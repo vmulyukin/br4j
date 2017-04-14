@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JAX-WS"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/SharedLib/asn1rt.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/AsnLite.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/LirJSSE.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/LirJCE.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/jna.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Platform"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/CryptoModule"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.2"/>
+	<classpathentry kind="src" path="/Kernel"/>
+	<classpathentry kind="lib" path="/SharedLib/bcpkix-jdk15on-147.jar" sourcepath="D:/Docs/Downloads/crypto-147"/>
+	<classpathentry kind="lib" path="/SharedLib/bcprov-ext-jdk15on-147.jar" sourcepath="D:/Docs/Downloads/crypto-147"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

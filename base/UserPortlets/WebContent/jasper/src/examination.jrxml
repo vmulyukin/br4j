@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="examination" pageWidth="555" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 	st.name_rus as status,
+        	av_sname_nm.string_value as name,
+        	p_exam.full_name as f_name,
+    	av_date.date_value + interval '$P!{tz_hour} hour' as date_exam,
+    	av_exam_job.string_value as job
+from 	card c_exam
+left outer join attribute_value av_exam on (av_exam.attribute_code = 'JBR_IMPL_ACQUAINT' and
+	c_exam.card_id = av_exam.number_value)
+left outer join -- дата рассмотрения
+	attribute_value av_date on (av_date.attribute_code = 'JBR_RASSM_TODATE' and c_exam.card_id = av_date.card_id )
+left outer join -- хар-ка на персону которая должна рассмотреть
+	attribute_value av_p on (av_p.card_id = c_exam.card_id and av_p.attribute_code = 'JBR_RASSM_PERSON')
+left outer join -- персона которая должна рассмотреть
+	person p_exam on (p_exam.person_id = av_p.number_value)
+left outer join -- фамилия ио чел. который должен рассмотреть
+	attribute_value av_sname_nm on (av_sname_nm.card_id = p_exam.card_id and av_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+left outer join -- Должность рассматривающего
+	attribute_value av_exam_job on (av_exam_job.card_id = p_exam.card_id and av_exam_job.attribute_code = 'JBR_PERS_POSITION')
+left outer join --Наименование статуса
+	card_status st on st.status_id = c_exam.status_id
+where 	av_exam.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="status" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="f_name" class="java.lang.String"/>
+	<field name="date_exam" class="java.sql.Timestamp"/>
+	<field name="job" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="text" positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="555" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{name} != null ? $F{name} :
+    ($F{f_name} != null ? $F{f_name} : "") ) +
+($F{job} != null ? (", " + $F{job}) : "") +
+($F{status} != null ? ( " - " + $F{status}) : "") +
+($F{date_exam} != null ? (" (Рассмотреть до: " +
+    (new SimpleDateFormat("dd.MM.yyyy")).format($F{date_exam}) + ")") : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

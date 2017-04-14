@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_2_1" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" lineSpacing="1_1_2" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" lineSpacing="1_1_2" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+	<subDataset name="dataset1"/>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="executor_card_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from
+(
+select sname.string_value as executor_name from card
+left outer join attribute_value sname on sname.attribute_code = 'JBR_PERS_SNAME_NM' AND sname.card_id = card.card_id
+where card.card_id  in ($P!{executor_card_id})
+),
+(
+select COUNT(*) as total
+from card c
+left outer join attribute_value executor on (executor.card_id = c.card_id AND executor.attribute_code = 'JBR_INFD_EXEC_LINK')
+left outer join attribute_value crdate on (c.card_id = crdate.card_id AND crdate.attribute_code = 'CREATED')
+left outer join attribute_value exdate on (c.card_id = exdate.card_id AND exdate.attribute_code = 'JBR_INFD_DTSGN_LINK')
+left outer join attribute_value dldate on (c.card_id = dldate.card_id AND dldate.attribute_code = 'JBR_TCON_TERM')
+left outer join
+(
+select person.person_id as pid from card
+left outer join person on person.card_id = card.card_id
+where card.card_id  in ($P!{executor_card_id})
+) pcard on executor.number_value = pid
+where
+	c.template_id = 324 AND
+	(c.status_id = 103 OR c.status_id = 206) AND
+	crdate.date_value >= $P{from_date} AND
+	crdate.date_value <= $P{to_date} AND
+	executor.number_value = pcard.pid
+),
+(
+select COUNT(*) as executed
+from card c
+left outer join attribute_value executor on (executor.card_id = c.card_id AND executor.attribute_code = 'JBR_INFD_EXEC_LINK')
+left outer join attribute_value crdate on (c.card_id = crdate.card_id AND crdate.attribute_code = 'CREATED')
+left outer join attribute_value exdate on (c.card_id = exdate.card_id AND exdate.attribute_code = 'JBR_INFD_DTSGN_LINK')
+left outer join attribute_value dldate on (c.card_id = dldate.card_id AND dldate.attribute_code = 'JBR_TCON_TERM')
+left outer join
+(
+select person.person_id as pid from card
+left outer join person on person.card_id = card.card_id
+where card.card_id  in ($P!{executor_card_id})
+) pcard on executor.number_value = pid
+where
+	c.template_id = 324 AND
+	crdate.date_value >= $P{from_date} AND
+	crdate.date_value <= $P{to_date} AND
+	executor.number_value = pcard.pid AND
+	c.status_id = 206
+),
+(
+select COUNT(*) as ex_in_time
+from card c
+left outer join attribute_value executor on (executor.card_id = c.card_id AND executor.attribute_code = 'JBR_INFD_EXEC_LINK')
+left outer join attribute_value crdate on (c.card_id = crdate.card_id AND crdate.attribute_code = 'CREATED')
+left outer join attribute_value exdate on (c.card_id = exdate.card_id AND exdate.attribute_code = 'JBR_INFD_DTSGN_LINK')
+left outer join attribute_value dldate on (c.card_id = dldate.card_id AND dldate.attribute_code = 'JBR_TCON_TERM')
+left outer join
+(
+select person.person_id as pid from card
+left outer join person on person.card_id = card.card_id
+where card.card_id  in ($P!{executor_card_id})
+) pcard on executor.number_value = pid
+where
+	c.template_id = 324 AND
+	crdate.date_value >= $P{from_date} AND
+	crdate.date_value <= $P{to_date} AND
+	executor.number_value = pcard.pid AND
+	c.status_id = 206 AND
+	(exdate.date_value < dldate.date_value OR dldate.date_value IS NULL)
+),
+(
+select COUNT(*) as overdued
+from card c
+left outer join attribute_value executor on (executor.card_id = c.card_id AND executor.attribute_code = 'JBR_INFD_EXEC_LINK')
+left outer join attribute_value crdate on (c.card_id = crdate.card_id AND crdate.attribute_code = 'CREATED')
+left outer join attribute_value exdate on (c.card_id = exdate.card_id AND exdate.attribute_code = 'JBR_INFD_DTSGN_LINK')
+left outer join attribute_value dldate on (c.card_id = dldate.card_id AND dldate.attribute_code = 'JBR_TCON_TERM')
+left outer join
+(
+select person.person_id as pid from card
+left outer join person on person.card_id = card.card_id
+where card.card_id  in ($P!{executor_card_id})
+) pcard on executor.number_value = pid
+where
+	c.template_id = 324 AND
+	crdate.date_value >= $P{from_date} AND
+	crdate.date_value <= $P{to_date} AND
+	executor.number_value = pcard.pid AND
+	c.status_id = 103 AND
+	dldate.date_value < CURRENT_DATE
+)
+
+
+
+	]]>
+	</queryString>
+	<field name="executor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="executed" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ex_in_time" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="overdued" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="not_executed" class="java.lang.Long">
+		<variableExpression><![CDATA[new Long($F{total}.intValue()-$F{executed}.intValue())]]></variableExpression>
+	</variable>
+	<variable name="executed_overdued" class="java.lang.Long">
+		<variableExpression><![CDATA[new Long($F{executed}.intValue()-$F{ex_in_time}.intValue())]]></variableExpression>
+	</variable>
+	<variable name="deadline_not_come" class="java.lang.Long">
+		<variableExpression><![CDATA[new Long($F{total}.intValue()-$F{executed}.intValue()-$F{overdued}.intValue())]]></variableExpression>
+	</variable>
+	<title>
+		<band height="126" splitType="Stretch">
+			<staticText>
+				<reportElement style="def" stretchType="RelativeToBandHeight" x="92" y="0" width="375" height="29"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Справка по исполнительской дисциплине]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="def" stretchType="RelativeToBandHeight" x="92" y="29" width="375" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["За период с " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})  + " по "+ (new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" stretchType="RelativeToBandHeight" x="92" y="54" width="375" height="30"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Исполнитель поручений: "+$F{executor_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="71" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="30" y="0" width="92" height="71"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Всего поручений]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="300" y="0" width="208" height="33"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Не выполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="122" y="0" width="178" height="33"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Выполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="122" y="33" width="54" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="176" y="33" width="54" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[В срок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="230" y="33" width="70" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Просрочено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="300" y="33" width="69" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="369" y="33" width="73" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Просрочено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="442" y="33" width="66" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Срок не наступил]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="38" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="30" y="0" width="92" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="122" y="0" width="54" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{executed}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="176" y="0" width="54" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{ex_in_time}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="230" y="0" width="70" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{executed_overdued}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="300" y="0" width="69" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{not_executed}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="369" y="0" width="73" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{overdued}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="442" y="0" width="66" height="38"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{deadline_not_come}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

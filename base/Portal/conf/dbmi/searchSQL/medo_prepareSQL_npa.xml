@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery>
+	<query>
+		<sql>
+			<![CDATA[
+-- Документы на предварительной обработке, пришедшие по МЭДО с признаком входящий нпа (JBR_INCOMING_NPA=да)
+select distinct card_id from (
+select c1.card_id from 
+(
+select c.card_id
+	from card c
+	join attribute_value av on av.card_id = c.card_id and av.attribute_code = 'ADMIN_118450'
+where
+	c.template_id in (224)
+    and c.status_id in (301)
+	and av.value_id in (1522,1592) --(1588,1521,1522,1592)
+    and
+    	EXISTS(select 1 from attribute_value av2 where 
+			 	(av2.card_id = c.card_id) AND 
+				(av2.attribute_code='CREATED') AND 
+                (av2.date_value >= date_trunc('day', CURRENT_TIMESTAMP - interval '366 days'))
+			)
+union all
+select c.card_id
+from card c
+where
+	c.template_id in (224)				-- шаблон "Входящий"
+	and c.status_id in (102,103)		-- в статусе "Исполнение", "Рассмотрение"
+	and
+		NOT EXISTS(select 1 from attribute_value av2 where		-- поле "Регистрационный номер" пусто
+			 	(av2.card_id = c.card_id) AND 
+				(av2.attribute_code='JBR_REGD_REGNUM')
+		)
+	and
+		EXISTS(select 1 from attribute_value av3 where 
+		 	(av3.card_id = c.card_id) AND 
+			(av3.attribute_code='CREATED') AND 
+			(av3.date_value >= date_trunc('day', CURRENT_TIMESTAMP - interval '366 days'))
+		)
+) as c1
+-- Дата создания или изменения ...
+JOIN attribute_value av1
+	ON	(av1.card_id = c1.card_id
+		AND av1.attribute_code in ('CREATED', 'CHANGED')) -- ('CREATED')
+--ORDER BY av1.DATE_VALUE DESC
+) as a
+where 
+(
+	EXISTS (select 1 from attribute_value av5 where
+			(av5.card_id = a.card_id) AND 
+		(av5.attribute_code='JBR_INCOMING_NPA') AND
+		(av5.value_id = 1449)
+	)
+)
+			]]>
+		</sql>
+	</query>
+</searchQuery>

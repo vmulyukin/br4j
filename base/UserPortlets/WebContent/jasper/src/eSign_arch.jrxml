@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming" pageWidth="555" pageHeight="782" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="table_header"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="timeSign" class="java.lang.String"/>
+	<field name="templateName" class="java.lang.String"/>
+	<field name="owner" class="java.lang.String"/>
+	<field name="certificationCenter" class="java.lang.String"/>
+	<field name="validDate" class="java.lang.String"/>
+	<field name="serialNumber" class="java.lang.String"/>
+	<field name="keyState" class="java.lang.String"/>
+	<field name="signState" class="java.lang.String"/>
+	<title>
+		<band height="30">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="70" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Дата подписания]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="122" y="0" width="62" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Владелец сертификата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="184" y="0" width="82" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Наименование УЦ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="266" y="0" width="79" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Срок действия сертификата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="345" y="0" width="75" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Серийный номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="420" y="0" width="70" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Состояние ключа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="490" y="0" width="65" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Статус ЭП]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="70" y="0" width="52" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Шаблон]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement style="table" x="0" y="0" width="555" height="30"/>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" x="70" y="0" width="52" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{templateName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="420" y="0" width="70" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{keyState}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="490" y="0" width="65" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{signState}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="184" y="0" width="82" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{certificationCenter}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="345" y="0" width="75" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{serialNumber}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="70" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{timeSign}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="266" y="0" width="79" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{validDate}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" x="122" y="0" width="62" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{owner}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

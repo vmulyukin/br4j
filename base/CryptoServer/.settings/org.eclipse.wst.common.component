@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="CryptoServer">
+        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="JBCrypto.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/D:/MyDocuments/MyProject/BR4J/JBossReferent_APO/CryptoApplet/build/JBCrypto.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="Platform.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Platform/Platform">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="CryptoServer"/>
+        <property name="java-output-path" value="/CryptoServer/build/classes"/>
+    </wb-module>
+</project-modules>

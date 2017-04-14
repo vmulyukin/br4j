@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Ознакомление с поручением" template_id="1144">
+        <Permission Status="73992" Rule="Помощник ознакамливающегося">
+            <Operations>
+                <Operation permHash="8baff371a3f64e37449fe9696493b464"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="8685ee7e167c6c6305f70f5ffa914d73"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="62f384ea817f31cd02153ea046c39a24"
+                    name="В АРМ руководителю-825528" wfm_id="825528" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="67424" Rule="Д_Кому ознакомиться">
+            <Operations>
+                <Operation permHash="12d98191a9707da6d93fb469dffdb561"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="de5f8887f8a69d957bff23989f6c3c78"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="c41ffa6fb58a3d36eee67516b62dc78e"
+                    name="Ознакомился-67427" wfm_id="67427" Action="add"/>
+                <WfMove permHash="d484116cf92726e8174cca476856c9b7"
+                    name="Отменить-825580" wfm_id="825580" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Старший регистратор" ruleHash="de5d0962786dd481fc7cc645be1d35b1">
+                <RuleRole name="Старший регистратор"
+                    ruleHash="de5d0962786dd481fc7cc645be1d35b1" roleCode="JBR_CHR"/>
+            </Rule>
+            <Rule name="Помощник ознакамливающегося" ruleHash="327bf9d46ea39af8b40d8df7c8560fef">
+                <RuleProfile name="Помощник ознакамливающегося"
+                    ruleHash="327bf9d46ea39af8b40d8df7c8560fef"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="ADMIN_726874"/>
+            </Rule>
+            <Rule
+                name="Динамическая роль, дает такие же права, как и на родительское поручение" ruleHash="bdd4856afe9e9294061c65896ff5c921">
+                <RuleDelegation
+                    name="Динамическая роль, дает такие же права, как и на родительское поручение"
+                    ruleHash="bdd4856afe9e9294061c65896ff5c921" linkAttributeCode="ADMIN_726876"/>
+            </Rule>
+            <Rule name="Д_Кому ознакомиться"
+                ruleHash="8705ae363c3a1be915d400cb60c17ef5" Action="rename">
+                <RulePerson name="Д_Кому ознакомиться"
+                    personAttributeCode="ADMIN_726874" ruleHash="8705ae363c3a1be915d400cb60c17ef5"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Обработка помощником" status_id="73992"/>
+        <Status name="Ожидание рассмотрения" status_id="52086"/>
+        <Status name="Ознакомился" status_id="67425"/>
+        <Status name="Ознакомление" status_id="67424"/>
+        <Status name="Отменен" status_id="34145"/>
+        <Status name="Черновик" status_id="1"/>
+        <WFMoveType name="В АРМ руководителю-825528" wfm_id="825528"
+            wfm_from="Обработка помощником" wfm_to="Ознакомление"
+            wfm_from_status="73992" wfm_to_status="67424"/>
+        <WFMoveType name="В корзину-219974933" wfm_id="219974933"
+            wfm_from="Ознакомление" wfm_to="Корзина"
+            wfm_from_status="67424" wfm_to_status="303990"/>
+        <WFMoveType name="В корзину-219974934" wfm_id="219974934"
+            wfm_from="Ознакомился" wfm_to="Корзина"
+            wfm_from_status="67425" wfm_to_status="303990"/>
+        <WFMoveType name="В корзину-556661" wfm_id="556661"
+            wfm_from="Черновик" wfm_to="Корзина" wfm_from_status="1" wfm_to_status="303990"/>
+        <WFMoveType name="нет помошника-825576" wfm_id="825576"
+            wfm_from="Ожидание рассмотрения" wfm_to="Ознакомление"
+            wfm_from_status="52086" wfm_to_status="67424"/>
+        <WFMoveType name="Ознакомился-67427" wfm_id="67427"
+            wfm_from="Ознакомление" wfm_to="Ознакомился"
+            wfm_from_status="67424" wfm_to_status="67425"/>
+        <WFMoveType name="Отменить-825577" wfm_id="825577"
+            wfm_from="Черновик" wfm_to="Отменен" wfm_from_status="1" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-825578" wfm_id="825578"
+            wfm_from="Ожидание рассмотрения" wfm_to="Отменен"
+            wfm_from_status="52086" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-825579" wfm_id="825579"
+            wfm_from="Обработка помощником" wfm_to="Отменен"
+            wfm_from_status="73992" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-825580" wfm_id="825580"
+            wfm_from="Ознакомление" wfm_to="Отменен"
+            wfm_from_status="67424" wfm_to_status="34145"/>
+        <WFMoveType name="Отправить на ознакомление-556660"
+            wfm_id="556660" wfm_from="Черновик" wfm_to="Ознакомление"
+            wfm_from_status="1" wfm_to_status="67424"/>
+        <WFMoveType name="Отправить по маршруту-825575" wfm_id="825575"
+            wfm_from="Черновик" wfm_to="Ожидание рассмотрения"
+            wfm_from_status="1" wfm_to_status="52086"/>
+        <WFMoveType name="Помощнику на обработку-825529" wfm_id="825529"
+            wfm_from="Ожидание рассмотрения"
+            wfm_to="Обработка помощником" wfm_from_status="52086" wfm_to_status="73992"/>
+    </Template>
+</AccessConfig>

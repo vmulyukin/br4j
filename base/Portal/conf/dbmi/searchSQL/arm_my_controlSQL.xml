@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+	<query>
+		<sql>
+			<![CDATA[
+
+			SELECT DISTINCT cardID
+			FROM
+			(
+					SELECT c.card_id AS cardID
+					FROM Card c
+						INNER JOIN attribute_value avUser ON (
+								avUser.card_id = c.card_id
+
+								-- (324)  "Поручение"             : "Контролер"/U ('JBR_TCON_INSPECTOR')
+								-- (1255) "Независимое поручение" : "Контролер"/U ('JBR_IMPL_INSPECTOR')
+								AND (avUser.attribute_code IN ('JBR_TCON_INSPECTOR', 'JBR_IMPL_INSPECTOR')) 
+								AND avUser.number_value IN (%CURRENTUSERS%)
+						)
+						-- " На контроле = Да "
+						INNER JOIN attribute_value av_c ON (
+							(av_c.card_id = c.card_id)
+							AND (av_c.attribute_code in ('JBR_TCON_ONCONT', 'JBR_IMPL_ONCONT'))
+							AND av_c.value_id IN (1449, 1432)
+						)
+
+					WHERE (
+						-- Шаблон=Поручение (324), Независимое поручение (1255), состояние="Исполнение"(103)
+						(c.template_id IN (324, 1255)) AND (c.status_id=103)
+					) -- /WHERE
+
+					UNION
+
+					-- для "отчетов внешних исполнителей" 1064
+					SELECT 
+						CRD.card_id 
+					FROM 
+						card CRD
+						INNER JOIN attribute_value AVO ON AVO.card_id = CRD.card_id
+							AND AVO.attribute_code = 'ADMIN_702600'
+							AND AVO.number_value in (
+								SELECT 
+									AV.card_id 
+								FROM 
+									attribute_value AV
+								WHERE 
+									AV.attribute_code = 'JBR_TCON_INSPECTOR'
+									AND AV.template_id = 324 
+									AND AV.number_value = (%CURRENTUSERS%)
+							)
+					WHERE CRD.template_id=1064 AND CRD.status_id=556656
+
+					UNION
+					/* 
+						Все исполненные контрольные документы, контролером которых является текущий пользователь 
+					и которые НЕ ИМЕЮТ контрольных резолюций.
+					*/
+					SELECT c.card_id AS cardID FROM card c
+					-- Контролер
+					JOIN attribute_value ctrlr ON c.card_id = ctrlr.card_id AND ctrlr.attribute_code = 'JBR_IMPL_INSPECTOR'
+					-- На контроле
+					JOIN attribute_value ctrl ON c.card_id = ctrl.card_id AND ctrl.attribute_code = 'JBR_IMPL_ONCONT'
+					WHERE 
+						-- Входящие, ОГ, ИЗ, Внут, НПА, ОРД
+						c.template_id IN (224, 864, 865, 784, 1226, 764) AND 
+						-- Исполнен, Исполнение
+						c.status_id IN (206, 103) AND 
+						-- Контролер - текущий пользователь
+						ctrlr.number_value IN (%CURRENTUSERS%) AND 
+						-- Документ на контроле
+						ctrl.value_id = 1432 --AND 
+						-- Документ не имеет контрольных резолюций
+			) AS b				
+			]]>
+		</sql>
+
+	</query>
+</searchQuery>

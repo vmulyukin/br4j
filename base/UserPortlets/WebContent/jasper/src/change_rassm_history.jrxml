@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="change_rassm_history" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with cards as (
+	select cc.* from card c
+	join attribute_value av_ch_r on av_ch_r.number_value = c.card_id and av_ch_r.attribute_code = 'JBR_MAINDOC_REQUEST'
+	join card cc on av_ch_r.card_id = cc.card_id and cc.status_id = 10000101
+	where c.card_id = $P{card_id}
+)
+select rtype, old_rassm, new_rassm, old_date + interval '$P!{tz_hour} hour' as old_date, new_date + interval '$P!{tz_hour} hour' as new_date, old_otv, new_otv, rdate + interval '$P!{tz_hour} hour' as rdate from
+		    (
+		        select vl_type.value_rus as rtype,
+		        av_cr_date.date_value as created,
+		        case when av_type.value_id = 1127 then null else av_prev_rassm_snm.string_value end as old_rassm,
+		        case when av_type.value_id in (1128,1129) then null else av_new_rassm_snm.string_value end as new_rassm,
+		        case when av_type.value_id = 1127 then null when av_type.value_id = 1128 then av_todate.date_value else av_state_do.date_value end as old_date,
+		        case when av_type.value_id = 1128 then null else av_state_after_date.date_value end as new_date,
+		        case when av_type.value_id in (1127,1129) then null when av_type.value_id = 1128 then av_cons_values.value_rus else av_state_do_values.value_rus end as old_otv,
+		        case when av_type.value_id in (1128,1129) then null else new_resp.value_rus end as new_otv,
+		        av_proc_date.date_value as rdate
+
+		        from cards c
+		        left join attribute_value av_cr_date on av_cr_date.card_id = c.card_id and av_cr_date.attribute_code = 'CREATED'
+		        left join attribute_value av_proc_date on av_proc_date.card_id = c.card_id and av_proc_date.attribute_code = 'JBR_REQ_RES_DATE'
+		        left join attribute_value av_type on av_type.card_id = c.card_id and av_type.attribute_code = 'JBR_REQUEST_TYPE'
+		        left join values_list vl_type on vl_type.value_id= av_type.value_id
+
+		        left join attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_REQUEST_CONS'
+		        left join attribute_value av_rassm_p on av_rassm.number_value = av_rassm_p.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+
+		        join person p_rassm_p on av_rassm_p.number_value = p_rassm_p.person_id
+
+		        left join attribute_value av_prev_rassm_snm on p_rassm_p.card_id = av_prev_rassm_snm.card_id and av_prev_rassm_snm.attribute_code = 'JBR_PERS_SNAME_NM'
+		        left join attribute_value av_todate on av_rassm.number_value = av_todate.card_id and av_todate.attribute_code = 'JBR_RASSM_TODATE'
+		        left join attribute_value av_cons on av_rassm.number_value = av_cons.card_id and av_cons.attribute_code = 'JBR_RESPONS_CONSIDER'
+		        left join values_list av_cons_values on av_cons_values.value_id = av_cons.value_id
+
+		        left join attribute_value av_new_rassm_p on av_new_rassm_p.card_id = c.card_id and av_new_rassm_p.attribute_code = 'JBR_REQUEST_NEW'
+		        left join person av_new_rassm_person on av_new_rassm_person.card_id = av_new_rassm_p.number_value
+		        left join attribute_value av_new_rassm_snm on av_new_rassm_p.number_value = av_new_rassm_snm.card_id and av_new_rassm_snm.attribute_code = 'JBR_PERS_SNAME_NM'
+		        left join attribute_value av_chan_date on av_chan_date.card_id = c.card_id and av_chan_date.attribute_code = 'JBR_REQUEST_CHAN'
+		        left join attribute_value av_state_do on av_new_rassm_p.number_value in
+		            (
+		                select p_rassm_p.card_id from attribute_value av_rassm_p
+		                join person p_rassm_p on av_rassm_p.number_value = p_rassm_p.person_id
+		                where av_rassm_p.card_id = av_state_do.number_value
+		                and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+		            )
+		            and av_state_do.card_id = c.card_id and av_state_do.attribute_code = 'JBR_REQUEST_PREV'
+		        left join values_list av_state_do_values on av_state_do_values.value_id = av_state_do.value_id
+
+		        left join attribute_value av_state_after_main on av_state_after_main.card_id = c.card_id and av_state_after_main.attribute_code = 'JBR_MAINDOC_REQUEST'
+		        left join attribute_value av_state_after on av_state_after.card_id = av_state_after_main.number_value and av_state_after.attribute_code = 'JBR_IMPL_ACQUAINT'
+		        join card av_rassm_card_id on av_rassm_card_id.card_id = av_state_after.number_value and av_rassm_card_id.status_id <> 34145
+		        left join attribute_value av_state_after_p on av_state_after_p.card_id = av_rassm_card_id.card_id and av_state_after_p.attribute_code = 'JBR_RASSM_PERSON'
+		        left join attribute_value av_state_after_date on av_state_after_date.card_id = av_rassm_card_id.card_id and av_state_after_date.attribute_code = 'JBR_RASSM_TODATE'
+		        left join attribute_value av_state_after_resp on av_state_after_resp.card_id = av_rassm_card_id.card_id and av_state_after_resp.attribute_code = 'JBR_RESPONS_CONSIDER'
+		        left join values_list new_resp on new_resp.value_id = av_state_after_resp.value_id
+
+		        where (av_state_after_p.number_value = av_new_rassm_person.person_id)
+		        and av_type.value_id not in (1128, 1129)
+
+		        UNION
+
+		        select vl_type.value_rus as rtype,
+		        av_cr_date.date_value as created,
+		        av_prev_rassm_snm.string_value as old_rassm,
+		        null as new_rassm,
+		        case when av_type.value_id = 1128 then av_todate.date_value else av_state_do.date_value end as old_date,
+		        case when av_type.value_id = 1128 then null else av_chan_date.date_value end as new_date,
+		        case when av_type.value_id = 1129 then null    when av_type.value_id = 1128 then av_cons_values.value_rus end as old_otv,
+		        null as new_otv,
+		        av_proc_date.date_value as rdate
+
+		        from cards c
+		        left join attribute_value av_cr_date on av_cr_date.card_id = c.card_id and av_cr_date.attribute_code = 'CREATED'
+		        left join attribute_value av_proc_date on av_proc_date.card_id = c.card_id and av_proc_date.attribute_code = 'JBR_REQ_RES_DATE'
+		        left join attribute_value av_type on av_type.card_id = c.card_id and av_type.attribute_code = 'JBR_REQUEST_TYPE'
+		        left join values_list vl_type on vl_type.value_id= av_type.value_id
+
+		        left join attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_REQUEST_CONS'
+		        left join attribute_value av_rassm_p on av_rassm.number_value = av_rassm_p.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+
+		        join person p_rassm_p on av_rassm_p.number_value = p_rassm_p.person_id
+
+		        left join attribute_value av_prev_rassm_snm on p_rassm_p.card_id = av_prev_rassm_snm.card_id and av_prev_rassm_snm.attribute_code = 'JBR_PERS_SNAME_NM'
+		        left join attribute_value av_todate on av_rassm.number_value = av_todate.card_id and av_todate.attribute_code = 'JBR_RASSM_TODATE'
+		        left join attribute_value av_cons on av_rassm.number_value = av_cons.card_id and av_cons.attribute_code = 'JBR_RESPONS_CONSIDER'
+		        left join values_list av_cons_values on av_cons_values.value_id = av_cons.value_id
+
+		        left join attribute_value av_new_rassm_p on av_new_rassm_p.card_id = c.card_id and av_new_rassm_p.attribute_code = 'JBR_REQUEST_NEW'
+		        left join person av_new_rassm_person on av_new_rassm_person.card_id = av_new_rassm_p.number_value
+		        left join attribute_value av_chan_date on av_chan_date.card_id = c.card_id and av_chan_date.attribute_code = 'JBR_REQUEST_CHAN'
+		        left join attribute_value av_state_do on p_rassm_p.card_id in
+		            (
+		                select p_rassm_p.card_id from attribute_value av_rassm_p
+		                join person p_rassm_p on av_rassm_p.number_value = p_rassm_p.person_id
+		                where av_rassm_p.card_id = av_state_do.number_value
+		                and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+		            )
+		            and av_state_do.card_id = c.card_id and av_state_do.attribute_code = 'JBR_REQUEST_PREV'
+
+		        where av_type.value_id in (1128, 1129)
+
+		    ) as hist
+		order by rdate]]>
+	</queryString>
+	<field name="rtype" class="java.lang.String"/>
+	<field name="old_rassm" class="java.lang.String"/>
+	<field name="new_rassm" class="java.lang.String"/>
+	<field name="old_date" class="java.sql.Timestamp"/>
+	<field name="new_date" class="java.sql.Timestamp"/>
+	<field name="old_otv" class="java.lang.String"/>
+	<field name="new_otv" class="java.lang.String"/>
+	<field name="rdate" class="java.sql.Timestamp"/>
+	<columnHeader>
+		<band height="40">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="0" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Дата изменения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="69" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Тип изменения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="138" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Рассматривающий]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="348" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Срок (после)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="279" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Срок (до)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="417" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Отв. (до)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="207" y="0" width="72" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Новый рассматривающий]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="486" y="0" width="69" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Отв. (после)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="0" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{rdate} != null
+    ? new SimpleDateFormat("dd.MM.yyyy").format($F{rdate})
+    : ""
+)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="69" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rtype}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="138" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{old_rassm}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="207" y="0" width="72" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{new_rassm}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="279" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{old_date} != null
+    ? new SimpleDateFormat("dd.MM.yyyy").format($F{old_date})
+    : ""
+)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="348" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{new_date} != null
+    ? new SimpleDateFormat("dd.MM.yyyy").format($F{new_date})
+    : ""
+)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="417" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{old_otv}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="486" y="0" width="69" height="15"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{new_otv}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

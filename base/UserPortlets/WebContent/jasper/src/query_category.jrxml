@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="addressee" pageWidth="281" pageHeight="842" columnWidth="281" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+        av_qcategories_name.string_value as qcategories
+from 	card c
+left outer join -- категория вопроса
+	attribute_value av_qcategories_name on (av_qcategories_name.card_id = c.card_id  and av_qcategories_name.attribute_code = 'NAME')
+-----------------------------------------------------------------------
+where	c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="qcategories" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="text" mode="Transparent" x="0" y="0" width="281" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{qcategories} != null ? $F{qcategories} : "-"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

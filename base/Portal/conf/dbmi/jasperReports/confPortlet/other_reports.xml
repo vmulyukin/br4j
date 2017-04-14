@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<reports>
+	<exportType>pdf</exportType>
+	<report id="IndicatorsOfUnits" title="IndicatorsOfUnits_title" rootKit="rootKit" fileName="IndicatorsOfUnits_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="date" type="Date" title="onDate" require="true"/>
+				<parameter name="departments" type="Cards" title="department_title" require="true" query="jasperReports/departments.xml" buttons="true" allSelected="All_units"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<messages>
+		<lang code="en">
+			<message key="deadlinesControlOfControlDocumentsReport" value="Dead lines control of control documents report"/>
+			<message key="incomingDocsRegister" value="List of incoming correspondence"/>
+			<message key="outgoingDocsRegister" value="List of outgoing correspondence"/>
+			<message key="dateReg" value="Registration date"/>
+			<message key="dateDeparture" value="Departure date"/>
+			<message key="instrsMinister" value="List of instructions minister"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Information on the coordination of projects"/>
+			<message key="Registered_Legal_Acts_report_title" value="Registered Legal Acts report"/>
+			<message key="registered_docs_list_title" value="Registered documents list"/>
+			<message key="SFA_administative_docs_help_title" value="Administative documents help"/>
+			<message key="lim_term" value="Date of execution orders"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="From"/>
+			<message key="endDate" value="Till"/>
+			<message key="onDate" value="On date"/>
+			<message key="journal" value="Journal"/>
+			<message key="curators_title" value="Curator"/>
+			<message key="document_type_title" value="Document types"/>
+			<message key="developer_title" value="Developer"/>
+			<message key="department_title" value="department"/>
+			<message key="group_by_year_title" value="Group by year"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="IndicatorsOfUnits_title" value="Indicators of units"/>
+			<message key="All_units" value="All units"/>
+			<message key="overExportReportFormat" value="Формат отчета"/>
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>	
+		</lang>	
+		<lang code="ru">
+			<message key="deadlinesControlOfControlDocumentsReport" value="Отчет по контролю сроков исполнения контрольных документов"/>
+			<message key="incomingDocsRegister" value="Реестр входящих документов"/>
+			<message key="outgoingDocsRegister" value="Реестр исходящих документов"/>
+			<message key="dateReg" value="Дата регистрации"/>
+			<message key="dateDeparture" value="Дата отправления"/>
+			<message key="instrsMinister" value="Список поручений министра"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Информация о ходе согласования проектов"/>
+			<message key="Registered_Legal_Acts_report_title" value="Отчет по принятым НПА"/>
+			<message key="registered_docs_list_title" value="Перечень зарегистрированных документов"/>
+			<message key="SFA_administative_docs_help_title" value="Справка о выпуске распорядительных документов"/>
+			<message key="lim_term" value="Дата исполнения поручений"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="С      "/>
+			<message key="endDate" value="По     "/>
+			<message key="onDate" value="На дату"/>
+			<message key="journal" value="Журнал"/>
+			<message key="curators_title" value="Куратор"/>
+			<message key="document_type_title" value="Типы документов"/>
+			<message key="developer_title" value="Разработчик"/>
+			<message key="group_by_year_title" value="Группировать по годам"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="department_title" value="Подразделение"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="IndicatorsOfUnits_title" value="Показатели деятельности подразделения"/>
+			<message key="All_units" value="По всем подразделениям"/>
+			<message key="overExportReportFormat" value="Формат отчета"/>
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>	
+		</lang>		
+	</messages>
+</reports>

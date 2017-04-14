@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+	<query>
+		<sql>
+			<![CDATA[
+
+				--Администраторам выводим все Заявления за указанный промежуток времени
+				SELECT distinct c.card_id
+				FROM Card c
+
+				--Дата отмены должна быть больше чем текущая минус 30 дней
+				INNER JOIN attribute_value created_date ON (
+					created_date.card_id = c.card_id AND
+					created_date.attribute_code = 'CREATED' AND
+					created_date.date_value > date_trunc('day', (CURRENT_TIMESTAMP - interval '30 days'))
+				)
+
+				WHERE 
+					c.template_id=967
+					and exists (select 1 from person pUser
+						    inner join person_role prUser on pUser.person_id = prUser.person_id
+						    and prUser.role_code in ('A')
+						    where pUser.person_id in (%CURRENTUSERS%))
+				
+				UNION
+
+				SELECT distinct c.card_id
+				FROM Card c
+
+				--Дата отмены должна быть больше чем текущая минус 30 дней
+				INNER JOIN attribute_value created_date ON (
+					created_date.card_id = c.card_id AND
+					created_date.attribute_code = 'CREATED' AND
+					created_date.date_value > date_trunc('day', (CURRENT_TIMESTAMP - interval '30 days'))
+				)
+				--Текущий пользователь должен быть Регистратором связанного ОГ
+				INNER JOIN attribute_value av_og ON (
+						av_og.card_id = c.card_id and av_og.attribute_code = 'JBR_MAINDOC_REQUEST'
+				)
+				INNER JOIN attribute_value av_og_registrar ON (
+					   av_og_registrar.card_id = av_og.number_value AND
+					   av_og_registrar.attribute_code = 'JBR_REGD_REGISTRAR' AND
+					   av_og_registrar.number_value in (%CURRENTUSERS%)
+				)
+				WHERE 
+					c.template_id=967
+					and exists (select 1 from person pUser
+						    inner join person_role prUser on pUser.person_id = prUser.person_id
+						    and prUser.role_code in ('A', 'JBR_OG_CHR', 'JBR_OG')
+						    where pUser.person_id in (%CURRENTUSERS%))
+						    
+				UNION
+
+				SELECT distinct c.card_id
+				FROM Card c
+
+				INNER JOIN attribute_value avCons ON (
+					avCons.card_id = c.card_id
+					AND avCons.attribute_code = 'JBR_REQUEST_CONS')
+					
+				INNER JOIN attribute_value avConsUser ON (
+					avConsUser.card_id = avCons.number_value
+					AND avConsUser.attribute_code = 'JBR_RASSM_PERSON'
+					AND avConsUser.number_value in (%CURRENTUSERS%))
+
+				--Дата отмены должна быть больше чем текущая минус 30 дней
+				INNER JOIN attribute_value created_date ON (
+					created_date.card_id = c.card_id AND
+					created_date.attribute_code = 'CREATED' AND
+					created_date.date_value > date_trunc('day', (CURRENT_TIMESTAMP - interval '30 days'))
+				)
+
+				WHERE 
+					c.template_id=967
+					
+				UNION
+
+				SELECT distinct c.card_id
+				FROM Card c
+
+				INNER JOIN attribute_value avCons ON (
+					avCons.card_id = c.card_id
+					AND avCons.attribute_code = 'JBR_REQUEST_CONS')
+					
+				INNER JOIN attribute_value avConsUser ON (
+					avConsUser.card_id = avCons.number_value
+					AND avConsUser.attribute_code = 'JBR_RASSM_PERSON')
+
+				INNER JOIN attribute_value av_m 
+					on av_m.number_value = avConsUser.number_value
+					and av_m.attribute_code = 'JBR_ARM_MANAGER'
+
+				INNER JOIN attribute_value av_a
+					on  av_a.card_id = av_m.card_id
+					and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+					and av_a.number_value in (%CURRENTUSERS%)
+
+				--Дата отмены должна быть больше чем текущая минус 30 дней
+				INNER JOIN attribute_value created_date ON (
+					created_date.card_id = c.card_id AND
+					created_date.attribute_code = 'CREATED' AND
+					created_date.date_value > date_trunc('day', (CURRENT_TIMESTAMP - interval '30 days'))
+				)
+
+				WHERE 
+					c.template_id=967
+
+			]]>
+		</sql>
+	</query>
+</searchQuery>

@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reference_of_citizens_appl" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+district.string_value as district, --район
+count(distinct c.card_id) as all_letters, ---поступило всего ОГ
+count(questions.number_value) as all_questions, ---поступило всего вопросов
+count(distinct okrug.card_id) as okrug,---из ЦО
+count(distinct col_obr.card_id) as col_obr, ---коллуктивные обращения
+count(distinct repeat.card_id) as repeat, ---повторные
+count(distinct vov.card_id) as vov, ---от участников войны
+count(distinct control.card_id) as control, ---на контроле
+count(distinct rassm_all.card_id) as rassm_all, ---рассмотрено вопросов всего
+count(distinct rassm_in_term.card_id) as in_term, ---рассмотрено вопросов в срок
+count(distinct rassm_not_term.card_id) as not_term, ---рассмотрено вопросов c нарушением срока
+count(distinct fav_des.card_id) as  fav_des, ---вопросы решены положительно
+count(distinct add_cont.card_id) as  add_cont --- поставлено на длительный контроль
+from attribute_value district_code
+----район
+JOIN attribute_value district ON district.card_id = district_code.number_value and district.attribute_code='NAME'
+---Всего ОГ
+JOIN card c on c.card_id=district_code.card_id and c.template_id=864
+---проверяем дату создания
+ JOIN attribute_value reg_date ON reg_date.card_id = c.card_id and reg_date.attribute_code='JBR_REGD_DATEREG' and
+	date_trunc('day', reg_date.date_value + interval '$P!{tz_hour} hour') BETWEEN  $P{from_date} and $P{to_date}
+
+---выбираем все письменные обращения граждан
+JOIN attribute_value a ON a.card_id = c.card_id and a.attribute_code='ADMIN_283122' and a.value_id in (2136, 2137, 2138)
+
+---всего вопросов
+ LEFT JOIN attribute_value questions ON questions.card_id = c.card_id and questions.attribute_code='ADMIN_277251'
+
+  ---Из ЦО
+ LEFT JOIN attribute_value okrug ON okrug.card_id = c.card_id and okrug.attribute_code='ADMIN_277246' and okrug.number_value=437392
+  LEFT JOIN attribute_value okrug_name ON okrug_name.card_id=okrug.number_value and okrug_name.string_value='Центральный федеральный округ (ЦФО)'
+
+---выбираем коллективные обращения граждан
+LEFT JOIN attribute_value col_obr ON col_obr.card_id = c.card_id and col_obr.attribute_code='ADMIN_283576' and col_obr.number_value=15920
+
+    ---Повторных
+LEFT JOIN attribute_value repeat ON repeat.card_id = c.card_id and repeat.attribute_code='ADMIN_277616' and repeat.number_value is not null
+
+ ---обращения участников ВОВ
+ LEFT JOIN attribute_value vov ON vov.card_id = c.card_id and vov.attribute_code='ADMIN_277615' and vov.value_id=1933
+
+  ---на контроле
+LEFT JOIN attribute_value control ON control.card_id = c.card_id and control.attribute_code='JBR_IMPL_ONCONT' and control.value_id=1432
+
+---рассмотрено вопросов всего
+LEFT JOIN attribute_value rassm_all ON  rassm_all.card_id = c.card_id and  rassm_all.attribute_code='ADMIN_283929' and  rassm_all.value_id is not null
+
+---рассмотрено вопросов в срок
+LEFT JOIN attribute_value rassm_in_term ON rassm_in_term.card_id = c.card_id and rassm_in_term.attribute_code='JBR_IMPL_DEADLINE'
+	and rassm_in_term.date_value is not null  and exists (select 1 from attribute_value v where v.card_id=c.card_id and v.attribute_code='ADMIN_283929' and v.value_id is not null)
+	and exists (select 1 from attribute_value v1 where v1.card_id=c.card_id and v1.attribute_code='ADMIN_220912' and v1.date_value + interval '$P!{tz_hour} hour' <= rassm_in_term.date_value + interval '$P!{tz_hour} hour')
+
+---рассмотрено вопросов с нарушением срока
+LEFT JOIN attribute_value rassm_not_term ON rassm_not_term.card_id = c.card_id and rassm_not_term.attribute_code='JBR_IMPL_DEADLINE'
+	and rassm_not_term.date_value is not null  and exists (select 1 from attribute_value v2 where v2.card_id=c.card_id and v2.attribute_code='ADMIN_283929' and v2.value_id is not null)
+	and exists (select 1 from attribute_value v3 where v3.card_id=c.card_id and v3.attribute_code='ADMIN_220912' and v3.date_value + interval '$P!{tz_hour} hour' > rassm_not_term.date_value + interval '$P!{tz_hour} hour')
+
+---принято положительных решений
+LEFT JOIN attribute_value fav_des ON  fav_des.card_id = c.card_id and  fav_des.attribute_code='ADMIN_283929' and  fav_des.value_id in (1890, 1894, 1895, 1896)
+
+    ---поставлено на длительный контроль
+LEFT JOIN attribute_value add_cont ON add_cont.card_id = c.card_id and add_cont.attribute_code='JBR_IMPL_TYPECONT' and add_cont.value_id=1897
+
+
+
+WHERE
+district_code.attribute_code='ADMIN_277243'
+group by district_code.number_value, district
+
+UNION ALL
+SELECT
+'Другие' as district, ---название района
+count(distinct c.card_id) as all_letters, ---поступило всего ОГ
+count(questions.number_value) as all_questions, ---поступило всего вопросов
+count(distinct okrug.card_id) as okrug,---из ЦО
+count(distinct col_obr.card_id) as col_obr, ---коллуктивные обращения
+count(distinct repeat.card_id) as repeat, ---повторные
+count(distinct vov.card_id) as vov, ---от участников войны
+count(distinct control.card_id) as control, ---на контроле
+count(distinct rassm_all.card_id) as rassm_all, ---рассмотрено вопросов всего
+count(distinct rassm_in_term.card_id) as in_term, ---рассмотрено вопросов в срок
+count(distinct rassm_not_term.card_id) as not_term, ---рассмотрено вопросов c нарушением срока
+count(distinct fav_des.card_id) as  fav_des, ---вопросы решены положительно
+count(distinct add_cont.card_id) as  add_cont --- поставлено на длительный контроль
+FROM card c
+
+---проверяем дату создания
+ JOIN attribute_value reg_date ON reg_date.card_id = c.card_id and reg_date.attribute_code='JBR_REGD_DATEREG' and
+	date_trunc('day', reg_date.date_value + interval '$P!{tz_hour} hour') BETWEEN  $P{from_date} and $P{to_date}
+
+---выбираем все письменные обращения граждан
+JOIN attribute_value a ON a.card_id = c.card_id and a.attribute_code='ADMIN_283122' and a.value_id in (2136, 2137, 2138)
+
+---район
+---   LEFT JOIN attribute_value district_code ON district_code.card_id = c.card_id and district_code.attribute_code='ADMIN_277243'
+ ----LEFT JOIN attribute_value district ON district.card_id = district_code.number_value and district.attribute_code='NAME'
+
+ ---всего вопросов
+ LEFT JOIN attribute_value questions ON questions.card_id = c.card_id and questions.attribute_code='ADMIN_277251'
+
+  ---Из ЦО
+ LEFT JOIN attribute_value okrug ON okrug.card_id = c.card_id and okrug.attribute_code='ADMIN_277246' and okrug.number_value=437392
+  LEFT JOIN attribute_value okrug_name ON okrug_name.card_id=okrug.number_value and okrug_name.string_value='Центральный федеральный округ (ЦФО)'
+
+---выбираем коллективные обращения граждан
+LEFT JOIN attribute_value col_obr ON col_obr.card_id = c.card_id and col_obr.attribute_code='ADMIN_283576' and col_obr.number_value=15920
+
+    ---Повторных
+LEFT JOIN attribute_value repeat ON repeat.card_id = c.card_id and repeat.attribute_code='ADMIN_277616' and repeat.number_value is not null
+
+ ---обращения участников ВОВ
+ LEFT JOIN attribute_value vov ON vov.card_id = c.card_id and vov.attribute_code='ADMIN_277615' and vov.value_id=1933
+
+  ---на контроле
+LEFT JOIN attribute_value control ON control.card_id = c.card_id and control.attribute_code='JBR_IMPL_ONCONT' and control.value_id=1432
+
+---рассмотрено вопросов всего
+LEFT JOIN attribute_value rassm_all ON  rassm_all.card_id = c.card_id and  rassm_all.attribute_code='ADMIN_283929' and  rassm_all.value_id is not null
+
+---рассмотрено вопросов в срок
+LEFT JOIN attribute_value rassm_in_term ON rassm_in_term.card_id = c.card_id and rassm_in_term.attribute_code='JBR_IMPL_DEADLINE'
+	and rassm_in_term.date_value is not null  and exists (select 1 from attribute_value v where v.card_id=c.card_id and v.attribute_code='ADMIN_283929' and v.value_id is not null)
+	and exists (select 1 from attribute_value v1 where v1.card_id=c.card_id and v1.attribute_code='ADMIN_220912' and v1.date_value + interval '$P!{tz_hour} hour' <= rassm_in_term.date_value + interval '$P!{tz_hour} hour')
+
+---рассмотрено вопросов с нарушением срока
+LEFT JOIN attribute_value rassm_not_term ON rassm_not_term.card_id = c.card_id and rassm_not_term.attribute_code='JBR_IMPL_DEADLINE'
+	and rassm_not_term.date_value is not null  and exists (select 1 from attribute_value v2 where v2.card_id=c.card_id and v2.attribute_code='ADMIN_283929' and v2.value_id is not null)
+	and exists (select 1 from attribute_value v3 where v3.card_id=c.card_id and v3.attribute_code='ADMIN_220912' and v3.date_value + interval '$P!{tz_hour} hour' > rassm_not_term.date_value + interval '$P!{tz_hour} hour')
+
+---принято положительных решений
+LEFT JOIN attribute_value fav_des ON  fav_des.card_id = c.card_id and  fav_des.attribute_code='ADMIN_283929' and  fav_des.value_id in (1890, 1894, 1895, 1896)
+
+    ---поставлено на длительный контроль
+LEFT JOIN attribute_value add_cont ON add_cont.card_id = c.card_id and add_cont.attribute_code='JBR_IMPL_TYPECONT' and add_cont.value_id=1897
+
+WHERE
+c.template_id=864 and not exists (select 1 from attribute_value district_code where district_code.card_id = c.card_id and district_code.attribute_code='ADMIN_277243')
+order by district]]>
+	</queryString>
+	<field name="district" class="java.lang.String"/>
+	<field name="all_letters" class="java.lang.Long"/>
+	<field name="all_questions" class="java.lang.Long"/>
+	<field name="okrug" class="java.lang.Long"/>
+	<field name="col_obr" class="java.lang.Long"/>
+	<field name="repeat" class="java.lang.Long"/>
+	<field name="vov" class="java.lang.Long"/>
+	<field name="control" class="java.lang.Long"/>
+	<field name="rassm_all" class="java.lang.Long"/>
+	<field name="in_term" class="java.lang.Long"/>
+	<field name="not_term" class="java.lang.Long"/>
+	<field name="fav_des" class="java.lang.Long"/>
+	<field name="add_cont" class="java.lang.Long"/>
+	<variable name="letters_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{all_letters}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="questions_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{all_questions}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="col_obr_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{col_obr}]]></variableExpression>
+	</variable>
+	<variable name="vov_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{vov}]]></variableExpression>
+	</variable>
+	<variable name="control_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{control}]]></variableExpression>
+	</variable>
+	<variable name="cons_res_count" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{rassm_all}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="at_a_stated_time_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{in_term}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="not_at_a_stated_time_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{not_term}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="fav_des_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{fav_des}]]></variableExpression>
+	</variable>
+	<variable name="add_cont_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{add_cont}]]></variableExpression>
+	</variable>
+	<variable name="okrug_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{okrug}]]></variableExpression>
+	</variable>
+	<variable name="repeat_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{repeat}]]></variableExpression>
+	</variable>
+	<title>
+		<band height="31" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="802" height="30"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["СПРАВКА О ПИСЬМЕННЫХ ОБРАЩЕНИЯХ ГРАЖДАН за период с  " +(new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})
++ " по " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="132" splitType="Stretch">
+			<staticText>
+				<reportElement style="def" x="1" y="0" width="143" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Район]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="144" y="0" width="100" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Поступило всего ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="244" y="0" width="39" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Из ЦО]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="385" y="0" width="63" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[От участников войны]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="448" y="0" width="51" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[На контроле]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="726" y="0" width="86" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Поставлено на длительный контроль]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="144" y="66" width="43" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Писем]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="187" y="66" width="57" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Вопросов]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="499" y="66" width="40" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="539" y="66" width="31" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[В срок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="570" y="66" width="66" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[С нарушением срока]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="636" y="0" width="90" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Принято положительных решенийй]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="283" y="0" width="41" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Коллективные]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="499" y="0" width="137" height="66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Рассмотрено вопросов]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="324" y="0" width="61" height="132"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Повторные]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<elementGroup/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="143" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{district}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="144" y="0" width="43" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{all_letters}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="0" width="63" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vov}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="448" y="0" width="51" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{control}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="636" y="0" width="90" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fav_des}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="726" y="0" width="86" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{add_cont}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="244" y="0" width="39" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{okrug}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="187" y="0" width="57" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{all_questions}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="283" y="0" width="41" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{col_obr}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="499" y="0" width="40" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rassm_all}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="539" y="0" width="31" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{in_term}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="570" y="0" width="66" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{not_term}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="324" y="0" width="61" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{repeat}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="35">
+			<textField>
+				<reportElement x="144" y="0" width="43" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{letters_count}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="def" x="1" y="0" width="143" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<text><![CDATA[ИТОГО]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="385" y="0" width="63" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vov_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="448" y="0" width="51" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{control_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="636" y="0" width="90" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{fav_des_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="726" y="0" width="86" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{add_cont_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="244" y="0" width="39" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{okrug_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="0" width="57" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{questions_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="0" width="41" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{col_obr_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="499" y="0" width="40" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cons_res_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="539" y="0" width="31" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{at_a_stated_time_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="0" width="66" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{not_at_a_stated_time_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="324" y="0" width="61" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{repeat_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

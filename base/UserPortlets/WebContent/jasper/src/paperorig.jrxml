@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="paperorig" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" isDefault="false" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" isDefault="false" style="dejavu_bold"/>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	vl_act.value_rus as act,
+	av_date.date_value + interval '$P!{tz_hour} hour' as date,
+	who_name.string_value as name_who,
+	exec_name.string_value as name_exec,
+	av_com.string_value as comment
+
+from
+	card c
+	join attribute_value av_pap on c.card_id = av_pap.card_id and av_pap.attribute_code = 'JBR_ORIG_WORKPAP'
+	join card c_pap on c_pap.card_id = av_pap.number_value
+
+left outer join -- Хар-ка ссылающиеся Действие
+	attribute_value av_act on (av_act.card_id = c_pap.card_id and av_act.attribute_code = 'JBR_WKPO_ACTION')
+left outer join -- Значение Действия из справочника
+	values_list vl_act on (vl_act.value_id = av_act.value_id)
+
+left outer join -- Дата
+	attribute_value av_date on (av_date.card_id = c_pap.card_id and av_date.attribute_code = 'JBR_WKPO_DATE')
+
+left outer join -- Хар-ка ссылающаяся на лицо "Кому"
+	attribute_value av_who on (av_who.card_id = c_pap.card_id and av_who.attribute_code = 'ADMIN_228030')
+left outer join -- Лицо "Кому"
+	person p_who on (p_who.person_id = av_who.number_value)
+left outer join attribute_value who_name on who_name.card_id = p_who.card_id and who_name.attribute_code = 'JBR_PERS_SNAME_NM'
+
+left outer join -- Хар-ка ссылающаяся на лицо "Кто выполнил"
+	attribute_value av_exec on (av_exec.card_id = c_pap.card_id and av_exec.attribute_code = 'ADMIN_222229')
+left outer join -- Лицо "Кто выполнил"
+	person p_exec on (p_exec.person_id = av_exec.number_value)
+left outer join attribute_value exec_name on exec_name.card_id = p_exec.card_id and exec_name.attribute_code = 'JBR_PERS_SNAME_NM'
+
+left outer join -- Комментарий
+	attribute_value av_com on (av_com.card_id = c_pap.card_id and av_com.attribute_code = 'ADMIN_222230')
+where c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="act" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name_who" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name_exec" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="comment" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Transparent" x="0" y="0" width="111" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Действие]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="111" y="0" width="111" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="222" y="0" width="111" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Кому]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="333" y="0" width="111" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Кто выполнил]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="444" y="0" width="111" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Комментарий]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="555" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="111" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{act} != null ? $F{act} : "нет"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="111" y="0" width="111" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{date} != null ? (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).format($F{date}) : "нет"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="222" y="0" width="111" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{name_who} != null ? $F{name_who} : "нет"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="333" y="0" width="111" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{name_exec} != null ? $F{name_exec} : "нет"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="444" y="0" width="111" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{comment} != null ? $F{comment} : ""]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

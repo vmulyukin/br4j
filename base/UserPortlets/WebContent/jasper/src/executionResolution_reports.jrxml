@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="executionResolution_subreport" pageWidth="425" pageHeight="62" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="425" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.607691607500001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="stikeThrough" style="dejavu">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{res_status_id} == 34145 || $F{visaState} == 34145]]></conditionExpression>
+			<style isStrikeThrough="true"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="res_card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String"/>
+	<parameter name="connection" class="java.sql.Connection"/>
+	<parameter name="res_status_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="type" class="java.lang.String"/>
+	<field name="sname" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="mname" class="java.lang.String"/>
+	<field name="date" class="java.util.Date"/>
+	<field name="text" class="java.lang.String"/>
+	<field name="round" class="java.lang.String"/>
+	<field name="fact_user" class="java.lang.String"/>
+	<field name="cardStatusName" class="java.lang.String"/>
+	<field name="visaId" class="java.lang.Long"/>
+	<field name="org" class="java.lang.String"/>
+	<field name="visaState" class="java.lang.Long"/>
+	<detail>
+		<band height="62" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="stikeThrough" stretchType="RelativeToBandHeight" x="80" y="0" width="64" height="62" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{date} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{date}) : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="stikeThrough" stretchType="RelativeToTallestObject" x="0" y="0" width="80" height="62" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sname} +
+($F{org} != null ? ", " + $F{org} : "")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="341" y="0" width="84" height="62"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement style="stikeThrough" stretchType="RelativeToBandHeight" x="0" y="0" width="84" height="17" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cardStatusName}]]></textFieldExpression>
+				</textField>
+				<subreport isUsingCache="true" runToBottom="false">
+					<reportElement positionType="Float" x="0" y="17" width="84" height="33" isPrintWhenDetailOverflows="true"/>
+					<subreportParameter name="report_status_id">
+						<subreportParameterExpression><![CDATA[$F{visaState}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="res_status_id">
+						<subreportParameterExpression><![CDATA[$P{res_status_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="executor">
+						<subreportParameterExpression><![CDATA[$F{sname}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{res_card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{connection}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"executionResolution_reports_subreport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="144" y="0" width="197" height="62"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="stikeThrough" stretchType="RelativeToBandHeight" x="0" y="0" width="197" height="17"/>
+					<box leftPadding="5" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{text}.replace("&#13;", "\n")]]></textFieldExpression>
+				</textField>
+				<subreport isUsingCache="true" runToBottom="false">
+					<reportElement positionType="Float" x="0" y="17" width="197" height="45"/>
+					<subreportParameter name="report_status_id">
+						<subreportParameterExpression><![CDATA[$F{visaState}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="res_status_id">
+						<subreportParameterExpression><![CDATA[$P{res_status_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{visaId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{connection}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"executionResolution_reports_subreport2.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog readOnly="false">
+				<hierarchy>
+					<cardSet stored="true" alias="repeat_distributions" labelAttr="NAME" labelAttrType="string" maxLength="100" collapsed="false" labelAsLink="true" checkAll="true"/>
+				</hierarchy>
+				<columns>
+					<column id="jbr.sending.method" width="60" columnTitleRu="Способ доставки" columnTitleEn="Send method" />
+				</columns>
+				<actions>
+					<action id="removeRecipient"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionRemoveRecipientHandler"
+							selectionType="multiple"
+							title="removeTitle"
+							mode="view"
+							confirmation="confirmDelete">
+						<parameters>
+							<parameter name="sendStatesAllowed"  value="elm.sending.status.error"/>
+						</parameters>
+					</action>
+					<action id="createDistribution"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionCreateHandler"
+							selectionType="multiple"
+							title="createTitle"
+							mode="view">
+						<parameters>
+							<parameter name="sendStatesAllowed"  value="elm.sending.status.error"/>
+						</parameters>
+					</action>
+				</actions>	
+				<styling>
+				</styling>
+				<selectableCardCondition>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<message key="removeTitle" value="Remove"/>
+			<message key="createTitle" value="Create"/>
+			<message key="confirmDelete" value="Receiver will be also deleted from attribute 'Outgoing receiver'"/>
+		</lang>	
+		<lang code="ru">
+			<message key="removeTitle" value="Удалить"/>
+			<message key="createTitle" value="Создать"/>
+			<message key="confirmDelete" value="При удалении получатель будет так же удален из атрибута «Получатель исходящего»."/>
+		</lang>
+	</messages>
+</settings>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="independentResolution_sub1" pageWidth="415" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="415" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="table_header"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="path" class="java.lang.String"/>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="rep_id" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long"/>
+	<parameter name="sort" class="java.lang.String">
+		<defaultValueExpression><![CDATA["JBR_INFD_EXEC_LINK"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sort_column" class="java.lang.String">
+		<defaultValueExpression><![CDATA["attr_value_id"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sort_direct" class="java.lang.String">
+		<defaultValueExpression><![CDATA["asc"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+
+av_nm.string_value as fio,
+av_s.string_value as fam,
+av_n.string_value as name,
+av_m.string_value as patr,
+c_st.name_rus as status,
+av_done.date_value + interval '$P!{tz_hour} hour' as done,
+av_text.long_binary_value as ktulhu
+
+from card c
+join attribute_value av_reps on av_reps.number_value = c.card_id and av_reps.attribute_code = 'ADMIN_702311'
+join attribute_value av_execs on av_execs.card_id = av_reps.card_id and av_execs.attribute_code = 'ADMIN_702335'
+join card c_rep on c_rep.card_id = av_execs.card_id
+join card_status c_st on c_st.status_id = c_rep.status_id
+-- атрибут для сортировки
+join attribute_value av_sort on av_sort.card_id = c.card_id and av_sort.attribute_code = $P{sort} and av_sort.number_value = av_execs.number_value
+left join person p on av_execs.number_value = p.person_id
+left join card c_exec on c_exec.card_id = p.card_id
+left join attribute_value av_nm on av_nm.card_id = c_exec.card_id and av_nm.attribute_code = 'JBR_PERS_SNAME_NM'
+left join attribute_value av_s on av_s.card_id = c_exec.card_id and av_s.attribute_code = 'JBR_PERS_SNAME'
+left join attribute_value av_n on av_n.card_id = c_exec.card_id and av_n.attribute_code = 'JBR_PERS_NAME'
+left join attribute_value av_m on av_m.card_id = c_exec.card_id and av_m.attribute_code = 'JBR_PERS_MNAME'
+
+left join attribute_value av_done on av_done.card_id = c.card_id and av_done.attribute_code = 'JBR_INFD_DT_DONE'
+
+left join attribute_value av_text on av_text.card_id = av_reps.card_id and av_text.attribute_code = 'ADMIN_702354'
+
+where c.card_id = $P{card_id}
+order by av_sort.$P!{sort_column} $P!{sort_direct}]]>
+	</queryString>
+	<field name="fio" class="java.lang.String"/>
+	<field name="fam" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="patr" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="done" class="java.util.Date"/>
+	<field name="ktulhu" class="java.io.InputStream"/>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="415" height="30"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((($F{fio} != null && !"".equals($F{fio}.trim()))
+    ? $F{fio}
+    : (($F{fam} != null && !"".equals($F{fam}.trim()))
+        ? ($F{fam}
+            +
+            (($F{name} != null && !"".equals($F{name}.trim()))
+                ? ($F{name}.substring(0,1) + ". "
+                    +
+                    (($F{patr} != null && !"".equals($F{patr}.trim()))
+                        ? $F{patr}.substring(0,1) + ". "
+                        : ""
+                    )
+                  )
+                : ""
+            )
+          )
+        : ""
+      )
+)
++
+" (" + $F{status} + ")"
++ (($F{done} != null)
+    ? ", " + (new SimpleDateFormat("dd.MM.yyyy")).format($F{done})
+    : ""
+  )
++ ($F{ktulhu} != null
+    ? ", " + (new com.aplana.dbmi.jasperreports.GettingFromXML()).getLastRecordText($F{ktulhu})
+    : "")
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="og_author_appeal_sub" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+    auth_type.string_value as auth_type_name,
+    auth_type.card_id as auth_type_id,
+    av_author_req.number_value as pers,
+    av_ar1.string_value as rafam,
+    av_ar2.string_value as raname,
+    av_ar3.string_value as raotc,
+    av_city.string_value as city,
+    av_ar5.string_value as street,
+    av_ar6.string_value as house,
+    av_country_name.string_value as country,
+    av_region_name.string_value as region,
+    av_district_name.string_value as district,
+    av_building.string_value as building,
+    av_appartment.number_value as appartment,
+    av_email.string_value as email,
+    vl_author_type.value_rus as author_type
+from
+	card c
+left outer join -- Тип автора
+	attribute_value auth_type_link on (auth_type_link.card_id = c.card_id and auth_type_link.attribute_code = 'ADMIN_283576')
+left outer join
+	card auth_type_card on (auth_type_card.card_id = auth_type_link.number_value)
+left outer join
+	attribute_value auth_type on (auth_type_card.card_id = auth_type.card_id and auth_type.attribute_code = 'NAME')
+
+
+--Автор обращения
+left join attribute_value av_author_req on (av_author_req.card_id = c.card_id and av_author_req.attribute_code = 'JBR_OG_REQ_AUTHOR')
+left join attribute_value av_ar1 on (av_ar1.card_id = av_author_req.number_value and av_ar1.attribute_code = 'ADMIN_274992')
+left join attribute_value av_ar2 on (av_ar2.card_id = av_author_req.number_value and av_ar2.attribute_code = 'ADMIN_281034')
+left join attribute_value av_ar3 on (av_ar3.card_id = av_author_req.number_value and av_ar3.attribute_code = 'ADMIN_281035')
+
+left join attribute_value av_ar4 on (av_ar4.card_id = av_author_req.number_value and av_ar4.attribute_code = 'ADMIN_277245')
+left join attribute_value av_city on (av_city.card_id=av_ar4.number_value and av_city.attribute_code='NAME')
+
+left join attribute_value av_ar5 on (av_ar5.card_id = av_author_req.number_value and av_ar5.attribute_code = 'JBR_APP_STREET')
+left join attribute_value av_ar6 on (av_ar6.card_id = av_author_req.number_value and av_ar6.attribute_code = 'JBR_APP_HOUSE')
+
+left join attribute_value av_country on (av_country.card_id = av_author_req.number_value and av_country.attribute_code = 'ADMIN_277412')
+left join attribute_value av_country_name on (av_country_name.card_id=av_country.number_value and av_country_name.attribute_code='NAME')
+
+left join attribute_value av_region on (av_region.card_id = av_author_req.number_value and av_region.attribute_code = 'ADMIN_277224')
+left join attribute_value av_region_name on (av_region_name.card_id=av_region.number_value and av_region_name.attribute_code='NAME')
+
+left join attribute_value av_district on (av_district.card_id = av_author_req.number_value and av_district.attribute_code = 'ADMIN_277243')
+left join attribute_value av_district_name on (av_district_name.card_id=av_district.number_value and av_district_name.attribute_code='NAME')
+
+left join attribute_value av_building on (av_building.card_id = av_author_req.number_value and av_building.attribute_code = 'JBR_APP_BUILDING')
+left join attribute_value av_appartment on (av_appartment.card_id = av_author_req.number_value and av_appartment.attribute_code = 'JBR_APP_APARTMENT')
+left join attribute_value av_email on (av_email.card_id = av_author_req.number_value and av_email.attribute_code = 'JBR_REQ_AUTHOR_EMAIL')
+
+left join attribute_value av_author_type on (av_author_type.card_id = c.card_id and av_author_type.attribute_code = 'JBR_COMPLAINT_REASON')
+left join values_list vl_author_type on av_author_type.value_id = vl_author_type.value_id
+
+where c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="auth_type_name" class="java.lang.String"/>
+	<field name="auth_type_id" class="java.math.BigDecimal"/>
+	<field name="pers" class="java.lang.Long"/>
+	<field name="rafam" class="java.lang.String"/>
+	<field name="raname" class="java.lang.String"/>
+	<field name="raotc" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="street" class="java.lang.String"/>
+	<field name="house" class="java.lang.String"/>
+	<field name="country" class="java.lang.String"/>
+	<field name="region" class="java.lang.String"/>
+	<field name="district" class="java.lang.String"/>
+	<field name="building" class="java.lang.String"/>
+	<field name="appartment" class="java.math.BigDecimal"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="author_type" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu" isPrintRepeatedValues="false" x="0" y="0" width="272" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{pers} == 10 ?"Аноним;":
+    (
+        ($F{author_type}==null ?"":$F{author_type} + "\n")+
+        ($F{rafam}==null || $F{rafam}.equals("null")?"":$F{rafam})+
+        ($F{raname}==null || $F{raname}.equals("null")?"":" "+$F{raname})+
+        ($F{raotc}==null || $F{raotc}.equals("null")?"":" "+$F{raotc})+
+        ($F{country}==null ?"":", "+$F{country})+
+        ($F{region}==null ?"":", "+$F{region})+
+        ($F{district}==null ?"":", "+$F{district}+" район")+
+        ($F{city}==null || $F{city}.equals("null")?"":", "+$F{city})+
+        ($F{street}==null || $F{street}.equals("null")?"":", "+$F{street})+
+        ($F{house}==null || $F{house}.equals("null")?"":" "+$F{house})+
+        ($F{building}!=null ?" стр. "+$F{building}:"")+
+        ($F{appartment}==null ?"":", кв. "+$F{appartment})+
+        ($F{email}==null ?"":", "+$F{email})
+    )
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

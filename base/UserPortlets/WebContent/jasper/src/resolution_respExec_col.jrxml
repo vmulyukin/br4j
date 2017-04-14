@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resolution_respExec" columnCount="3" printOrder="Horizontal" pageWidth="330" pageHeight="842" columnWidth="110" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="stikeThrough" style="dejavu">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{res_status_id} == 34145 || $F{rep_status_id} == 34145]]></conditionExpression>
+			<style isStrikeThrough="true"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="res_status_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[with tmp as (
+	select 	av_sname_nm.string_value as name, -- фамилия ио
+				    av_sname.string_value as sname,
+				    av_name.string_value as nname,
+				    av_mname.string_value as mname,
+				    p.person_id as person_id
+	from 	attribute_value av, person p, card cr_p
+	left outer join
+		attribute_value av_sname_nm on (av_sname_nm.card_id = cr_p.card_id and av_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+
+	left outer join
+	    attribute_value av_sname on (av_sname.card_id = cr_p.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+	left outer join
+	    attribute_value av_name on (av_name.card_id = cr_p.card_id and av_name.attribute_code = 'JBR_PERS_NAME')
+	left outer join
+	    attribute_value av_mname on (av_mname.card_id = cr_p.card_id and av_mname.attribute_code = 'JBR_PERS_MNAME')
+
+	where 	av.card_id = $P{card_id} and av.attribute_code = 'JBR_INFD_EXEC_LINK' and
+		p.person_id = av.number_value and p.card_id = cr_p.card_id
+	order by
+		av.attr_value_id
+)
+select
+    tmp.name as name,
+    tmp.sname as sname,
+    tmp.nname as nname,
+    tmp.mname as mname,
+    c_rep.status_id as rep_status_id  from tmp
+	left outer join
+		attribute_value av_rep on (av_rep.number_value = $P{card_id} and av_rep.attribute_code = 'ADMIN_702311')
+	join attribute_value av_rep_exec on (av_rep_exec.card_id = av_rep.card_id and av_rep_exec.attribute_code = 'ADMIN_702335' and av_rep_exec.number_value = tmp.person_id)
+	join card c_rep on (av_rep.card_id = c_rep.card_id)]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="sname" class="java.lang.String"/>
+	<field name="nname" class="java.lang.String"/>
+	<field name="mname" class="java.lang.String"/>
+    <field name="rep_status_id" class="java.lang.Long"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement style="stikeThrough" x="0" y="0" width="100" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{name} != null ? $F{name} :
+    (
+        ($F{sname}!=null?$F{sname}+" ":"")+
+        ($F{nname}!=null?$F{nname}.substring( 0, 1 )+". ":"")+
+        ($F{mname}!=null?$F{mname}.substring( 0, 1 )+". ":"")
+    ))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,1369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+<!--  represents card form configurations for card editing/configuration in Minister/Supervisor Workstation  -->
+
+
+    <bean id="parentCmsCardForm" class="com.aplana.cms.card.CmsCardForm"  abstract="true" >
+    </bean>
+    
+    <bean id="parentCmsCardBlock" class="com.aplana.cms.card.CmsCardBlock"  abstract="true" >
+    </bean>
+
+    
+    <bean id="regDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_REGDATA"/>
+        <property name="name" value="Регистрационные данные"/>
+        <property name="region" value="LEFT"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="numOutCmsViewAttribute" value-ref="numOutCmsViewAttribute"/>
+                <entry key-ref="dateOutCmsViewAttribute" value-ref="dateOutCmsViewAttribute" />
+                <entry key-ref="typeDocCmsViewAttribute" value-ref="typeDocCmsViewAttribute" />
+                <entry key-ref="regJournCmsViewAttribute" value-ref="regJournCmsViewAttribute"/>
+                <entry key-ref="urgentCategoryCmsViewAttribute" value-ref="urgentCategoryCmsViewAttribute"/>
+                <entry key-ref="indexCmsViewAttribute" value-ref="indexCmsViewAttribute"/>
+            </map>
+        </property>        
+    </bean>
+
+    <bean id="infoDocCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_INFDOC"/>
+        <property name="name" value="Сведения о документе"/> 
+        <property name="attributeViews">
+            <map>
+              	<entry key-ref="shortDescCmsViewAttribute" value-ref="shortDescCmsViewAttribute"/>
+                <entry key-ref="infoSignatoryCmsViewAttribute" value-ref="infoSignatoryCmsViewAttribute"/>
+                <entry key-ref="infoSenderCmsViewAttribute" value-ref="infoSenderCmsViewAttribute" />
+                <entry key-ref="recieverCmsViewAttribute" value-ref="recieverCmsViewAttribute"/>
+				<entry key-ref="recieverCACmsViewAttribute" value-ref="recieverCACmsViewAttribute"/>
+                <entry key-ref="recieverExtCmsViewAttribute" value-ref="recieverExtCmsViewAttribute"/>
+                <entry key-ref="recieverExtUserCmsViewAttribute" value-ref="recieverExtUserCmsViewAttribute"/>
+                <entry key-ref="infoExecutorCmsViewAttribute" value-ref="infoExecutorCmsViewAttribute"/>
+                <entry key-ref="dspCmsViewAttribute" value-ref="dspCmsViewAttribute"/>
+            </map>
+        </property>     
+    </bean>
+
+    <bean id="filesCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_FILES"/>
+        <property name="name" value="Состав электронных вложений документа"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="docLinksCmsViewAttribute" value-ref="docLinksCmsViewAttribute" />
+                <entry key-ref="infoDocLinksCmsViewAttribute" value-ref="infoDocLinksCmsViewAttribute" />                
+            </map>
+        </property>
+    </bean>     
+
+    <bean id="exampleCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="regDataCmsCardBlock" />
+                <ref bean="infoDocCmsCardBlock" />
+                <ref bean="filesCmsCardBlock" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- 944  -->
+    <bean id="listExternalPersonsCmsCardForm" parent="parentCmsCardForm">
+    	<property name="view" value="cmsCardExample.jsp"/>
+    	<property name="blockAttributes">
+            <list>  
+                <ref bean="commonCmsCardBlock" />          
+                <ref bean="admin313514PersonCmsCardBlock" />
+            </list>
+        </property>    	  	
+    </bean>
+    
+    <!--  Form for outcoming(364) documents  -->
+    <bean id="outcomingCmsCardForm" parent="parentCmsCardForm">
+    	<property name="view" value="cmsCardExample.jsp"/>
+    	<property name="blockAttributes">
+            <list>            
+                <ref bean="regDataCmsCardBlock" />
+                <ref bean="originalCmsCardBlock"/>
+                <ref bean="rightInfoDocCmsCardBlock" />
+                <ref bean="leftFilesCmsCardBlock" />
+                <ref bean="internalVisaSettingCmsCardBlock" />
+                <ref bean="visaCmsCardBlock" />
+                <ref bean="acceptedDecisionCmsCardBlock"/>
+                <ref bean="relatedDocCmsCardBlock" />
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Form for ord(764) documents  -->
+    <bean id="ordCmsCardForm" parent="parentCmsCardForm">
+    	<property name="view" value="cmsCardExample.jsp"/>
+    	<property name="blockAttributes">
+            <list>
+                <ref bean="regDataCmsCardBlock"/>
+                <ref bean="originalCmsCardBlock"/>
+                <ref bean="rightInfoDocCmsCardBlock"/>
+               	<ref bean="leftFilesCmsCardBlock"/>
+               	<ref bean="wideRelatedDocCmsCardBlock"/>
+               	<ref bean="docControlInformationCmsCardBlock"/>
+               	<ref bean="internalVisaSettingCmsCardBlock"/>
+                <ref bean="visaCmsCardBlock"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Internal documents  form -->
+    <bean id="internalCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="regDataCmsCardBlock"/>
+                <ref bean="originalCmsCardBlock"/>
+                <ref bean="rightInfoDocCmsCardBlock"/>
+                <ref bean="leftFilesCmsCardBlock"/>
+                <ref bean="wideRelatedDocCmsCardBlock"/>
+                <ref bean="docControlInformationCmsCardBlock"/>
+                <ref bean="internalVisaSettingCmsCardBlock"/>
+                <ref bean="visaCmsCardBlock"/>
+                <ref bean="acceptedDecisionCmsCardBlock"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--  Visa form  -->
+    <bean id="internalVisaCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="approversCmsCardBlock" />
+                <ref bean="visaDataCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!--  Визы внешние - Visa External form  -->
+    <bean id="internalVisaExternalCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="approversCmsCardBlock" />
+                <ref bean="visaExternalDataCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>        
+  
+    <!--  Визирование -->
+    <bean id="visaCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="visaDataCmsCardBlock" />
+                <ref bean="additionalMatchingVisaCmsCardBlock" />
+                <ref bean="filesCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!--  Персона (Внутренний) -->
+    <bean id="internalPersonCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="materialCmsCardBlock" />
+                <ref bean="personDataCmsCardBlock" />
+                <ref bean="departmentPersonDataCmsCardBlock" />
+                <ref bean="signaturePersonDataCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!-- Организация -->
+    <bean id="organizationCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="commonCmsCardBlock" />
+                <ref bean="orgDataCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!-- Вид документа -->
+    <bean id="typeDocCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="commonCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!-- Номенклатура дел -->
+    <bean id="nomenCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="commonCmsCardBlock" />
+                <ref bean="nomenCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!--  Список внутренних персон -->
+    <bean id="internalPersonsListCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="commonCmsCardBlock" />
+                <ref bean="internalPersPresetCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <bean id="internalPersPresetCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="Preset list"/>
+        <property name="name" value="Список (заранее заданный)"/>
+        <property name="attributeViews">
+            <map>
+            	<entry key-ref="internalPersListCmsViewAttribute" value-ref="internalPersListCmsViewAttribute"/>
+            	<entry key-ref="internalPersListOwnerCmsViewAttribute" value-ref="internalPersListOwnerCmsViewAttribute"/>
+            </map>
+        </property>   
+    </bean>
+    
+    <!-- Состав -->
+    <bean id="internalPersListCmsViewAttribute" parent="parentCmsViewAttribute">
+    	<constructor-arg value="ADMIN_894717" />
+    </bean>
+    
+    <!-- Владелец списка -->
+    <bean id="internalPersListOwnerCmsViewAttribute" parent="parentCmsViewAttribute">
+    	<constructor-arg value="ADMIN_894716" />
+    </bean>
+    
+    <!--  Персона (Внешний) -->
+    <bean id="externalPersonCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="materialCmsCardBlock" />
+                <ref bean="personDataCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+    
+    <!--  Визы на бумажном носителе - Visa paper form  -->
+    <bean id="internalVisaPaperCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="approversCmsCardBlock" />
+                <ref bean="visaDataCmsCardBlock" />  
+            </list>
+        </property>    
+    </bean>    
+    
+    <!-- Результат рассмотрения (925) -->
+    <bean id="considerationResultCmsCardForm" parent="parentCmsCardForm">
+    	<property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="considerationInfoCmsCardBlock" />
+                <ref bean="considerationResultCmsCardBlock" />
+                <ref bean="redirectDataCmsCardBlock" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="considerationInfoCmsCardBlock" parent="parentCmsCardBlock">
+    	<property name="id" value="ADMIN_45985"/>
+    	<property name="name" value="Информация о рассмотрении"/>
+    	<property name="attributeViews">
+    		<map>
+    			<entry key-ref="accDecisionCmsViewAttribute" value-ref="accDecisionCmsViewAttribute"/>
+    			<entry key-ref="themeClassifCmsViewAttribute" value-ref="themeClassifCmsViewAttribute"/>
+    			<entry key-ref="questionsCmsViewAttribute" value-ref="questionsCmsViewAttribute"/>
+    		</map>
+    	</property>
+    </bean>
+    
+    <bean id="accDecisionCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ACC_DECISION" />
+    </bean>
+    
+    <bean id="themeClassifCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_QUESTION_RES" />
+    </bean>
+    
+    <bean id="questionsCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_QUESTIONS_RES" />
+    </bean>
+    
+    <bean id="considerationResultCmsCardBlock" parent="parentCmsCardBlock">
+    	<property name="id" value="JBR_DECISION_RES"/>
+    	<property name="name" value="Результат рассмотрения"/>
+    	<property name="attributeViews">
+    		<map>
+    			<entry key-ref="decisionResCmsViewAttribute" value-ref="decisionResCmsViewAttribute"/>
+    			<entry key-ref="measuresTakenCmsViewAttribute" value-ref="measuresTakenCmsViewAttribute"/>
+    			<entry key-ref="decisionOutCmsViewAttribute" value-ref="decisionOutCmsViewAttribute"/>
+    			<entry key-ref="decisionCmsViewAttribute" value-ref="decisionCmsViewAttribute"/>
+    		</map>
+    	</property>
+    </bean>
+    
+    <bean id="decisionResCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DECISION_RES" />
+    </bean>
+    
+    <bean id="measuresTakenCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_MEASURES_TAKEN" />
+    </bean>
+    
+    <bean id="decisionOutCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DECISION_OUT" />
+    </bean>
+    
+    <bean id="decisionCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_SOLUTION" />
+    </bean>
+    
+    <bean id="redirectDataCmsCardBlock" parent="parentCmsCardBlock">
+    	<property name="id" value="JBR_REDIRECT_DATA"/>
+    	<property name="name" value="Данные перенаправления"/>
+    	<property name="attributeViews">
+    		<map>
+    			<entry key-ref="redirectionCmsViewAttribute" value-ref="redirectionCmsViewAttribute"/>
+    			<entry key-ref="requestReceiverCmsViewAttribute" value-ref="requestReceiverCmsViewAttribute"/>
+    		</map>
+    	</property>
+    </bean>
+    
+    <bean id="redirectionCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_REDIRECTION" />
+    </bean>
+    
+    <bean id="requestReceiverCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_TREATMENT_RECIP" />
+    </bean>
+    
+    <bean id="acceptedDecisionCmsCardBlock" parent="parentCmsCardBlock">
+    	<property name="id" value="ADMIN_277637"/>
+    	<property name="name" value="Принятое решение и результат рассмотрения"/>
+    	<property name="attributeViews">
+    		<map>
+    			<entry key-ref="considerationResultCmsViewAttribute" value-ref="considerationResultCmsViewAttribute"/>
+    		</map>
+    	</property>
+    </bean>
+    
+    <bean id="considerationResultCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_283926" />
+    </bean>
+    
+    <bean id="materialCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="MATERIAL"/>
+        <property name="name" value="Материал"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="materialCmsViewAttribute" value-ref="materialCmsViewAttribute"/>
+                <entry key-ref="fileSizeCmsViewAttribute" value-ref="fileSizeCmsViewAttribute" />
+                <entry key-ref="fileTypeCmsViewAttribute" value-ref="fileTypeCmsViewAttribute" />
+                <entry key-ref="isPrimeCmsViewAttribute" value-ref="isPrimeCmsViewAttribute"/>
+                <entry key-ref="fileAcrepsonCmsViewAttribute" value-ref="fileAcrepsonCmsViewAttribute" />
+                <entry key-ref="materialNameCmsViewAttribute" value-ref="materialNameCmsViewAttribute" />               
+            </map>
+        </property>   
+    </bean>
+    
+    <bean id="admin313514PersonCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="ADMIN_313514"/>
+        <property name="name" value="Список рассылки"/>        
+        <property name="attributeViews">
+            <map>
+            	<entry key-ref="admin313515CmsViewAttribute" value-ref="admin313515CmsViewAttribute" />  
+				<entry key-ref="admin313518CmsViewAttribute" value-ref="admin313518CmsViewAttribute"/>
+            </map>
+        </property>             
+    </bean>
+    
+    <!-- ОРД  документ - Сведения о документе -->
+    <bean id="rightInfoDocCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_INFDOC"/>
+        <property name="name" value="Сведения о документе"/>
+        <property name="region" value="RIGHT"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="shortDescCmsViewAttribute" value-ref="shortDescCmsViewAttribute"/>
+                <entry key-ref="infoSignatoryCmsViewAttribute" value-ref="infoSignatoryCmsViewAttribute"/>
+                <entry key-ref="infoSenderCmsViewAttribute" value-ref="infoSenderCmsViewAttribute" />
+                <entry key-ref="recieverCmsViewAttribute" value-ref="recieverCmsViewAttribute"/>
+				<entry key-ref="recieverCACmsViewAttribute" value-ref="recieverCACmsViewAttribute"/>
+                <entry key-ref="recieverExtCmsViewAttribute" value-ref="recieverExtCmsViewAttribute"/>
+                <entry key-ref="recieverExtUserCmsViewAttribute" value-ref="recieverExtUserCmsViewAttribute"/>
+                <entry key-ref="infoExecutorCmsViewAttribute" value-ref="infoExecutorCmsViewAttribute"/>
+                <entry key-ref="dspCmsViewAttribute" value-ref="dspCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Исходящий  документ - Вложения -->
+    <bean id="leftFilesCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_FILES"/>
+        <property name="name" value="Состав электронных вложений"/>
+        <property name="region" value="LEFT"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="docLinksCmsViewAttribute" value-ref="docLinksCmsViewAttribute" />
+                <entry key-ref="infoDocLinksCmsViewAttribute" value-ref="infoDocLinksCmsViewAttribute" />
+            </map>
+        </property>
+    </bean>
+	
+	<!-- Блок Визирование-->
+    <bean id="visaCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_VISA"/>
+        <property name="name" value="Визирование"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="visaCmsViewAttribute" value-ref="visaCmsViewAttribute"/>
+                <entry key-ref="visaRouteCmsViewAttribute" value-ref="visaRouteCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>          
+    <!-- Исходящий  документ - Связанные док-ты -->
+    <bean id="relatedDocCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="DOCLINKS"/>
+        <property name="name" value="Связанные документы"/>
+        <property name="region" value="LEFT"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="relatedDocsCmsViewAttribute" value-ref="relatedDocsCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Блок связанные документы (на всю ширину) -->
+    <bean id="wideRelatedDocCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="DOCLINKS"/>
+        <property name="name" value="Связанные документы"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="relatedDocsCmsViewAttribute" value-ref="relatedDocsCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Блок Оригинал - Original -->
+    <bean id="originalCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_ORIGINAL"/>
+        <property name="name" value="Оригинал"/>
+        <property name="region" value="LEFT"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="origQuantCopyCmsViewAttribute" value-ref="origQuantCopyCmsViewAttribute"/>
+                <entry key-ref="quantityPaperCmsViewAttribute" value-ref="quantityPaperCmsViewAttribute"/>
+                <entry key-ref="attachmentQuantityCmsViewAttribute" value-ref="attachmentQuantityCmsViewAttribute"/>
+                <entry key-ref="quantityPaperApendixCmsViewAttribute" value-ref="quantityPaperApendixCmsViewAttribute"/>
+                <entry key-ref="attachmentOtherInfoCmsViewAttribute" value-ref="attachmentOtherInfoCmsViewAttribute"/>
+            </map>
+        </property>     
+    </bean>
+
+    <!-- Внутренний документ - Параметры визирования  
+    Internal document -  Visa's settings-->
+    <bean id="internalVisaSettingCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_VISA_SETTING"/>
+        <property name="name" value="Параметры визирования"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="visaBackCmsViewAttribute" value-ref="visaBackCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Информация о контрольности документа -->
+    <bean id="docControlInformationCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="ADMIN_220911"/>
+        <property name="name" value="Информация о контрольности документа"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="onControlCmsViewAttribute" value-ref="onControlCmsViewAttribute"/>
+                <entry key-ref="inspectorCmsViewAttribute" value-ref="inspectorCmsViewAttribute"/>
+                <entry key-ref="deadlineCmsViewAttribute" value-ref="deadlineCmsViewAttribute"/>
+            </map>
+        </property>     
+    </bean>
+    
+    <!-- Визы - Согласующие   
+    	Visa form -  Approvers -->
+    <bean id="approversCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="ADMIN_703176"/>
+        <property name="name" value="Согласующие"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="approveListCmsViewAttribute" value-ref="approveListCmsViewAttribute"/>
+                <entry key-ref="approveListExternalCmsViewAttribute" value-ref="approveListExternalCmsViewAttribute"/>
+                <entry key-ref="approveListVisaPaperCmsViewAttribute" value-ref="approveListVisaPaperCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>               
+
+    <!-- Визы - Данные согласования    
+    	Visa form -  Visa data -->
+    <bean id="visaDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_VISA_DATA"/>
+        <property name="name" value="Данные согласования"/>
+        <property name="attributeViews">
+            <map>
+            	<entry key-ref="negotiationPeriodCmsViewAttribute" value-ref="negotiationPeriodCmsViewAttribute"/>
+                <entry key-ref="negotiationOrderCmsViewAttribute" value-ref="negotiationOrderCmsViewAttribute"/>          
+                <entry key-ref="matchingCmsViewAttribute" value-ref="matchingCmsViewAttribute"/>
+                <entry key-ref="documentBaseCmsViewAttribute" value-ref="documentBaseCmsViewAttribute"/>
+                <entry key-ref="approveUpToDateCmsViewAttribute" value-ref="approveUpToDateCmsViewAttribute"/>
+                <entry key-ref="iterationNumberCmsViewAttribute"  value-ref="iterationNumberCmsViewAttribute"/>
+                <entry key-ref="solutionVisaPaperCmsViewAttribute" value-ref="solutionVisaPaperCmsViewAttribute"/>
+                <entry key-ref="dateVisaPaperCmsViewAttribute" value-ref="dateVisaPaperCmsViewAttribute"/>
+                <entry key-ref="visaInitiatorCmsViewAttribute" value-ref="visaInitiatorCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Персона (Внутренний) - Данные персоны    
+    	  JBR_PERSON -->
+    <bean id="personDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_PERSON"/>
+        <property name="name" value="Данные персоны"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="lastNameViewAttribute" value-ref="lastNameViewAttribute"/>
+                <entry key-ref="firstNameViewAttribute" value-ref="firstNameViewAttribute"/>          
+                <entry key-ref="thirdNameViewAttribute" value-ref="thirdNameViewAttribute"/>
+                <entry key-ref="textPositionViewAttribute" value-ref="textPositionViewAttribute"/>
+                <entry key-ref="telephoneViewAttribute" value-ref="telephoneViewAttribute"/>
+                <entry key-ref="eMailViewAttribute"  value-ref="eMailViewAttribute"/>
+                <entry key-ref="organizationViewAttribute" value-ref="organizationViewAttribute"/>
+                <entry key-ref="linkPositionViewAttribute" value-ref="linkPositionViewAttribute"/>          
+                <entry key-ref="locationViewAttribute" value-ref="locationViewAttribute"/>
+                <entry key-ref="personPhoneViewAttribute" value-ref="personPhoneViewAttribute"/>
+                <entry key-ref="FIOViewAttribute" value-ref="FIOViewAttribute"/>
+                <entry key-ref="dativFIOViewAttribute"  value-ref="dativFIOViewAttribute"/>
+                <entry key-ref="descriptionPersonViewAttribute" value-ref="descriptionPersonViewAttribute"/>
+                <entry key-ref="typeBlankViewAttribute" value-ref="typeBlankViewAttribute"/>          
+                <entry key-ref="originalValueViewAttribute" value-ref="originalValueViewAttribute"/>
+                <entry key-ref="recalcZoneDOWViewAttribute" value-ref="recalcZoneDOWViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Персона (Внутренний) - Данные о департаменте сотрудника    
+    	  JBR_PERS_DEPT -->
+    <bean id="departmentPersonDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="JBR_PERS_DEPT"/>
+        <property name="name" value="Данные о департаменте сотрудника"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="subUnitViewAttribute" value-ref="subUnitViewAttribute"/>
+                <entry key-ref="helperForViewAttribute" value-ref="helperForViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Персона (Внутренний) - Настройки ЭП    
+    	  ADMIN_113330 -->
+    <bean id="signaturePersonDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="ADMIN_113330"/>
+        <property name="name" value="Настройки ЭП"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="certificatesViewAttribute" value-ref="certificatesViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--ADMIN_6814500 -->
+	<!-- Визирование - Дополнительное согласования    
+    	  Visa data -->
+    <bean id="additionalMatchingVisaCmsCardBlock" parent="parentCmsCardBlock"   > 
+	    <property name="id" value="ADMIN_6814500"/>
+        <property name="name" value="Дополнительное согласование"/>   
+        <property name="attributeViews">   
+        	<map>
+        		<entry key-ref="additionalMatchingVisaCmsViewAttribute" value-ref="additionalMatchingVisaCmsViewAttribute"/>	
+        	</map>
+        </property>
+    </bean>  
+    
+    <!-- Визы Внешние- Данные согласования    
+    	External Visas form -  Visa data -->
+    <bean id="visaExternalDataCmsCardBlock" parent="parentCmsCardBlock"   >
+        <property name="id" value="ADMIN_893449"/>
+        <property name="name" value="Данные согласования (внешняя персона)"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="solutionVisaExtCmsViewAttribute" value-ref="solutionVisaExtCmsViewAttribute"/>
+                <entry key-ref="executionDateVisaExtCmsViewAttribute" value-ref="executionDateVisaExtCmsViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="filesCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="materialCmsCardBlock" />
+            </list>
+        </property>    
+    </bean>
+
+
+    <bean id="parentCmsViewAttribute" class="com.aplana.cms.card.CmsViewAttribute"  abstract="true">
+    </bean>
+    
+    <!-- Владелец списка  -->
+    <bean id="admin313518CmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_313518" />
+    </bean>      
+    
+    <!-- Состав получателей  -->
+    <bean id="admin313515CmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_313515" />
+    </bean>
+    
+    <!-- Дата поступления - файла -->
+    <bean id="incomeDateCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INCOMEDATE" />
+    </bean>
+
+    <!-- Автор материала - файла -->
+    <bean id="authorCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="AUTHOR" />
+    </bean>
+
+    <!-- Дата создания материала - файла -->
+    <bean id="createdCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="CREATED" />
+    </bean>
+    
+    <!-- Дата изменения материала - файла -->
+    <bean id="changedCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="CHANGED" />
+    </bean>
+            
+    <!-- Название материала - файла -->
+    <bean id="nameCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="NAME" />
+    </bean>
+    
+    <!-- Описание материала - файла -->
+    <bean id="descrCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="DESCR" />
+    </bean>
+
+    <!-- Ключевые слова -->
+    <bean id="keywordsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="KEYWORDS" />
+    </bean>
+    
+    <!-- материал - файл -->
+    <bean id="materialCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="MATERIAL" />
+    </bean>
+    
+    <!-- является основным (файл) -->
+    <bean id="isPrimeCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="IS_PRIME" />
+    </bean>
+    
+    <!-- название материала (файла) -->
+    <bean id="materialNameCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="MATERIAL_NAME" />
+    </bean>
+    
+    <!-- размер материала - файла -->
+    <bean id="fileSizeCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="FILESIZE" />
+    </bean>
+    
+    <!-- тип материала - файла -->
+    <bean id="fileTypeCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="FILETYPE" />
+    </bean>
+    
+    <!-- Пользователи, имеющие доступ к файлу  -->
+    <bean id="fileAcrepsonCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_FILE_ACPERSON" />
+    </bean>    
+    
+    
+    <!-- номер исходящего -->
+    <bean id="numOutCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_REGD_NUMOUT" />
+    </bean>
+    
+    <!-- Дата документа -->
+    <bean id="dateOutCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_REGD_DATEOUT" />
+    </bean>    
+    
+    <!-- Категория срочности -->
+    <bean id="urgentCategoryCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_290575" />
+    </bean>    
+    
+    <!-- Индекс номенклатуры --> 
+    <bean id="indexCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_REGD_INDEX" />
+    </bean>    
+    
+    <!-- Количество листов основного документа --> 
+    <bean id="quantityPaperCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORIG_QUANTPAP" />
+    </bean>    
+    
+    <!-- Общее количество листов приложений --> 
+    <bean id="quantityPaperApendixCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORIG_QUANTPAPAT" />
+    </bean>
+    
+    <!-- Количество экземпляров --> 
+    <bean id="origQuantCopyCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORIG_QUANTCOPY" />
+    </bean>
+    
+    <!-- Количество приложений --> 
+    <bean id="attachmentQuantityCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_220409" />
+    </bean>
+    
+    <!-- Другая информация о приложении --> 
+    <bean id="attachmentOtherInfoCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORIG_COMMENT" />
+    </bean>
+    
+    <!-- Вид документа -->
+    <bean id="typeDocCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_TYPEDOC" />
+    </bean>    
+    
+    <!-- Журнал регистрации -->
+    <bean id="regJournCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_REGD_REGJOURN" />
+    </bean>
+    
+    <!-- Адресат -->
+    <bean id="recieverCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_RECEIVER" />
+    </bean>
+    
+    <!-- Адресат ОГ-->
+    <bean id="recieverCACmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_RECEIVER_CA" />
+    </bean>    
+        
+    
+    <!-- Получатель исходящего -->
+    <bean id="recieverExtCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_RECEIVER_EXT" />
+    </bean> 
+    
+    <!-- Получатель исходящего -->
+    <bean id="recieverExtUserCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_RECEIVER_EXT_USR" />
+    </bean> 
+
+    <!-- Краткое содержание (наименование текста) -->
+    <bean id="shortDescCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_SHORTDESC" />
+    </bean>
+    
+    <bean id="infoSenderCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_SENDER" />
+    </bean>        
+    
+    <!--  ФИО подписанта -->
+    <bean id="infoSignatoryCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_SIGNATORY" />
+    </bean>    
+    
+    <!--  Исполнитель -->
+    <bean id="infoExecutorCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_INFD_EXECUTOR" />
+    </bean>    
+    
+    <!--  ДСП -->
+    <bean id="dspCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_281785" />
+    </bean>    
+    
+    <!--  Визы -->
+    <bean id="visaCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_VISA" />
+    </bean>
+    
+    <!-- Маршрут согласования -->
+    <bean id="visaRouteCmsViewAttribute" parent="parentCmsViewAttribute" >
+    	<constructor-arg value="ADMIN_5971141" />
+    </bean>
+    
+    
+    <!--  Визы внешние -->
+    <bean id="visaExternalCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_893724" />
+    </bean>    
+    
+    <!-- Возвращать при первом отказе -->
+    <bean id="visaBackCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_BACK" />
+    </bean>   
+    
+    <!--  Согласовано на бумажном носителе  -->
+    <bean id="visaPaperCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PAPER_VISAS" />
+    </bean>    
+    
+    
+    <!--  Связанные документы  -->
+    <bean id="relatedDocsCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DOCL_RELATDOC" />
+    </bean>    
+    
+    <!--  Список согласования  -->
+    <bean id="approveListCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_703174" />
+    </bean>
+    
+    <!--  Список согласования  -->
+    <bean id="approveListVisaPaperCmsViewAttribute" parent="approveListCmsViewAttribute" />
+
+    <!--  Список согласования(Список согласования (внешние персоны) )  -->
+    <bean id="approveListExternalCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_893450" />
+    </bean>        
+    
+    <!--  Завизировать до: -->
+    <bean id="approveUpToDateCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_TODATE" />
+    </bean>    
+    
+    <!--  Виза-инициатор  -->
+    <bean id="visaInitiatorCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_6818738" />
+    </bean>    
+    
+    <!--  Срок согласования -->
+    <bean id="negotiationPeriodCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_5971140" />
+    </bean>    
+
+    <!--  Порядок согласования -->
+    <bean id="negotiationOrderCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_NUMBER" />
+    </bean> 
+    
+    <!--  Согласующий --> 
+    <bean id="matchingCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_RESPONSIBLE" />
+    </bean> 
+
+    <!--  Документ-основание --> 
+    <bean id="documentBaseCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_PARENT_DOC" />
+    </bean>     
+ 
+     <!--  Номер итерации --> 
+    <bean id="iterationNumberCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_VISA_RND" />
+    </bean> 
+    
+    <!--  Визы additional matching -->
+    <bean id="additionalMatchingVisaCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_6814498" />
+   	</bean>   
+      
+    
+    <!--  Решение -->
+    <bean id="solutionVisaExtCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_893446" />
+    </bean>    
+    
+    <!--  Виза на бумажном носителе - Решение -->
+    <bean id="solutionVisaPaperCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_VISA_SOLUTION" />
+    </bean>    
+    
+    
+    <!--  Дата исполнения  -->
+    <bean id="executionDateVisaExtCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_893448" />
+    </bean>
+    
+    <!--  Дата визирования  -->
+    <bean id="dateVisaPaperCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_234889" />
+    </bean>
+
+    <!-- Вложения -->
+    <bean id="docLinksCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="DOCLINKS" />
+    </bean>  
+
+    <!-- Справочные материалы -->
+    <bean id="infoDocLinksCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="INFO_DOCLINKS" />
+    </bean>  
+    
+    <!-- На контроле -->
+    <bean id="onControlCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_IMPL_ONCONT" />
+    </bean>
+    
+    <!-- Контролер по документу -->
+    <bean id="inspectorCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_IMPL_INSPECTOR" />
+    </bean>
+    
+    <!-- Срок исполнения или предоставления ответа -->
+    <bean id="deadlineCmsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_IMPL_DEADLINE" />
+    </bean>
+
+    <!-- Форма работы с бумажным оригиналом -->
+    <bean id="paperOriginalCmsCardForm" parent="parentCmsCardForm">  
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="paperWorkCmsCardBlock" />
+                <ref bean="docStorageCmsCardBlock" />
+                <ref bean="filesCmsCardBlock" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Работа с бумажным оригиналом -->
+    <bean id="paperWorkCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="JBR_PAPER"/>
+        <property name="name" value="Работа с бумажным оригиналом"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="jbrOrigWorkpapViewAttribute" value-ref="jbrOrigWorkpapViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="docStorageCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="ADMIN_222284"/>
+        <property name="name" value="Хранение документа"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="admin222281_ViewAttribute" value-ref="admin222281_ViewAttribute"/>
+                <entry key-ref="admin222282_ViewAttribute" value-ref="admin222282_ViewAttribute"/>
+                <entry key-ref="admin222283_ViewAttribute" value-ref="admin222283_ViewAttribute"/>
+                <entry key-ref="jbrPaperStoreViewAttribute" value-ref="jbrPaperStoreViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Работа с бумажным оригиналом -->
+    <bean id="jbrOrigWorkpapViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORIG_WORKPAP" />
+    </bean>
+    <!-- Номер тома -->
+    <bean id="admin222281_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_222281" />
+    </bean>
+    <!-- Комната/Стеллаж/Полка -->
+    <bean id="admin222282_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_222282" />
+    </bean>
+    <!-- Комментарии -->
+    <bean id="admin222283_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_222283" />
+    </bean>
+    <!-- Хранение документа -->
+    <bean id="jbrPaperStoreViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PAPER_STORE" />
+    </bean>
+    
+    <!-- Форма Хранение документа -->
+    <bean id="docStorageCmsCardForm" parent="parentCmsCardForm">
+    	<property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="paperOrigAndCopiesStorageCardBlock"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Хранение бумажного оригинала и копий -->
+    <bean id="paperOrigAndCopiesStorageCardBlock" parent="parentCmsCardBlock">
+    	<property name="id" value="JBR_PAPER_STORAGE" />
+    	<property name="name" value="Хранение бумажного оригинала и копий" />
+    	<property name="attributeViews">
+    		<map>
+    			<entry key-ref="storageTypeAttribute" value-ref="storageTypeAttribute" />
+    			<entry key-ref="storageNomIndexAttribute" value-ref="storageNomIndexAttribute" />
+    			<entry key-ref="storageVolNumAttribute" value-ref="storageVolNumAttribute" />
+    			<entry key-ref="storagePlaceAttribute" value-ref="storagePlaceAttribute" />
+    			<entry key-ref="storageCommentsAttribute" value-ref="storageCommentsAttribute" />
+    		</map>
+    	</property>
+    </bean>
+    
+    <!-- Тип -->
+    <bean id="storageTypeAttribute" parent="parentCmsViewAttribute">
+    	<constructor-arg value="JBR_STORE_TYPE" />
+    </bean>
+    <!-- Индекс номенклатуры -->
+    <bean id="storageNomIndexAttribute" parent="parentCmsViewAttribute" >
+    	<constructor-arg value="NAMESLIST_IDX" />
+    </bean>
+    <!-- Номер тома -->
+    <bean id="storageVolNumAttribute" parent="parentCmsViewAttribute" >
+    	<constructor-arg value="JBR_VOLUME" />
+    </bean>
+    <!-- Комната/Стеллаж/Полка -->
+    <bean id="storagePlaceAttribute" parent="parentCmsViewAttribute" >
+    	<constructor-arg value="JBR_STORE_PLACE" />
+    </bean>
+    <!-- Комментарии -->
+    <bean id="storageCommentsAttribute" parent="parentCmsViewAttribute" >
+    	<constructor-arg value="JBR_COMMENTS" />
+    </bean>
+
+    <!-- Form for template 344 (Actions with paper original) -->
+    <bean id="paperActionsCmsCardForm" parent="parentCmsCardForm">
+        <property name="view" value="cmsCardExample.jsp"/>
+        <property name="blockAttributes">
+            <list>
+                <ref bean="jbrWorkPapOrigCmsCardBlock"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Работа с бумажным оригиналом 1 -->
+    <bean id="jbrWorkPapOrigCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="JBR_WORKPAPORIG"/>
+        <property name="name" value="Работа с бумажным оригиналом 1"/>
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="jbrWkpoActionViewAttribute" value-ref="jbrWkpoActionViewAttribute"/>
+                <entry key-ref="jbrWkpoDateViewAttribute" value-ref="jbrWkpoDateViewAttribute"/>
+                <entry key-ref="admin228030_ViewAttribute" value-ref="admin228030_ViewAttribute"/>
+                <entry key-ref="admin222229_ViewAttribute" value-ref="admin222229_ViewAttribute"/>
+                <entry key-ref="admin222230_ViewAttribute" value-ref="admin222230_ViewAttribute"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Действие -->
+    <bean id="jbrWkpoActionViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_WKPO_ACTION" />
+    </bean>
+    <!-- Дата -->
+	<bean id="jbrWkpoDateViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_WKPO_DATE" />
+    </bean>
+    <!-- Куда/Кому -->
+    <bean id="admin228030_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_228030" />
+    </bean>
+    <!-- Кто выполнил -->
+    <bean id="admin222229_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_222229" />
+    </bean>
+    <!-- Комментарий -->
+    <bean id="admin222230_ViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_222230" />
+    </bean>
+
+    <!-- Для блока "Данные персоны" -->
+    
+    <!-- Фамилия -->
+    <bean id="lastNameViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_SNAME" />
+    </bean>
+    <!-- Имя -->
+	<bean id="firstNameViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_NAME" />
+    </bean>
+    <!-- Отчество -->
+    <bean id="thirdNameViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_MNAME" />
+    </bean>
+    <!-- Должность (текст) -->
+    <bean id="textPositionViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_POSITION" />
+    </bean>
+    <!-- Телефон -->
+    <bean id="telephoneViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_PHONE" />
+    </bean>
+    <!-- E-mail -->
+    <bean id="eMailViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_EMAIL" />
+    </bean>
+    <!-- Организация -->
+	<bean id="organizationViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_ORG" />
+    </bean>
+    <!-- Должность (линк) -->
+    <bean id="linkPositionViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_5977822" />
+    </bean>
+    <!-- Местоположение -->
+    <bean id="locationViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_LOC" />
+    </bean>
+    <!-- Телефон персоны -->
+    <bean id="personPhoneViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERSON_PHONE" />
+    </bean>
+    <!-- ФамилияИО -->
+    <bean id="FIOViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_SNAME_NM" />
+    </bean>
+    <!-- ФамилияИО в дат.падеже -->
+	<bean id="dativFIOViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_SNAME_DATIV" />
+    </bean>
+    <!-- Описание -->
+    <bean id="descriptionPersonViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_DESCR" />
+    </bean>
+    <!-- Вид бланка -->
+    <bean id="typeBlankViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_BLANK" />
+    </bean>
+    <!-- Оригинальное значение -->
+    <bean id="originalValueViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_ORIG_VALUE" />
+    </bean>
+    <!-- Пересчитывать Зоны ДОУ в документах  -->
+    <bean id="recalcZoneDOWViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ZONE_DOW_RECALC" />
+    </bean>
+
+
+    <!-- Для блока "Данные о департаменте сотрудника" -->
+    
+    <!-- Подразделение -->
+	<bean id="subUnitViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_PERS_DEPT_LINK" />
+    </bean>
+    <!-- Помощник для -->
+    <bean id="helperForViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ASSISTANT_FOR" />
+    </bean>
+    
+    
+    <!-- Для блока "Настройки ЭП" -->
+    
+    <!-- Сертификаты -->
+    <bean id="certificatesViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_6884958" />
+    </bean>
+    
+    <!-- Блок "Общие характеристики" -->
+    <bean id="commonCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="COMMON"/>
+        <property name="name" value="Общие характеристики"/>        
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="nameCmsViewAttribute" value-ref="nameCmsViewAttribute"/>
+                <entry key-ref="descrCmsViewAttribute" value-ref="descrCmsViewAttribute"/>
+                <entry key-ref="keywordsViewAttribute" value-ref="keywordsViewAttribute"/>
+                <entry key-ref="createdCmsViewAttribute" value-ref="createdCmsViewAttribute"/>
+                <entry key-ref="changedCmsViewAttribute" value-ref="changedCmsViewAttribute" />
+                <entry key-ref="authorCmsViewAttribute" value-ref="authorCmsViewAttribute" />
+                <entry key-ref="incomeDateCmsViewAttribute" value-ref="incomeDateCmsViewAttribute" />
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Блок "Данные организации" -->
+    <bean id="orgDataCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="JBR_DATAORG"/>
+        <property name="name" value="Данные организации"/>        
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="chiefViewAttribute" value-ref="chiefViewAttribute"/>
+                <entry key-ref="shortNameViewAttribute" value-ref="shortNameViewAttribute"/>
+                <entry key-ref="fullNameViewAttribute" value-ref="fullNameViewAttribute"/>
+                <entry key-ref="specViewAttribute" value-ref="specViewAttribute"/>
+                <entry key-ref="commentsViewAttribute" value-ref="commentsViewAttribute" />
+                <entry key-ref="cityViewAttribute" value-ref="cityViewAttribute" />
+                <entry key-ref="addressViewAttribute" value-ref="addressViewAttribute" />
+                <entry key-ref="indexViewAttribute" value-ref="indexViewAttribute"/>
+                <entry key-ref="phoneViewAttribute" value-ref="phoneViewAttribute"/>
+                <entry key-ref="faxViewAttribute" value-ref="faxViewAttribute"/>
+                <entry key-ref="orgEmailViewAttribute" value-ref="orgEmailViewAttribute"/>
+                <entry key-ref="codeViewAttribute" value-ref="codeViewAttribute" />
+                <entry key-ref="origCardViewAttribute" value-ref="origCardViewAttribute" />
+                <entry key-ref="typeOrgViewAttribute" value-ref="typeOrgViewAttribute" />
+                <entry key-ref="orgStaffViewAttribute" value-ref="orgStaffViewAttribute"/>
+                <entry key-ref="orgIdentViewAttribute" value-ref="orgIdentViewAttribute"/>
+                <entry key-ref="sendMethodViewAttribute" value-ref="sendMethodViewAttribute"/>
+                <entry key-ref="UUIDViewAttribute" value-ref="UUIDViewAttribute"/>
+                <entry key-ref="externalOrgViewAttribute" value-ref="externalOrgViewAttribute" />
+                <entry key-ref="orgZoneDOWViewAttribute" value-ref="orgZoneDOWViewAttribute" />
+                <entry key-ref="superOrgViewAttribute" value-ref="superOrgViewAttribute" />
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Для блока "Данные организации" -->
+    
+    <!-- Руководитель -->
+    <bean id="chiefViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ORGANIZATION_CHIEF" />
+    </bean>
+    <!-- Сокращенное наименование -->
+	<bean id="shortNameViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_SHORTNAME" />
+    </bean>
+    <!-- Полное наименование -->
+    <bean id="fullNameViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_FULLNAME" />
+    </bean>
+    <!-- Специализация -->
+    <bean id="specViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_SPESIALIZ" />
+    </bean>
+    <!-- Комментарии -->
+    <bean id="commentsViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_COMMENTS" />
+    </bean>
+    <!-- Город -->
+    <bean id="cityViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_894334" />
+    </bean>
+    <!-- Адрес -->
+	<bean id="addressViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_232429" />
+    </bean>
+    <!-- Индекс -->
+    <bean id="indexViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_894336" />
+    </bean>
+    <!-- Телефон -->
+    <bean id="phoneViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_TEL" />
+    </bean>
+    <!-- Факс -->
+    <bean id="faxViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_FAX" />
+    </bean>
+    <!-- E-mail -->
+    <bean id="orgEmailViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_EMAIL" />
+    </bean>
+    <!-- Код -->
+	<bean id="codeViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_CODE" />
+    </bean>
+    <!-- Оригинальная карточка организации -->
+    <bean id="origCardViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_ORIG_ORG" />
+    </bean>
+    <!-- Тип организации -->
+    <bean id="typeOrgViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_247935" />
+    </bean>
+    <!-- Сотрудники организации -->
+    <bean id="orgStaffViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_247936" />
+    </bean>
+    <!-- Идентификационный номер организации -->
+    <bean id="orgIdentViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ORG_UNIQUE_ID" />
+    </bean>
+    <!-- Способ отправки по умолчанию -->
+	<bean id="sendMethodViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_SENDING_METHOD" />
+    </bean>
+    <!-- UUID -->
+    <bean id="UUIDViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORG_UUID" />
+    </bean>
+    <!-- Внешняя организация -->
+    <bean id="externalOrgViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ORG_IS_EXT" />
+    </bean>
+    <!-- Зоны ДОУ -->
+    <bean id="orgZoneDOWViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_ZONES_DOW" />
+    </bean>
+    <!-- Вышестоящая организация -->
+    <bean id="superOrgViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_DORG_SUPER_ORG" />
+    </bean>
+    
+    <!-- Блок "Номенклатура дел" -->
+    <bean id="nomenCmsCardBlock" parent="parentCmsCardBlock">
+        <property name="id" value="ADMIN_262755"/>
+        <property name="name" value="Номенклатура дел"/>        
+        <property name="attributeViews">
+            <map>
+                <entry key-ref="nameCaseViewAttribute" value-ref="nameCaseViewAttribute"/>
+                <entry key-ref="indexCaseViewAttribute" value-ref="indexCaseViewAttribute"/>
+                <entry key-ref="countCasesViewAttribute" value-ref="countCasesViewAttribute"/>
+                <entry key-ref="bestBeforeCaseViewAttribute" value-ref="bestBeforeCaseViewAttribute"/>
+                <entry key-ref="noteCaseViewAttribute" value-ref="noteCaseViewAttribute" />
+                <entry key-ref="departmentCaseViewAttribute" value-ref="departmentCaseViewAttribute" />
+                <entry key-ref="regJournCaseViewAttribute" value-ref="regJournCaseViewAttribute" />
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Для блока "Номенклатура дел" -->
+    
+    <!-- Полное наименование дела -->
+    <bean id="nameCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_266050" />
+    </bean>
+    <!-- Индекс дела -->
+	<bean id="indexCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_262754" />
+    </bean>
+    <!-- Кол-во дел (томов, частей) -->
+    <bean id="countCasesViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_266051" />
+    </bean>
+    <!-- Срок хранения дела (тома, части) и № статей по перечню  -->
+    <bean id="bestBeforeCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_266052" />
+    </bean>
+    <!-- Примечание -->
+    <bean id="noteCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_266053" />
+    </bean>
+    <!-- Департамент -->
+    <bean id="departmentCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="ADMIN_305019" />
+    </bean>
+    <!-- Принадлежность к журналу регистрации -->
+	<bean id="regJournCaseViewAttribute" parent="parentCmsViewAttribute" >
+        <constructor-arg value="JBR_OWNER_REGJOURNAL" />
+    </bean>
+
+</beans>

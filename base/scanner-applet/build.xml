@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="jar" name="scanner-applet">
+	<target name="clean">
+		<delete dir="${dir.target}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${dir.target.classes}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<echo message="Compiling scanner-applet classes"/>
+		
+		<javac debug="true" debuglevel="${debuglevel}" 
+			destdir="${dir.target.classes}"
+			source="${source}" 
+			target="${target}"
+			encoding="${encoding}">
+			<src path="${dir.src.main.java}"/>
+			<classpath>
+				<pathelement location="${mmsc.location}/${dir.target.classes}"/>
+				<pathelement location="${java.home}/lib/plugin.jar"/>
+				<fileset dir="lib" includes="*.jar"/>
+			</classpath>
+		</javac>
+		
+		<copy todir="${dir.target.classes}">
+			<fileset dir="${dir.src.main.resources}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<jarjar jarfile="${dir.target}/${scanner-applet.name}">
+			<fileset dir="${dir.target.classes}"/>
+			<fileset dir="${mmsc.location}/${dir.target.classes}"/>
+			<zipfileset src="lib/commons-codec-1.2.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="lib/commons-httpclient-3.1.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="lib/commons-io-1.4.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="lib/commons-logging-1.0.4.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="lib/itext-2.1.7.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="lib/swing-worker-1.1.jar" excludes="META-INF/**/*.*"/>
+			<keep pattern="com.aplana.**"/>
+			<keep pattern="uk.co.mmscomputing.**"/>
+			<manifest>
+				<attribute name="Trusted-Library" value="true"/>
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Codebase" value="*"/>
+				<attribute name="Application-Name" value="Scanner applet"/>
+				<attribute name="Caller-Allowable-Codebase" value="*"/>
+			</manifest>
+		</jarjar>
+		
+		<signjar
+			jar="${dir.target}/${scanner-applet.name}"
+			keystore="${AppletsSignature.keystore.location}"
+			storepass="${AppletsSignature.keystore.password}"
+			keypass="${AppletsSignature.key.password}"
+			alias="${AppletsSignature.key.alias}"
+		/>
+	</target>
+</project>

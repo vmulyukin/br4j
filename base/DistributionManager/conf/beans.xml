@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd" 
+		default-lazy-init="true">
+
+	<bean name="GOST" class="com.aplana.dmsi.GOSTTaskBean"></bean>
+	
+	<bean id="gostInterchanger" class="com.aplana.distrmanager.LoadSaveDocFacade" init-method="init">
+		<property name="configFilePath" value="dbmi/gost/config.properties"/>
+		<property name="documentsDownloader" ref="gostDownloaderFromFileStystem"/>
+		<property name="documentsUploader" ref="gostUploaderFromFileSystem"/>
+	</bean>
+	
+	<bean id="gostUploaderFromFileSystem" class="com.aplana.distrmanager.LoadDoc">
+		<property name="documentLoader" ref="gostDocumentLoader"/>
+	</bean>
+	
+	<bean id="distributionDatabase" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="asyncDatabaseTarget"/>
+		<property name="proxyInterfaces">
+			<value>com.aplana.dbmi.service.impl.DatabaseEx</value>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_SUPPORTS, +RuntimeException</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="distributionDataServiceFacade" class="com.aplana.dbmi.service.client.DataServiceFacade" init-method="setSystemUser" lazy-init="true">
+		<property name="database" ref="distributionDatabase"/>
+		<property name="queryFactory" ref="queryFactory"/>
+	</bean>
+	
+	<bean id="gostDownloaderFromFileStystem" class="com.aplana.distrmanager.SaveDoc">
+	</bean>
+	
+	<bean id="gostDocumentLoader" class="com.aplana.distrmanager.GostDocumentLoader">
+		<property name="serviceBean" ref="systemDataServiceFacade"/>
+	</bean>
+		
+	<bean id="exceptionToFileLogger" class="com.aplana.distrmanager.ExceptionToFileLogger" scope="prototype">
+		<property name="destinationFolder">
+			<bean id="gostUploaderFromFileSystem.inDiscardedFolder" 
+				class="org.springframework.beans.factory.config.PropertyPathFactoryBean" lazy-init="true"/>
+		</property>
+		<property name="fileName">
+			<bean id="gostUploaderFromFileSystem.destFolderName" 
+				class="org.springframework.beans.factory.config.PropertyPathFactoryBean" lazy-init="true"/>
+		</property>
+	</bean>
+	
+	<bean id="commonGostNotificationSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.always
+						AND
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification"/>
+	</bean>
+	<bean id="ifErrorGostNotificationSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.always
+						AND
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification
+						OR
+						.card@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.ifErrors
+						AND
+						.card@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification
+						"/>
+	</bean>
+	<bean id="docGostNotificationSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@link:jbr.original.source@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.always
+						AND
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification"/>
+	</bean>
+	<bean id="docRefuseGostNotificationSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@link:jbr.original.source@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.always
+						AND
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification
+						OR
+						.card@link:jbr.original.source@list:jbr.distr.deliveryMethod=jbr.deliveryItem.method.gost 
+						AND 
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.notifNeed=jbr.gost.msg.notifNeed.ifErrors
+						AND
+						.card@link:jbr.original.source@link:jbr.distr.recievedMessage@list:jbr.gost.msg.type#jbr.gost.msg.type.notification
+						"/>
+	</bean>
+	<bean id="gostDistributionSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.distributionItem.method=jbr.distributionItem.method.gost"/>
+	</bean>
+	
+	<bean id="docDistributionSelector"  class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.gost.msg.type.sent=jbr.gost.msg.type.mainDoc"/>
+	</bean>
+
+	<bean id="notificationDistributionSelector"  class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification"/>
+	</bean>
+
+	<bean id="documentGostUpdater" class="com.aplana.distrmanager.handlers.UpdateMessageGost" scope="prototype">
+		<constructor-arg><ref bean="systemDataServiceFacade"/></constructor-arg>
+		<property name="senderPath">
+			<list>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.DistributionListElement.ParentDoc"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.outcoming.signatory"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.person.organization"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<bean id="incomingDocumentGostUpdater" class="com.aplana.distrmanager.handlers.UpdateMessageGost" scope="prototype">
+		<constructor-arg><ref bean="systemDataServiceFacade"/></constructor-arg>
+		<property name="senderPath">
+			<list>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.DistributionListElement.ParentDoc"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.incoming.addressee"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.person.organization"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<bean id="ackGostUpdater" class="com.aplana.distrmanager.handlers.UpdateMessageGostForAck" scope="prototype">
+		<constructor-arg><ref bean="systemDataServiceFacade"/></constructor-arg>
+		<property name="pathToIncomingMessageGost">
+			<list>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.DistributionListElement.ParentDoc"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.distr.recievedMessage"/>
+				</bean>
+			</list>
+		</property>
+		<property name="toOrganizationAttributeId">
+			<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+				<constructor-arg value="jbr.gost.msg.toOrg"/>
+			</bean>
+		</property>
+		<property name="toUidAttributeId">
+			<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+				<constructor-arg value="jbr.gost.msg.toOrgUuid"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<aop:config>
+		<aop:aspect id="logToFileSystemException" ref="exceptionToFileLogger">
+			<aop:after-throwing 
+				pointcut="execution(* com.aplana.distrmanager.GostDocumentLoader.load(..))"
+				throwing="exception"
+				method="logException"/>
+		</aop:aspect>
+	</aop:config>
+	
+</beans>

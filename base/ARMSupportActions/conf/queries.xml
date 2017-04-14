@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.support" selector-package="com.aplana.dbmi.support">
+	<action package="com.aplana.dbmi.support.action" type="CreateResolution">
+		<query package="com.aplana.dbmi.support.query">DoCreateResolution</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="GetGroupExecutionReports">
+		<query package="com.aplana.dbmi.support.query">DoGetGroupExecutionReports</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="ProcessGroupExecution">
+		<query package="com.aplana.dbmi.support.query">DoProcessGroupExecution</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="GetGroupResolutionDocs">
+		<query package="com.aplana.dbmi.support.query">DoGetGroupResolutionDocs</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="LightCreateCard">
+		<query package="com.aplana.dbmi.service.impl.query">DoNewCard</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="GetDocumentAttachmentsList">
+		<query package="com.aplana.dbmi.support.query">DoGetDocumentAttachmentsList</query>
+	</action>
+	<action package="com.aplana.dbmi.support.action" type="GetRulesInfoByRole">
+		<query package="com.aplana.dbmi.support.query">DoGetRulesInfoByRole</query>
+	</action>
+	<action package="com.aplana.dbmi.action" type="BatchAsyncExecution">
+		<!--
+			Проверка заполненности атрибута Резолюция до пакетной отправки поручений на исполнение
+		-->
+		<specific property="operationType" value="jbr.batch_resolutions">
+			<validator class="TestEmptyAttrProcessor" package="com.aplana.dbmi.jbr.processors">
+				<parameter name="test_attr" value="text:jbr.resolutionText"/>
+				<parameter name="must_empty" value="false"/>
+				<parameter name="empty_message" value="Атрибут Резолюция в поручении должен быть заполнен."/>
+			</validator>
+		</specific>
+		<specific property="operationType" value="jbr.batch_rassm">
+			<validator class="CallOriginsProcessor" package="com.aplana.dbmi.jbr.processors">
+				<parameter name="backLinkAttrId" value="jbr.exam.parent" />
+				<parameter name="processorClassName" value="com.aplana.dbmi.jbr.processors.TestEmptyAttrProcessor" />
+				<parameter name="linked_attr" value="backLink:jbr.allResolutions"/>
+				<parameter name="linked_attr_state" value="draft"/>
+				<parameter name="linked_attr_test" value="jbr.resolution.FioSign=CURRENT_USER"/>
+				<parameter name="test_attr" value="text:jbr.resolutionText"/>
+				<parameter name="empty_message" value="Атрибут Резолюция в поручении должен быть заполнен."/>
+			</validator>
+		</specific>
+		<specific class="IdenticallyTrueSelector" package="com.aplana.dbmi.service.impl" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.service.impl.query">DoBatchAsyncExecution</query>
+		</specific>
+	</action>
+	<!-- Для определенных переходов и шаблонов делаем процедуру смены статуса через синий интерфейс асинхронным (дублируем данную асинхронику из простой смены статуса) -->
+	<action package="com.aplana.dbmi.support.action" type="BatchChangeState">
+		<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		<specific property="workflowMove.id" value="jbr.commission.execute1" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.execute" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.incoming.registration.execution" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.ord.registration.execution" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.interndoc.execution.go" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.independent.resolution.draft.sign" async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="dictionaryNew.dublet"  async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.id" value="published.dublet"  async="true" policy="IterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<specific property="workflowMove.toState" value="delo" async="true" priority="0">
+			<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+		</specific>
+		<!-- specific property="card.template" value="jbr.inform" load="true">
+			 <specific property="workflowMove.id" value="jbr.info.send" async="true" policy="IterationPolicy">
+				<query package="com.aplana.dbmi.support.query">DoBatchChangeState</query>
+			</specific>
+		</specific-->
+	</action>
+	
+	<action package="com.aplana.dbmi.support.action" type="ProcessGroupResolution">
+		<specific class="IdenticallyTrueSelector" package="com.aplana.dbmi.service.impl" async="true" policy="GroupResolutionIterationPolicy">
+			<query package="com.aplana.dbmi.support.query">DoProcessGroupResolution</query>
+			<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+				<parameter name="test_attr" value="text:jbr.resolutionText"/>
+			</validator>
+			<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+				<parameter name="test_attr" value="user:jbr.AssignmentExecutor"/>
+			</validator>
+			<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+				<parameter name="test_attr" value="date:jbr.resolutionTerm"/>
+			</validator>
+            <validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+				<parameter name="test_attr" value="user:jbr.resolution.FioSign"/>
+			</validator>
+			<validator package="com.aplana.dbmi.jbr.processors" class="ChkOnCtrlInfo" runOrder="5">
+				<parameter name="forceSave" value="false" />
+			</validator>
+		</specific>
+	</action>
+	<object type="Card">
+		<store>
+			<specific property="template" value="jbr.group.resolution" async="true" policy="IterationPolicy">
+				<query package="com.aplana.dbmi.support.query">SaveGroupResolution</query>
+				<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+					<parameter name="test_attr" value="text:jbr.resolutionText"/>
+				</validator>
+				<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+					<parameter name="test_attr" value="user:jbr.AssignmentExecutor"/>
+				</validator>
+				<validator package="com.aplana.dbmi.jbr.processors" class="TestEmptyAttrProcessor">
+					<parameter name="test_attr" value="date:jbr.resolutionTerm"/>
+				</validator>
+				<validator package="com.aplana.dbmi.jbr.processors" class="ChkOnCtrlInfo" runOrder="5">
+					<parameter name="forceSave" value="false" />
+				</validator>
+			</specific>
+			<specific property="template" value="jbr.group.report.int" async="true" policy="IterationPolicy">
+				<query package="com.aplana.dbmi.support.query">SaveGroupExecution</query>
+			</specific>
+		</store>
+	</object>
+</queries>

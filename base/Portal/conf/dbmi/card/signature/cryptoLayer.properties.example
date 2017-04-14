@@ -1,0 +1,42 @@
+#
+#   Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to you under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+
+#������ ����� � ������ �������� �� ������� ��� ������� ����� ���������� �� ��� ���� ��������� (server ��� client)
+#�� ������� ��� ������� ����� ���������� ���� � ��� �� ��� ������ �����������������
+
+#��������� ��� CryptoPro JCE ����������������
+server.crypto.layer=com.aplana.crypto.JCPCryptoLayer
+server.crypto.layer.params=KEYSTORE_TYPE=HDImageStore;SIGN_ALGORITHM=CryptoProSignature;HASH_ALGORITHM=GOST3411;PKCS7_VERIFIER=com.aplana.crypto.cryptopro.CryptoProPKCS
+
+#��������� ��� LirJCE ����������������
+#server.crypto.layer=com.aplana.crypto.JCPCryptoLayer
+#server.crypto.layer.params=KEYSTORE_TYPE=PKCS12;SIGN_ALGORITHM=GOST_DS;HASH_ALGORITHM=HASH_34_11_94
+
+#��������� ��� CryptoPro CSP ����������������
+client.crypto.layer=com.aplana.crypto.WindowsCryproAPILayer
+client.crypto.layer.params=PROVIDER_TYPE=75;ALGORITHM=32798;TIMESTAMP_SERVER=http://www.cryptopro.ru/tsp/tsp.srf
+
+#��������� ��� LirPKCS11 ����������������
+#client.crypto.layer=com.aplana.crypto.JCPCryptoLayer
+#client.crypto.layer.params=KEYSTORE_TYPE=PKCS11;SIGN_ALGORITHM=GostR3411-94-with-GostR3410-2001;HASH_ALGORITHM=GostR3411-94;HIDE_CONTEINER_FIELD=true;
+client.timestamp.address=0.us.pool.ntp.org
+
+#��������� ��� ����� � NTP-��������
+#client.timestamp.address=clock.psu.edu
+
+#������ ����� � ������ �������� �� ������� ��� ������� ����� ���������� �� ��� ���� ��������� (server ��� client)
+#�� ������� ��� ������� ����� ���������� ���� � ��� �� ��� ������ �����������������

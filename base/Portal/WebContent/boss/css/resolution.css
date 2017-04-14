@@ -1,0 +1,744 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+#document_body .wizard {
+	border: none;
+}
+
+#document_body .wizard .content a.delete {
+	background:url(../images/ico_del2.gif) 2px 2px no-repeat;
+	text-decoration:none;
+	padding-left:12px;
+}
+
+#document_body .wizard .attr .col2
+{
+	width:auto;
+}
+
+#document_body .wizard .attr .col3
+{
+	width:250px;
+}
+
+#document_body span.date {
+	padding-left: 16px;
+	padding-top: 0px;
+	display: inline;
+	float: none;
+	margin-left:0px;
+	width:18px;
+	height:21px;
+	background:url(../images/ico_findcal.png) 0px 5px no-repeat;
+	text-decoration:none;
+}
+
+#document_body .peoples .men
+{
+	padding:5px;
+	width:250px;
+	height:auto;
+	display:block;
+	margin-right:5px;
+	margin-bottom:5px;
+	float:left;
+}
+
+#document_body .peoples .men p
+{
+	padding:0px 0px 0px 0px;
+	font-size:12px;
+	font-weight:bold;
+	width:auto;
+	display:block;
+	float:left;
+	text-align:left;
+}
+
+#document_body .content .otherExec
+{
+	padding-top:3px;
+	padding-right:5px;
+}
+
+#document_body .content td.executors
+{
+	vertical-align:top;
+}
+
+#document_body .wizard .content {
+	width: 100%;
+}
+
+.tools a.added,
+.tools a.exec
+{
+	height:37px;
+	text-decoration:none;
+	float:left;
+	display:block;
+}
+
+.tools a.added
+{
+	width:121px;
+	background:url(../images/button_added.png) left top no-repeat;
+}
+
+.tools a.exec
+{
+	width:116px;
+	background:url(../images/button_accept.gif) left top no-repeat;
+}
+
+.tools a:hover.exec,
+.tools a:hover.added
+{
+	background-position:left bottom;
+}
+
+.resolution * {
+    margin: 0;
+    padding: 0;
+}
+
+div.resolution {
+    padding: 21px;
+    background: white;
+}
+
+.resolution div {
+    font-family: Trebuchet MS, Verdana, Sans-serif;
+    font-size: 13px;
+
+    float: left;
+
+    color: black;
+    background: white;
+}
+
+.resolution a {
+    color: #3d8ac8;
+}
+
+.resolution a.dotted {
+    text-decoration: none;
+
+    border-bottom: 1px dotted;
+}
+.resolution a.inactive {
+    text-decoration: none;
+    color: #999;
+}
+
+.resolution hr {
+    clear: both;
+
+    height: 2px;
+    margin: 0px 0px;
+
+    border: 0px;
+    background: #eaeaea;
+}
+
+
+/* ����� ��������� ������� */
+.resolution div.left_column {
+    width: 350px;
+    padding: 16px 20px 19px 0px;
+}
+.resolution div.center_column {
+    width: 320px;
+    padding: 16px 20px 19px 0px;
+}
+.resolution div.right_column {
+    width: 500px;
+    padding: 16px 20px 19px 20px;
+}
+
+/* ����� ������� */
+.resolution h1 {
+    font-size: 16px;
+
+    margin-bottom: 10px;
+
+    color: #444;
+}
+
+.resolution .resolution_text {
+    font-family: Trebuchet MS;
+    font-size: 13px;
+
+    width: 340px;
+    height: 130px;
+    padding: 5px;
+    margin: 0px 0px 9px 0px;
+
+    border: 1px solid #ccc;
+}
+
+.resolution div.resolution_templates ul li {
+    margin: 3px 0px;
+
+    list-style-type: none;
+}
+
+.resolution_templates {
+	max-height: 300px;
+	overflow: auto;
+}
+
+.resolution .esolution_templates ul li a {
+   color: #666; 
+}
+
+.resolution .left_column p.breif {
+    padding-right: 22px;
+}
+
+.resolution .left_column div.time_frames {
+    float: left;
+    margin-top: -12px;
+}
+
+.resolution .left_column div.time_frames input {
+        
+}
+
+.resolution .left_column div.time_frames label {
+    display: block;
+    clear: both;
+
+    margin-bottom: 7px;
+    margin-top: 14px;
+}
+
+.resolution .left_column div.date_select {
+    margin-right: 18px;
+}
+
+.resolution .left_column div.date_select div div input {
+   width: 70px !important; 
+}
+
+/* ������ ������� ����� */
+
+.resolution div.right_column-10 {
+    width: 10px;
+    padding: 16px 20px 19px 20px;
+}
+
+/* ������� ������� ������� */
+
+.resolution div.center_column-720 {
+    width: 720px;
+    padding: 16px 20px 19px 0px;
+}
+
+.resolution div.center_column-720 ul li {
+    margin-left: 16px;
+}
+
+.resolution div.center_column-720 .checkBox {
+	margin-top: -8px;
+	margin-bottom: 5px;
+    margin-left: 23px;
+}
+
+.resolution div.center_column-720 .dijitInputField input {
+    float: left;
+}
+.resolution div.center_column-720 .dijitInputField input {
+
+}
+
+.resolution div.center_column-720 select {
+    width: 190px;
+    height: 25px;
+    margin-bottom: 5px;
+
+    border: 1px solid #ccc;
+    
+}
+
+.resolution div.center_column-720 label {
+    float: left;
+
+    width: 92px;
+    margin-left: 7px;
+    margin-right: 9px;
+}
+
+.resolution div.center_column-720 table {
+    clear: both;
+    padding: 4px 0;
+    margin-left: 124px;
+    width: 160px !important;
+}
+.resolution div.center_column-720 table td {
+    line-height: 13px;
+    padding: 4px 0px;
+
+}
+.resolution div.center_column-720 table.content td {
+}
+
+.resolution div.center_column-720 label.no-radio-100 {
+	width: 100px;
+	margin-left: 23px;
+}
+
+.resolution .center_column-720 div.block {
+	float: left;
+    margin: 10px 300px 10px 0px;
+}
+
+.resolution .center_column-720 div.list {
+    clear: both;
+
+    margin: 0px 0px 0px 114px;
+}
+
+.resolution .center_column-720 a.delete {
+    margin-top: 3px;
+    padding-left: 14px;
+    list-style-type: none;
+    text-decoration: none;
+    color: black;
+    background: url(../images/remove_person.png) 0px 6px no-repeat;
+    cursor: pointer;
+}
+
+.resolution .center_column-720 a.delete_inactive {
+    margin-top: 3px;
+    padding-left: 14px;
+    list-style-type: none;
+    text-decoration: none;
+    color: black;
+    background: url(../images/remove_person_inactive.png) 0px 6px no-repeat;
+    cursor: default;
+}
+
+
+.resolution .center_column-720 div.time_frames {
+    float: left;
+    margin-top: -12px;
+}
+
+.resolution .center_column-720 div.time_frames input {
+        
+}
+
+.resolution .center_column-720 div.time_frames label {
+    display: block;
+    clear: both;
+
+    margin-bottom: 7px;
+    margin-top: 14px;
+}
+
+.resolution .center_column-720 div.date_select {
+    margin-right: 18px;
+}
+
+.resolution .center_column-720 div.date_select div div input {
+   width: 70px !important; 
+}
+
+.resolution .center_column-720 .date_select div.dijitInputField {
+    width: 100px;
+    border: 1px solid #cfcfcf;
+}
+
+/* ������� ������� */
+
+.resolution div.center_column ul li {
+    margin-left: 16px;
+}
+
+.resolution div.center_column .checkBox {
+	margin-top: -8px;
+	margin-bottom: 5px;
+    margin-left: 23px;
+}
+
+.resolution div.center_column .dijitInputField input {
+    float: left;
+}
+.resolution div.center_column .dijitInputField input {
+/*     width: 117px !important; */
+}
+.resolution div.dijitValidationIcon {
+    display: none;
+}
+
+.resolution div.dijitInputField {
+    width: 137px;
+}
+.resolution .left_column .date_select div.dijitInputField {
+    width: 100px;
+    border: 1px solid #cfcfcf;
+}
+.resolution .date_select .dijitDateTextBox{
+    width: 137px;
+    background: url(../images/calendar.png) 108px 3px no-repeat;
+    margin-right: 14px;
+    border: none;
+}
+
+.resolution div.center_column select {
+    width: 190px;
+    height: 25px;
+    margin-bottom: 5px;
+
+    border: 1px solid #ccc;
+    
+}
+
+.resolution div.center_column label {
+    float: left;
+
+    width: 92px;
+    margin-left: 7px;
+    margin-right: 9px;
+}
+
+.resolution div.center_column table {
+    clear: both;
+    padding: 4px 0;
+    margin-left: 124px;
+    width: 160px !important;
+}
+.resolution div.center_column table td {
+    line-height: 13px;
+    padding: 4px 0px;
+
+}
+.resolution div.center_column table.content td {
+}
+.resolution div.center_column label.no-radio {
+    margin-left: 23px;
+}
+
+.resolution div.center_column label.no-radio-100 {
+	width: 100px;
+	margin-left: 23px;
+}
+
+.resolution .center_column div.block {
+    margin: 10px 0px;
+}
+
+.resolution .center_column div.list {
+    clear: both;
+
+    margin: 0px 0px 0px 114px;
+}
+
+.resolution .center_column a.delete {
+    margin-top: 3px;
+    padding-left: 14px;
+    list-style-type: none;
+    text-decoration: none;
+    color: black;
+    background: url(../images/remove_person.png) 0px 6px no-repeat;
+    cursor: pointer;
+}
+
+.resolution .center_column a.delete_inactive {
+    margin-top: 3px;
+    padding-left: 14px;
+    list-style-type: none;
+    text-decoration: none;
+    color: black;
+    background: url(../images/remove_person_inactive.png) 0px 6px no-repeat;
+    cursor: default;
+}
+
+.resolution .left_column a.delete {
+    margin-top: 3px;
+    padding-left: 14px;
+
+    list-style-type: none;
+
+    cursor: default;
+    text-decoration: none;
+
+    color: black;
+    background: url(../images/remove_person.png) 0px 6px no-repeat;
+}
+
+
+/* ������ ������� */
+
+
+.resolution div.right_column div.environment {
+    margin-top: 18px;
+    padding-left: 20px;
+    
+    border-left: 2px solid #eee;
+    max-height: 460px;
+    overflow: auto;
+}
+
+.resolution div.right_column div.execution_course {
+    display: block;
+    clear: both;
+
+    width: 90px;
+    margin-top: 26px;
+    padding-left: 52px;
+
+    line-height: 14px;
+
+    background: url(../images/execution_course_icon.png) 20px 0 no-repeat;
+}
+
+.resolution div.persons_list {
+    clear: both;
+}
+
+.resolution div.right_column div.arrow {
+    display: block;
+
+    width: 30px;
+    height: 30px;
+
+    background: url(../images/arrow.png) no-repeat;
+}
+
+.resolution div.persons_list ul li {
+    margin: 3px 0px;
+
+    list-style-type: none;
+}
+
+.resolution .persons_list ul li a.dotted {
+    color: #3D8AC8;
+}
+
+/* ������ ������ */
+
+.resolution div.resolution_buttons {
+    float: left;
+    padding-left: 260px;
+}
+ .search_search .dijitButtonNode {
+
+    display: block !important;
+    width: 90px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: url(../images/button_search_search.png) no-repeat !important;
+    margin-right: 13px;
+}
+ .search_clear .dijitButtonNode {
+
+    display: block !important;
+    width: 90px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: url(../images/button_search_clear.png) no-repeat !important;
+}
+
+.search_search, .search_clear {
+    float: left;
+    margin-left: 13px;
+}
+
+.resolution .resolution_buttons div.submit_resolution {
+
+    width: 90px;
+    height: 26px;
+    display: block;
+    float: left;
+    background: url(../images/submit.png) no-repeat;
+    cursor: pointer;
+
+}
+
+
+.resolution .resolution_buttons div.cancel_resolution {
+    width: 90px;
+    height: 26px;
+    display: block;
+    background: url(../images/cancel.png) no-repeat;
+    cursor: pointer;
+    margin-right: 13px;
+}
+
+ 
+.resolution .left_column div.clear_resolution a{
+    width: 90px;
+    height: 26px;
+    display: block;
+    background: url(../images/button_search_clear.png) no-repeat;
+    cursor: pointer;
+    margin-right: 13px;
+}
+
+
+.resolution .resolution_buttons a {
+    display: block;
+    width: 90px;
+    height: 26px;
+}
+
+
+.resolution .resolution_buttons a.button.blue {
+  background: url("../images/button_bg_blue.png") repeat-x scroll 0 0 transparent;
+}
+
+.resolution .resolution_buttons a.button.gray {
+  background: url("../images/button_bg_gray.png") repeat-x scroll 0 0 transparent;
+}
+
+.resolution .resolution_buttons a.button {
+  border: 1px solid #5A5A5A;
+  color: white;
+  display: inline-block;
+  font-size: 13px;
+  height: 24px;
+  line-height: 22px;
+  margin-bottom: 3px;
+  min-width: 80px;
+  width: auto;
+  padding: 0 5px;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 1px 1px #606060;
+}
+
+
+
+/* refuse form additions */
+
+.resolution .refuse {
+    padding-bottom: 16px;
+}
+
+.resolution .refuse .controls {
+    float: left;
+    clear: both;
+    margin-top: 30px;
+}
+.resolution .refuse .center_column ul li {
+    list-style-type: none;
+    margin-left: 0px;
+}
+.resolution .refuse .center_column ul li a {
+    color: #3D8AC8; 
+}
+.resolution .refuse .date_select div.dijit {
+    margin-left: 4px !important;
+    width: 205px !important;
+    height: 24px !important;
+    margin-top: 12px;
+}
+.resolution .refuse div.dijit div {
+    height: auto;
+}  
+.resolution .refuse div.dijitInputField {
+}
+.resolution .refuse .dijitComboBox {
+    height: auto !important;
+    width: auto;
+    margin-top: 13px;
+}  
+.resolution .refuse label {
+    margin-right: 40px;
+}
+.resolution .refuse div.date_input div {
+    height: 20px;
+    width: 100px;
+}  
+.resolution .refuse #jbpns_2fboss_2fresolution_2fContentsnpbj_executorSelect {
+    /*width: 160px !important;*/
+}
+.resolution .refuse .time_frames label {
+    margin-top: 3px;
+}
+.resolution .refuse .left_column div.date_select {
+    margin-right: 0px;
+}
+
+.resolution .refuse .upload {
+    margin-top: 13px;
+}
+.resolution .refuse .date_select label {
+    margin-right: 80px;
+    margin-top: 13px;
+}
+.resolution .refuse table {
+    margin-left: 97px;
+    width: 168px !important;
+}
+.resolution .refuse td {
+    padding: 3px 0px;
+    line-height: 12px;
+}
+.resolution .refuse .date_select div.dijitInputField {
+    width: 182px;
+}
+.resolution .refuse .date_select .dijitDateTextBox{
+    width: 138px !important;
+    background: url(../images/calendar.png) 108px 3px no-repeat;
+    margin-right: 14px;
+    border: none;
+}
+
+.resolution .refuse div.center_column .date_select select {
+    width: 190px;
+    height: 25px;
+    margin-bottom: 5px;
+
+    border: 1px solid #ccc;
+    
+}
+
+.resolution div.center_column .upload {
+    margin-top: 5px;
+}
+
+.resolution div.center_column .upload table {
+    clear: both;
+    padding: 4px 0;
+    margin-left: 10px;
+    width: 250px !important;
+}
+
+/* comboboxes context search list height fix */
+.dijitPopup  {
+    padding-bottom: 26px !important;
+}
+
+.resolution div.single_column {
+    padding: 16px 0 0;
+}
+
+.resolution div.single_column label {
+	padding-right: 5px;
+	vertical-align: middle;
+}
+
+.resolution .single_column .filePathInput {
+	display: inline-block;
+	vertical-align: middle;
+	height: 25px;
+	margin-top: 5px;
+}

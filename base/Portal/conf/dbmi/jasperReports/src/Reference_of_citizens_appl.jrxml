@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reference_of_citizens_appl" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/stig/stuff/jasper_works_RB/subreports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="type_of_report" class="java.lang.Long"/>
+	<parameter name="journal_reg" class="java.lang.String"/>
+	<parameter name="jregs" class="java.lang.String"/>
+	<parameter name="source_type" class="java.lang.String"/>
+	<parameter name="divisions" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT array_to_string (array(select string_value from attribute_value where card_id in ($P!{journal_reg}) and attribute_code='NAME'), ', ') as vals,
+                 array_to_string (array(select string_value from attribute_value where card_id in ($P!{jregs}) and attribute_code='NAME'), ', ') as control,
+                 array_to_string (array(select value_rus from values_list where value_id in ($P!{source_type})), ', ') as typecontrol]]>
+	</queryString>
+	<field name="vals" class="java.lang.String"/>
+	<field name="control" class="java.lang.String"/>
+	<field name="typecontrol" class="java.lang.String"/>
+	<title>
+		<band height="203" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="15" width="811" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с  " +(new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="54" width="779" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Журнал регистрации:  " + ($F{vals}.equals("") ?  "По всем журналам регистрации" : $F{vals})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="def" x="0" y="0" width="811" height="15"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Справка о поступивших обращениях граждан за период]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 222]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="divisions">
+					<subreportParameterExpression><![CDATA[$P{divisions}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub2.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 111]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="69" width="779" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{jregs}== null?"":
+"Контролер:  " + ($P{jregs}.equals("-1") ?  "По всем контролерам" : $F{control})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="84" width="779" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{source_type}== null?"":
+"Тип контроля:  " + ($P{source_type}.equals("-1") ?  "По всем типам контроля" : $F{typecontrol})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="811" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{type_of_report}==111?"по территориям":
+$P{type_of_report}==222?"по источнику поступления":
+$P{type_of_report}==333?"по журналам регистрации":
+$P{type_of_report}==444?"по типам источника поступления":
+$P{type_of_report}==555?"по подразделениям-исполнителям":
+$P{type_of_report}==666?"по исполнителям":""]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 333]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub3.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 444]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="divisions">
+					<subreportParameterExpression><![CDATA[$P{divisions}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub4.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 555]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="divisions">
+					<subreportParameterExpression><![CDATA[$P{divisions}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub5.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="103" width="200" height="100">
+					<printWhenExpression><![CDATA[$P{type_of_report} == 666]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="from_date">
+					<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="to_date">
+					<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="journal_reg">
+					<subreportParameterExpression><![CDATA[$P{journal_reg}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="divisions">
+					<subreportParameterExpression><![CDATA[$P{divisions}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Reference_of_citizens_appl_sub6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+</jasperReport>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming" pageWidth="555" pageHeight="782" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" isDefault="false" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" isDefault="false" style="table_header"/>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  av_shortdesk.string_value as shortdesk,
+	av_regnum.string_value as regnum,
+	av_regdate.date_value + interval '$P!{tz_hour} hour' as regdate,
+	vl_linktype.value_rus as linktype,
+	av_doc_regnum.string_value as doc_regnum
+from card c
+--- получение информации об ответе на входящий
+left outer join -- ссылка на документ для ответа
+	attribute_value c_relatdoc on (c_relatdoc.card_id = c.card_id
+	and c_relatdoc.attribute_code = 'JBR_DOCL_RELATDOC' )
+left outer join card c_og on (c_og.card_id=c_relatdoc.number_value)
+LEFT OUTER JOIN attribute_value av_shortdesk on (av_shortdesk.card_id = c_relatdoc.number_value
+and av_shortdesk.attribute_code = 'JBR_INFD_SHORTDESC')
+LEFT OUTER JOIN attribute_value av_regnum on (av_regnum.card_id = c_relatdoc.number_value
+and av_regnum.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_regdate on (av_regdate.card_id = c_relatdoc.number_value
+and av_regdate.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN values_list vl_linktype on (vl_linktype.value_id =  c_relatdoc.value_id)
+LEFT OUTER JOIN attribute_value av_doc_regnum on (av_doc_regnum.card_id = c.card_id
+and av_doc_regnum.attribute_code = 'JBR_REGD_REGNUM')
+where c.card_id=$P{card_id} and c_og.template_id<>864
+-------------------------------------------------------
+UNION
+SELECT  av_shortdesk.string_value as shortdesk,
+	av_regnum.string_value as regnum,
+	av_regdate.date_value + interval '$P!{tz_hour} hour' as regdate,
+	vl_linktype.value_rus as linktype,
+	av_doc_regnum.string_value as doc_regnum
+from card c
+--- получение информации об ответе на входящий
+left outer join -- ссылка на документ для ответа
+	attribute_value c_relatdoc on (c_relatdoc.card_id = c.card_id
+	and c_relatdoc.attribute_code = 'JBR_DOCL_RELATDOC' )
+left outer join card c_og on (c_og.card_id=c_relatdoc.number_value)
+LEFT OUTER JOIN attribute_value av_shortdesk on (av_shortdesk.card_id = c_relatdoc.number_value
+and av_shortdesk.attribute_code = 'JBR_INFD_SHORTDESC')
+LEFT OUTER JOIN attribute_value av_regnum on (av_regnum.card_id = c_relatdoc.number_value
+and av_regnum.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_regdate on (av_regdate.card_id = c_relatdoc.number_value
+and av_regdate.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN values_list vl_linktype on (vl_linktype.value_id =  c_relatdoc.value_id)
+LEFT OUTER JOIN attribute_value av_doc_regnum on (av_doc_regnum.card_id = c.card_id
+and av_doc_regnum.attribute_code = 'JBR_REGD_REGNUM')
+where c.card_id=$P{card_id} and c_og.template_id=864
+-------------------------------------------------------
+UNION
+SELECT  av_shortdesk.string_value as shortdesk,
+	av_regnum.string_value as regnum,
+	av_regdate.date_value + interval '$P!{tz_hour} hour' as regdate,
+	vl_linktype.value_rus as linktype,
+	av_doc_regnum.string_value as doc_regnum
+from card c
+--- получение информации об ответе на входящий
+left outer join -- ссылка на документ для ответа
+	attribute_value c_relatdoc on (c_relatdoc.number_value = c.card_id
+	and c_relatdoc.attribute_code = 'JBR_DOCL_RELATDOC' )
+left outer join card c_og on (c_og.card_id=c_relatdoc.number_value)
+LEFT OUTER JOIN attribute_value av_shortdesk on (av_shortdesk.card_id = c_relatdoc.card_id
+and av_shortdesk.attribute_code = 'JBR_INFD_SHORTDESC')
+LEFT OUTER JOIN attribute_value av_regnum on (av_regnum.card_id = c_relatdoc.card_id
+and av_regnum.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_regdate on (av_regdate.card_id = c_relatdoc.card_id
+and av_regdate.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN values_list vl_linktype on (vl_linktype.value_id =  c_relatdoc.value_id)
+LEFT OUTER JOIN attribute_value av_doc_regnum on (av_doc_regnum.card_id = c.card_id
+and av_doc_regnum.attribute_code = 'JBR_REGD_REGNUM')
+where c.card_id=$P{card_id} and c_og.template_id<>864
+-------------------------------------------------------
+UNION
+SELECT  av_shortdesk.string_value as shortdesk,
+	av_regnum.string_value as regnum,
+	av_regdate.date_value + interval '$P!{tz_hour} hour' as regdate,
+	vl_linktype.value_rus as linktype,
+	av_doc_regnum.string_value as doc_regnum
+from card c
+--- получение информации об ответе на входящий
+left outer join -- ссылка на документ для ответа
+	attribute_value c_relatdoc on (c_relatdoc.number_value = c.card_id
+	and c_relatdoc.attribute_code = 'JBR_DOCL_RELATDOC' )
+left outer join card c_og on (c_og.card_id=c_relatdoc.number_value)
+LEFT OUTER JOIN attribute_value av_shortdesk on (av_shortdesk.card_id = c_relatdoc.card_id
+and av_shortdesk.attribute_code = 'JBR_INFD_SHORTDESC')
+LEFT OUTER JOIN attribute_value av_regnum on (av_regnum.card_id = c_relatdoc.card_id
+and av_regnum.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_regdate on (av_regdate.card_id = c_relatdoc.card_id
+and av_regdate.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN values_list vl_linktype on (vl_linktype.value_id =  c_relatdoc.value_id)
+LEFT OUTER JOIN attribute_value av_doc_regnum on (av_doc_regnum.card_id = c.card_id
+and av_doc_regnum.attribute_code = 'JBR_REGD_REGNUM')
+where c.card_id=$P{card_id} and c_og.template_id=864
+-------------------------------------------------------
+
+ORDER BY regdate DESC]]>
+	</queryString>
+	<field name="shortdesk" class="java.lang.String"/>
+	<field name="regnum" class="java.lang.String"/>
+	<field name="regdate" class="java.sql.Timestamp"/>
+	<field name="linktype" class="java.lang.String"/>
+	<field name="doc_regnum" class="java.lang.String"/>
+	<title>
+		<band height="30">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="156" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Регистрационный номер документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="156" y="0" width="101" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Дата регистрации]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="257" y="0" width="167" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Краткое содержание]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="424" y="0" width="131" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Тип связи]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="257" y="0" width="167" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{shortdesk}==null?"":$F{shortdesk})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="424" y="0" width="131" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{linktype}==null?"":$F{linktype})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="156" y="0" width="101" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{regdate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{regdate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="156" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{regnum}==null?"":$F{regnum})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

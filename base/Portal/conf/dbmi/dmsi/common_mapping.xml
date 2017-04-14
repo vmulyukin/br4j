@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description package="com.aplana.dmsi.types.common">
+	<config forClass="com.aplana.dmsi.types.DMSIObject">
+		<field name="id" readonly="true">
+			<valueSources>
+				<attribute type="number">_ID</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.StringConverter"/>
+		</field>
+		<field name="state" readonly="true">
+			<valueSources>
+				<attribute type="list">_STATE</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.ListAttributeIdConverter"/>
+		</field>
+	</config>
+	<config forClass="Country" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefCountry</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Area" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefRegion</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Region" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefDistrict</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Town" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefCity</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Street" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>street</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Organization" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.organization</template>
+		<field name="fullName" useInSearch="true">
+			<valueSources>
+				<attribute type="text">jbr.organization.fullName</attribute>
+			</valueSources>
+		</field>
+		<field name="uuid" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.organization.uniqueId</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="RequestAuthor" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.requestAuthor</template>
+		<field name="name">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+		<field name="lastName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.InfOGSecondName</attribute>
+			</valueSources>
+		</field>
+		<field name="firstName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.InfOGFirstName</attribute>
+			</valueSources>
+		</field>
+		<field name="midleName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.InfOGPatronimic</attribute>
+			</valueSources>
+		</field>
+		<field name="country" useInSearch="true">
+			<valueSources>
+				<attribute type="link">jbr.InfAboutDocCountry</attribute>
+			</valueSources>
+			<type name="Country"/>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="area" useInSearch="true">
+			<valueSources>
+				<attribute type="link">jbr.InfAboutDocRegion</attribute>
+			</valueSources>
+			<type name="Area"/>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="region" useInSearch="true">
+			<valueSources>
+				<attribute type="link">jbr.InfAboutDocDistrict</attribute>
+			</valueSources>
+			<type name="Region"/>    
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="town" useInSearch="true">
+			<valueSources>
+				<attribute type="link">jbr.InfAboutDocCity</attribute>
+			</valueSources>
+			<type name="Town"/>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="street" useInSearch="true">
+			<valueSources>
+				<attribute type="text">jbr.InfAboutDocStreet</attribute>
+			</valueSources>
+		</field>
+		<field name="zipCode" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.reqAuthorIndex</attribute>
+			</valueSources>
+		</field>
+		<field name="comment">
+			<valueSources>
+				<attribute type="text">jbr.reqAuthorAddress</attribute>
+			</valueSources>
+		</field>
+		<field name="email" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.reqAuthorEmail</attribute>
+			</valueSources>
+		</field>
+		<field name="organization">
+			<valueSources>
+				<attribute type="link">jbr.reqAuthorOrg</attribute>
+			</valueSources>
+			<type name="common.Organization"/>
+		</field>
+		<field name="house" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.reqAuthorHouse</attribute>
+			</valueSources>
+		</field>
+		<field name="building" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.reqAuthorBuilding</attribute>
+			</valueSources>
+		</field>
+		<field name="flat" useInSearch="true">
+			<valueSources>
+				<attribute type="number">jbr.reqAuthorApartment</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="ReceiptSource" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefSourceComeFrom</template>
+		<field name="correspondent">
+			<valueSources>
+				<attribute type="link">jbr.ComeFromOrg</attribute>
+			</valueSources>
+			<type name="Organization"/>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchWithDuplicatesConverter">
+				<parameter name="duplicateStates">doublet</parameter>
+				<parameter name="originalAttr">jbr.organization.originalOrganization</parameter>
+				<parameter name="states">published,dictionaryNew</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="regNumber">
+			<valueSources>
+				<attribute type="string">ADMIN_281683</attribute>
+			</valueSources>
+		</field>
+		<field name="regDate">
+			<valueSources>
+				<attribute type="date">ADMIN_281692</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+	</config>
+	<config forClass="DocType" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>typeOfDoc</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="AuthType" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.authtypeitem</template>
+		<field name="name" useInSearch="true">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="ImportedDocCard" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.ImportedDocument</template>
+		<field name="uid">
+			<valueSources>
+				<attribute type="string">ImportedDocument.message_id</attribute>
+			</valueSources>
+		</field>
+		<field name="processingResult">
+			<valueSources>
+				<attribute type="text">jbr.importedDoc.result</attribute>
+			</valueSources>
+		</field>
+		<field name="files" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+			<type name="File"/>
+		</field>
+	</config>
+	<config forClass="File" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.file</template>
+		<field name="fileName">
+			<valueSources>
+				<attribute type="material">MATERIAL</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.MaterialNameConverter"/>
+		</field>	
+		<field name="image">
+			<valueSources>
+				<attribute type="material">MATERIAL</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.MaterialDataConverter"/>
+		</field>
+		<field name="materialName">
+			<valueSources>
+				<attribute type="string">jbr.materialName</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Packet" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.packet</template>
+		<field name="sender">
+			<valueSources>
+				<attribute type="link">jbr.distr.sender</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchWithDuplicatesConverter">
+				<parameter name="duplicateStates">doublet</parameter>
+				<parameter name="originalAttr">jbr.organization.originalOrganization</parameter>
+				<parameter name="states">published,dictionaryNew</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="type">
+			<valueSources>
+				<attribute type="list">jbr.distr.deliveryMethod</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.TypeStandardEnumListAttributeConverter">
+				<parameter name="GOST">jbr.deliveryItem.method.gost</parameter>
+				<parameter name="DELO">jbr.deliveryItem.method.delo</parameter>
+			</converter>
+		</field>
+		<field name="date">
+			<valueSources>
+				<attribute type="date">jbr.distr.deliveryTime</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="packetUid">
+			<valueSources>
+				<attribute type="string">jbr.distr.uuid</attribute>
+			</valueSources>
+		</field>
+		<field name="messageUid">
+			<valueSources>
+				<attribute type="string">jbr.distr.sourceUuid</attribute>
+			</valueSources>
+		</field>
+		<field name="processingResult">
+			<valueSources>
+				<attribute type="text">jbr.distr.processingResult</attribute>
+			</valueSources>
+		</field>
+		<field name="errorCode">
+			<valueSources>
+				<attribute type="string">jbr.distr.errorCode</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.LongStringConverter"/>
+		</field>
+		<field name="packetData" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+		</field>
+		<field name="header" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.distr.recievedMessage</attribute>
+			</valueSources>
+		</field>
+	
+	</config>
+	<config forClass="Rubric" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.RefQuestionOfAddress</template>
+		<field name="code" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.RefQuestionOfAddress.code</attribute>
+			</valueSources>
+		</field>
+		<field name="number" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.RefQuestionOfAddress.number</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="SubRubric" extendsConfigOf="Rubric">
+		<template>jbr.RefSubQuestionOfAddress</template>
+	</config>
+</description>

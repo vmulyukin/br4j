@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description>
+	<config forClass="WSObject">
+		<field name="id" readonly="true">
+			<attribute type="number">_ID</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringConverter"/>
+		</field>
+		<field name="state" readonly="true">
+			<attribute type="list">_STATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.ListAttributeIdConverter"/>
+		</field>
+		<field name="title" readonly="true">
+			<attribute type="string">name</attribute>
+		</field>
+		<field name="updDate" readonly="true">
+			<attribute type="date">changed</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>
+	</config>
+	<config forClass="WSOMDocument" extendsConfigOf="WSObject">
+		<field name="regNum">
+			<attribute type="string">regnumber</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringConverter"/>
+		</field>
+		<field name="regDate">
+			<attribute type="date">regdate</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>		
+		<field name="subject">
+			<attribute type="text">jbr.document.title</attribute>
+		</field>
+		<field name="statusName" readonly="true">
+			<attribute type="list">_STATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<field name="urgencyLevel">
+			<attribute type="list">jbr.urgencyLevel</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+	</config>
+	<config forClass="WSODocumentCommonProperties">
+		<field name="template" readonly="true">
+			<attribute type="list">_TEMPLATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<field name="pagesCount">
+			<attribute type="number">jbr.original.quantitypaper</attribute>
+		</field>
+		<field name="comments">
+			<attribute type="text">JBR_IMPL_INRES</attribute>
+		</field>
+		<field name="docType" readonly="true">
+			<attribute type="link">jbr.reg.doctype</attribute>
+			<type name="DocType"/>
+			<converter class="com.aplana.ireferent.value.converters.StringConverter"/>
+		</field>
+		<field name="attachments" newCard="true">
+			<attribute type="link">jbr.files</attribute>
+			<type name="File"/>
+		</field>
+		<field name="links" readonly="true">
+			<attribute type="typedLink">jbr.relatdocs</attribute>
+			<type name="Document"/>
+		</field>
+		<field name="onDocumentLinks">
+			<attribute type="backLink">jbr.doclinks.references</attribute>
+			<type name="Document"/>
+		</field>
+		<field name="recipients">
+			<attribute type="user">jbr.incoming.addressee</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="executor">
+			<attribute type="user">jbr.document.executor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="signatory">
+			<attribute type="user">jbr.outcoming.signatory</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="sender">
+			<attribute type="link">jbr.incoming.sender</attribute>
+			<type name="Group"/>
+		</field>
+		<field name="signext">
+			<attribute type="link">jbr.signext</attribute>
+			<type name="Person"/>
+		</field>
+	</config>
+	<!--<config forClass="WSOEds">
+		<field name="signature">
+			<attribute type="html">jbr.uzdo.signature</attribute>
+			<converter class="com.aplana.ireferent.value.converters.HtmlByteConverter"/>
+		</field>
+		<field name="who">
+			<attribute type="string">jbr.incoming.outnumber</attribute>
+		</field>
+		<field name="when">
+			<attribute type="string">jbr.incoming.outnumber</attribute>
+		</field>
+		<field name="fields">
+			<attribute type="string">jbr.incoming.outnumber</attribute>
+		</field>
+		<field name="stage">
+			<attribute type="string">jbr.incoming.outnumber</attribute>
+		</field>
+	</config>-->
+	<config forClass="WSOMInternalDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.interndoc</template>
+	</config>
+	<config forClass="WSOInternalDocument" extendsConfigOf="WSOMInternalDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>
+	</config>
+	<config forClass="WSOMOutcomeDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.outcoming</template>
+	</config>
+	<config forClass="WSOOutcomeDocument" extendsConfigOf="WSOMOutcomeDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<!-- <field name="signReview">
+			<attribute type="link">jbr.sign.set</attribute>
+   			<type name="SignReview"/>
+		</field> -->
+	</config>
+	<config forClass="WSOMIncomeDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.incoming</template>
+		<!-- <extension name="esignature" readonly="false">
+			<config forClass="WSOEds" extendsConfigOf="WSOEds" />
+		</extension>	-->
+	</config>
+	<config forClass="WSOIncomeDocument" extendsConfigOf="WSOMIncomeDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>	
+	</config>
+	<config forClass="WSOMOrdDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.ord</template>
+	</config>
+	<config forClass="WSOOrdDocument" extendsConfigOf="WSOMOrdDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>		
+	</config>
+	<config forClass="WSOMOgDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.citizenrequest</template>
+	</config>
+	<config forClass="WSOOgDocument" extendsConfigOf="WSOMOgDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<field name="addressFormat">
+			<attribute type="list">jbr.address.format</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>		
+	</config>
+	<config forClass="WSOMNpaDocument" extendsConfigOf="WSOMDocument">
+		<template>jbr.npa</template>
+	</config>
+	<config forClass="WSONpaDocument" extendsConfigOf="WSOMNpaDocument">
+		<field name="commonProps">
+			<config forClass="WSODocumentCommonProperties" extendsConfigOf="WSODocumentCommonProperties" />
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>		
+	</config>
+	<config forClass="WSOMNp" extendsConfigOf="WSOMDocument">
+		<template>jbr.independent.resolution</template>
+		<field name="isControl">
+			<attribute type="list">jbr.incoming.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.incoming.control.yes</parameter>
+				<parameter name="noValueId">jbr.incoming.control.no</parameter>
+			</converter>		
+		</field>
+		<field name="subjectnp">
+			<attribute type="text">jbr.resolutionText</attribute>
+		</field>
+		<field name="childs" readonly="true">
+			<attribute type="backLink">jbr.linkedResolutions</attribute>
+			<type name="Task"/>
+		</field>
+		<field name="controller">
+			<attribute type="user">jbr.incoming.inspector</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="mainExecutors">
+			<attribute type="user">jbr.AssignmentExecutor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="executors">
+			<attribute type="user">jbr.CoExecutor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="signer">
+			<attribute type="user">jbr.resolution.FioSign</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="datePlan">
+			<attribute type="date">jbr.incoming.deadline</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>
+	</config>
+	<config forClass="WSONp" extendsConfigOf="WSOMNp">
+		<field name="links" readonly="true">
+			<attribute type="typedLink">jbr.relatdocs</attribute>
+			<type name="Document"/>
+		</field>
+		<field name="docType" readonly="true">
+			<attribute type="link">jbr.reg.doctype</attribute>
+			<type name="DocType"/>
+			<converter class="com.aplana.ireferent.value.converters.StringConverter"/>
+		</field>
+		<field name="attachments" newCard="true">
+			<attribute type="link">jbr.files</attribute>
+			<type name="File"/>
+		</field>
+	</config>
+	<config forClass="WSOMFile" extendsConfigOf="WSObject">
+		<template>jbr.file</template>
+		<field name="name">
+			<attribute type="material">MATERIAL</attribute>
+			<converter class="com.aplana.ireferent.value.converters.MaterialNameConverter"/>
+		</field>
+		<field name="date" readonly="true">
+			<attribute type="date">created</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>
+	</config>
+	<config forClass="WSOFile" extendsConfigOf="WSOMFile">
+		<field name="body">
+			<attribute type="material">MATERIAL</attribute>
+			<converter class="com.aplana.ireferent.value.converters.MaterialDataConverter"/>
+		</field>
+	</config>
+	<config forClass="WSOURLFile" extendsConfigOf="WSObject">
+		<template>jbr.file</template>
+		<field name="name">
+			<attribute type="material">MATERIAL</attribute>
+			<converter class="com.aplana.ireferent.value.converters.MaterialNameConverter"/>
+		</field>
+		<field name="author">
+			<attribute type="user">author</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="creationDate" readonly="true">
+			<attribute type="date">created</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>
+		<field name="reference">
+			<attribute type="number">_ID</attribute>
+			<converter class="com.aplana.ireferent.value.converters.IdUrlConverter">
+				<parameter name="isPdf">true</parameter>
+			</converter>
+		</field>
+		<field name="filesize">
+			<attribute type="material">MATERIAL</attribute>
+			<converter class="com.aplana.ireferent.value.converters.MaterialFileSizeConverter"/>
+		</field>
+	</config>
+	
+	<config forClass="WSOStaffObject" extendsConfigOf="WSObject">
+	</config>
+	<config forClass="WSOMPerson" extendsConfigOf="WSOStaffObject">
+		<template>jbr.internalPerson</template>
+		<field name="title">
+			<attribute type="string">jbr.person.lastnameNM</attribute>
+		</field>
+	</config>
+	<config forClass="WSOPerson" extendsConfigOf="WSOMPerson">		
+	</config>
+	<config forClass="WSOMExternalPerson" extendsConfigOf="WSOStaffObject">
+		<template>jbr.externalPerson</template>
+		<field name="title">
+			<attribute type="string">jbr.person.lastnameNM</attribute>
+		</field>
+	</config>
+	<config forClass="WSOExternalPerson" extendsConfigOf="WSOMExternalPerson">		
+	</config>
+	<config forClass="WSOMGroup" extendsConfigOf="WSOStaffObject">
+		<template>jbr.organization</template>
+	</config>
+	<config forClass="WSOGroup" extendsConfigOf="WSOMGroup">
+		<field name="fullName">
+			<attribute type="text">jbr.organization.fullName</attribute>
+		</field>
+		<field name="shortName">
+			<attribute type="string">jbr.organization.shortName</attribute>
+		</field>
+	</config>
+	<config forClass="WSOMTask" extendsConfigOf="WSObject">
+		<template>jbr.resolution</template>
+		<field name="document">
+			<attribute type="link">jbr.main.doc</attribute>
+			<type name="Document"/>
+		</field>
+		<field name="parent" isParent="true">
+			<attribute type="link">jbr.rimp.byrimp</attribute>
+			<type name="Task"/>
+		</field>
+		<field name="subject">
+			<attribute type="text">jbr.resolutionText</attribute>
+		</field>
+		<field name="isControl">
+			<attribute type="list">jbr.oncontrol</attribute>
+			<converter class="com.aplana.ireferent.value.converters.BooleanListAttributeConverter">
+				<parameter name="yesValueId">jbr.commission.control.yes</parameter>
+				<parameter name="noValueId">jbr.commission.control.no</parameter>
+			</converter>		
+		</field>
+		<field name="childs" readonly="true">
+			<attribute type="backLink">jbr.linkedResolutions</attribute>
+			<type name="Task"/>
+		</field>
+		<field name="datePlan">
+			<attribute type="date">jbr.resolutionTerm</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>
+		</field>
+		<field name="signer">
+			<attribute type="user">jbr.resolution.FioSign</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="controller">
+			<attribute type="user">jbr.commission.inspector</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="mainExecutors">
+			<attribute type="user">jbr.AssignmentExecutor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="executors">
+			<attribute type="user">jbr.CoExecutor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="statusName" readonly="true">
+			<attribute type="list">_STATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<extension name="resolutionFiles" newCard="true" multivalued="true">
+			<attribute type="typedLink">jbr.attachRes</attribute>
+			<converter class="com.aplana.ireferent.value.converters.TypedLinkConverter">
+				<parameter name="graphical">901</parameter>
+				<parameter name="audio">902</parameter>
+			</converter>
+		</extension>
+	</config>
+	<config forClass="WSOTask" extendsConfigOf="WSOMTask">
+		<field name="attachments" newCard="true">
+			<attribute type="link">jbr.files</attribute>
+			<type name="File"/>
+		</field>
+		<field name="zamExecutors" readonly="true">
+			<attribute type="user">jbr.AssignmentExecutor.assistant</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="viewers">
+			<attribute type="user">jbr.Fyi</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="dateFact">
+			<attribute type="date">JBR_INFD_DT_DONE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>		
+		</field>
+		<field name="dateSign">
+			<attribute type="date">jbr.resolution.SignDate</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>		
+		</field>
+		<field name="comments">
+			<attribute type="text">jbr.resolution.comment</attribute>
+		</field>
+	</config>
+	<config forClass="WSOTaskWithReports" extendsConfigOf="WSOMTask">
+		<field name="attachments" newCard="true">
+			<attribute type="link">jbr.files</attribute>
+			<type name="File"/>
+		</field>
+		<field name="reports"  readonly="true">
+			<attribute type="backLink">jbr.reports</attribute>
+			<type name="TaskReportForMerge"/>
+			<filter class="com.aplana.ireferent.value.filters.NoElementFilter" forSetId="Execution" >
+ 			</filter>
+			<filter class="com.aplana.ireferent.value.filters.TaskReportForMergeFilter" forSetId="Approval" >
+				<parameter name="states">done</parameter>
+				<parameter name="currentUser">hidenApprover</parameter>
+				<parameter name="doneDaysMaxAge">6</parameter>
+			</filter>
+			<filter class="com.aplana.ireferent.value.filters.NoElementFilter" forSetId="Selfexecution" >
+ 			</filter>
+			<filter class="com.aplana.ireferent.value.filters.NoElementFilter" forSetId="Control" >
+			</filter>
+		</field>
+		<field name="zamExecutors" readonly="true">
+			<attribute type="user">jbr.AssignmentExecutor.assistant</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="viewers">
+			<attribute type="user">jbr.Fyi</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="dateFact">
+			<attribute type="date">JBR_INFD_DT_DONE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>		
+		</field>
+		<field name="dateSign">
+			<attribute type="date">jbr.resolution.SignDate</attribute>
+			<converter class="com.aplana.ireferent.value.converters.DateConverter"/>		
+		</field>
+		<field name="comments">
+			<attribute type="text">jbr.resolution.comment</attribute>
+		</field>
+	</config>
+	<config forClass="WSOMTaskReport" extendsConfigOf="WSObject">
+		<template>jbr.report.internal</template>
+	</config>
+	<config forClass="WSOTaskReport" extendsConfigOf="WSOMTaskReport">
+		<field name="task">
+			<attribute type="link">jbr.report.int.parent</attribute>
+			<type name="Task"/>
+		</field>
+		<field name="executor">
+			<attribute type="user">jbr.report.int.executor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="attachments">
+			<attribute type="link">jbr.report.attachments</attribute>
+			<type name="File"/>
+		</field>
+		<field name="comments">
+			<attribute type="text">jbr.report.currentText</attribute>
+		</field>
+		<field name="statusName" readonly="true">
+			<attribute type="list">_STATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<field name="declineReason">
+			<attribute type="text">RREASON</attribute>
+		</field>
+		<field name="armViewed">
+			<attribute type="string">jbr.arm_flag</attribute>
+		</field>
+		<field name="reportText">
+			<attribute type="text">jbr.report.hidden.text</attribute>
+		</field>
+	</config>
+	<config forClass="WSOTaskReportForMerge" extendsConfigOf="WSOMTaskReport">
+		<field name="executor">
+			<attribute type="user">jbr.report.int.executor</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="hidenApprover">
+			<attribute type="user">jbr.report.int.dynamic_role.approver.hidden</attribute>
+			<type name="Person"/>
+		</field>
+		<field name="attachments">
+			<attribute type="link">jbr.report.attachments</attribute>
+			<type name="File"/>
+		</field>
+		<field name="comments">
+			<attribute type="text">jbr.report.currentText</attribute>
+		</field>
+		<field name="statusName" readonly="true">
+			<attribute type="list">_STATE</attribute>
+			<converter class="com.aplana.ireferent.value.converters.StringListAttributeConverter"/>
+		</field>
+		<field name="declineReason">
+			<attribute type="text">RREASON</attribute>
+		</field>
+		<field name="armViewed">
+			<attribute type="string">jbr.arm_flag</attribute>
+		</field>
+		<field name="doneDate">
+			<attribute type="date">jbr.report.done.date</attribute>
+		</field>
+		<field name="reportText">
+			<attribute type="text">jbr.report.hidden.text</attribute>
+		</field>
+	</config>
+	<config forClass="TaskReportInternal" extendsConfigOf="WSOTaskReport">
+		<field name="declineReason">
+			<attribute type="text">RREASON</attribute>
+		</field>
+		<field name="armViewed">
+			<attribute type="string">jbr.arm_flag</attribute>
+		</field>
+	</config>
+	<config forClass="WSOTypeResolution" extendsConfigOf="WSObject">
+		<template>545</template>
+		<field name="title">
+			<attribute type="text">jbr.typeResolution.resolution</attribute>
+		</field>
+	</config>
+	<config forClass="WSOMApprovalReview" extendsConfigOf="WSObject">
+		<template>jbr.visa</template>
+	</config>
+	<config forClass="WSOApprovalReview" extendsConfigOf="WSOMApprovalReview">
+		<field name="solution">
+			<config forClass="WSOApprovalReviewSolution">
+				<field name="text">
+					<attribute type="text">jbr.visa.current.resolution</attribute>
+				</field>
+			</config>
+		</field>
+	</config>
+	<config forClass="SignReview" extendsConfigOf="WSObject">
+		<template>jbr.sign</template>
+		<field name="solution">
+			<config forClass="WSOApprovalReviewSolution">
+				<field name="text">
+					<attribute type="text">jbr.sign.current.resolution</attribute>
+				</field>
+				<!-- <field name="history">
+					<attribute type="html">jbr.sign.comment</attribute>
+				</field>-->
+			</config>
+		</field>
+	</config>
+	<config forClass="DocType" extendsConfigOf="WSObject">
+		<template>typeOfDoc</template>
+	</config>
+	
+	<!-- Transient objects -->
+	<config forClass="Favorites" extendsConfigOf="WSObject">
+		<template>jbr.boss.favorite</template>
+		<field name="linkOnDoc">
+			<attribute type="link">jbr.boss.favorite.document</attribute>
+		</field>
+		<field name="user">
+			<attribute type="user">jbr.boss.favorite.person</attribute>
+		</field>
+	</config>
+</description>

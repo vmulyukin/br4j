@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<cardLinkPickerAttributeEditorSettings>
+    <variants>
+        <variant searchAttr="NAME" searchAttrType="string" requiredPermissions="none">
+            <search byAttr="true">
+                <template>jbr.interndoc</template>
+                <template>jbr.incoming</template>
+                <!--template>jbr.informationrequest</template-->
+                <template>jbr.outcoming</template>
+                <!--template>jbr.infreq.answer</template-->
+                <!--template>jbr.incomingpeople.answer</template-->
+                <template>jbr.incomingpeople</template>
+                <template>jbr.ord</template>
+                <!-- <template>jbr.npa</template>  -->
+                <template>jbr.independent.resolution</template>
+
+            </search>
+
+            <hierarchyDialog>
+                <hierarchy>
+                    <cardSet stored="true" alias="root" collapsed="false" sortAttr="NAME" sortAttrType="text" sortOrder="asc" >
+                    </cardSet>
+                </hierarchy>
+                <noColumns value="true"/>
+                <!-- 1 ������� ���������, �.�. �������� noColumns �� ������� �������� �������� ������� -->
+                <columns>
+                    <column id="jbr.organization.code" width="50" sort="asc" />
+                </columns>
+                <actions>
+                    <action title="addDocTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandler" selectionType="none" id="addDoc">
+                        <parameters>
+                            <parameter name="templatesToChooseFrom" value="jbr.interndoc, jbr.incoming, jbr.outcoming, jbr.incomingpeople, jbr.ord, jbr.independent.resolution"/>
+                        </parameters>
+                    </action>
+                </actions>
+                <selectableCardCondition/>
+                <cacheable reloadTime="300"/>
+                <styling>
+                    <style value="documentPrintForm : reportChartInside" >
+                        <template>jbr.interndoc</template>
+                    </style>
+                    <style value="documentPrintForm : reportChartIncoming" >
+                        <template>jbr.incoming</template>
+                    </style>
+                    <style value="documentPrintForm : reportChartOutgoing" >
+                        <template>jbr.outcoming</template>
+                    </style>
+                    <style value="documentPrintForm : reportChartOG" >
+                        <template>jbr.incomingpeople</template>
+                    </style>
+                    <style value="documentPrintForm : reportChartORD" >
+                        <template>jbr.ord</template>
+                    </style>
+                    <!-- <style value="documentPrintForm : reportChartORD" >
+                        <template>jbr.npa</template>
+                    </style>  -->
+                    <style value="documentPrintForm : reportChartIR" >
+                        <template>jbr.independent.resolution</template>
+                    </style>
+                </styling>
+            </hierarchyDialog>
+            <columns>
+                <column id="NAME" width="400" sort="asc" />
+                <column id="_TEMPLATE"  fullReplaceAttrId="_ABC" replaceStatusId="6"/>	<!-- ���������� ������, �� �� ���������� ��� -->
+            </columns>
+        </variant>
+    </variants>
+    <messages>
+        <lang code="en">
+            <message key="acceptTitle" value="Add Link"/>
+            <message key="cancelTitle" value="Cancel"/>
+            <message key="addDocTitle" value="Create new one"/>
+        </lang>
+        <lang code="ru">
+            <message key="acceptTitle" value="�������"/>
+            <message key="cancelTitle" value="������"/>
+            <message key="addDocTitle" value="������� �����"/>
+        </lang>
+    </messages>
+</cardLinkPickerAttributeEditorSettings>

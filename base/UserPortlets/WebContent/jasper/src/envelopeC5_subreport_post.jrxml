@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="envelopeC5_subreport_post" pageWidth="610" pageHeight="459" orientation="Landscape" columnWidth="610" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="address_address" class="java.lang.String"/>
+	<parameter name="org_from" class="java.lang.String"/>
+	<parameter name="doc_reg_num" class="java.lang.String"/>
+	<parameter name="address_index" class="java.lang.String"/>
+	<parameter name="address_city" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 0 as value]]>
+	</queryString>
+	<field name="value" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="352" splitType="Prevent">
+			<frame>
+				<reportElement isPrintRepeatedValues="false" mode="Transparent" x="0" y="0" width="609" height="350"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="326" y="210" width="217" height="108"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="12" isBold="false" isUnderline="false" isStrikeThrough="false" pdfFontName="DejaVu Sans" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{org_from}+"\n\r"+
+($P{address_city}==null ? "":$P{address_city}+"\n\r")+
+($P{address_address}==null ? "":$P{address_address})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="326" y="318" width="217" height="20" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="13" isBold="true" pdfFontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{address_index}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="36" y="308" width="128" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="12" isBold="false" pdfFontName="DejaVu Sans" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{doc_reg_num}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement isPrintRepeatedValues="false" x="36" y="28" width="254" height="51"/>
+					<box bottomPadding="5"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="12" isBold="false" pdfFontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Администрация Псковской области"+
+"\r\n"+"180001, Россия, г. Псков, ул. Некрасова, 23"+
+"\r\n"+"Телефон/Факс +7 (8112) 66-35-17"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="339" y="28" width="240" height="37"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="20" isBold="false" pdfFontName="DejaVu Sans" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ПРАВИТЕЛЬСТВЕННОЕ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="164" y="108" width="148" height="34"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="20" isBold="false" pdfFontName="DejaVu Sans" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[СЛУЖЕБНОЕ]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

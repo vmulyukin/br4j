@@ -1,0 +1,107 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- 
+   Настройка конвертеров в соответствии с MIME-типом конвертируемого файла. 
+   Указанный mime будет обрабатывать конвертер, указанный в тэге.
+   <oo> - OpenOffice
+   <txt> - OpenOffice с перекодировкой в UTF-8
+   <image> - конвертер из картинок в PDF (itext)
+   <tiff> - tiff -> pdf конвертер (itext)
+   <pdf> - PDF -> PDFA конвертер (ghostscript)
+-->
+<mime-types>
+	<!-- BR4J00039333 убираем xml из конвертирования в PDF -->
+	<!--oo>application/xml</oo-->
+	<oo>image/svg+xml</oo>
+	<oo>application/x-tika-msoffice</oo>
+	<oo>application/vnd.visio</oo>
+	<oo>application/vnd.ms-powerpoint</oo>
+	<oo>application/vnd.ms-excel</oo>
+	<oo>application/vnd.ms-excel.sheet.binary.macroenabled.12</oo>
+	<oo>application/msword</oo>
+	<oo>application/vnd.ms-outlook</oo>
+	<oo>application/x-tika-ooxml</oo>
+	<oo>application/vnd.openxmlformats-officedocument.presentationml.presentation</oo>
+	<oo>application/vnd.ms-powerpoint.presentation.macroenabled.12</oo>
+	<oo>application/vnd.openxmlformats-officedocument.presentationml.template</oo>
+	<oo>application/vnd.openxmlformats-officedocument.presentationml.slideshow</oo>
+	<oo>application/vnd.ms-powerpoint.slideshow.macroenabled.12</oo>
+	<oo>application/vnd.ms-powerpoint.addin.macroenabled.12</oo>
+	<oo>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</oo>
+	<oo>application/vnd.ms-excel.sheet.macroenabled.12</oo>
+	<oo>application/vnd.openxmlformats-officedocument.spreadsheetml.template</oo>
+	<oo>application/vnd.ms-excel.template.macroenabled.12</oo>
+	<oo>application/vnd.ms-excel.addin.macroenabled.12</oo>
+	<oo>application/vnd.openxmlformats-officedocument.wordprocessingml.document</oo>
+	<oo>application/vnd.ms-word.document.macroenabled.12</oo>
+	<oo>application/vnd.openxmlformats-officedocument.wordprocessingml.template</oo>
+	<oo>application/vnd.ms-word.template.macroenabled.12</oo>
+	<oo>text/html</oo>
+	<oo>application/xhtml+xml</oo>
+	<oo>application/x-asp</oo>
+	<oo>application/rtf</oo>
+	<oo>application/vnd.sun.xml.writer</oo>
+	<oo>application/vnd.oasis.opendocument.text</oo>
+	<oo>application/vnd.oasis.opendocument.graphics</oo>
+	<oo>application/vnd.oasis.opendocument.presentation</oo>
+	<oo>application/vnd.oasis.opendocument.spreadsheet</oo>
+	<oo>application/vnd.oasis.opendocument.chart</oo>
+	<oo>application/vnd.oasis.opendocument.image</oo>
+	<oo>application/vnd.oasis.opendocument.formula</oo>
+	<oo>application/vnd.oasis.opendocument.text-master</oo>
+	<oo>application/vnd.oasis.opendocument.text-web</oo>
+	<oo>application/vnd.oasis.opendocument.text-template</oo>
+	<oo>application/vnd.oasis.opendocument.graphics-template</oo>
+	<oo>application/vnd.oasis.opendocument.presentation-template</oo>
+	<oo>application/vnd.oasis.opendocument.spreadsheet-template</oo>
+	<oo>application/vnd.oasis.opendocument.chart-template</oo>
+	<oo>application/vnd.oasis.opendocument.image-template</oo>
+	<oo>application/vnd.oasis.opendocument.formula-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.text</oo>
+	<oo>application/x-vnd.oasis.opendocument.graphics</oo>
+	<oo>application/x-vnd.oasis.opendocument.presentation</oo>
+	<oo>application/x-vnd.oasis.opendocument.spreadsheet</oo>
+	<oo>application/x-vnd.oasis.opendocument.chart</oo>
+	<oo>application/x-vnd.oasis.opendocument.image</oo>
+	<oo>application/x-vnd.oasis.opendocument.formula</oo>
+	<oo>application/x-vnd.oasis.opendocument.text-master</oo>
+	<oo>application/x-vnd.oasis.opendocument.text-web</oo>
+	<oo>application/x-vnd.oasis.opendocument.text-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.graphics-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.presentation-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.spreadsheet-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.chart-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.image-template</oo>
+	<oo>application/x-vnd.oasis.opendocument.formula-template</oo>
+
+	<txt>text/plain</txt>
+
+	<image>image/bmp</image>
+	<image>image/gif</image>
+	<image>image/jpeg</image>
+	<image>image/png</image>
+	<image>image/vnd.wap.wbmp</image>
+	<image>image/x-icon</image>
+	<image>image/x-psd</image>
+	<image>image/x-xcf</image>
+
+	<tiff>image/tiff</tiff>
+
+	<pdf>application/pdf</pdf>
+</mime-types>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessRulesConfig version="1" xsi:schemaLocation="http://www.btlab.ru/btlabdmtools/xsd/AccessRulesConfig AccessRulesConfigParameters.xsd" xmlns="http://www.btlab.ru/btlabdmtools/xsd/AccessRulesConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Parameter name="xmlFileHome" comment="Домашняя папка для xml-файла">
+		<SimpleParameter value="D:\\Projects\\2013-09 (for merge New-Access)\\_TempWork\\DynamicAccessRule\\resources\\"/>
+	</Parameter>
+	<Parameter name="profileAttributes" comment="Коды атрибутов, которые могут использоваться в поле Атрибут профиля">
+		<AttributeList>
+			<Attribute code="JBR_ASSISTANT_FOR"/>
+			<Attribute code="JBR_ZONE_DOW"/>
+			<Attribute code="JBR_ZONES_DOW_ACCESS"/>
+			<!--  <Attribute code="JBR_ASSISTANT_FOR_C"/>  
+			<Attribute code="JBR_PROFILE_PERSON"/> -->
+		</AttributeList>
+	</Parameter>
+	<Parameter name="personCardLinkAttributes" comment="Коды кардлинк-атрибутов, которые могут использоваться в качестве персонального">
+		<AttributeList>
+			<!-- <Attribute code="JBR_INFD_SGNEX_LINK"/> 
+			<Attribute code="ADMIN_255979"/> -->
+		</AttributeList> 
+	</Parameter>
+	<Parameter name="profileCardAttributes" comment="Коды атрибутов, которые могут использоваться в качестве сверяемых атрибутов для профильных правил, помимо U-атрибутов в карточках">
+		<AttributeList>
+			<Attribute code="JBR_ZONE_DOW"/>
+			<!-- <Attribute code="JBR_INFD_SGNEX_LINK"/> 
+			<Attribute code="ADMIN_255979"/> -->
+		</AttributeList> 
+	</Parameter>
+</AccessRulesConfig>

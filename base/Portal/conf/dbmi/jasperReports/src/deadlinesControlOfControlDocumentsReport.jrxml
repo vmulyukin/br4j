@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="deadlinesControlOfControlDocumentsReport " pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+	<property name="ireport.zoom" value="1.3636363636363635"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="onDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\bsirazetdinov\\workspace\\FSIN\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inspectors" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inspectors_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="addressees" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="addressees_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="user" class="java.lang.String">
+		<defaultValueExpression><![CDATA["admin"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\Projects\\APO\\Portal\\conf\\dbmi\\jasperReports\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="docGroup" class="java.lang.String">
+		<defaultValueExpression><![CDATA["224,784,864,764,1226"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select distinct
+av_reg_num.string_value as reg_num,
+av_reg_num_d.number_value as reg_num_d,
+av_date_reg.date_value + interval '$P!{tz_hour} hour' as date_reg,
+av_dead_line.date_value + interval '$P!{tz_hour} hour' as dead_line,
+av_troff_check_date.date_value + interval '$P!{tz_hour} hour' as troff_check_date,
+--coalesce(av_sender_fname.string_value, av_sender_sname.string_value) as sender_sname,
+av_short_desk.string_value as short_desk,
+c.card_id as card_id,
+av_controler_name.string_value as controler_name,
+av_controler_pos.string_value as controler_pos,
+av_controler_phone.string_value as controler_phone,
+case
+	when av_dead_line.date_value is null then false
+	when av_troff_check_date.date_value is null and date_trunc('day', $P{onDate}::timestamp) > date_trunc('day', av_dead_line.date_value + interval '$P!{tz_hour} hour') then true
+	when date_trunc('day', av_troff_check_date.date_value + interval '$P!{tz_hour} hour') > date_trunc('day', av_dead_line.date_value + interval '$P!{tz_hour} hour') then true
+	else false
+end as overdue,
+av_num_out.string_value as num_out,
+av_date_out.date_value + interval '$P!{tz_hour} hour' as date_out,
+--av_sign_ext_pos.string_value || ', ' || av_sign_ext_fio.string_value as sign_ext,
+case
+	when c.template_id in (224) then coalesce(array_to_string(array(select coalesce(av_sender_fname.string_value, av_sender_sname.string_value, av_sender_name.string_value, '') || '' || coalesce(' ' || av_sign_ext_pos.string_value || ', ', '') || '' || coalesce(av_sign_ext_fio.string_value || '', '')
+					 from Card cc
+					 LEFT OUTER JOIN attribute_value av_sender on av_sender.card_id = c.card_id and av_sender.attribute_code = 'JBR_INFD_SENDER'
+					 LEFT OUTER JOIN attribute_value av_sender_fname on (av_sender_fname.card_id = av_sender.number_value and av_sender_fname.attribute_code = 'JBR_DORG_FULLNAME')
+					 LEFT OUTER JOIN attribute_value av_sender_sname on (av_sender_sname.card_id = av_sender.number_value and av_sender_sname.attribute_code = 'JBR_DORG_SHORTNAME')
+					 LEFT OUTER JOIN attribute_value av_sender_name on (av_sender_name.card_id = av_sender.number_value and av_sender_name.attribute_code = 'NAME')
+
+					 LEFT OUTER JOIN attribute_value av_sign_ext on (av_sign_ext.card_id = c.card_id and av_sign_ext.attribute_code = 'JBR_INFD_SIGN_EXT')
+					 LEFT OUTER JOIN attribute_value av_sign_ext_fio on (av_sign_ext_fio.card_id = av_sign_ext.number_value and av_sign_ext_fio.attribute_code = 'JBR_PERS_SNAME_NM')
+					 LEFT OUTER JOIN attribute_value av_sign_ext_pos on (av_sign_ext_pos.card_id = av_sign_ext.number_value and av_sign_ext_pos.attribute_code = 'JBR_PERS_POSITION')
+					 where cc.card_id = c.card_id), ', ') || ' ') || coalesce(av_num_out.string_value, '')  || ' ' || to_char(av_date_out.date_value + interval '$P!{tz_hour} hour', 'DD.MM.YYYY')
+	when c.template_id in (764,784,1226) then av_sign_sname_nm.string_value
+	when c.template_id in (864) then array_to_string(array(select
+                                                            coalesce(av_cc_sname.string_value, '') || ' ' || coalesce(av_cc_name.string_value, '') || ' ' || coalesce(av_cc_mname.string_value, '')
+                                                            from card cc join attribute_value av_cc on av_cc.card_id = cc.card_id and av_cc.attribute_code = 'JBR_OG_REQ_AUTHOR'
+                                                            left join attribute_value av_cc_sname on (av_cc_sname.card_id = av_cc.number_value and av_cc_sname.attribute_code = 'ADMIN_274992')
+                                                            left join attribute_value av_cc_name on (av_cc_name.card_id = av_cc.number_value and av_cc_name.attribute_code = 'ADMIN_281034')
+                                                            left join attribute_value av_cc_mname on (av_cc_mname.card_id = av_cc.number_value and av_cc_mname.attribute_code = 'ADMIN_281035')
+                                                            where cc.card_id = c.card_id
+                                                           ), chr(13)
+                                                    )
+end as corr
+--av_author_req.number_value as pid
+
+From card c
+
+LEFT OUTER JOIN attribute_value av_reg_num on (av_reg_num.card_id = c.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_reg_num_d on (av_reg_num_d.card_id = c.card_id and av_reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D')
+LEFT OUTER JOIN attribute_value av_date_reg on (av_date_reg.card_id = c.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN attribute_value av_dead_line on (av_dead_line.card_id = c.card_id and av_dead_line.attribute_code = 'JBR_IMPL_DEADLINE')
+LEFT OUTER JOIN attribute_value av_troff_check_date on (av_troff_check_date.card_id = c.card_id and av_troff_check_date.attribute_code = 'ADMIN_220912')
+
+LEFT OUTER JOIN attribute_value av_controler on (av_controler.card_id = c.card_id and av_controler.attribute_code = 'JBR_IMPL_INSPECTOR')
+LEFT OUTER JOIN person av_controler_p on (av_controler_p.person_id = av_controler.number_value)
+LEFT OUTER JOIN attribute_value av_controler_name on (av_controler_name.card_id = av_controler_p.card_id and av_controler_name.attribute_code = 'JBR_PERS_SNAME_NM')
+LEFT OUTER JOIN attribute_value av_controler_pos on (av_controler_pos.card_id = av_controler_p.card_id and av_controler_pos.attribute_code = 'JBR_PERS_POSITION')
+LEFT OUTER JOIN attribute_value av_controler_phone on (av_controler_phone.card_id = av_controler_p.card_id and av_controler_phone.attribute_code = 'JBR_PERS_PHONE')
+
+LEFT OUTER JOIN attribute_value av_short_desk on (av_short_desk.card_id = c.card_id and av_short_desk.attribute_code = 'JBR_INFD_SHORTDESC')
+
+LEFT OUTER JOIN attribute_value av_on_count on (av_on_count.card_id = c.card_id and av_on_count.attribute_code = 'JBR_IMPL_ONCONT')
+left outer join attribute_value doctype on c.card_id = doctype.card_id and doctype.attribute_code ='JBR_IMPL_TYPECONT'
+
+-- Адресат для всех кроме ОГ
+left outer join attribute_value addressee on c.card_id = addressee.card_id and addressee.attribute_code = 'JBR_INFD_RECEIVER'
+left outer join person addressees_val on addressee.number_value = addressees_val.person_id
+
+-- Рассматривающий для ОГ
+LEFT OUTER JOIN attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    LEFT OUTER JOIN attribute_value av_rec on av_rassm.number_value = av_rec.card_id and av_rec.attribute_code = 'JBR_RASSM_PERSON'
+        LEFT OUTER JOIN person p_rec on av_rec.number_value = p_rec.person_id
+
+LEFT OUTER JOIN attribute_value av_num_out on (av_num_out.card_id = c.card_id and av_num_out.attribute_code = 'JBR_REGD_NUMOUT')
+LEFT OUTER JOIN attribute_value av_date_out on (av_date_out.card_id = c.card_id and av_date_out.attribute_code = 'JBR_REGD_DATEOUT')
+
+left outer join -- Хар-ка ссылющиеся на лицо подписавшее документ
+	attribute_value av_sign on (av_sign.card_id = c.card_id and av_sign.attribute_code = 'JBR_INFD_SIGNATORY')
+left outer join -- лицо подписавшее документ
+	person p_sign on (p_sign.person_id = av_sign.number_value)
+left outer join -- Фамилия лица подписавшее документ
+	attribute_value av_sign_sname_nm on (av_sign_sname_nm.card_id = p_sign.card_id and av_sign_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+
+where
+($P{docGroup} is null or c.template_id in ($P!{docGroup})) and  --входящий
+av_on_count.value_id=1432 and --контрольный
+c.status_id=103  and     --на исполнении
+ date_trunc('day',av_dead_line.date_value + interval '$P!{tz_hour} hour') <= $P{endDate} and  -- / срок исполнения в ('2011-10-28')
+ date_trunc('day',av_dead_line.date_value + interval '$P!{tz_hour} hour') >= $P{startDate} and -- \ указанном периоде ('2010-10-28')
+    (
+        av_troff_check_date.date_value is null  -- дата фактического исполнения документа не указана
+        or
+        $P{onDate} > date_trunc('day',av_dead_line.date_value + interval '$P!{tz_hour} hour')  -- срок исполнения документа меньше, чем значение параметра «На дату»
+    )
+and
+($P{addressees_ISNULL} or p_rec.card_id in ($P!{addressees}) and c.template_id = 864 or
+	addressees_val.card_id in ($P!{addressees}) and c.template_id <> 864) and
+($P{inspectors_ISNULL} or av_controler_p.card_id in ($P!{inspectors})) and
+($P{document_type_ISNULL} or doctype.value_id in ($P!{document_type}))
+order by reg_num_d, reg_num]]>
+	</queryString>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_num_d" class="java.lang.String"/>
+	<field name="date_reg" class="java.sql.Timestamp"/>
+	<field name="dead_line" class="java.sql.Timestamp"/>
+	<field name="troff_check_date" class="java.sql.Timestamp"/>
+	<field name="short_desk" class="java.lang.String"/>
+	<field name="card_id" class="java.lang.Integer"/>
+	<field name="controler_name" class="java.lang.String"/>
+	<field name="controler_pos" class="java.lang.String"/>
+	<field name="controler_phone" class="java.lang.String"/>
+	<field name="overdue" class="java.lang.Boolean"/>
+	<field name="num_out" class="java.lang.String"/>
+	<field name="date_out" class="java.sql.Timestamp"/>
+	<field name="corr" class="java.lang.String"/>
+	<variable name="doc_gr" class="java.lang.String">
+		<initialValueExpression><![CDATA[new String("224,784,864,764,1226")]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="130" splitType="Stretch">
+			<textField>
+				<reportElement x="13" y="0" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчет по контролю сроков исполнения контрольных документов"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="16" width="802" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["на " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{onDate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="31" width="802" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["С "+ (new SimpleDateFormat("dd.MM.yyyy")).format($P{startDate}) + " по "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{endDate})]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="0" y="46" width="802" height="15"/>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="51" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Адресат:]]></text>
+				</staticText>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="51" y="0" width="751" height="15"/>
+					<subreportParameter name="addresses">
+						<subreportParameterExpression><![CDATA[$P{addressees}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "deadlinesControlOfControlDocumentsReport_addresses.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="61" width="802" height="15"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="68" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Контролёр:]]></text>
+				</staticText>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="68" y="0" width="734" height="15" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="inspectors">
+						<subreportParameterExpression><![CDATA[$P{inspectors}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "deadlinesControlOfControlDocumentsReport_inspectors.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="76" width="802" height="15"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="68" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Тип контроля: ]]></text>
+				</staticText>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="722" height="15"/>
+					<subreportParameter name="document_type">
+						<subreportParameterExpression><![CDATA[$P{document_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "deadlinesControlOfControlDocumentsReport_DocumentType.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="91" width="802" height="15"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="108" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Группы документов:]]></text>
+				</staticText>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="108" y="0" width="694" height="15"/>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[($P{docGroup}.equals($V{doc_gr}) ? null : $P{docGroup})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "deadlinesControlOfControlDocumentsReport_DocumentGroups.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[№ п/п]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="60" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[№ документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="202" y="0" width="84" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FreeSerif" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Корреспондент/ Подписант/Заявитель]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="0" width="160" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Содержание документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="596" y="0" width="120" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Поручение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="366" y="0" width="70" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Просрочено (в днях)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="0" width="56" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Плановая дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="56" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Фактическая дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="0" width="80" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Контролер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="716" y="0" width="86" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ответственный исполнитель]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="30" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}+"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" mode="Transparent" x="30" y="0" width="60" height="30" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_num}==null?"":$F{reg_num})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="366" y="0" width="70" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdue}.equals(Boolean.FALSE)
+    ? ""
+    : $F{dead_line} == null
+        ? ""
+        : $F{troff_check_date} == null
+            ? String.valueOf(
+                                com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance()
+                                .diff($F{dead_line}, $P{onDate})
+                            ).equals("0")
+                                ? ""
+                                : String.valueOf(
+                                                    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance()
+                                                    .diff($F{dead_line}, $P{onDate})
+                                                )
+            : String.valueOf(
+                                com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance()
+                                .diff($F{dead_line}, $F{troff_check_date})).equals("0")
+                                    ? ""
+                                    : String.valueOf(
+                                                        com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance()
+                                                        .diff($F{dead_line}, $F{troff_check_date})
+                                                    )]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="436" y="0" width="160" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{short_desk}==null?"":$F{short_desk})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="202" y="0" width="84" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{corr}==null?"":$F{corr})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="30" y="30" width="60" height="10" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{date_reg}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{date_reg}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="90" y="0" width="56" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{dead_line}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{dead_line}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="146" y="0" width="56" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{troff_check_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{troff_check_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="286" y="0" width="80" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{controler_name} != null ? $F{controler_name} : "") +
+(($F{controler_pos} != null && !"".equals($F{controler_pos}.trim())) ?
+                            ($F{controler_name} != null ? ", " + $F{controler_pos} : $F{controler_pos})
+                           : "") +
+(($F{controler_phone} != null && !"".equals($F{controler_phone}.trim())) ?
+                            (($F{controler_name} != null || $F{controler_pos} != null) ?  ", " + $F{controler_phone} : $F{controler_phone})
+                             : "")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="596" y="0" width="206" height="40" isPrintInFirstWholeBand="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport runToBottom="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="206" height="40"/>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"deadlinesControlOfControlDocumentsReport_resol1.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="802" height="0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+			</frame>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

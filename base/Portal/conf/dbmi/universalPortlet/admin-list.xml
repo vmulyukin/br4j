@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+			SELECT DISTINCT p.full_name, p.email, d.value_eng
+			FROM person_role r
+			JOIN person p ON r.person_id=p.person_id
+			LEFT JOIN values_list d ON p.value_id=d.value_id
+			WHERE r.role_code='A' or r.role_code = 'E'
+         </sql>
+         <parameters/>
+     </query>
+     <query lang="ru">
+         <sql>
+			SELECT DISTINCT p.full_name, p.email, d.value_rus
+			FROM person_role r
+			JOIN person p ON r.person_id=p.person_id
+			LEFT JOIN values_list d ON p.value_id=d.value_id
+			WHERE r.role_code='A' or r.role_code = 'E'
+         </sql>
+         <parameters/>
+     </query>
+     <table title="List of administrators" pagesize="20">
+	     <column-description name="FULL_NAME" display-name="User name" is-sortable="true"/>
+	     <column-description name="EMAIL" display-name="E-mail" is-sortable="false" link="mailto:{0}?subject=CBMI user request"/>
+	     <column-description name="VALUE_ENG" display-name="Department" is-sortable="true"/>
+     </table>
+     <table lang="ru" title="Список ответственных сотрудников" pagesize="20">
+	     <column-description name="FULL_NAME" display-name="Имя администратора" is-sortable="true"/>
+	     <column-description name="EMAIL" display-name="Адрес" is-sortable="false" link="mailto:{0}?subject=CBMI user request"/>
+	     <column-description name="VALUE_RUS" display-name="Подразделение" is-sortable="true"/>
+     </table>
+</universal-portlet>

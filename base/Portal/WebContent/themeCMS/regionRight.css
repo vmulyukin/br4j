@@ -1,0 +1,114 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+#regionRight {
+	background-color: #ffffff;
+	width: 100%;
+}
+
+.regionRight-left {
+	border-left: 1px dotted #405E95;
+	background-color: #ffffff;
+	color: #ffffff;
+	width: 5px;
+}
+
+.regionRight-content {
+	background-color: #ffffff;
+}
+
+/**************************
+* HTML Elements
+***************************/
+div#regionRight a {
+	color: #405E95;
+	text-decoration: none;
+	vertical-alignment: middle;
+}
+
+div#regionRight .searchPortlet-topLeft {
+	background: transparent url(images/area/blueTopLeftCorner.gif) no-repeat right;
+}
+
+div#regionRight .searchPortlet-left {
+	width: 8px;	
+	background: transparent url(images/area/blueLeftSide.gif) repeat-y right;
+}
+
+div#regionRight .searchPortlet-bottomLeft {
+	background: transparent url(images/area/blueBottomLeftCorner.gif) no-repeat right top;
+}
+
+div#regionRight .searchPortlet-top {
+	height: 8px;	
+	background: transparent url(images/area/blueTopSide.gif) repeat-x;
+}
+
+div#regionRight .searchPortlet-content {
+	background-color: #6982b2;
+	color: #ffffff;
+}
+
+div#regionRight .searchPortlet-content table.findSelector td {
+	color: #ffffff;
+} 
+
+div#regionRight .searchPortlet-bottom {
+	height: 20px;	
+	background: transparent url(images/area/blueBottomSide.gif) repeat-x;
+}
+
+div#regionRight .searchPortlet-topRight {
+	background: transparent url(images/area/blueTopRightCorner.gif) no-repeat left;
+}
+
+div#regionRight .searchPortlet-right {
+	width: 8px;	
+	background: transparent url(images/area/blueRightSide.gif) repeat-y left;
+}
+
+div#regionRight .searchPortlet-bottomRight {
+	background: transparent url(images/area/blueBottomRightCorner.gif) no-repeat left top;
+}
+
+div#regionRight div.buttonPanel ul {
+	float: left;
+	padding:0 2px 0;
+}
+
+div#regionRight div.buttonPanel li {
+	background:url(./images/BTN_white.gif) no-repeat 0px 0px; 
+}
+
+div#regionRight div.buttonPanel a {
+	color: #405E95 !important;
+	min-width: 60px;
+	text-align: center; 
+	background:url(./images/BTN_white.gif)   no-repeat right -34px;    
+}
+
+div#regionRight div.buttonPanel li.select {
+	background:url(./images/BTN_white.gif) no-repeat 0px -17px;   
+}
+ 
+div#regionRight div.buttonPanel a.select {
+	background:url(./images/BTN_white.gif) no-repeat  100% -51px;
+}       
+
+div#regionRight table.minisearch td.left {
+	padding-right:8px;
+	vertical-align:middle;
+}

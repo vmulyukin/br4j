@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="deadlinesControlOfControlDocumentsReport_addresses" pageWidth="79" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="79" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.3579476910000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="card_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:/java/JBossReferent-APO/UserPortlets/WebContent/jasper/src/"]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select
+CASE
+WHEN c.template_id=224 THEN   coalesce(av_sender_fname.string_value, av_sender_sname.string_value, av_sender_name.string_value, '') ||  ( case when sign.string_value IS not null  then ', ' || sign.string_value else '' end) || ( case when nom.string_value IS not null  then ', ' || nom.string_value else '' end)|| ( case when reg_date.date_value IS not null  then ', ' || to_char(reg_date.date_value + interval '$P!{tz_hour} hour', 'DD.MM.YYYY') end)
+WHEN c.template_id in (784,764,1226) THEN  ( case when signatory.string_value IS not null  then  signatory.string_value end)
+WHEN c.template_id =864 THEN  ( case when f.string_value IS not null  then  f.string_value else '' end) || ( case when i.string_value IS not null  then  ' ' || i.string_value else '' end) || ( case when o.string_value IS not null  then  ' ' || o.string_value else '' end)
+end as str,
+av_author_req.number_value as pid
+
+from card c
+left outer join attribute_value av_sender on (av_sender.card_id=c.card_id and av_sender.attribute_code='JBR_INFD_SENDER')
+LEFT OUTER JOIN attribute_value av_sender_fname on (av_sender_fname.card_id = av_sender.number_value and av_sender_fname.attribute_code = 'JBR_DORG_FULLNAME')
+LEFT OUTER JOIN attribute_value av_sender_sname on (av_sender_sname.card_id = av_sender.number_value and av_sender_sname.attribute_code = 'JBR_DORG_SHORTNAME')
+LEFT OUTER JOIN attribute_value av_sender_name on (av_sender_name.card_id = av_sender.number_value and av_sender_name.attribute_code = 'NAME')
+
+left outer join attribute_value av_sign on (av_sign.card_id=c.card_id and av_sign.attribute_code='JBR_INFD_SIGN_EXT')
+left outer join attribute_value sign on (sign.card_id=av_sign.number_value and sign.attribute_code='JBR_PERS_SNAME_NM')
+left outer join attribute_value nom on (nom.card_id=c.card_id and nom.attribute_code='JBR_REGD_NUMOUT')
+left outer join attribute_value reg_date on (reg_date.card_id=c.card_id and reg_date.attribute_code='JBR_REGD_DATEOUT')
+
+left outer join attribute_value av_signatory on (av_signatory.card_id=c.card_id and av_signatory.attribute_code='JBR_INFD_SIGNATORY')
+left outer join person p_signatory on (p_signatory.person_id=av_signatory.number_value)
+left outer join attribute_value signatory on (signatory.card_id=p_signatory.card_id and signatory.attribute_code='JBR_PERS_SNAME_NM')
+
+left join attribute_value av_author_req on (av_author_req.card_id = c.card_id and av_author_req.attribute_code = 'JBR_OG_REQ_AUTHOR')
+left outer join attribute_value f on ( f.card_id=av_author_req.number_value and f.attribute_code='ADMIN_274992')
+left outer join attribute_value i on ( i.card_id=av_author_req.number_value and i.attribute_code='ADMIN_281034')
+left outer join attribute_value o on ( o.card_id=av_author_req.number_value and o.attribute_code='ADMIN_281035')
+
+where c.card_id=$P{card_id}]]>
+	</queryString>
+	<field name="str" class="java.lang.String"/>
+	<field name="pid" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="79" height="15" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{str} != null ? $F{str} : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

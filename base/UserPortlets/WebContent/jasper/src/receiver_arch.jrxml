@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming" pageWidth="455" pageHeight="782" whenNoDataType="NoDataSection" columnWidth="455" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="table_header"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM (
+select
+	av_name.string_value as org_name,
+	array_to_string(array_agg(COALESCE(av_pcard.string_value||' ','') || COALESCE(substring(av_nname.string_value from 1 for 1)||'. ','') || COALESCE(substring(av_pname.string_value from 1 for 1)||'.','')), ', ') as sname
+
+from card c_out
+--Организация
+left join attribute_value av_org on (av_org.card_id=c_out.card_id and av_org.attribute_code='JBR_RECEIVER_EXT')
+	left join attribute_value av_name on (av_name.card_id=av_org.number_value and av_name.attribute_code='NAME')
+--ФИО адресата
+left join attribute_value av_person on (av_person.card_id=c_out.card_id and av_person.attribute_code='JBR_RECEIVER_EXT_USR')
+
+left join attribute_value av_pcard on (av_pcard.card_id=av_person.number_value AND av_pcard.attribute_code='JBR_PERS_SNAME' and av_org.number_value in (select tempo.number_value
+from attribute_value tempo
+where tempo.card_id=av_person.number_value and tempo.attribute_code='JBR_PERS_ORG' ) )
+
+left join attribute_value av_nname on av_pcard.card_id = av_nname.card_id and av_nname.attribute_code='JBR_PERS_NAME'
+left join attribute_value av_pname on av_pcard.card_id = av_pname.card_id and av_pname.attribute_code='JBR_PERS_MNAME'
+
+WHERE
+c_out.card_id = $P{card_id} group by org_name
+
+UNION
+select
+	text('') as org_name,
+	array_to_string(array_agg(COALESCE(av_pcard.string_value||' ','') || COALESCE(substring(av_nname.string_value from 1 for 1)||'. ','') || COALESCE(substring(av_pname.string_value from 1 for 1)||'.','')), ', ') as sname
+	/*av_pcard.string_value,
+	av_person.number_value,
+	av_org.number_value*/
+
+from card c_out
+--ФИО адресата
+left join attribute_value av_person on (av_person.card_id=c_out.card_id and av_person.attribute_code='JBR_RECEIVER_EXT_USR')
+left join attribute_value av_pcard on
+av_pcard.card_id=av_person.number_value AND av_pcard.attribute_code='JBR_PERS_SNAME'
+left join attribute_value av_nname on av_pcard.card_id = av_nname.card_id and av_nname.attribute_code='JBR_PERS_NAME'
+left join attribute_value av_pname on av_pcard.card_id = av_pname.card_id and av_pname.attribute_code='JBR_PERS_MNAME'
+left join attribute_value av_org on
+av_org.card_id=av_person.number_value AND av_org.attribute_code='JBR_PERS_ORG' /*and */
+
+
+WHERE
+c_out.card_id =  $P{card_id} --group by org_name
+and
+av_org.number_value not in (select tempo.number_value
+from attribute_value tempo
+where tempo.card_id=av_person.number_value and tempo.attribute_code='JBR_RECEIVER_EXT_USR' )
+) as dd
+where (sname is not null and trim(sname) != '') or (org_name is not null and trim(org_name) != '')
+ORDER BY org_name DESC]]>
+	</queryString>
+	<field name="org_name" class="java.lang.String"/>
+	<field name="sname" class="java.lang.String"/>
+	<title>
+		<band height="30">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="227" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Организация]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="227" y="0" width="228" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ФИО адресата]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="455" height="30"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="dejavu" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="227" height="30" isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{org_name}==null?"":$F{org_name})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="227" y="0" width="228" height="30"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[($F{sname}==null?"":$F{sname})]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

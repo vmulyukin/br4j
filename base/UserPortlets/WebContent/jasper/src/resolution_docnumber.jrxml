@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resolution_docnumber" columnCount="3" printOrder="Horizontal" pageWidth="330" pageHeight="842" columnWidth="110" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	av_ddoc.date_value + interval '$P!{tz_hour} hour' as ddoc,
+	av_nout.string_value as ndoc
+from
+	card c_prnt -- Родительская карточка: Входящий или Резолюция
+
+	left outer join -- Дата документа
+	attribute_value av_ddoc on (av_ddoc.card_id = c_prnt.card_id and av_ddoc.attribute_code = 'JBR_REGD_DATEREG')
+left outer join -- Номер документа - Номер исходящего
+	attribute_value av_nout on (av_nout.card_id = c_prnt.card_id and av_nout.attribute_code = 'JBR_REGD_REGNUM')
+where c_prnt.card_id=$P{card_id}]]>
+	</queryString>
+	<field name="ndoc" class="java.lang.String"/>
+	<field name="ddoc" class="java.util.Date"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement style="text" x="0" y="0" width="330" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[ ($F{ndoc} != null ? ("Документ № "+$F{ndoc}) : "") +" "+
+($F{ddoc} != null ? "от "+(new SimpleDateFormat("dd.MM.yyyy")).format($F{ddoc}) : "")
+                      ]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

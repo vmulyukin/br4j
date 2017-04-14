@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="buildImportTemplates" name="Build import templates">
+	<property file="${Portal.location}/conf/dbmi/objectids.properties" />
+	<property file="${Portal.location}/conf/dbmi/medo/predefined.properties" />
+	<property file="./templates/import_template_codes.properties" />
+	<property file="./templates/import_template_types.properties" />
+	<property file="./templates/source_template_codes.properties" />
+	<property file="./templates/source_template_types.properties" />
+	<property file="./templates/dictionary.properties" />
+
+	<target name="buildImportTemplates">
+		<copy file="./templates/import_template.example.xsl" tofile="${Portal.location}/conf/dbmi/medo/import_template.xsl" overwrite="true">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<copy file="./templates/dictionary.example.xsl" tofile="${Portal.location}/conf/dbmi/medo/dictionary.xsl" overwrite="true">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<copy file="./templates/source_template.example.xsl" tofile="${Portal.location}/conf/dbmi/medo/source_template.xsl" overwrite="true">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+	</target>
+</project>

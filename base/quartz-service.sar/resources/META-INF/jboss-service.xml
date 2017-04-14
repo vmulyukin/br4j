@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<server>
+
+  <mbean code="org.quartz.ee.jmx.jboss.QuartzService"
+      name="user:service=QuartzService,name=QuartzService">
+
+    <!--
+      JNDI name for locating Scheduler, "Quartz" is default.
+    -->
+    <attribute name="JndiName">Quartz</attribute>
+
+  </mbean>
+  
+  <mbean code="com.aplana.quartz.sheduler.SchedulerAutostartBean" 
+		 name="jboss:type=dbmi,name=scheduler_auto"
+		 jndiName="ejb/taskMgr/dbmiSchedulerAutostart">
+			<resource-ref>
+				<res-ref-name>jdbc/DBMIDS</res-ref-name>
+				<jndi-name>java:jdbc/DBMIDS</jndi-name>
+			</resource-ref>
+	</mbean>
+
+	<mbean code="com.aplana.quartz.sheduler.JbossShutdownInterceptor"
+			name="jboss:type=dbmi,name=jboss_shutdown_iterceptor"
+			jndiName="ejb/taskMgr/dbmiShutdownInterceptor">
+
+		<resource-ref>
+			<res-ref-name>jdbc/DBMIDS</res-ref-name>
+			<jndi-name>java:jdbc/DBMIDS</jndi-name>
+		</resource-ref>
+	</mbean>
+
+	<mbean code="org.jboss.varia.scheduler.Scheduler" name="jboss.init:service=SchedulerQuartzInit">
+		<!--
+    	    Wait until the DataSources deployed and Quartz service started. This option
+			ensures correct  deployment order at JBoss startup.
+    	-->
+    	<depends>user:service=QuartzService,name=QuartzService</depends>
+		<depends>jboss.jca:service=DataSourceBinding,name=PortalDS</depends>
+		
+		<attribute name="StartAtStartup">true</attribute>
+		<attribute name="SchedulableMBean">jboss:type=dbmi,name=scheduler_auto</attribute>
+		<attribute name="SchedulableMBeanMethod">perform( DATE, REPETITIONS)</attribute>
+		<attribute name="InitialStartDate">NOW</attribute>
+		<attribute name="SchedulePeriod">600000</attribute>
+		<attribute name="InitialRepetitions">1</attribute>
+	</mbean>
+	
+</server>

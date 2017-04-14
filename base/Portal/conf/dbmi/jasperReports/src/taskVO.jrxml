@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resolution" pageWidth="555" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[Long.valueOf(14141)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\EclipseJ2ee\\pr-indigo-apo-box\\JBossReferent-APO\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+            av_author.string_value as author, --автор
+            avt.string_value as textr,  --текст резолюции
+            avdp.date_value as dateofsigning, --дата подписания
+            avtd.date_value as targetdate, --плановый срок
+            avi.string_value as performer, --исполнитель
+            avsi.string_value as collaborators --соисполнители
+            FROM attribute_value av
+            LEFT JOIN attribute_value av_author on av.number_value=av_author.card_id  and av_author.attribute_code='JBR_DMSI_ER_AUTH' --автор
+            LEFT JOIN attribute_value avt on av.number_value=avt.card_id  and avt.attribute_code='JBR_DMSI_ER_TEXT' --текст резолюции
+            LEFT JOIN attribute_value avdp on av.number_value=avdp.card_id  and avdp.attribute_code='JBR_DMSI_ER_CRDATE' --дата подписания
+            LEFT JOIN attribute_value avtd on av.number_value=avtd.card_id  and avtd.attribute_code='JBR_DMSI_ER_PL_DUEDT' --плановый срок
+            LEFT JOIN attribute_value avi on av.number_value=avi.card_id  and avi.attribute_code='JBR_DMSI_ER_EXEC' --исполнитель
+            LEFT JOIN attribute_value avsi on av.number_value=avsi.card_id  and avsi.attribute_code='JBR_DMSI_ER_COEXEC' --соисполнители
+            WHERE av.card_id=$P{card_id} and
+            av.attribute_code='JBR_EXT_RESOL']]>
+	</queryString>
+	<field name="author" class="java.lang.String"/>
+	<field name="textr" class="java.lang.String"/>
+	<field name="dateofsigning" class="java.util.Date"/>
+	<field name="targetdate" class="java.util.Date"/>
+	<field name="performer" class="java.lang.String"/>
+	<field name="collaborators" class="java.lang.String"/>
+	<title>
+		<band height="15">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="515" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Входящие поручения]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="106" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="10" width="197" height="12" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Автор резолюции:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="22" width="502" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{author}!=null?$F{author}:""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="34" width="197" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Резолюция:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="46" width="450" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textr}!=null?$F{textr}:""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="58" width="425" height="12"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["от: "+($F{dateofsigning} != null
+          				? $F{dateofsigning} : ""
+          			)+", Срок (Плановая дата): "+($F{targetdate} != null
+          				? $F{targetdate} : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="71" width="197" height="12" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Исполнители:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="83" width="502" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{performer}!=null?$F{performer}:"") +
+($F{performer}!=null && $F{collaborators}!=null?", ":"")+
+($F{collaborators}!=null?$F{collaborators}:"")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

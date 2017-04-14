@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SFA_administative_docs_help" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" lineSpacing="Single" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" lineSpacing="1_1_2" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+	<parameter name="from_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[java.lang.Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="developer" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+	case when vl.string_value is not null then vl.string_value else 'Без типа' end as document_type,
+	count(*) as doc_number
+from card c
+left outer join attribute_value regdate on c.card_id = regdate.card_id and regdate.attribute_code = 'JBR_REGD_DATEREG'
+left outer join attribute_value doctype on c.card_id = doctype.card_id and doctype.attribute_code = 'JBR_INFD_TYPEDOC'
+left outer join --values_list vl on doctype.value_id = vl.value_id
+				attriubte_value vl on (vl.card_id = doctype.number_value and vl.attribute_code = 'NAME' )
+left outer join attribute_value dev on c.card_id = dev.card_id and dev.attribute_code = 'ADMIN_6079618' --dep card_id
+where
+	template_id = 764
+	and regdate.date_value > $P{from_date}
+	and regdate.date_value < $P{to_date}
+	and
+	(
+		$P{document_type_ISNULL} or $P{document_type} is null or doctype.value_id in ($P!{document_type})
+	)
+	and dev.number_value = $P{developer}
+group by vl.string_value
+order by document_type]]>
+	</queryString>
+	<field name="document_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doc_number" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="426" height="27"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["       "+$F{document_type}.replace("\n","")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="426" y="0" width="129" height="27"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

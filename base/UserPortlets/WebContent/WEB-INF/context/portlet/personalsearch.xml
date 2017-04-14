@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../../dtd/spring-beans.dtd">
+<beans>
+
+	<!-- Reused Portlet -->
+
+
+
+	<bean id="searchPortlet" class="com.aplana.dbmi.search.SearchPortlet">
+		<property name="sessionForm" value="true"/>	
+		<property name="commandName" value="searchBean"/>
+		<property name="commandClass" value="com.aplana.dbmi.model.web.WebSearchBean"/>
+		<property name="formView" value="search" />
+        <property name="successView" value="search" />		
+	</bean>
+	
+	<bean id="personalSearchPortlet" class="com.aplana.dbmi.search.PersonalSearchPortlet">
+		<property name="sessionForm" value="false"/>	
+		<property name="commandName" value="personalSearchBean"/>
+		<property name="commandClass" value="com.aplana.dbmi.search.WebPersonalSearchBean"/>
+		<property name="formView" value="personalSearch" />
+        <property name="successView" value="personalSearch" />		
+	</bean>
+	
+	
+	
+	
+
+
+	<!-- Handler Mapping -->
+
+ 	<bean id="portletModeParameterHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
+            <property name="order" value="1"/>	
+     		<property name="parameterName" value="portlet_action"/>
+
+		<property name="portletModeParameterMap">
+			<map>
+				<entry key="view">
+						<map>
+								<entry key="search" value-ref="searchPortlet" />														
+								<entry key="personalSearch" value-ref="personalSearchPortlet"/>								
+						</map>				
+				</entry>
+			</map>
+		</property>
+	</bean>  
+	
+	<bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="order" value="2"/>    	
+		<property name="portletModeMap">
+			<map>
+				<entry key="view"><ref bean="personalSearchPortlet"/></entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<!-- Exceptions Handler -->
+
+	<bean id="defaultExceptionHandler" parent="defaultExceptionHandlerTemplate"/>
+
+</beans>

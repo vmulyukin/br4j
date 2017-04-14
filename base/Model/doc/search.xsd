@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://aplana.com/dbmi/search" 
+	xmlns:tns="http://aplana.com/dbmi/search"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	elementFormDefault="qualified" 
+	attributeFormDefault="unqualified">
+	<xs:simpleType name="TLanguageCode">
+		<xs:annotation>
+			<xs:documentation>Language codes</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+  			<xs:enumeration value="ru">
+				<xs:annotation>
+					<xs:documentation>Russian</xs:documentation>
+				</xs:annotation>  				
+  			</xs:enumeration>
+			<xs:enumeration value="en">
+				<xs:annotation>
+					<xs:documentation>English</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="TLocalizedName">
+		<xs:annotation>
+			<xs:documentation>Represents localized name of search query.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="tns:TLanguageCode" use="required">
+					<xs:annotation>
+						<xs:documentation>Language code</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="TMaterialType">
+		<xs:annotation>
+			<xs:documentation>Represents allowed types of material attached to card.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="none">
+				<xs:annotation>
+					<xs:documentation>no material</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="file">
+				<xs:annotation>
+					<xs:documentation>file</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="url">
+				<xs:annotation>
+					<xs:documentation>url of external resource</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TAttributeType">
+		<xs:annotation>
+			<xs:documentation>Supported types of card attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="string">
+				<xs:annotation>
+					<xs:documentation>StringAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="text">
+				<xs:annotation>
+					<xs:documentation>TextAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="number">
+				<xs:annotation>
+					<xs:documentation>IntegerAttribute</xs:documentation>
+				</xs:annotation>				
+			</xs:enumeration>
+			<xs:enumeration value="date">
+				<xs:annotation>
+					<xs:documentation>DateAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="list">
+				<xs:annotation>
+					<xs:documentation>ListAttribute</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tree">
+				<xs:annotation>
+					<xs:documentation>TreeAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="user">
+				<xs:annotation>
+					<xs:documentation>PersonAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="link">
+				<xs:annotation>
+					<xs:documentation>CardLinkAttribute</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TIntervalBorder">
+		<xs:annotation>
+			<xs:documentation>Defines borders for values interval.
+			Could be used for date and number attributes</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="start">
+				<xs:annotation>
+					<xs:documentation>used to define minimal allowed value</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+			<xs:enumeration value="end">
+				<xs:annotation>
+					<xs:documentation>used to define maximal allowed value</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TVariable">
+		<xs:annotation>
+			<xs:documentation>Variables allowed in search definition
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="current">
+				<xs:annotation>
+					<xs:documentation>Could be used for Date and Person attributes only.
+					Represents current datetime and user who performs search respectively.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>	
+	</xs:simpleType>
+	<xs:simpleType name="TSortOrder">
+		<xs:annotation>
+			<xs:documentation>Supported sorting orders</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="asc">
+				<xs:annotation>
+					<xs:documentation>ascending</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="desc">
+				<xs:annotation>
+					<xs:documentation>descending</xs:documentation>
+				</xs:annotation>			
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>	
+	<xs:complexType name="TAttributeDefinition">
+		<xs:sequence>
+			<xs:element name="value" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						For string and text attributes presense of this tag means that
+						only these attributes should be used for keyword search. If no
+						string or text attributes is defined in search definition 
+						then keyword will be searched in all string and text 
+						attributes of all cards.
+						For other types of attributes this tag is used to define
+						constraint on allowed values. For date and number attributes
+						interval of allowed values should be specified. For remaining attributes
+						collection of allowed values should be specified.
+					</xs:documentation>
+				</xs:annotation>			
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type" type="tns:TIntervalBorder">
+								<xs:annotation>
+									<xs:documentation>
+										Used to specify interval of allowed values.
+										Must be used for date and number attributes only. 
+									</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="var" type="tns:TVariable">
+								<xs:annotation>
+									<xs:documentation>
+										Specify name of variable to be used as desired attriute value.
+										If used for date attribute then content of value tag itself
+										should contain desired days offset in form of (+|-){1}[0-9]+. 
+									</xs:documentation>
+								</xs:annotation>				
+							</xs:attribute>								
+						</xs:extension>
+					</xs:simpleContent>														
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>identifier of attribute. Could be used string value
+				of ATTRIBUTE_CODE column in ATTRIBUTE table as well as one of constants
+				specified in objectids.properties file
+				</xs:documentation>
+			</xs:annotation>			 		
+		</xs:attribute>
+		<xs:attribute name="type" use="required" type="tns:TAttributeType">
+			<xs:annotation>
+				<xs:documentation>type of attribute
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>		
+	</xs:complexType>
+	<xs:complexType name="TColumnDefinition">
+		<xs:attribute name="id" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>String identifier of attribute shown in this column.
+				Following pseudo-attributes is allowed: _STATE, _TEMPLATE</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="width" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>width of column</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="sort" type="tns:TSortOrder">
+			<xs:annotation>
+				<xs:documentation>desired sorting mode for this column</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TSearchDefinition">
+		<xs:sequence >
+			<xs:element minOccurs="0" maxOccurs="2" name="name"  type="tns:TLocalizedName">
+				<xs:annotation>
+					<xs:documentation>Defines name of search query. This name will be shown
+						as header of table containin search results in GUI. 						
+					</xs:documentation>
+				</xs:annotation>			
+			</xs:element>			
+			<xs:element minOccurs="0" maxOccurs="1" name="words" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Defines search keyword. If search is performed by
+					cards identifiers (@byCode = true) then keyword should contains
+					list of numeric card identifiers delimited by comma or semicolon						
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="template" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>If present then only cards created by given
+						set of templates will be included in search result.
+					</xs:documentation>
+				</xs:annotation>			
+			</xs:element>			
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="status" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Defines set of card statuses allowed in search result.
+						If missed then cards will not be filtered by statuses.
+					</xs:documentation>
+				</xs:annotation>				
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="3" name="material" type="tns:TMaterialType">
+				<xs:annotation>
+					<xs:documentation>Defines material types allowed in search result.						 
+						For example it is possible to restrict search result 
+						to set of cards which have URL materials only.
+						If missed then cards will not be filtered by material type.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+ 			<xs:element minOccurs="0" maxOccurs="unbounded" name="attribute" type="tns:TAttributeDefinition">
+				<xs:annotation>
+					<xs:documentation>
+						defines constraints on attribute values 
+					</xs:documentation>
+				</xs:annotation>
+ 			</xs:element>
+ 			<xs:element minOccurs="0" maxOccurs="unbounded" name="column" type="tns:TColumnDefinition">
+				<xs:annotation>
+					<xs:documentation>defines set of columns to be included in search result.
+						If no columns was specified and card search is restricted to single template
+						then set of columns specified as 'show in search result' for current template
+						will be used.
+						If no columns was specified and card search is not restricted to single template
+						then following hardcoded set of columns will be used: 
+						name, description, region, creation date, template.
+					</xs:documentation>
+				</xs:annotation>
+ 			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="byCode" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>Defines if search by cards identifiers needs to be performed
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>		
+		<xs:attribute name="byAttr" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>Defines if search by attribute values needs to be performed
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="byText" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>Defines if full-text search needs to be performed
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="search" type="tns:TSearchDefinition">
+		<xs:annotation>
+			<xs:documentation>XML representation of Search object</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

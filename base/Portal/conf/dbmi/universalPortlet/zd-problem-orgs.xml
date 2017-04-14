@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+	<query>
+		<sql>
+			select file_av.number_value as CARD_ID, created_av.date_value as CREATED, material_av.string_value as LINK from card c
+			join attribute_value created_av on (c.template_id = 1600 and created_av.card_id = c.card_id and created_av.attribute_code = 'CREATED')
+			join attribute_value file_av on (file_av.card_id = c.card_id  and file_av.attribute_code = 'DOCLINKS')
+			join attribute_value material_av on (material_av.card_id = file_av.number_value and material_av.attribute_code = 'MATERIAL_NAME')
+			join attribute_value stat_type_av on (stat_type_av.card_id = c.card_id and stat_type_av.attribute_code = 'JBR_STAT_REPORT_TYPE' and stat_type_av.value_id = 9691)
+			WHERE created_av.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC') and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			ORDER BY created_av.date_value DESC
+		</sql>
+
+		<parameters>
+			<param name="dateStart" dispaly-name="Start date" type="calendar" />
+			<param name="dateEnd" dispaly-name="End date" type="calendar" />
+		</parameters>
+
+	</query>
+
+	<query lang="ru">
+		<sql>
+			select file_av.number_value as CARD_ID, created_av.date_value as CREATED, material_av.string_value as LINK from card c
+			join attribute_value created_av on (c.template_id = 1600 and created_av.card_id = c.card_id and created_av.attribute_code = 'CREATED')
+			join attribute_value file_av on (file_av.card_id = c.card_id  and file_av.attribute_code = 'DOCLINKS')
+			join attribute_value material_av on (material_av.card_id = file_av.number_value and material_av.attribute_code = 'MATERIAL_NAME')
+			join attribute_value stat_type_av on (stat_type_av.card_id = c.card_id and stat_type_av.attribute_code = 'JBR_STAT_REPORT_TYPE' and stat_type_av.value_id = 9691)
+			WHERE created_av.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC') and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			ORDER BY created_av.date_value DESC
+		</sql>
+
+		<parameters>
+			<param name="dateStart" dispaly-name="Дата начала" type="calendar" />
+			<param name="dateEnd" dispaly-name="Дата окончания" type="calendar" />
+		</parameters>
+
+	</query>
+
+	 <table title="Documents Statistic" pagesize="20">
+		 <column-description name="CARD_ID" display-name="ID"/>
+		 <column-description name="CREATED" display-name="Created" is-sortable="true"/>
+		 <column-description name="LINK" display-name="Report" link="/DBMI-UserPortlets/MaterialDownloadServlet?MI_CARD_ID_FIELD={0}"/>
+     </table>
+
+     <table lang="ru" title="Статистика по работе с системой в подразделениях" pagesize="20">
+		 <column-description name="CARD_ID" display-name="ID"/>
+		 <column-description name="CREATED" display-name="Дата создания" is-sortable="true"/>
+		 <column-description name="LINK" display-name="Отчет" link="/DBMI-UserPortlets/MaterialDownloadServlet?MI_CARD_ID_FIELD={0}"/>
+     </table>
+</universal-portlet>

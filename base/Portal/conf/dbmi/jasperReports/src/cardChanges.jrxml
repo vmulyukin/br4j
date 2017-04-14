@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="multiIncomingForm" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="561" leftMargin="17" rightMargin="17" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="13" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="path" class="java.lang.String"/>
+	<parameter name="cardId" class="java.lang.Long"/>
+	<parameter name="versionId" class="java.lang.Long"/>
+	<parameter name="actor" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="action" class="java.lang.String"/>
+	<parameter name="attrExist" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[WITH
+				next_version as
+				(
+					select version_id, version_date
+					from card_version
+					where card_id = $P{cardId}
+						and version_date > (select version_date from card_version where card_id = $P{cardId} and version_id = $P{versionId})
+						order by version_date asc limit 1
+				),
+				max_version as
+				(
+					select max_cv.version_id, max_cv.version_date
+					from card_version max_cv
+					where card_id = $P{cardId}
+					and version_date = (select max(version_date) from card_version where card_id = max_cv.card_id)
+					order by max_cv.version_date, max_cv.action_log_id desc limit 1 -- если на одно и то же время несколько версий - берем по макс. action_log_id.
+				),
+				current_version as
+				(
+					select version_id, version_date
+					from card_version
+					where card_id = $P{cardId}
+						and version_id = $P{versionId}
+				)
+				select distinct attr_exist.attr_code as attr_code,
+					at.attr_name_rus as attr_name,
+					at.data_type as attr_type
+				from	(	-- возвращает коды атрибутов которые есть в данной ревизии (или в текущей карточки если ревизия больше последней) и предедущей ревизии
+						select	avh_old.attribute_code as attr_code
+						from	attribute_value_hist avh_old
+						where	avh_old.card_id = $P{cardId}
+							and avh_old.version_id = $P{versionId}
+						union
+						select	avh_new.attribute_code as attr_code
+						from	attribute_value_hist avh_new
+						where	avh_new.card_id = $P{cardId}
+							and avh_new.version_id = (select version_id from next_version)
+							and (select version_date from max_version) > (select version_date from current_version)
+						union
+						select	av.attribute_code as attr_code
+						from 	attribute_value av
+						where	(select version_date from max_version) <= (select version_date from current_version)
+							and av.card_id = $P{cardId}
+					) as attr_exist
+				inner join
+					card cr on (cr.card_id = $P{cardId})
+				inner join
+					attribute at on (at.attribute_code = attr_exist.attr_code and at.attribute_code in ($P!{attrExist}))
+				inner join
+					template_attribute ta on (ta.template_id = cr.template_id and ta.attribute_code = at.attribute_code)
+				where 	-- фильтрация по видимости и допустимости типа
+					at.data_type <> 'Y'
+					and -- пропускаем атрибуты у которых в старой и новой версии разные значения
+					(
+					    -- случай когда новое значение берется из attribute_value_hist (avh_new)
+					    (
+						(select version_date from max_version) > (select version_date from current_version)
+						-- пересечение
+						and
+						(select count(*)
+						 from attribute_value_hist avh_old, attribute_value_hist avh_new
+						 where avh_old.card_id = cr.card_id
+							and avh_old.version_id = $P{versionId}
+							and avh_old.attribute_code = at.attribute_code
+							and avh_new.card_id = cr.card_id and avh_new.version_id = (select version_id from next_version)
+							and avh_new.attribute_code = at.attribute_code
+							and ((avh_old.string_value is null and avh_new.string_value is null) or avh_old.string_value = avh_new.string_value)
+							and ((avh_old.number_value is null and avh_new.number_value is null) or avh_old.number_value = avh_new.number_value)
+							and ((avh_old.date_value is null and avh_new.date_value is null) or avh_old.date_value = avh_new.date_value)
+							and ((avh_old.value_id is null and avh_new.value_id is null) or avh_old.value_id = avh_new.value_id))
+						<>
+						-- объединение
+						(select count(*)
+						 from ( select avh_old.string_value, avh_old.number_value, avh_old.date_value, avh_old.value_id
+							from attribute_value_hist avh_old
+							where avh_old.card_id = cr.card_id
+								and avh_old.version_id = $P{versionId}
+								and avh_old.attribute_code = at.attribute_code
+							union
+							select avh_new.string_value, avh_new.number_value, avh_new.date_value, avh_new.value_id
+							from attribute_value_hist avh_new
+							where avh_new.card_id = cr.card_id and avh_new.version_id = (select version_id from next_version)
+								  and avh_new.attribute_code = at.attribute_code
+						     ) as avh_union
+						)
+					    )
+					    or
+					    -- случай когда новое значение берется из текущей карточки
+					    (
+						(select version_date from max_version) <= (select version_date from current_version)
+						and
+						(select count(*)
+						 from attribute_value_hist avh_old, attribute_value av_cur
+						 where avh_old.card_id = cr.card_id
+							and avh_old.version_id = $P{versionId}
+							and avh_old.attribute_code = at.attribute_code
+							and av_cur.card_id = cr.card_id and av_cur.attribute_code = at.attribute_code
+							and ((avh_old.string_value is null and av_cur.string_value is null) or avh_old.string_value = av_cur.string_value)
+							and ((avh_old.number_value is null and av_cur.number_value is null) or avh_old.number_value = av_cur.number_value)
+							and ((avh_old.date_value is null and av_cur.date_value is null) or avh_old.date_value = av_cur.date_value)
+							and ((avh_old.value_id is null and av_cur.value_id is null) or avh_old.value_id = av_cur.value_id))
+						<>
+						-- объединение
+						(select count(*)
+						 from ( select avh_old.string_value, avh_old.number_value, avh_old.date_value, avh_old.value_id
+							from attribute_value_hist avh_old
+							where avh_old.card_id = cr.card_id
+								and avh_old.version_id = $P{versionId}
+								and avh_old.attribute_code = at.attribute_code
+							union
+							select av_cur.string_value, av_cur.number_value, av_cur.date_value, av_cur.value_id
+							from attribute_value av_cur
+							where av_cur.card_id = cr.card_id and av_cur.attribute_code = at.attribute_code
+						     ) as avh_union
+						)
+					    )
+					)]]>
+	</queryString>
+	<field name="attr_name" class="java.lang.String"/>
+	<field name="attr_type" class="java.lang.String"/>
+	<field name="attr_code" class="java.lang.String"/>
+	<columnHeader>
+		<band height="25">
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="0" y="0" width="90" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ФИО]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="90" y="0" width="55" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата/
+время]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="145" y="0" width="80" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Операция]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="225" y="0" width="83" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Поле]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="308" y="0" width="126" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Старое значение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Transparent" x="434" y="0" width="127" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Новое значение]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="text" positionType="Float" mode="Transparent" x="0" y="0" width="561" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="90" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10" pdfFontName="Font name Times New Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{actor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="90" y="0" width="55" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10" pdfFontName="Font name Times New Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="145" y="0" width="80" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10" pdfFontName="Font name Times New Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{action}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="225" y="0" width="83" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10" pdfFontName="Font name Times New Roman" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{attr_name}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="0" width="126" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("STDIW".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="126" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesPrevValueSimple.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="434" y="0" width="127" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("STDIW".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="127" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesValueSimple.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="0" width="126" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("U".equals($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="126" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesPrevValuePersons.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="434" y="0" width="127" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("U".equals($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="127" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesValuePersons.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="0" width="126" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("CEF".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="126" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesPrevValueCards.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="434" y="0" width="127" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("CEF".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="127" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesValueCards.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="0" width="126" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("LH".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="126" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesPrevValueList.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="434" y="0" width="127" height="15">
+						<printWhenExpression><![CDATA[Boolean.valueOf("LH".contains($F{attr_type}))]]></printWhenExpression>
+					</reportElement>
+					<subreport>
+						<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="127" height="15" isPrintWhenDetailOverflows="true"/>
+						<subreportParameter name="cardId">
+							<subreportParameterExpression><![CDATA[$P{cardId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_code">
+							<subreportParameterExpression><![CDATA[$F{attr_code}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="versionId">
+							<subreportParameterExpression><![CDATA[$P{versionId}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="attr_type">
+							<subreportParameterExpression><![CDATA[$F{attr_type}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"cardChangesValueList.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

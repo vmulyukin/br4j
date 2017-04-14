@@ -1,0 +1,110 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@ taglib uri="/WEB-INF/lib/portal-layout.tld" prefix="p"%>
+<%@page import="java.util.ResourceBundle"%>
+<%
+	ResourceBundle headRb = ResourceBundle.getBundle("nls.dbmi", request.getLocale());
+%>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><%=headRb.getString("site.title")%></title>
+<p:headerContent />
+
+<script 
+	type="text/javascript" 
+	src="<%=request.getContextPath() + "/js/dojo/dojo.js"%>" 
+	djConfig="parseOnLoad: true, locale:'<%= request.getLocale().toString().toLowerCase().replace('_', '-')%>'">
+</script>
+<script 
+	type="text/javascript" 
+	src="<%=request.getContextPath() + "/js/jquery.js"%>">
+</script>
+<script 
+	type="text/javascript" 
+	src="<%=request.getContextPath() + "/js/opentip-jquery.js"%>">
+</script>
+<link href="<%=request.getContextPath() + "/theme/notif.css"%>" rel="stylesheet">
+<link href="<%=request.getContextPath() + "/theme/opentip.css"%>" rel="stylesheet">
+<link href="<%=request.getContextPath() + "/js/dojox/grid/enhanced/resources/EnhancedGrid_rtl.css"%>" rel="stylesheet">
+<link href="<%=request.getContextPath() + "/js/dojox/grid/enhanced/resources/tundraEnhancedGrid.css"%>" rel="stylesheet">
+<script type="text/javascript">
+function setButtonStyle(obj, state) {
+	obj.className = state;
+	var links=obj.getElementsByTagName('a');
+	if (links.length > 0) {
+		links[0].className = state;
+	} 
+}
+
+function downButton(obj) {
+	setButtonStyle(obj, 'select');
+}
+function upButton(obj) {
+	setButtonStyle(obj, '');
+}
+
+function overButton(obj) {
+	setButtonStyle(obj, 'hover'); 
+}
+
+function downBackBut(obj) {
+	setButtonStyle(obj, 'back_select'); 
+}
+function upBackButton(obj) {
+	setButtonStyle(obj, 'back');
+}
+function overBackButton(obj) {
+	setButtonStyle(obj, 'back_hover');
+}
+
+	function hideMenu(menuId) {
+		var menu = dijit.byId(menuId);
+		var focus = menu._focused;
+		//This code doesn't works.
+		/*if (!focus) {
+			dijit.popup.close(menu);       			
+		}*/
+	}
+      
+	function openMenu(thisObj, menuId, itemId) {
+		downButton(thisObj);
+		var obj = dojo.byId(itemId);
+		var menu = dijit.byId(menuId);
+		dijit.popup.open({
+			popup: menu,
+			around: obj,
+			orient: {'BL':'TL', 'BR':'TR', 'TL':'BL', 'TR':'BR'},
+			onExecute: function() {
+				dijit.popup.close(menu);
+			},
+			onCancel: function() {
+				dijit.popup.close(menu);
+			},
+			onClose: function() {
+			}
+		});
+	}
+
+function setDropDownButtonStyle(target, style){
+	dojo.forEach(dojo.query('li,a', target), function(entry, i){entry.className = style;});
+}
+
+</script>
+<p:theme themeName="dbmi_theme" />
+</head>

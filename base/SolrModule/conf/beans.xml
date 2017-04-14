@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+
+	<!-- File storage manager: registering URL storages here -->
+	<bean id="fileStorageManagerBean" class="com.aplana.dbmi.storage.impl.beans.ContentStorageManagerBean">
+		<property name="jndiName" value="java:/filestorage/DBMI"/>
+
+		<!--  registering active storage points in map<key, value>:
+			"key"	will be the storage name using as the first optional suffix
+			after the protocol specific in the url path (with spec prefix '$'), 
+			like this: 
+				filestore:$filestorage/./a/b/c.txt
+			"value"	is the local bean name
+		  -->
+		<property name="storageMap">
+			<map>
+				<entry key="filestorage" value-ref="defaultFileStorageBean" />
+				<entry key="autoFileStorage" value-ref="autoFileStorageBean" />
+				<entry key="cache" value-ref="cacheFileStorageBean" />
+			</map>
+		</property>
+
+	</bean>
+
+	<!-- main file storage URL storage point -->
+	<bean id="defaultFileStorageBean" class="com.aplana.dbmi.storage.impl.beans.FileContentStorageBean">
+		<property name="jndiName" value="java:/filestorage/DBMI"/>
+		<property name="fileStoreSchema" ref="fileNamesStoreRuleBean"/>
+
+		<!-- configPropNameRootDirectory has more priority than rootLocation-->
+		<!--  property name="rootLocation" value="/filestore.jbr"/ -->
+		<property name="configPropNameRootDirectory" value="store.rootLocation" />
+
+		<!-- property name="searchIndexer" ref="solrSearch"/ -->
+		<!-- property name="" ref="fileContentTypeInfo"/ -->
+	</bean>
+
+	<!-- main file storage URL storage point -->
+	<bean id="cacheFileStorageBean" class="com.aplana.dbmi.storage.impl.beans.FileContentStorageBean">
+		<property name="jndiName" value="java:/filestorage/DBMI"/>
+		<property name="fileStoreSchema" ref="fileNamesStoreRuleBean"/>
+
+		<!-- configPropNameRootDirectory has more priority than rootLocation-->
+		<!--  property name="rootLocation" value="/filestore.jbr"/ -->
+
+		<property name="configPropNameRootDirectory" value="store.cacheRootLocation" />
+
+	</bean>
+	<!-- ManagerBeans --> 
+	<bean id="defaultPdfConvertMgrBean" class="com.aplana.dbmi.filestorage.convertmanager.ManagerBean">
+		<property name="pdfConvertManager" ref="pdfConvertManager" />
+	</bean>
+	<bean id="pdfConvertManager" class="com.aplana.dbmi.filestorage.convertmanager.PdfConvertManager"/>
+
+	<!-- default new files URL generator -->
+	<bean id="fileNamesStoreRuleBean" class="com.aplana.dbmi.storage.impl.beans.DefaultFileStoreSchema">
+		<property name="fileExt" value=".dat" />
+	</bean>
+
+	<!-- Mime type informator -->
+	<!--bean id="fileContentTypeInfoBean" class="com.aplana.dbmi.storage.impl.beans.MimeContentTypeReestrBean">
+		<property name="jndiName" value="java:/filestorage/DBMI"/>
+		<property name="config" value="/mime_types.properties"/>
+	</bean-->
+
+	<!-- search machine = SOLR -->
+	<bean id="defaultSearchIndexBean" class="com.aplana.dbmi.storage.impl.beans.SolrSearchServiceBean">
+		<property name="waitFlush" value="false" />
+		<property name="waitSearcher" value="true" />
+	</bean>
+
+
+	<!--  (old-style) file storage point for NULL URL's -->
+	<bean id="autoFileStorageBean" class="com.aplana.dbmi.storage.impl.beans.FileContentStorageBean">
+
+		<property name="jndiName" value="java:/filestorage/DBMI"/>
+
+		<!--  property name="rootLocation" value="/..."/ -->
+		<property name="configPropNameRootDirectory" value="store.nullUrlRootLocation" />
+
+		<!-- the protocol list -->
+		<property name="listProtocols">
+			<list>
+				<value>autostore</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>

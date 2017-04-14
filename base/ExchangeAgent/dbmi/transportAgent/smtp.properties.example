@@ -1,0 +1,37 @@
+#
+#   Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to you under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+
+INTERNET_ADDRESEE_FROM=example@mail.ru
+NAME_FROM=\u0412\u0430\u0441\u044F \u041F\u0443\u043F\u043A\u0438\u043D
+NAME_TO=TO
+CONNECT_LOGIN=user
+CONNECT_PASSWORD=123456
+TRANSPORT_PROTOCOL_NAME=smtp
+MAIL_HOST_NAME=192.168.55.143
+MAIL_PORT_NUMBER=25
+
+MAIL_POP_HOST=192.168.55.143
+STORE_PROTOCOL=pop3
+MAIL_INBOX_FOLDER=INBOX
+ENCODING=UTF-8
+SUBJECT=\u0421\u041F\u0410\u041C
+MAIL_TEXT=\u0422\u0435\u0441\u0442 \u043F\u0438\u0441\u044C\u043C\u0430
+Organization_ID=e240852e-d98d-43e3-b9a6-1dcda5016f0b
+Organization_name=\u0414\u0430\u0442\u0430\u0442\u0435\u0445
+Gate_ID=c6b3cabe-c713-4eb0-a3eb-78aad0b32667
+Gate_Name=\u041F\u043E\u0447\u0442\u043E\u0428\u043B\u044E\u0437 14 \u0432 \u0414\u0430\u0442\u0430\u0442\u0435\u0445
+Econtact_Mail=dev@it.ru

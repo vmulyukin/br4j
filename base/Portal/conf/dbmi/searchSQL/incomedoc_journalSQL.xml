@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+			(
+				SELECT distinct av_journal.card_id
+				FROM person pers
+				LEFT OUTER JOIN attribute_value av_pers_dep on av_pers_dep.card_id = pers.card_id and av_pers_dep.attribute_code = 'JBR_PERS_DEPT_LINK' 
+				LEFT OUTER JOIN attribute_value av_journal on av_journal.attribute_code = 'ADMIN_1091614' and av_journal.number_value = av_pers_dep.number_value
+				LEFT OUTER JOIN attribute_value av_journal_link on av_journal_link.attribute_code = 'JBR_REGLOG_TYPE_J' and av_journal_link.card_id = av_journal.card_id 
+				LEFT OUTER JOIN person_role prole on prole.person_id = pers.person_id
+				WHERE pers.person_id in (%CURRENTUSERS%) and prole.role_code in ('JBR', 'JBR_CHR', 'JBR_MH')  
+					and av_journal_link.value_id = 1710
+			)
+
+			UNION
+
+			(
+				SELECT distinct av_journal.card_id
+				FROM person pers
+				LEFT OUTER JOIN attribute_value av_pers_dep on av_pers_dep.card_id = pers.card_id and av_pers_dep.attribute_code = 'JBR_PERS_DEPT_LINK' 
+				LEFT OUTER JOIN attribute_value av_parent_dep on av_parent_dep.attribute_code = 'JBR_DEPT_PARENT_LINK' and av_parent_dep.card_id = av_pers_dep.number_value 
+				LEFT OUTER JOIN attribute_value av_journal on av_journal.attribute_code = 'ADMIN_1091614' and av_journal.number_value = av_parent_dep.number_value
+				LEFT OUTER JOIN attribute_value av_journal_link on av_journal_link.attribute_code = 'JBR_REGLOG_TYPE_J' and av_journal_link.card_id = av_journal.card_id 
+				LEFT OUTER JOIN person_role prole on prole.person_id = pers.person_id
+				WHERE (
+					SELECT count(av_jour.card_id) from person p
+					LEFT OUTER JOIN attribute_value av_dep on av_dep.card_id = p.card_id and av_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+					LEFT OUTER JOIN attribute_value av_jour on av_jour.attribute_code = 'ADMIN_1091614' and av_jour.number_value = av_dep.number_value
+					WHERE p.person_id in (%CURRENTUSERS%)
+				) = 0 and pers.person_id in (%CURRENTUSERS%) and prole.role_code in ('JBR', 'JBR_CHR', 'JBR_MH') 
+				and av_journal_link.value_id = 1710
+			)
+						
+			UNION
+				
+			(
+				SELECT distinct av_journal.card_id
+				FROM attribute_value av_journal 
+				WHERE av_journal.attribute_code = 'JBR_REGLOG_TYPE_J' and av_journal.value_id = 1710 and
+				(
+					SELECT av_pers_dep.number_value from person pers
+					LEFT OUTER JOIN attribute_value av_pers_dep on av_pers_dep.card_id = pers.card_id and av_pers_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+					WHERE pers.person_id in (%CURRENTUSERS%)
+				) IS NULL 
+				and 
+				(	
+					SELECT role_code FROM person_role WHERE person_id in (%CURRENTUSERS%) and role_code = 'A'
+				) IS NOT NULL
+			)
+			]]>
+		</sql>
+	</query>
+
+</searchQuery>

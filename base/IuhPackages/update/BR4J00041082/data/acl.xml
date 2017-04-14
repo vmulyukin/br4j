@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Рассмотрение" template_id="504">
+        <Permission Status="NO_STATUS" Rule="Регистратор ОГ">
+            <Operations>
+                <Operation permHash="11757839398ebeb5ac45539042fa8faf"
+                    OperationType="create" Action="add"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="1" Rule="Регистратор ОГ">
+            <Operations>
+                <Operation permHash="576ddd3c7c275922c675b4d76c95b4d4"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="f3c04bf6240a237c11c2e1d5cca51774"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="88afc63c3b7f24774edc2c17a599523a"
+                    name="На рассмотрение-52087" wfm_id="52087" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д1_Ответственный за ДОУ ДО-ВН" ruleHash="4343525db4e45812148d691781a158df">
+                <RulePerson name="Д1_Ответственный за ДОУ ДО-ВН"
+                    personAttributeCode="JBR_RESP_DOW_RESP"
+                    ruleHash="4343525db4e45812148d691781a158df" link="JBR_RASSM_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Д1_Регистратор ДО-ВН" ruleHash="1642d7eb92407c839b77196b79e8a156">
+                <RulePerson name="Д1_Регистратор ДО-ВН"
+                    personAttributeCode="JBR_REGD_REGISTRAR"
+                    ruleHash="1642d7eb92407c839b77196b79e8a156" link="JBR_RASSM_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Д2_Рассматривающий_ОГ_Рассмотрение" ruleHash="b2570ee9bf04bf8e2ef3e81b5e18feaa">
+                <RulePerson name="Д2_Рассматривающий_ОГ_Рассмотрение"
+                    personAttributeCode="JBR_RASSM_PERSON"
+                    ruleHash="b2570ee9bf04bf8e2ef3e81b5e18feaa"
+                    link="JBR_RASSM_PARENT_DOC" intermedAttributeCode="JBR_IMPL_ACQUAINT"/>
+            </Rule>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Д_Рассматривающий" ruleHash="33be15f711798d760d59ed7af82cce33">
+                <RulePerson name="Д_Рассматривающий"
+                    personAttributeCode="JBR_RASSM_PERSON" ruleHash="33be15f711798d760d59ed7af82cce33"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Регистратор ВХ" ruleHash="878c9d4ba359a05651524e5c94cf14c9">
+                <RuleRole name="Регистратор ВХ"
+                    ruleHash="878c9d4ba359a05651524e5c94cf14c9" roleCode="JBR_INCOMING"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+            <Rule name="Старший регистратор ОГ" ruleHash="666fa0f5e914c71bbe32bbdc93652302">
+                <RuleRole name="Старший регистратор ОГ"
+                    ruleHash="666fa0f5e914c71bbe32bbdc93652302" roleCode="JBR_OG_CHR"/>
+            </Rule>
+            <Rule name="Страший регистратор ВХ" ruleHash="d88fb39b6ea3e77baf773702de8b7baf">
+                <RuleRole name="Страший регистратор ВХ"
+                    ruleHash="d88fb39b6ea3e77baf773702de8b7baf" roleCode="JBR_INCOMING_CHR"/>
+            </Rule>
+            <Rule name="Читатель всех документов" ruleHash="69e1fc9d9c3e31e67697883394568a65">
+                <RuleRole name="Читатель всех документов"
+                    ruleHash="69e1fc9d9c3e31e67697883394568a65" roleCode="JBR_READER"/>
+            </Rule>
+            <Rule name="Читающий для рассмотрения" ruleHash="4ed928b9521b5e92a5a1897544174453">
+                <RuleRole name="Читающий для рассмотрения"
+                    ruleHash="4ed928b9521b5e92a5a1897544174453" roleCode="JBR_RASSM_READER"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Адресат" ruleHash="383b9b1d2082fb239b8830acde628a02">
+                <RuleProfile name="Пр_Пом для/Адресат"
+                    ruleHash="383b9b1d2082fb239b8830acde628a02"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_INFD_RECEIVER" linkAttributeCode="JBR_RASSM_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Предыдущий_рассматриваюший" ruleHash="f949f2ee542e782e737e9b7c0462d60a">
+                <RuleProfile
+                    name="Пр_Пом для/Предыдущий_рассматриваюший"
+                    ruleHash="f949f2ee542e782e737e9b7c0462d60a"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_RASSM_PR_PERSON"/>
+            </Rule>
+            <Rule name="Пр_ Пом для/Рассматривающий" ruleHash="f61f13e443b6788d8c986f3e32504c96">
+                <RuleProfile name="Пр_ Пом для/Рассматривающий"
+                    ruleHash="f61f13e443b6788d8c986f3e32504c96"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_RASSM_PERSON"/>
+            </Rule>
+            <Rule name="Дел_Документ-основание" ruleHash="d50f2966204111165fb30d0c99a44c35">
+                <RuleDelegation name="Дел_Документ-основание"
+                    ruleHash="d50f2966204111165fb30d0c99a44c35" linkAttributeCode="JBR_RASSM_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Регистратор ОГ" ruleHash="59a0d9ef51e2e799131dd868e7e8c45f">
+                <RuleRole name="Регистратор ОГ"
+                    ruleHash="59a0d9ef51e2e799131dd868e7e8c45f" roleCode="JBR_OG"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="В дело" status_id="104"/>
+        <Status name="Исполнение" status_id="103"/>
+        <Status name="Обработка помощником" status_id="73992"/>
+        <Status name="Ожидание рассмотрения" status_id="52086"/>
+        <Status name="Отменен" status_id="34145"/>
+        <Status name="Отправлен на исполнение руководителем" status_id="477679"/>
+        <Status name="Отправлен руководителем в дело" status_id="477681"/>
+        <Status name="Пропущен" status_id="66185"/>
+        <Status name="Пропущен руководителем" status_id="477680"/>
+        <Status name="Рассмотрение" status_id="102"/>
+        <Status name="Черновик" status_id="1"/>
+        <WFMoveType name="no_name_workflow-477889" wfm_id="477889"
+            wfm_from="Пропущен руководителем" wfm_to="Исполнение"
+            wfm_from_status="477680" wfm_to_status="103"/>
+        <WFMoveType name="no_name_workflow-477884" wfm_id="477884"
+            wfm_from="Пропущен руководителем" wfm_to="В дело"
+            wfm_from_status="477680" wfm_to_status="104"/>
+        <WFMoveType name="no_name_workflow-477888" wfm_id="477888"
+            wfm_from="Отправлен на исполнение руководителем"
+            wfm_to="В дело" wfm_from_status="477679" wfm_to_status="104"/>
+        <WFMoveType name="no_name_workflow-477883" wfm_id="477883"
+            wfm_from="Пропущен руководителем" wfm_to="Пропущен"
+            wfm_from_status="477680" wfm_to_status="66185"/>
+        <WFMoveType name="no_name_workflow-477682" wfm_id="477682"
+            wfm_from="Рассмотрение"
+            wfm_to="Отправлен на исполнение руководителем"
+            wfm_from_status="102" wfm_to_status="477679"/>
+        <WFMoveType name="no_name_workflow-477838" wfm_id="477838"
+            wfm_from="Рассмотрение" wfm_to="Пропущен руководителем"
+            wfm_from_status="102" wfm_to_status="477680"/>
+        <WFMoveType name="no_name_workflow-477886" wfm_id="477886"
+            wfm_from="Отправлен руководителем в дело" wfm_to="Пропущен"
+            wfm_from_status="477681" wfm_to_status="66185"/>
+        <WFMoveType name="no_name_workflow-477887" wfm_id="477887"
+            wfm_from="Отправлен руководителем в дело" wfm_to="В дело"
+            wfm_from_status="477681" wfm_to_status="104"/>
+        <WFMoveType name="no_name_workflow-477835" wfm_id="477835"
+            wfm_from="Отправлен на исполнение руководителем"
+            wfm_to="Исполнение" wfm_from_status="477679" wfm_to_status="103"/>
+        <WFMoveType name="no_name_workflow-477885" wfm_id="477885"
+            wfm_from="Отправлен руководителем в дело"
+            wfm_to="Исполнение" wfm_from_status="477681" wfm_to_status="103"/>
+        <WFMoveType name="no_name_workflow-477837" wfm_id="477837"
+            wfm_from="Рассмотрение"
+            wfm_to="Отправлен руководителем в дело"
+            wfm_from_status="102" wfm_to_status="477681"/>
+        <WFMoveType name="Замена рассматривающего-219974310"
+            wfm_id="219974310" wfm_from="Обработка помощником"
+            wfm_to="Черновик" wfm_from_status="73992" wfm_to_status="1"/>
+        <WFMoveType name="На исполнение-47255" wfm_id="47255"
+            wfm_from="Рассмотрение" wfm_to="Исполнение"
+            wfm_from_status="102" wfm_to_status="103"/>
+        <WFMoveType name="На исполнение-473933" wfm_id="473933"
+            wfm_from="Обработка помощником" wfm_to="Исполнение"
+            wfm_from_status="73992" wfm_to_status="103"/>
+        <WFMoveType name="На рассмотрение-52087" wfm_id="52087"
+            wfm_from="Черновик" wfm_to="Ожидание рассмотрения"
+            wfm_from_status="1" wfm_to_status="52086"/>
+        <WFMoveType name="Отменить-677300" wfm_id="677300"
+            wfm_from="Отправлен на исполнение руководителем"
+            wfm_to="Отменен" wfm_from_status="477679" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677301" wfm_id="677301"
+            wfm_from="Исполнение" wfm_to="Отменен" wfm_from_status="103" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677295" wfm_id="677295"
+            wfm_from="Черновик" wfm_to="Отменен" wfm_from_status="1" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677296" wfm_id="677296"
+            wfm_from="Ожидание рассмотрения" wfm_to="Отменен"
+            wfm_from_status="52086" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677297" wfm_id="677297"
+            wfm_from="Обработка помощником" wfm_to="Отменен"
+            wfm_from_status="73992" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677298" wfm_id="677298"
+            wfm_from="Отправлен руководителем в дело" wfm_to="Отменен"
+            wfm_from_status="477681" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-677299" wfm_id="677299"
+            wfm_from="Рассмотрение" wfm_to="Отменен"
+            wfm_from_status="102" wfm_to_status="34145"/>
+        <WFMoveType name="Отправить помощнику-219974469"
+            wfm_id="219974469" wfm_from="Черновик"
+            wfm_to="Обработка помощником" wfm_from_status="1" wfm_to_status="73992"/>
+        <WFMoveType name="Отправить помощнику-90420" wfm_id="90420"
+            wfm_from="Ожидание рассмотрения"
+            wfm_to="Обработка помощником" wfm_from_status="52086" wfm_to_status="73992"/>
+        <WFMoveType name="Передать другому руководителю-677294"
+            wfm_id="677294" wfm_from="Рассмотрение"
+            wfm_to="Ожидание рассмотрения" wfm_from_status="102" wfm_to_status="52086"/>
+        <WFMoveType name="Пропустить-473930" wfm_id="473930"
+            wfm_from="Обработка помощником" wfm_to="Пропущен"
+            wfm_from_status="73992" wfm_to_status="66185"/>
+        <WFMoveType name="Пропустить-66186" wfm_id="66186"
+            wfm_from="Рассмотрение" wfm_to="Пропущен"
+            wfm_from_status="102" wfm_to_status="66185"/>
+        <WFMoveType name="Пропустить-477836" wfm_id="477836"
+            wfm_from="Отправлен на исполнение руководителем"
+            wfm_to="Пропущен" wfm_from_status="477679" wfm_to_status="66185"/>
+        <WFMoveType name="Рассмотреть-52088" wfm_id="52088"
+            wfm_from="Ожидание рассмотрения" wfm_to="Рассмотрение"
+            wfm_from_status="52086" wfm_to_status="102"/>
+        <WFMoveType name="Руководителю-90421" wfm_id="90421"
+            wfm_from="Обработка помощником" wfm_to="Рассмотрение"
+            wfm_from_status="73992" wfm_to_status="102"/>
+        <WFMoveType name="Списать в дело-47256" wfm_id="47256"
+            wfm_from="Рассмотрение" wfm_to="В дело"
+            wfm_from_status="102" wfm_to_status="104"/>
+        <WFMoveType name="Списать в дело-473935" wfm_id="473935"
+            wfm_from="Обработка помощником" wfm_to="В дело"
+            wfm_from_status="73992" wfm_to_status="104"/>
+    </Template>
+</AccessConfig>

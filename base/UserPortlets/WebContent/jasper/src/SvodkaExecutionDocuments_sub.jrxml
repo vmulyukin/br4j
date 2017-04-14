@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SvodkaExecutionDocuments_sub" pageWidth="525" pageHeight="75" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="525" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.8150000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="department_id" class="java.lang.Integer"/>
+	<parameter name="current_date" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(new Date().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDateExec" class="java.sql.Timestamp"/>
+	<parameter name="responsibleExecutor" class="java.lang.Boolean"/>
+	<parameter name="startDateExec" class="java.sql.Timestamp"/>
+	<parameter name="startDateReg" class="java.sql.Timestamp"/>
+	<parameter name="endDateReg" class="java.sql.Timestamp"/>
+	<parameter name="executors" class="java.lang.String"/>
+	<parameter name="control" class="java.lang.String"/>
+	<parameter name="control_type" class="java.lang.String"/>
+	<parameter name="docGroup" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select distinct
+
+coalesce(fio.string_value, resol.executor_name) as executor,
+position.string_value as executor_pos,
+count(distinct resol.all_count) as all_count,
+count(distinct resol.on_cont_count) as on_cont_count,
+count(distinct resol.in_term) as in_term,
+count(distinct resol.not_in_term) as not_in_term,
+count(distinct resol.term_is_going) as term_is_going,
+count(distinct resol.term_is_done) as term_is_done
+
+From
+
+(
+
+SELECT distinct
+
+c.card_id as res_id,
+avMain.number_value as main_doc,
+executors_val.full_name as executor_name,
+executors_val.card_id as executor,
+res_all.card_id as all_count,
+res_on_cont.card_id as on_cont_count,
+av_cont_date1.card_id as in_term,
+av_cont_date2.card_id as not_in_term,
+av_exec_date1.card_id as term_is_going,
+av_exec_date2.card_id as term_is_done
+
+From card c
+-- ДО
+INNER JOIN attribute_value avMain ON avMain.card_id = c.card_id and avMain.attribute_code = 'JBR_MAINDOC'
+-- Срок исполения
+LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+
+-- Исполнитель
+JOIN attribute_value executor on c.card_id = executor.card_id and executor.attribute_code = 'JBR_INFD_EXEC_LINK'
+	LEFT JOIN person executors_val on executor.number_value = executors_val.person_id
+		LEFT JOIN attribute_value executor_dep on executor_dep.card_id = executors_val.card_id and executor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+			LEFT JOIN attribute_value department on department.card_id = executor_dep.number_value and department.attribute_code = 'JBR_DEPT_FULLNAME'
+
+-- Отчет об исполнении данного исполнителя
+LEFT JOIN attribute_value av_report on c.card_id = av_report.number_value and av_report.attribute_code = 'ADMIN_702311'
+    LEFT JOIN attribute_value av_report_exec on (av_report.card_id = av_report_exec.card_id and av_report_exec.attribute_code = 'ADMIN_702335')
+
+-- Карточка "Отчет об исполнении" и ее статус
+LEFT JOIN card c_report on av_report.card_id = c_report.card_id
+
+-- Дата утверждения отчета
+LEFT JOIN attribute_value av_report_approve_date on av_report_approve_date.card_id = av_report.card_id
+                                                    and av_report_approve_date.attribute_code = 'ADMIN_713534'
+
+
+-- Поручений всего
+LEFT JOIN attribute_value res_all on (c.card_id = res_all.card_id)
+-- Поручение на контроле
+LEFT JOIN attribute_value res_on_cont on (c.card_id = res_on_cont.card_id and res_on_cont.attribute_code = 'JBR_TCON_ONCONT' and res_on_cont.value_id = 1449)
+-- Исполнено в срок
+LEFT JOIN attribute_value av_cont_date1 on (av_cont_date1.card_id = c.card_id and av_cont_date1.attribute_code = 'JBR_TCON_TERM'
+	and c_report.status_id = 207 and ((av_cont_date1.date_value is not null and av_cont_date1.date_value >= av_report_approve_date.date_value) or (av_cont_date1.date_value is null)))
+-- Исполнено c нарушением срока
+LEFT JOIN attribute_value av_cont_date2 on (av_cont_date2.card_id = c.card_id and av_cont_date2.attribute_code = 'JBR_TCON_TERM'
+	and av_cont_date2.date_value is not null and c_report.status_id = 207 and av_cont_date2.date_value < av_report_approve_date.date_value)
+-- На исполнении срок не наступил
+LEFT JOIN attribute_value av_exec_date1 on (av_exec_date1.card_id = c.card_id and av_exec_date1.attribute_code = 'JBR_TCON_TERM'
+	and c_report.status_id in (556656,702239,73992,102,206) and av_report_approve_date.date_value is null
+    and ((av_exec_date1.date_value is not null and av_exec_date1.date_value + interval '$P!{tz_hour} hour' >= date_trunc('minute', $P{current_date}::timestamp)) or (av_exec_date1.date_value is null)))
+-- На исполнении срок истек
+LEFT JOIN attribute_value av_exec_date2 on (av_exec_date2.card_id = c.card_id and av_exec_date2.attribute_code = 'JBR_TCON_TERM'
+	and av_exec_date2.date_value is not null and c_report.status_id in (556656,702239,73992,102,206) and av_report_approve_date.date_value is null
+    and av_exec_date2.date_value + interval '$P!{tz_hour} hour' < date_trunc('minute', $P{current_date}::timestamp))
+
+WHERE
+c.template_id=324 and
+c.status_id in (103, 206) and
+date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+(department.card_id in ($P!{department_id}) or $P{department_id} is null) and
+(executors_val.card_id in ($P!{executors}) or $P{executors} is null) and
+av_report_exec.number_value = executor.number_value
+
+and exists (
+            select 1 from card c1 join attribute_value av1 on av1.number_value = c1.card_id and av1.attribute_code = 'ADMIN_702311'
+            LEFT JOIN attribute_value av2 on (av1.card_id = av2.card_id and av2.attribute_code = 'ADMIN_702335')
+            LEFT JOIN card c2 on av1.card_id = c2.card_id
+            where c1.card_id = c.card_id
+            and c2.status_id not in (1,34145,477681)
+            and av2.number_value = executor.number_value
+            )
+
+UNION
+
+SELECT distinct
+
+c.card_id as res_id,
+avMain.number_value as main_doc,
+coexecutors_val.full_name as executor_name,
+coexecutors_val.card_id as executor,
+res_all.card_id as all_count,
+res_on_cont.card_id as on_cont_count,
+av_cont_date1.card_id as in_term,
+av_cont_date2.card_id as not_in_term,
+av_exec_date1.card_id as term_is_going,
+av_exec_date2.card_id as term_is_done
+
+From card c
+
+-- ДО
+INNER JOIN attribute_value avMain ON avMain.card_id = c.card_id and avMain.attribute_code = 'JBR_MAINDOC'
+
+-- Срок исполения
+LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+
+-- Соисполнитель
+JOIN attribute_value coexecutor on c.card_id = coexecutor.card_id and coexecutor.attribute_code in ('ADMIN_255974')
+	LEFT JOIN person coexecutors_val on coexecutor.number_value = coexecutors_val.person_id
+		LEFT JOIN attribute_value coexecutor_dep on coexecutor_dep.card_id = coexecutors_val.card_id and coexecutor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+			LEFT JOIN attribute_value codepartment on codepartment.card_id = coexecutor_dep.number_value and codepartment.attribute_code = 'JBR_DEPT_FULLNAME'
+
+-- Отчет об исполнении данного исполнителя
+LEFT JOIN attribute_value av_report on c.card_id = av_report.number_value and av_report.attribute_code = 'ADMIN_702311'
+    LEFT JOIN attribute_value av_report_exec on (av_report.card_id = av_report_exec.card_id and av_report_exec.attribute_code = 'ADMIN_702335')
+
+-- Карточка "Отчет об исполнении" и ее статус
+LEFT JOIN card c_report on av_report.card_id = c_report.card_id
+
+-- Дата утверждения отчета
+LEFT JOIN attribute_value av_report_approve_date on av_report_approve_date.card_id = av_report.card_id
+                                                    and av_report_approve_date.attribute_code = 'ADMIN_713534'
+
+-- Поручений всего
+LEFT JOIN attribute_value res_all on (c.card_id = res_all.card_id)
+-- Поручение на контроле
+LEFT JOIN attribute_value res_on_cont on (c.card_id = res_on_cont.card_id and res_on_cont.attribute_code = 'JBR_TCON_ONCONT' and res_on_cont.value_id = 1449)
+-- Исполнено в срок
+LEFT JOIN attribute_value av_cont_date1 on (av_cont_date1.card_id = c.card_id and av_cont_date1.attribute_code = 'JBR_TCON_TERM'
+	and c_report.status_id = 207 and ((av_cont_date1.date_value is not null and av_cont_date1.date_value >= av_report_approve_date.date_value) or (av_cont_date1.date_value is null)))
+-- Исполнено c нарушением срока
+LEFT JOIN attribute_value av_cont_date2 on (av_cont_date2.card_id = c.card_id and av_cont_date2.attribute_code = 'JBR_TCON_TERM'
+	and av_cont_date2.date_value is not null and c_report.status_id = 207 and av_cont_date2.date_value < av_report_approve_date.date_value)
+-- На исполнении срок не наступил
+LEFT JOIN attribute_value av_exec_date1 on (av_exec_date1.card_id = c.card_id and av_exec_date1.attribute_code = 'JBR_TCON_TERM'
+	and c_report.status_id in (556656,702239,73992,102,206) and av_report_approve_date.date_value is null
+    and ((av_exec_date1.date_value is not null and av_exec_date1.date_value + interval '$P!{tz_hour} hour' >= date_trunc('minute', $P{current_date}::timestamp)) or (av_exec_date1.date_value is null)))
+-- На исполнении срок истек
+LEFT JOIN attribute_value av_exec_date2 on (av_exec_date2.card_id = c.card_id and av_exec_date2.attribute_code = 'JBR_TCON_TERM'
+	and av_exec_date2.date_value is not null and c_report.status_id in (556656,702239,73992,102,206) and av_report_approve_date.date_value is null 
+    and av_exec_date2.date_value + interval '$P!{tz_hour} hour' < date_trunc('minute', $P{current_date}::timestamp))
+
+WHERE
+($P{responsibleExecutor} is null or $P{responsibleExecutor} <> true) and
+c.template_id=324 and
+c.status_id in (103, 206) and
+date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+(codepartment.card_id in ($P!{department_id}) or $P{department_id} is null) and
+(coexecutors_val.card_id in ($P!{executors}) or $P{executors} is null) and
+av_report_exec.number_value = coexecutor.number_value
+
+and exists (
+            select 1 from card c1 join attribute_value av1 on av1.number_value = c1.card_id and av1.attribute_code = 'ADMIN_702311'
+            LEFT JOIN attribute_value av2 on (av1.card_id = av2.card_id and av2.attribute_code = 'ADMIN_702335')
+            LEFT JOIN card c2 on av1.card_id = c2.card_id
+            where c1.card_id = c.card_id
+            and c2.status_id not in (1,34145,477681)
+            and av2.number_value = coexecutor.number_value
+            )
+
+) as resol
+
+join card doc on doc.card_id = resol.main_doc
+join attribute_value doc_reg_date on (doc_reg_date.card_id = doc.card_id and doc_reg_date.attribute_code = 'JBR_REGD_DATEREG')
+left join attribute_value doc_on_cont on (doc_on_cont.card_id = doc.card_id and doc_on_cont.attribute_code = 'JBR_IMPL_ONCONT')
+left join attribute_value doc_type_cont on (doc_type_cont.card_id = doc.card_id and doc_type_cont.attribute_code = 'JBR_IMPL_TYPECONT')
+
+LEFT JOIN attribute_value position on resol.executor = position.card_id and position.attribute_code = 'JBR_PERS_POSITION'
+LEFT JOIN attribute_value fio on resol.executor = fio.card_id and fio.attribute_code = 'JBR_PERS_SNAME_NM'
+
+Where
+(doc.template_id in ($P!{docGroup}) or $P{docGroup} is null) and
+date_trunc('day', doc_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateReg} and
+date_trunc('day', doc_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateReg} and
+(
+	(
+		$P{control} = 'kitControl'
+		and
+		doc_on_cont.value_id = 1432
+        and
+        (doc_type_cont.value_id in ($P!{control_type}) or $P{control_type} is null)
+	)
+	or
+	(
+		$P{control} = 'off'
+		and
+		(doc_on_cont.value_id = 1433 or doc_on_cont.value_id is null)
+	)
+)
+group by coalesce(fio.string_value, resol.executor_name), position.string_value
+order by coalesce(fio.string_value, resol.executor_name), position.string_value]]>
+	</queryString>
+	<field name="executor" class="java.lang.String"/>
+	<field name="executor_pos" class="java.lang.String"/>
+	<field name="all_count" class="java.lang.Long"/>
+	<field name="on_cont_count" class="java.lang.Long"/>
+	<field name="in_term" class="java.lang.Long"/>
+	<field name="not_in_term" class="java.lang.Long"/>
+	<field name="term_is_going" class="java.lang.Long"/>
+	<field name="term_is_done" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="55">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="143" height="55"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Исполнитель]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="143" y="0" width="125" height="15"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Поступило поручений]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="0" width="125" height="15"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Исполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="393" y="0" width="132" height="15"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[На исполнении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="15" width="62" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[в срок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="330" y="15" width="63" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[с нарушением срока]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="459" y="15" width="66" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[срок истек]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="393" y="15" width="66" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[срок не наступил]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="143" y="15" width="62" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="205" y="15" width="63" height="40"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[из них контрольных]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="143" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{executor} +
+(($F{executor_pos} != null && !"".equals($F{executor_pos}))
+    ? ", " + $F{executor_pos}
+    : "")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="205" y="0" width="63" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{on_cont_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="268" y="0" width="62" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{in_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="63" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{not_in_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="459" y="0" width="66" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{term_is_done}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="393" y="0" width="66" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{term_is_going}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="143" y="0" width="62" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{all_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

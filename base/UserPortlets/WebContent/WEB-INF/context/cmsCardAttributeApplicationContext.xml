@@ -1,0 +1,2170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="parentCardViewData" class="com.aplana.cms.view_template.CardViewData" abstract="true"/>
+	
+	<bean id="mainViewAttributes" parent="parentCardViewData" >
+	
+		<property name="attributes">
+			<list>
+				<ref bean="docTypeAttribute" />
+				<ref bean="regNumAttribute" />
+				<ref bean="regDateAttribute" />
+				<ref bean="howfastAttribute" />                	
+				<ref bean="signatureAttribute" />
+				<ref bean="incomeDateAttribute" />
+				
+				<ref bean="incomingDeadlineAttribute" />
+				<ref bean="controlTypeAttribute" />
+				<ref bean="outcomingSignatoryAttribute" />
+				<ref bean="jbrOgReqAuthorLastAttribute" />	
+				<ref bean="jbrOgReqAuthorFirstAttribute" />
+							
+				<ref bean="declarantLastName" />
+				<ref bean="declarantFirstName" />
+				<ref bean="sourceOfComeAttribute" />
+				
+				<ref bean="incomingSenderAttribute" />
+				<ref bean="incomingSenderFullNameAttribute" />
+				<ref bean="signatoryExtAttribute" />
+				<ref bean="signatoryExtAttributeNM" />
+				<ref bean="signatoryExtAttributePosition" />
+				<ref bean="signatoryExtAttributeSurname" />
+				<ref bean="signatoryExtAttributeName" />
+				<ref bean="signatoryExtAttributeMiddleName" />
+				
+				<ref bean="shortDescAttribute" />
+				<ref bean="shortDescAttribute1" />		
+				
+				<ref bean="signingAttribute" />
+				<ref bean="visavisaAttribute" />	
+				
+				<ref bean="resolutGipaAttribute" />
+				<ref bean="resolutInfdSgnexLink" />
+				
+				<ref bean="incomeExamDateAttribute" />
+				<ref bean="acqAttribute" />					
+			</list>
+		</property>
+            	
+		<property name="sortColumns">
+			<list>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="default"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+							<!-- <bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="asc" value="true"/>
+							</bean> -->
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="1"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="valNumAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="2"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="3"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="shortDescAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="4"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="5"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeDateAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="regDateAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="signingAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="visavisaAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>	
+			</list>
+		</property>
+	</bean>
+    
+    <bean id="reworkCardsForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttribute" />
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Attributes required for getting cards, that are on Execution for Supervisor  -->
+    <bean id="cardOnExecutionForSupervisorAttributes" parent="mainViewAttributes" />
+
+    <!-- Attributes required for getting cards, that have been performed by subordinates and are on Execution for Supervisor  -->
+    <bean id="cardDoneBySubordinatesOnExecutionForSupervisorAttributes" parent="cardOnExecutionForSupervisorAttributes" />
+    
+    <!-- Attributes required for getting cards, that are "In Work" by subordinates and are on Execution for Supervisor  -->
+    <bean id="cardInWorkBySubordinatesOnExecutionForSupervisorAttributes" parent="cardOnExecutionForSupervisorAttributes" />
+    
+    <!-- Attributes required for getting cards, that are  on for personal execution to Supervisor  -->
+    <bean id="cardOnPersonalExecutionForSupervisorAttributes" parent="cardOnExecutionForSupervisorAttributes" />
+    
+    <bean id="mainViewAttributesEx" parent="mainViewAttributes">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="delegatedFromAttribute" />
+                <ref bean="nameAttribute" />
+                <ref bean="delegationStartDateAttribute" />
+                <ref bean="incomeDateAttribute" />
+                <ref bean="signingAttribute" />     
+				<ref bean="visavisaAttribute" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="cardOnConsiderationForSupervisorAttributes" parent="mainViewAttributesEx">
+    	<property name="sortColumns">
+			<list>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="default"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+							<!-- <bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="asc" value="true"/>
+							</bean> -->
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="1"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="valNumAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="2"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="regDateAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="3"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="4"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="shortDescAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="5"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+    </bean>
+
+    
+    <bean id="signCardsForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                    <ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />                	
+                	<ref bean="howfastAttribute" />
+                	<ref bean="signatureAttribute" />
+					
+                    <ref bean="shortDescAttribute" />                    
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="recieverAttribute" />
+                    <ref bean="recieverExtAttribute" />
+                    <ref bean="recieverExtShortAttribute" />
+                    <ref bean="recieverExtUsrAttribute" />
+                    <ref bean="authorAttribute" />
+
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttribute" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="signToDateAttribute" />
+                    <ref bean="visaHiddenAttribute" />
+                    
+                    <ref bean="regDateAttribute" />
+                	<ref bean="incomeDateAttribute" />
+                    <ref bean="signingAttribute"/>
+				    <ref bean="visavisaAttribute" />
+				    
+				    <ref bean="resolutGipaAttribute" />
+				    <ref bean="resolutInfdSgnexLink" />	
+				    <ref bean="incomingDeadlineAttribute" />		    
+				    <ref bean="executorAttribute" />		    
+                    
+            </list>
+        </property>
+        
+        <property name="sortColumns">
+                <list>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="default"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="howfastAttribute"/>
+							        <property name="asc" value="true"/>
+							        <property name="nullsFirst">
+										<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+									</property>
+							    </bean>    
+							    <!-- bean parent="sortViewAttribute">
+							        <property name="attribute" ref="incomeDateAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean-->  
+			                </list>
+			            </property>
+                	</bean>               
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="1"/>
+                		<property name="sortAttributes">
+			                <list>
+							    <bean parent="sortViewAttribute">
+							        <property name="attribute" ref="howfastAttribute"/>
+							        <property name="asc" value="true"/>
+							        <property name="nullsFirst">
+										<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+									</property>
+							    </bean>  
+							    <!-- <bean parent="sortViewAttribute">
+									<property name="attribute" ref="docTypeAttribute"/>
+									<property name="asc" value="true"/>									
+								</bean>-->
+								<bean parent="sortViewAttribute">
+									<property name="byTemplate" value="true"/>
+									<property name="asc" value="true"/>	
+								</bean> 
+			                </list>
+			            </property>
+                	</bean>  
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="2"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="shortDescAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>       
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="3"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="outcomingSignatoryAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean> 
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="4"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="signToDateAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean> 
+								<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="incomingDeadlineAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean> 
+							    <bean parent="sortViewAttribute">
+							        <property name="attribute" ref="visaToDate"/>
+							        <property name="asc" value="true"/>
+							    </bean>  
+			                </list>
+			            </property>
+                	</bean>  
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="5"/>
+                		<property name="sortAttributes">
+			                <list>
+				                <bean parent="sortViewAttribute">
+									<property name="attribute" ref="incomeDateAttribute"/>
+									<property name="templateId" value="jbr.independent.resolution"/>
+									<property name="asc" value="true"/>
+								</bean>
+								<bean parent="sortViewAttribute">
+									<property name="attribute" ref="incomeSignDateAttribute"/>
+									<property name="statusId" value="sign"/>
+									<property name="asc" value="true"/>
+								</bean>
+								<bean parent="sortViewAttribute">
+									<property name="attribute" ref="incomeVisaDateAttribute"/>
+									<property name="statusId" value="jbr.visa.waiting"/>
+									<property name="asc" value="true"/>
+								</bean>
+								<bean parent="sortViewAttribute">
+									<property name="attribute" ref="incomeExamDateAttribute"/>
+									<property name="statusId" value="jbr.exam.waiting"/>
+									<property name="asc" value="true"/>
+								</bean>
+								<bean parent="sortViewAttribute">
+									<property name="attribute" ref="incomeDateAttribute"/>
+									<property name="asc" value="true"/>
+								</bean>
+								<bean parent="sortViewAttribute">
+									<property name="attribute" ref="regDateAttribute"/>
+									<property name="asc" value="true"/>
+								</bean>
+			                </list>
+			            </property>
+                	</bean> 
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="6"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="executorAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>                          	
+                </list>
+            </property>
+            
+    </bean>
+    
+    <!--  Attributes required for getting urgent cards that need signing for supervisor  -->
+    <bean id="signUrgentlyCardsForSupervisorAttributes" parent="signCardsForSupervisorAttributes"/>
+    
+    
+    <!--  Attributes required for getting urgent cards that need consideration for supervisor -->
+    <bean id="considerUrgentlyCardsForSupervisorAttributes" parent="cardOnConsiderationForSupervisorAttributes"/>           
+    
+    <!--  Attributes required for getting report cards for supervisor -->
+    <bean id="approveCardsForSupervisorAttributes" parent="mainViewAttributesEx"/>    		
+    
+    
+    <!--  Attributes required for getting urgent cards for supervisor -->
+    <bean id="urgentCardsForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                    
+                </list>
+            </property>
+    </bean>
+    
+    <!--  Attributes required for getting urgent cards that need signing for supervisor  -->
+    <bean id="urgentCardsSigningForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttribute" />
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Attributes required for getting urgent cards that need coordination for supervisor  -->
+    <bean id="urgentCardsCoordinationForSupervisorAttributes" parent="urgentCardsSigningForSupervisorAttributes"/>
+    
+    <!--  Attributes required for getting urgent cards that need consideration for supervisor -->
+    <bean id="urgentCardsConsiderationForSupervisorAttributes" parent="mainViewAttributesEx"/>        
+    
+    
+    <!--  Attributes required for getting very urgent cards for supervisor -->
+    <bean id="veryUrgentCardsForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute"/>
+                    
+                </list>
+            </property>
+    </bean>    
+    
+    <!--  Attributes required for getting very urgent cards that need signing for supervisor  -->
+    <bean id="veryUrgentCardsSigningForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttribute" />
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Attributes required for getting very urgent cards that need coordination for supervisor  -->
+    <bean id="veryUrgentCardsCoordinationForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>	
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+                    <ref bean="signatoryExtAttribute" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+            </list>
+        </property>
+    </bean>    
+    
+    <!--  Attributes required for getting very urgent cards that need consideration for supervisor -->
+    <bean id="veryUrgentCardsConsiderationForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="declarantLastName" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>        
+    
+    
+    <!--  Attributes required for getting immediate cards  for supervisor -->
+    <bean id="immediateCardsForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="sourceOfComeAttribute" />
+                    <ref bean="incomingDeadlineAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->                    
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="incomingFoivAttribute" />
+                    <ref bean="recieverExtAttribute" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                    
+                </list>
+            </property>
+    </bean>    
+    
+    <!--  Attributes required for getting immediate cards that need signing for supervisor  -->
+    <bean id="immediateCardsSigningForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="recieverAttribute" />
+                    <ref bean="recieverExtAttribute" />
+            </list>
+        </property>
+    </bean>    
+
+    <!--  Attributes required for getting immediate cards that need signing for supervisor  -->
+    <bean id="immediateCardsCoordinationForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="recieverAttribute" />
+                    <ref bean="recieverExtAttribute" />
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Attributes required for getting immediate cards that need consideration for supervisor -->
+    <bean id="immediateCardsConsiderationForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="sourceOfComeAttribute" />
+                    <ref bean="incomingDeadlineAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="incomingFoivAttribute" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting immediate cards  for minister -->
+    <bean id="immediateCardsForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                    <!-- Empty list -->
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting immediate cards For Signing for minister
+        <column id="JBR_RECEIVER_EXT" link="true" labelAttrId="NAME"/>
+        <column id="JBR_INFD_TYPEDOC"/>
+        <column id="JBR_INFD_EXECUTOR"/>
+        <column id="JBR_INFD_SHORTDESC"/>
+      -->
+    <bean id="immediateCardsForSigningForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="recieverExtAttribute"/>
+                    <ref bean="executorAttribute"/>
+                    <ref bean="shortDescAttribute"/>
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting immediate cards For Consideration for minister
+        <column id="JBR_INFD_SENDER"/>
+        <column id="JBR_INFD_SHORTDESC"/>
+        <column id="ADMIN_277253"/>
+        <column id="JBR_IMPL_FOIV" link="true" labelAttrId="NAME"/>
+        <column id="JBR_INFD_SIGN_EXT"/>
+        <column id="JBR_INFD_SIGNATORY"/>
+        <column id="ADMIN_281734"/>
+
+    -->
+    <bean id="immediateCardsForConsiderationForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="incomingSenderAttribute"/>
+                    <ref bean="incomingSenderFullNameAttribute" />
+                    <ref bean="shortDescAttribute"/>
+                    <ref bean="shortDescAttribute1"/>
+                    <ref bean="incomingFoivAttribute"/>
+<!--                     
+                    <ref bean="signatoryExtAttribute"/>
+-->
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    
+                    <ref bean="outcomingSignatoryAttribute"/>
+                    <ref bean="sourceOfComeAttribute"/>
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting very urgent cards  for minister -->
+    <bean id="veryUrgentCardsForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                    <!-- Empty list -->
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting very urgent cards For Signing for minister  -->
+    <bean id="veryUrgentCardsForSigningForMinisterAttributes" parent="immediateCardsForSigningForMinisterAttributes"/>
+
+    <!--  Attributes required for getting very urgent cards For Consideration for minister -->
+    <bean id="veryUrgentCardsForConsiderationForMinisterAttributes" parent="immediateCardsForConsiderationForMinisterAttributes"/>
+
+    <!--  Attributes required for getting urgent cards  for minister -->
+    <bean id="urgentCardsForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                    <!-- Empty list -->
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting urgent cards For Signing for minister  -->
+    <bean id="urgentCardsForSigningForMinisterAttributes" parent="immediateCardsForSigningForMinisterAttributes"/>
+
+    <!--  Attributes required for getting urgent cards For Consideration for minister -->
+    <bean id="urgentCardsForConsiderationForMinisterAttributes" parent="immediateCardsForConsiderationForMinisterAttributes"/>
+
+    <!--  Attributes required for getting report cards for supervisor -->
+    <bean id="reportsCardsForSupervisorAttributes" parent="mainViewAttributesEx"/>    		
+    
+    <!--  Attributes required for getting cards that are on Control for supervisor -->
+    <bean id="controlCardsForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="sourceOfComeAttribute" />
+                    <ref bean="incomingDeadlineAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+<!--                     
+                    <ref bean="signatoryExtAttribute" />
+-->
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="incomingFoivAttribute" />
+                    
+                    <ref bean="signingAttribute" />
+				    <ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+
+    <!--  Attributes required for getting cards that are on Control for supervisor -->
+    <bean id="externalControlCardsForSupervisorAttributes" parent="cardOnExecutionForSupervisorAttributes"/>
+
+	<!--  Attributes required for getting Favorite cards for supervisor -->
+	<bean id="favoriteCardsForSupervisorAttributes" parent="persControlCardsForSupervisorAttributes"/>
+	
+    <!--  Attributes required for getting cards that are on Personal Control for supervisor -->
+	<bean id="persControlCardsForSupervisorAttributes" parent="parentCardViewData">
+		<property name="attributes">
+			<list>
+				<ref bean="docTypeAttribute" />
+				<ref bean="regNumAttribute" />
+				<ref bean="regDateAttribute" />
+				<ref bean="howfastAttribute" />
+				<ref bean="signatureAttribute" />
+				
+				<ref bean="resolutAttribute" />
+				<ref bean="incomingSenderAttribute" />
+				<ref bean="incomingSenderFullNameAttribute" />
+				<ref bean="incomingDeadlineAttribute" />
+				
+				<ref bean="outcomingSignatoryAttribute" />
+				<ref bean="declarantLastName" />
+				<ref bean="declarantFirstName" />
+				<ref bean="signatoryExtAttribute" />
+<!-- 
+				<ref bean="signatoryExtAttributeSurname" />
+				<ref bean="signatoryExtAttributeName" />
+				<ref bean="signatoryExtAttributeMiddleName" />
+-->                    
+				<ref bean="shortDescAttribute" />
+				<ref bean="shortDescAttribute1" />
+				<ref bean="incomingFoivAttribute" />
+				<ref bean="recieverExtAttribute" />
+				<ref bean="signingAttribute" />
+				<ref bean="visavisaAttribute" />
+				<ref bean="incomeDateAttribute" />	
+				<ref bean="resolutGipaAttribute" />
+				<ref bean="resolutInfdSgnexLink" />
+				
+				<ref bean="incomeExamDateAttribute" />
+				<ref bean="acqAttribute" />					
+			</list>
+		</property>
+		
+		<property name="sortColumns">
+			<list>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="default"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="sortGroup" value="1"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="sortGroup" value="2"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="1"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="valNumAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="2"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="3"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="shortDescAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+                	<property name="columnId" value="4"/>
+                	<property name="sortAttributes">
+			           	<list>
+			               	<bean parent="sortViewAttribute">
+							    <property name="byStatus" value="true"/>
+								<property name="asc" value="true"/>
+							</bean>
+			        	</list>
+			    	</property>
+                </bean>
+                <bean parent="columnSortAttributes">
+                	<property name="columnId" value="5"/>
+                	<property name="sortAttributes">
+			           	<list>
+			               	<bean parent="sortViewAttribute">
+							    <property name="attribute" ref="personalControlDateAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+			        	</list>
+			    	</property>
+                </bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="6"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeDateAttribute"/>
+								<property name="templateId" value="jbr.independent.resolution"/>
+								<property name="asc" value="false"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeSignDateAttribute"/>
+								<property name="statusId" value="sign"/>
+								<property name="asc" value="false"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeVisaDateAttribute"/>
+								<property name="statusId" value="jbr.visa.waiting"/>
+								<property name="asc" value="false"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeExamDateAttribute"/>
+								<property name="statusId" value="jbr.exam.waiting"/>
+								<property name="asc" value="false"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomeDateAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="regDateAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+    
+    <!--  Attributes required for getting worker cards for supervisor -->
+    <bean id="staffCardsForSupervisorAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	
+                    <ref bean="personLastNameAttribute" />
+                    <ref bean="personFirstNameAttribute" />
+                    <ref bean="personMiddleNameAttribute" />
+                    <ref bean="personPositionAttribute" />
+                    <ref bean="personPhoneAttribute" />
+                    <ref bean="departmentNameAttribute" />
+                                                                                                                            
+                </list>
+            </property>
+    </bean>                    
+    
+    
+    
+    
+    <!--  Attributes required for getting cards that are on Control for Minister -->
+    <bean id="controlCardsForMinisterAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="resolutAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+                    <ref bean="signatoryExtAttribute" />
+<!-- 
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+ -->                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="sourceOfComeAttribute" />
+                    
+                    <ref bean="regDateAttribute" />
+                	<ref bean="incomeDateAttribute" />
+                    <ref bean="signingAttribute" />
+					<ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+    
+    <!--  Attributes required for getting cards that are on Control for Minister and are president assignments  -->
+    <bean id="controlCardsForMinisterPresAssignmentsAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="resolutAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+                    <ref bean="signatoryExtAttribute" />
+<!--                     
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+ -->                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="sourceOfComeAttribute" />
+                    <ref bean="signingAttribute" />
+				<ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+    
+    <!--  Attributes required for getting cards that are on Control for Minister and are government assignments -->
+    <bean id="controlCardsForMinisterGovAssignmentsAttributes" parent="parentCardViewData">
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="resolutAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+                    <ref bean="signatoryExtAttribute" />
+<!-- 
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+ -->                    
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="sourceOfComeAttribute" />
+                    
+                    <ref bean="signingAttribute" />
+				<ref bean="visavisaAttribute" />
+                </list>
+            </property>
+    </bean>
+    
+    <!--  Attributes required for getting controlled cards that are under Control for Minister  -->
+    <bean id="controlCardsForControlMinisterAttributes" parent="controlCardsForMinisterGovAssignmentsAttributes">
+    </bean>            
+    
+    <!--  Attributes required for getting cards that are on Consideration for Minister  -->
+    <bean id="cardOnConsiderationForMinisterAttributes" parent="mainViewAttributes" >
+        
+            <property name="attributes">
+                <list>
+                	<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	<ref bean="howfastAttribute" /> 
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="sourceOfComeAttribute" />
+                    <ref bean="incomingDeadlineAttribute" />
+                    <ref bean="incomingSenderAttribute" />
+                    <ref bean="incomingSenderFullNameAttribute" />
+                    
+                    <ref bean="signatoryExtAttribute" />
+
+                    <ref bean="signatoryExtAttributeSurname" />
+                    <ref bean="signatoryExtAttributeName" />
+                    <ref bean="signatoryExtAttributeMiddleName" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="shortDescAttribute1" />
+                    <ref bean="incomingFoivAttribute" />
+                    
+                    <ref bean="regDateAttribute" />
+                	<ref bean="incomeDateAttribute" />
+                    <ref bean="signingAttribute" />     
+					<ref bean="visavisaAttribute" />
+					
+					<ref bean="jbrOgReqAuthorLastAttribute" />	
+					<ref bean="jbrOgReqAuthorFirstAttribute" />
+                </list>
+            </property>
+    </bean>    
+    
+    <!--  Attributes required for getting cards that need to be signing for Minsiter  -->
+    <bean id="signingCardsForMinisterAttributes" parent="signCardsForSupervisorAttributes"/>
+
+    <!--  Attributes required for getting cards that need to be signing and are orders for Minsiter  -->
+    <bean id="signingOrderCardsForMinisterAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+            		<ref bean="docTypeAttribute" />
+                	<ref bean="regNumAttribute" />
+                	
+                    <ref bean="recieverExtAttribute" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="docTypeAttribute" />
+                    <ref bean="executorAttribute" />
+
+            </list>
+        </property>
+    </bean>    
+
+	<bean id="cardsAcquaintanceForSupervisorAttributes" parent="parentCardViewData">
+		<property name="attributes">
+	            <list>
+	                    <ref bean="shortDescAttribute" />
+	            </list>
+	    </property>
+	</bean>
+	
+    <!--  Attributes required for getting cards that need to be signing and are HR orders for Minsiter  -->
+    <bean id="signingHROrderCardsForMinisterAttributes" parent="signingOrderCardsForMinisterAttributes"/>
+    
+    <!--  Attributes required for getting cards that need to be signing and are letters for Minsiter  -->
+    <bean id="signingLettersCardsForMinisterAttributes" parent="signingOrderCardsForMinisterAttributes"/>
+
+
+    <bean id="myDocumentsForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                    <ref bean="docTypeAttribute" />
+                    <ref bean="regNumAttribute" />
+                    <ref bean="valNumAttribute" />
+                    <ref bean="regDateAttribute" />
+                    <ref bean="incomeDateAttribute" />
+                    <ref bean="howfastAttribute" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="outcomingSignatoryAttribute" />
+                    <ref bean="signatureAttribute" />	
+                    <ref bean="incomingDeadlineAttribute" />
+                    <ref bean="planDateAttribute" />
+                    <ref bean="createdAttribute" />
+                    <ref bean="resolutGipaAttribute"/>
+                    <ref bean="resolutInfdSgnexLink"/>
+                    <ref bean="personSnameNm"/>
+                    <ref bean="recieverAttribute"/>
+                    <ref bean="recieverExtFullNameAttribute"/>
+            </list>
+        </property>
+
+        <property name="sortColumns">
+                <list>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="default"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="createdAttribute"/>
+                               <property name="sortGroup" value="1" />
+                               <property name="asc" value="false"/>
+                            </bean>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="valNumAttribute"/>
+                               <property name="sortGroup" value="2" />
+                               <property name="asc" value="false"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="1"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="byTemplate" value="true"/>
+                               <property name="asc" value="true"/>	
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="2"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="createdAttribute"/>
+                               <property name="sortGroup" value="1" />
+                               <property name="asc" value="true"/>
+                            </bean>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="valNumAttribute"/>
+                               <property name="sortGroup" value="2" />
+                               <property name="asc" value="false"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="3"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="shortDescAttribute"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="resolutGipaAttribute"/>
+                               <property name="templateId" value="jbr.independent.resolution"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="4"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="recieverAttribute"/>
+                               <property name="templateId" value="jbr.interndoc"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="recieverExtFullNameAttribute"/>
+                               <property name="templateId" value="jbr.outcoming"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="5"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="byStatus" value="true"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="6"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="resolutInfdSgnexLink"/>
+                               <property name="templateId" value="jbr.independent.resolution"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="outcomingSignatoryAttribute"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="7"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="valNumAttribute"/>
+                               <property name="asc" value="false"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                   <bean parent="columnSortAttributes">
+                      <property name="columnId" value="8"/>
+                      <property name="sortAttributes">
+                         <list>
+                            <bean parent="sortViewAttribute">
+                               <property name="attribute" ref="regDateAttribute"/>
+                               <property name="asc" value="true"/>
+                            </bean>
+                         </list>
+                      </property>
+                   </bean>
+                </list>
+             </property>
+    </bean>
+
+	<bean id="sentDocsForSupervisorAttributes" parent="parentCardViewData">
+		<property name="attributes">
+            <list>
+                    <ref bean="docTypeAttribute" />
+                    <ref bean="regNumAttribute" />
+                    <ref bean="valNumAttribute" />
+                    <ref bean="regDateAttribute" />
+                    <ref bean="incomeDateAttribute" />
+                    <ref bean="shortDescAttribute" />
+                    <ref bean="resolutGipaAttribute"/>
+                    <ref bean="resolutInfdSgnexLink"/>
+                    <ref bean="personSnameNm"/>
+                    <ref bean="recieverAttribute"/>
+                    <ref bean="recieverExtFullNameAttribute"/>
+                    <ref bean="jbrNumoutAttribute" />
+                    <ref bean="jbrDateoutAttribute" />
+                    <ref bean="jbrRassmPersonAttribute"/>
+                    <ref bean="execLinkAttribute"/>
+                    <ref bean="acqAttribute" />
+                    <ref bean="executorAttribute" />
+            </list>
+    	</property>
+    	<property name="sortColumns">
+            <list>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="default"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="createdAttribute"/>
+                           <property name="sortGroup" value="1" />
+                           <property name="asc" value="false"/>
+                        </bean>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="valNumAttribute"/>
+                           <property name="sortGroup" value="2" />
+                           <property name="asc" value="false"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="1"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="byTemplate" value="true"/>
+                           <property name="asc" value="true"/>	
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="2"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="regDateAttribute"/>
+                           <property name="sortGroup" value="1" />
+                           <property name="asc" value="true"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="3"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="shortDescAttribute"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="resolutGipaAttribute"/>
+                           <property name="templateId" value="jbr.independent.resolution"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="4"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="jbrNumoutAttribute"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="5"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="jbrDateoutAttribute"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="6"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="recieverAttribute"/>
+                           <property name="templateId" value="jbr.incoming"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="recieverAttribute"/>
+                           <property name="templateId" value="jbr.interndoc"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="jbrRassmPersonAttribute"/>
+                           <property name="templateId" value="jbr.incomingpeople"/>
+                           <property name="asc" value="true"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+               <bean parent="columnSortAttributes">
+                  <property name="columnId" value="7"/>
+                  <property name="sortAttributes">
+                     <list>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="execLinkAttribute"/>
+                           <property name="templateId" value="jbr.independent.resolution"/>
+                           <property name="asc" value="false"/>
+                        </bean>
+                        <bean parent="sortViewAttribute">
+                           <property name="attribute" ref="executorAttribute"/>
+                           <property name="asc" value="false"/>
+                        </bean>
+                     </list>
+                  </property>
+               </bean>
+            </list>
+    	</property>
+	</bean>
+
+    <bean id="delegationsForSupervisorAttributes" parent="parentCardViewData">
+        <property name="attributes">
+            <list>
+                	<ref bean="delegationStartDateAttribute" />
+                	<ref bean="delegationEndDateAttribute" />
+                	<ref bean="delegatedFromAttribute" />
+                    <ref bean="delegatedToAttribute" />
+                    <ref bean="delegatedToPositionAttribute" />
+					<ref bean="delegatedToDepartmentAttribute" />
+					<ref bean="delegatedFromPositionAttribute" />
+					<ref bean="delegatedFromDepartmentAttribute" />
+            </list>
+        </property>
+        <property name="sortColumns">
+                <list>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="default"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="createdAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="1"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="createdAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="2"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="3"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="4"/>
+                		<property name="sortAttributes">
+                            <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromDepartmentAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="5"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToDepartmentAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="6"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromPositionAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="7"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToPositionAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="8"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegationStartDateAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="9"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegationEndDateAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                </list>
+            </property>
+    </bean>
+
+    <bean id="delegationsHistoryForSupervisorAttributes" parent="delegationsForSupervisorAttributes">
+        <property name="sortColumns">
+                <list>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="default"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="createdAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="1"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="createdAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="2"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="3"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="4"/>
+                		<property name="sortAttributes">
+                            <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromDepartmentAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                	<bean parent="columnSortAttributes">
+                		<property name="columnId" value="5"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToDepartmentAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="6"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedFromPositionAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="7"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegatedToPositionAttribute"/>
+							        <property name="asc" value="true"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="8"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegationStartDateAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                    <bean parent="columnSortAttributes">
+                		<property name="columnId" value="9"/>
+                		<property name="sortAttributes">
+			                <list>
+			                	<bean parent="sortViewAttribute">
+							        <property name="attribute" ref="delegationEndDateAttribute"/>
+							        <property name="asc" value="false"/>
+							    </bean>
+			                </list>
+			            </property>
+                	</bean>
+                </list>
+            </property>
+    </bean>
+    
+    <!-- advancedSearchForSupervisorAttributes used for sort columns only -->
+    <bean id="advancedSearchForSupervisorAttributes" parent="parentCardViewData" >   
+    	<property name="attributes">
+			<list>
+				<ref bean="docTypeAttribute" />
+				<ref bean="regNumAttribute" />
+				<ref bean="regDateAttribute" />
+				<ref bean="howfastAttribute" />                	
+				<ref bean="signatureAttribute" />
+				<ref bean="incomeDateAttribute" />
+				
+				<ref bean="incomingDeadlineAttribute" />
+				<ref bean="controlTypeAttribute" />
+				<ref bean="outcomingSignatoryAttribute" />
+				<ref bean="jbrOgReqAuthorLastAttribute" />	
+				<ref bean="jbrOgReqAuthorFirstAttribute" />
+							
+				<ref bean="declarantLastName" />
+				<ref bean="declarantFirstName" />
+				<ref bean="sourceOfComeAttribute" />
+				
+				<ref bean="incomingSenderAttribute" />
+				<ref bean="incomingSenderFullNameAttribute" />
+				<ref bean="signatoryExtAttribute" />
+				<ref bean="signatoryExtAttributeNM" />
+				<ref bean="signatoryExtAttributePosition" />
+				<ref bean="signatoryExtAttributeSurname" />
+				<ref bean="signatoryExtAttributeName" />
+				<ref bean="signatoryExtAttributeMiddleName" />
+				
+				<ref bean="shortDescAttribute" />
+				<ref bean="shortDescAttribute1" />		
+				
+				<ref bean="signingAttribute" />
+				<ref bean="visavisaAttribute" />	
+				
+				<ref bean="resolutGipaAttribute" />
+				<ref bean="resolutInfdSgnexLink" />
+				
+				<ref bean="incomeExamDateAttribute" />
+				<ref bean="acqAttribute" />					
+			</list>
+		</property>
+		<property name="sortColumns">
+			<list>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="default"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="sortGroup" value="1" />
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="sortGroup" value="2" />
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="1"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="valNumAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="2"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="howfastAttribute"/>
+								<property name="asc" value="true"/>
+								<property name="nullsFirst">
+									<value type="com.aplana.dbmi.model.workstation.NullsSortingPolicy">NULLS_IS_SORTABLE</value>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<!-- non-sorted column, just to be on the safe side -->
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="3"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="shortDescAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="4"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="shortDescAttribute"/>
+								<property name="asc" value="true"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="columnSortAttributes">
+					<property name="columnId" value="5"/>
+					<property name="sortAttributes">
+						<list>
+							<bean parent="sortViewAttribute">
+								<property name="attribute" ref="incomingDeadlineAttribute"/>
+								<property name="asc" value="false"/>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+    
+
+    <bean id="viewAttribute" class="com.aplana.cms.view_template.ViewAttribute" abstract="true" />
+    <bean id="sortViewAttribute" class="com.aplana.cms.view_template.SortViewAttribute" abstract="true" />
+    <bean id="columnSortAttributes" class="com.aplana.cms.view_template.ColumnSortAttributes" abstract="true" />
+    
+    
+    
+    
+    <!--  Department short name -->
+     <bean id="departmentNameAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_DEPT_LINK" />
+        <property name="linkedCode" value="JBR_DEPT_SHORTNAME" />
+    </bean>    
+    
+    
+    <!--  person last name -->
+    <bean id="personLastNameAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_SNAME" />
+    </bean>
+    
+    <bean id="personFirstNameAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_NAME" />
+    </bean>        
+    
+    <bean id="personMiddleNameAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_MNAME" />
+    </bean>    
+    
+    
+    
+    <bean id="personPositionAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_POSITION" />
+    </bean>    
+    
+    <bean id="personPhoneAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_PERS_PHONE" />
+    </bean>
+    
+    
+    <bean id="shortDescAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SHORTDESC" />
+    </bean>
+    
+    <bean id="recieverAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_RECEIVER" />
+    </bean> 
+    
+    <bean id="recieverExtAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_RECEIVER_EXT" />
+        <property name="linkedCode" value="NAME"/>
+    </bean>
+    
+	<bean id="recieverExtShortAttribute" parent="viewAttribute">
+		<property name="code" value="JBR_RECEIVER_EXT" />
+		<property name="linkedCode" value="JBR_DORG_SHORTNAME"/>
+	</bean>
+	
+	<bean id="recieverExtFullNameAttribute" parent="viewAttribute">
+		<property name="code" value="JBR_RECEIVER_EXT" />
+		<property name="linkedCode" value="JBR_DORG_FULLNAME"/>
+	</bean>
+    
+	<bean id="recieverExtUsrAttribute" parent="viewAttribute">
+		<property name="code" value="JBR_RECEIVER_EXT_USR" />
+		<property name="linkedCode" value="NAME"/>
+	</bean>
+
+	<bean id="outcomingSignatoryAttribute" parent="viewAttribute">
+		<property name="code" value="JBR_INFD_SIGNATORY" />
+	</bean>
+    
+     <bean id="sourceOfComeAttribute" parent="viewAttribute">
+        <property name="code" value="ADMIN_281734" />
+    </bean>
+    
+     <bean id="incomingDeadlineAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_IMPL_DEADLINE" />
+    </bean>        
+    
+    <!--  Отправитель -->
+     <bean id="incomingSenderAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SENDER" />
+        <property name="linkedCode" value="JBR_DORG_SHORTNAME" />
+    </bean>
+    <bean id="incomingSenderFullNameAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SENDER" />
+        <property name="linkedCode" value="JBR_DORG_FULLNAME" />
+    </bean>
+	
+    <!-- Должность, ФИО лица, подписавшего документ -->
+    <bean id="signatoryExtAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="NAME" />
+    </bean>
+    
+      <!--  -->
+     <bean id="resolutAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_IMPL_RESOLUT" />
+        
+    </bean>    
+
+     
+     <bean id="signatoryExtAttributeSurname" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="JBR_PERS_SNAME" />
+    </bean>
+    
+     <bean id="signatoryExtAttributeMiddleName" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="JBR_PERS_MNAME" />
+    </bean>    
+    
+    <bean id="signatoryExtAttributeName" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="JBR_PERS_NAME" />
+    </bean>    
+    
+	<bean id="signatoryExtAttributePosition" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="JBR_PERS_POSITION" />
+    </bean>  
+    
+    <bean id="signatoryExtAttributeNM" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT" />
+        <property name="linkedCode" value="JBR_PERS_SNAME_NM" />
+    </bean>
+    
+    
+    <bean id="shortDescAttribute1" parent="viewAttribute">
+        <property name="code" value="ADMIN_277253" />
+    </bean>
+
+    <bean id="docTypeAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_TYPEDOC" />
+        <property name="linkedCode" value="NAME" />
+    </bean>
+    
+    <bean id="regNumAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_REGD_REGNUM" />
+    </bean>
+    
+    <bean id="valNumAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_REGD_REGNUM_D" />
+    </bean>
+    
+    <bean id="executorAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_EXECUTOR" />
+    </bean>
+
+    <bean id="incomingFoivAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_IMPL_FOIV" />
+        <property name="linkedCode" value="NAME"/>
+    </bean>
+    
+    <bean id="declarantLastName" parent="viewAttribute">
+        <property name="code" value="ADMIN_274992" />
+    </bean>
+    
+    <bean id="declarantFirstName" parent="viewAttribute">
+		<property name="code" value="ADMIN_281034" />
+	</bean>
+	
+    <bean id="howfastAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_HOWFAST" />
+    </bean>
+    
+    <bean id="createdAttribute" parent="viewAttribute">
+        <property name="code" value="CREATED" />
+    </bean>
+    
+    <bean id="regDateAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_REGD_DATEREG" />
+    </bean>
+    
+    <bean id="termAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_TERM" />
+    </bean>
+    
+    <bean id="controlTypeAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_IMPL_TYPECONT" />
+    </bean>
+
+  <bean id="incomeDateAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INCOMEDATE" />
+  </bean>
+  
+  <bean id="incomeSignDateAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_SIGN_SIGNING" />
+        <property name="linkedCode" value="JBR_INCOMEDATE" />
+  </bean>
+  
+  <bean id="incomeVisaDateAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_VISA_VISA" />
+        <property name="linkedCode" value="JBR_INCOMEDATE" />
+  </bean>
+  
+  <bean id="incomeExamDateAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_IMPL_ACQUAINT" />
+        <property name="linkedCode" value="JBR_INCOMEDATE" />
+  </bean> 
+   
+  <bean id="visaToDate" parent="viewAttribute">
+        <property name="code" value="JBR_VISA_VISA" />
+        <property name="linkedCode" value="JBR_VISA_TODATE" />
+  </bean>
+  
+  <bean id="authorAttribute" parent="viewAttribute">
+       <property name="code" value="AUTHOR" />
+  </bean>
+  
+  <bean id="signToDateAttribute" parent="viewAttribute">
+       <property name="code" value="JBR_SIGN_SIGNING" />
+       <property name="linkedCode" value="JBR_SIGN_TODATE" />
+  </bean>
+  
+  <bean id="visaHiddenAttribute" parent="viewAttribute">
+       <property name="code" value="JBR_VISA_VISA_HIDDEN" />
+  </bean>
+  
+  <bean id="personalControlDateAttribute" parent="viewAttribute">
+       <property name="code" value="JBR_PCON_DATE" />
+  </bean>
+  
+  <bean id="signatureAttribute" parent="viewAttribute">
+  	   <property name="code" value="JBR_SIGN_SIGNING" />
+       <property name="linkedCode" value="ADMIN_67129" />
+  </bean>  
+
+  <bean id="planDateAttribute" parent="viewAttribute">
+      <property name="code" value="ADMIN_5976960" />
+  </bean>
+
+  <bean id="delegationStartDateAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_DATE_START" />
+  </bean>
+
+  <bean id="delegationEndDateAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_DATE_END" />
+      <!-- property name="corrector" ref="dateAttributeCorrector"/-->  	
+  </bean>
+
+  <bean id="delegatedFromAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_FROM" />
+  </bean>
+
+  <bean id="delegatedToAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_TO" />
+  </bean>
+
+  <bean id="delegatedToPositionAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_TO" />
+      <property name="linkedCode" value="JBR_PERS_POSITION" />
+      <property name="linkedByPerson" value="true"/>
+  </bean>
+
+  <bean id="delegatedToDepartmentAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_TO" />
+      <property name="linkedCode" value="JBR_PERS_DEPARTMENT" />
+      <property name="linkedByPerson" value="true"/>
+  </bean>
+
+  <bean id="delegatedFromPositionAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_FROM" />
+      <property name="linkedCode" value="JBR_PERS_POSITION" />
+      <property name="linkedByPerson" value="true"/>
+  </bean>
+
+  <bean id="delegatedFromDepartmentAttribute" parent="viewAttribute">
+      <property name="code" value="DLGT_FROM" />
+      <property name="linkedCode" value="JBR_PERS_DEPARTMENT" />
+      <property name="linkedByPerson" value="true"/>
+  </bean>
+  
+  <bean id="signingAttribute" parent="viewAttribute">
+	  <property name="code" value="JBR_SIGN_SIGNING" />
+	  <property name="linkedCode" value="JBR_INCOMEDATE"/>  	
+  </bean>
+  
+  <bean id="visavisaAttribute" parent="viewAttribute">
+  	  <property name="code" value="JBR_VISA_VISA" />
+  	  <property name="linkedCode" value="JBR_INCOMEDATE"/>
+  </bean>
+
+  <bean id="nameAttribute" parent="viewAttribute">
+      <property name="code" value="NAME" />
+  </bean>
+  
+   <bean id="jbrOgReqAuthorLastAttribute" parent="viewAttribute">
+  	  <property name="code" value="JBR_OG_REQ_AUTHOR" />
+  	  <property name="linkedCode" value="ADMIN_274992"/>
+   </bean>
+   
+   <bean id="jbrOgReqAuthorFirstAttribute" parent="viewAttribute">
+  	  <property name="code" value="JBR_OG_REQ_AUTHOR" />
+  	  <property name="linkedCode" value="ADMIN_281034"/>
+   </bean>
+  
+  <bean id="resolutGipaAttribute" parent="viewAttribute">
+      <property name="code" value="JBR_GIPA_RESOLUT" />
+  </bean>
+  
+  <bean id="resolutInfdSgnexLink" parent="viewAttribute">
+      <property name="code" value="JBR_INFD_SGNEX_LINK" />
+  </bean>
+  
+  <bean id="personSnameNm" parent="viewAttribute">
+      <property name="code" value="JBR_PERS_SNAME_NM" />
+  </bean>
+  
+  <bean id="resolutTermAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_TCON_TERM" />
+   </bean>
+   
+  <!-- bean id="dateAttributeCorrector" class="com.aplana.dbmi.model.workstation.DateAttributeValueCorrector">
+  	 	<property name="changeTo" value="-1000" />
+  </bean-->
+  
+  <bean id="acqAttribute" parent="viewAttribute">
+      <property name="code" value="JBR_IMPL_ACQUAINT" />
+  </bean>
+  <bean id="jbrNumoutAttribute" parent="viewAttribute">
+      <property name="code" value="JBR_REGD_NUMOUT" />
+  </bean>
+  <bean id="jbrDateoutAttribute" parent="viewAttribute">
+      <property name="code" value="JBR_REGD_DATEOUT" />
+  </bean>
+  
+   <bean id="jbrRassmPersonAttribute" parent="viewAttribute">
+  	  <property name="code" value="JBR_IMPL_ACQUAINT" /> <!-- Рассмотрение -->
+  	  <property name="linkedCode" value="JBR_RASSM_PERSON"/> <!-- Рассматривающий -->
+  </bean>
+  
+  <bean id="execLinkAttribute" parent="viewAttribute">
+        <property name="code" value="JBR_INFD_EXEC_LINK" />
+  </bean>
+
+</beans>

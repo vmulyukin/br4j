@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<search byAttr="true">
+
+	<!-- 
+	<name lang="ru">�������������</name>
+	<name lang="en">Unresolved</name>
+	   -->
+	<name lang="ru">�����������</name>
+	<name lang="en">Incomings</name>
+
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="���� ��������� ���������" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="��� ��������� ���������" tooltipEn="No category of urgency"/>
+	</column> 
+	
+	<!-- ������ ��� ������������  -->
+	<column id="_STATE">
+		<icon value="6833780" image="onEnclosed" tooltipRu="�� �������������� ������������" tooltipEn="On Enclosed"/>
+		<default_icon image="noImage" tooltipRu="�� �� �������������� ������������" tooltipEn="Not On Enclosed"/>
+	</column>
+	
+	<!-- ��� ������������ ���������  -->
+	<column id="ADMIN_6849958">
+		<default_icon image="innerEnded" tooltipRu="�������������� ������������ ���������" tooltipEn="Inner negotiation is ended"/>
+		<empty_icon image="noImage" tooltipRu="�������������� ������������ �� ���������" tooltipEn="Inner negotiation is not ended"/>		
+	</column> 
+
+	<!-- ��������� ��������� -->
+	<column id="JBR_HOWFAST" width="30"/>
+
+	<!-- Imcoming date -->
+	<column id="JBR_INCOMEDATE" width="14" sort="asc" />
+
+
+	<!-- attribute id="JBR_IMPL_DEADLINE" type="date"
+	<attribute id="JBR_TCON_TERM" type="date">
+		
+		<value type="start" var="current">+0</value>
+		<value type="end" var="current">+1</value>
+		
+	</attribute>
+
+	<attribute id="EXECUTOR" type="user">
+		<value var="current"/>
+	</attribute>
+	 -->
+
+	<column id="NAME" width="140" />
+	<!-- ���� -->
+	<column id="_UNITERM" width="30"/>
+
+	<!-- �������� 
+	<column id="JBR_INFD_SUBJECTS" width="100" />-->
+
+	<!-- ������� ��������
+	<column id="JBR_INFD_SHORTDESC" width="100" />
+	  -->
+
+	<!-- ����� 
+	<column id="AUTHOR" width="100" />-->
+
+	<!-- ����
+	<column id="JBR_TCON_TERM" width="70" />
+	  -->
+
+	<!-- ����-���������
+	<column id="DESCR" width="70" />
+	  -->
+
+	<!-- �����������
+	<column id="JBR_INFD_EXECUTOR" width="100" />
+	  -->
+
+	<column id="_STATE" width="50" />
+</search>

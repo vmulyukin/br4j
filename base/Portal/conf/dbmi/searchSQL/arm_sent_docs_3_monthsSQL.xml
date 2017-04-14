@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+				WITH
+				t_1044_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 1044 AND c2.status_id IN (206, 207, 34145))
+					WHERE av_executor.attribute_code IN ('ADMIN_702335') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_504_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 504 AND c2.status_id IN (477679, 477681, 104, 103, 34145))
+					WHERE av_executor.attribute_code IN ('JBR_RASSM_PERSON') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_524_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 524 AND c2.status_id IN (67425))
+					WHERE av_executor.attribute_code IN ('JBR_FOR_INFORMATION') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_365_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 365 AND c2.status_id IN (204, 477934, 205, 1))
+					WHERE av_executor.attribute_code IN ('JBR_SIGN_RESPONSIBLE') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_348_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 348 AND c2.status_id IN (201, 6092498, 202, 1))
+					WHERE av_executor.attribute_code IN ('JBR_VISA_RESPONSIBLE') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_2344_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 2344 AND c2.status_id IN (201, 34145))
+					WHERE av_executor.attribute_code IN ('JBR_VISA_RESPONSIBLE') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_1255_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 1255 AND c2.status_id IN (505050,103,206))
+					WHERE av_executor.attribute_code IN ('JBR_INFD_SGNEX_LINK') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_764_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 764 AND c2.status_id IN (101,103,206,104,48909))
+					WHERE av_executor.attribute_code IN ('JBR_HIDDEN_CHIEF') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_1226_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 1226 AND c2.status_id IN (101,103,206,104,48909))
+					WHERE av_executor.attribute_code IN ('JBR_HIDDEN_CHIEF') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_324_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 324 AND c2.status_id IN (103,206,34145))
+					WHERE av_executor.attribute_code IN ('JBR_RESP_DOW_MAINDOC') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				t_1144_docs AS (
+					SELECT c2.card_id FROM  attribute_value av_executor
+					JOIN card c2 ON (c2.card_id = av_executor.card_id AND c2.template_id = 1144 AND c2.status_id IN (67425))
+					WHERE av_executor.attribute_code IN ('ADMIN_726874') AND av_executor.number_value = %CURRENTUSERS%
+				), 
+				cards_temp_table AS (
+				--add template 1044
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('ADMIN_702604') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_1044_docs AS tt) AND av_basecard.attribute_code IN ('ADMIN_702604')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('ADMIN_702604')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_1044_docs AS tt)
+
+				UNION
+				--add template 504
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_RASSM_PARENT_DOC') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_504_docs AS tt) AND av_basecard.attribute_code IN ('JBR_RASSM_PARENT_DOC')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_RASSM_PARENT_DOC')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_504_docs AS tt)
+
+				UNION
+				--add template 524
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_INFORM_DOC') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_524_docs AS tt) AND av_basecard.attribute_code IN ('JBR_INFORM_DOC')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_INFORM_DOC')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_524_docs AS tt)
+
+				UNION
+				--add template 365
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_SIGN_PARENT') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_365_docs AS tt) AND av_basecard.attribute_code IN ('JBR_SIGN_PARENT')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_SIGN_PARENT')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_365_docs AS tt)
+
+				UNION
+				--add template 348
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_VISA_PARENT_DOC') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_348_docs AS tt) AND av_basecard.attribute_code IN ('JBR_VISA_PARENT_DOC')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_VISA_PARENT_DOC')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_348_docs AS tt)
+
+				UNION
+				--add template 2344
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_ADO_DOCBASE') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_2344_docs AS tt) AND av_basecard.attribute_code IN ('JBR_ADO_DOCBASE')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_ADO_DOCBASE')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_2344_docs AS tt)
+
+				UNION
+				--add template 1255
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_1255_docs AS tt) AND av_basecard.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_1255_docs AS tt)
+
+				UNION
+				--add template 764
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_764_docs AS tt) AND av_basecard.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_764_docs AS tt)
+
+				UNION
+				--add template 1226
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_1226_docs AS tt) AND av_basecard.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_DOCL_RELATDOC','ADMIN_221237')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_1226_docs AS tt)
+
+				UNION
+				--add template 324
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('JBR_MAINDOC') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_324_docs AS tt) AND av_basecard.attribute_code IN ('JBR_MAINDOC')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('JBR_MAINDOC')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_324_docs AS tt)
+
+				UNION
+				--add template 1144
+				SELECT DISTINCT av_basecard.number_value FROM attribute_value av_basecard
+				INNER JOIN attribute a ON (a.attribute_code IN ('ADMIN_726877') AND a.data_type <> 'B')
+				WHERE av_basecard.card_id IN (SELECT tt.card_id FROM t_1144_docs AS tt) AND av_basecard.attribute_code IN ('ADMIN_726877')
+				UNION
+				SELECT functionbacklink(ccc.card_id, o1.option_value, o2.option_value) AS number_value FROM card ccc
+				   INNER JOIN template_block tb ON tb.template_id = ccc.template_id
+				   INNER JOIN attribute a ON a.block_code=tb.block_code AND a.data_type='B'
+					  AND a.attribute_code IN ('ADMIN_726877')
+				   LEFT JOIN attribute_option o1 ON a.attribute_code = o1.attribute_code
+					  AND o1.option_code = 'UPLINK'
+				   LEFT JOIN attribute_option o2 ON a.attribute_code = o2.attribute_code
+					  AND o2.option_code = 'LINK'
+				   WHERE ccc.card_id IN (SELECT tt.card_id FROM t_1144_docs AS tt)
+				), c as  ( select c.CARD_ID, c.TEMPLATE_ID, c.STATUS_ID, t.template_name_rus from cards_temp_table
+				inner join card c ON (c.card_id = cards_temp_table.number_value)
+				inner join template t on (t.template_id=c.template_id) where exists (select 1 from ATTRIBUTE_VALUE av where av.ATTRIBUTE_CODE = 'CREATED' and av.date_VALUE > date_trunc('day', now() - INTERVAL '91 days')  and av.CARD_ID = c.CARD_ID)) 
+
+				select c.card_id from c
+			]]>
+		</sql>
+	</query>
+</searchQuery>

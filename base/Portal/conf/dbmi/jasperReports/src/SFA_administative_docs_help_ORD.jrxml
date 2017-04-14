@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SFA_administative_docs_help_ORD" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="565" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="document_type" class="java.lang.String"/>
+	<parameter name="group_by_year" class="java.lang.Boolean"/>
+	<parameter name="developer" class="java.lang.String"/>
+	<parameter name="start" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[com.aplana.dbmi.jasperreports.SplitByYears.getDate($P{from_date})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="finish" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[com.aplana.dbmi.jasperreports.SplitByYears.getDate($P{to_date})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="only_direct_developer" class="java.lang.Boolean"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\baulina\\My Documents\\MyProjects\\JBoss\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- таблица ссылок на непосредственый вышестоящий департамент
+-- id - департамент, pid - непосредлственно вышестоящий департамент
+with dep_parent (id, pid) as (
+	select cr.card_id as id, av_parent.number_value as pid
+	from card cr
+	left join attribute_value av_parent on av_parent.card_id = cr.card_id and av_parent.attribute_code = 'JBR_DEPT_PARENT_LINK'
+	where cr.template_id = 484
+),
+-- таблица ссылок на все вышестоящие департаменты + на саму себя
+dep_all_parent (id, pid) as (
+	with recursive dep_all_parent_rec (b_id, id, pid) as (
+		select id, id, pid
+		from dep_parent
+		union
+		select dap.b_id, dp.id, dp.pid
+		from dep_all_parent_rec dap, dep_parent dp
+		where dap.pid = dp.id
+	)
+	select b_id, id
+	from dep_all_parent_rec
+),
+-- таблица записей департаментов которые будут считаться разработчиками
+-- первый столбец: департамент который явл. непосредственым разработчиком
+-- второй столбец: департаменты которые считаются так же разработчиками документа (
+--    сам непосредственный разработчки и если НУЖНО его вышестоящие департаменты)
+dep_developers (id, pid) as (
+	select distinct dep.id,
+		case when $P{only_direct_developer} then dep.id
+		     else dep.pid
+		end
+	from dep_all_parent dep
+)
+select
+av_dev_name.string_value as develop,
+case
+    when $P{group_by_year} = true
+        then to_char(av_date_reg.date_value + interval '$P!{tz_hour} hour', 'YYYY')
+        else '0'
+end as year,
+av_doctype_name.string_value as doc_type,
+count(*) as count
+from card c
+join attribute_value av_date_reg on (av_date_reg.card_id = c.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG')
+join attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+    left join attribute_value av_doctype_name on (av_doctype_name.card_id = av_doctype.number_value and av_doctype_name.attribute_code = 'NAME')
+join attribute_value av_dev on (av_dev.card_id = c.card_id and av_dev.attribute_code = 'ADMIN_6079618') --dep card_id
+inner join dep_developers dep on dep.id = av_dev.number_value
+    left join attribute_value av_dev_name on (av_dev_name.card_id = dep.pid and av_dev_name.attribute_code = 'NAME')
+where c.template_id in (764)
+and c.status_id in (101,103,206,48909,104)
+and date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{from_date}
+and date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+and ($P{document_type} is null or av_doctype.number_value in ($P!{document_type}))
+and ($P{developer} is null or dep.pid in ($P!{developer}))
+group by develop, year, doc_type
+order by develop, year asc,  count desc, doc_type]]>
+	</queryString>
+	<field name="develop" class="java.lang.String"/>
+	<field name="year" class="java.lang.String"/>
+	<field name="doc_type" class="java.lang.String"/>
+	<field name="count" class="java.lang.Integer"/>
+	<group name="dev Group">
+		<groupExpression><![CDATA[$F{develop}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<staticText>
+					<reportElement style="table" mode="Opaque" x="0" y="15" width="426" height="20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font isBold="true" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Вид документа]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="565" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" Разработчик: "+
+($F{develop}==null || $F{develop}.equals("null")?"":$F{develop})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="table" mode="Opaque" x="426" y="15" width="139" height="20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font isBold="true" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Количество документов]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<group name="year Group">
+		<groupExpression><![CDATA[$F{year}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[($P{group_by_year} == true)
+&&
+($P{start}.intValue() != $P{finish}.intValue())]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="table" x="0" y="0" width="565" height="20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" Год "+$F{year}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="55">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Справка о выпуске организационно-распорядительных документов\nза период c " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " +
+(new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="426" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["        "+$F{doc_type}.replace("\n","")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="426" y="0" width="139" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="70">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="565" height="70"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="def" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="37"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Справка о выпуске организационно-распорядительных документов\nза период c " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " +
+(new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="48" width="565" height="20"/>
+					<textElement>
+						<font isItalic="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Не найдено ни одного документа"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</noData>
+</jasperReport>

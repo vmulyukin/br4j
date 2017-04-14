@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="route-table">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="transport-agent" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="nodes" minOccurs="1" maxOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+		<xs:key name="AgentID">
+			<xs:selector xpath="./transport-agent/agents/agent"/>
+			<xs:field xpath="@name"/>
+		</xs:key>
+		<xs:keyref name="AgentIDRef" refer="AgentID">
+			<xs:selector xpath="./nodes/node/agent"/>
+			<xs:field xpath="@name"/>
+		</xs:keyref>
+	</xs:element>
+	<!-- *************************** -->
+	<xs:element name="transport-agent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="agents" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="uuid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<!-- *************************** -->
+	<xs:element name="agents" type="AgentList">
+	</xs:element>
+		
+	<xs:complexType name="AgentList">
+		<xs:sequence minOccurs="1"  maxOccurs="unbounded">
+			<xs:element ref="agent"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="agent">
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="period" type="xs:unsignedInt" use="optional"/>
+			<xs:attribute name="cron" type="xs:string" use="optional"/>
+			<xs:attribute name="config" type="xs:string" use="optional"/>
+			<xs:attribute name="retries" type="xs:unsignedInt" use="optional" default="3"/>
+		</xs:complexType>
+	</xs:element>
+	<!-- *************************** -->
+	<xs:element name="nodes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:unique name="unique-node">
+			<xs:selector xpath="node"/> 
+			<xs:field xpath="@name"/> 
+		</xs:unique>
+	</xs:element>
+	<xs:element name="node">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="destination" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="resources" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="agent" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="type" type="NodeType" use="required"/>
+			<xs:attribute name="order" type="xs:unsignedShort" use="optional" default="0"/>
+		</xs:complexType>
+		<xs:unique name="DestinationNodeUUID">
+			<xs:selector xpath="./destination"/>
+			<xs:field xpath="@uuid"/>
+		</xs:unique>
+		
+	</xs:element>
+
+	<xs:element name="destination">
+		<xs:complexType>
+			<xs:attribute name="uuid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="NodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="in"/>
+			<xs:enumeration value="out"/>
+		</xs:restriction>
+	</xs:simpleType> 
+	
+	<!-- *************************** -->
+	<xs:element name="resources">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="resource" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="url" type="xs:anyURI" use="required"/>
+						<xs:attribute name="type" type="ResourceType" use="optional" default="document"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="ResourceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="document"/>
+			<xs:enumeration value="collector"/>
+			<xs:enumeration value="ticket"/>
+			<xs:enumeration value="copy"/>
+			<xs:enumeration value="trash"/>
+		</xs:restriction>
+	</xs:simpleType> 
+</xs:schema>

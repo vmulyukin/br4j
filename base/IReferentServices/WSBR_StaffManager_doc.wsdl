@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<wsdl:definitions 
+targetNamespace="urn:IReferent.it.com" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:apachesoap="http://xml.apache.org/xml-soap" 
+xmlns:impl="urn:IReferent.it.com" 
+xmlns:intf="urn:IReferent.it.com" 
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<schema targetNamespace="urn:IReferent.it.com" 
+		xmlns="http://www.w3.org/2001/XMLSchema" 
+		xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+			<complexType name="WSO_CONTEXT">
+				<sequence>
+					<element name="USERID" nillable="true" type="xsd:string" /> 
+					<element name="CLIENTTYPE" nillable="true" type="xsd:string" /> 
+				</sequence>
+			</complexType>
+			<complexType name="WSOBJECT">
+				<sequence>
+					<element name="ID" nillable="true" type="xsd:string"/>
+					<element name="TITLE" nillable="true" type="xsd:string"/>
+					<element name="TYPE" nillable="true" type="xsd:string"/>
+					<element name="EXTENSION" nillable="true" type="impl:WSO_COLLECTION" /> 
+				</sequence>
+			</complexType>
+			<complexType name="WSO_COLLECTION">
+				<sequence>
+					<element name="COUNT" type="xsd:integer" />
+					<element maxOccurs="unbounded" minOccurs="0" name="DATA" nillable="true" type="xsd:anyType" /> 
+				</sequence>
+			</complexType>
+			<complexType name="WSO_STAFFOBJECT">
+				<complexContent>
+					<extension base="impl:WSOBJECT">
+						<sequence>
+							<element name="PARENTS" nillable="true" type="impl:WSO_COLLECTION"/>
+							<element name="ATTACHMENTS" nillable="true" type="impl:WSO_COLLECTION" />
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<complexType name="WSO_MPERSON">
+				<complexContent>
+					<extension base="impl:WSO_STAFFOBJECT">
+						<sequence>
+							<element name="ISACTIVE" nillable="true" type="xsd:boolean" /> 
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<complexType name="WSO_PERSON"> 
+				<complexContent>
+					<extension base="impl:WSO_MPERSON">
+						<sequence>
+							<element name="EMAIL" nillable="true" type="xsd:string"/>
+							<element name="PHONE" nillable="true" type="xsd:string"/>
+							<element name="WORKPHONE" nillable="true" type="xsd:string"/>
+							<element name="FAX" nillable="true" type="xsd:string"/>
+							<element name="POST" nillable="true" type="xsd:string"/>
+							<element name="PROXIES" nillable="true" type="impl:WSO_MPERSON"/>
+							<element name="TRUSTERS" nillable="true" type="impl:WSO_COLLECTION"/>
+							<element name="FIRSTNAME" nillable="true" type="xsd:string"/>
+							<element name="MIDDLENAME" nillable="true" type="xsd:string"/>
+							<element name="LASTNAME" nillable="true" type="xsd:string"/>
+							<!--<element name="ATTACHMENTS" nillable="true" type="impl:WSO_COLLECTION" />-->
+							<element name="PHOTO" nillable="true" type="impl:WSO_COLLECTION" />
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<element name="GETPERSONReturn" type="impl:WSO_PERSON" /> 			
+			<complexType name="WSO_MGROUP">
+				<complexContent>
+					<extension base="impl:WSO_STAFFOBJECT">
+						<sequence>
+							<element name="CHILDS" nillable="true" type="impl:WSO_COLLECTION"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<complexType name="WSO_GROUP">
+				<complexContent>
+					<extension base="impl:WSO_MGROUP">
+						<sequence>
+							<element name="LEADER" nillable="true" type="impl:WSO_MPERSON"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<element name="GETGROUPReturn" type="impl:WSO_GROUP" /> 
+			<element name="GETORGANIZATIONSReturn" type="impl:WSO_COLLECTION" /> 
+			<element name="GETPERSONSReturn" type="impl:WSO_COLLECTION" /> 
+			<element name="GETSTRUCTUREReturn" type="impl:WSO_GROUP" />
+			<complexType name="WSO_MFILE">
+				<complexContent>
+					<extension base="impl:WSOBJECT">
+						<sequence>
+							<element name="NAME" nillable="true" type="xsd:string" /> 
+							<element name="DATE" nillable="true" type="xsd:date" /> 
+							<element name="VERSION" nillable="true" type="xsd:integer" /> 
+							<element name="USER" nillable="true" type="xsd:string" /> 
+							<element name="FIELDNAME" nillable="true" type="xsd:string" /> 
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<complexType name="WSO_FILE">
+				<complexContent>
+					<extension base="impl:WSO_MFILE">
+						<sequence>
+							<element name="BODY" nillable="true" type="xsd:base64Binary" />
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+			<!-- wrapped patterns -->
+			<element name="WR_GETGROUPRequest">
+				<complexType>
+					<sequence>
+						<element name="GROUPIDS" type="xsd:string"/>
+						<element name="INCLUDEATTACHMENTS" type="xsd:boolean"/>
+						<element name="CONTEXT" type="impl:WSO_CONTEXT"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="WR_GETPERSONRequest">
+				<complexType>
+					<sequence>
+						<element name="PERSONID" type="xsd:string"/>
+						<element name="INCLUDEATTACHMENTS" type="xsd:boolean"/>
+						<element name="CONTEXT" type="impl:WSO_CONTEXT"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="WR_GETORGANIZATIONSRequest">
+				<complexType>
+					<sequence>
+						<element name="ISMOBJECT" type="xsd:boolean"/>
+						<element name="INCLUDEATTACHMENTS" type="xsd:boolean"/>
+						<element name="CONTEXT" type="impl:WSO_CONTEXT"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="WR_GETPERSONSRequest">
+				<complexType>
+					<sequence>
+						<element name="GROUPID" type="xsd:string"/>
+						<element name="ISMOBJECT" type="xsd:boolean"/>
+						<element name="CHILDSLEVEL" type="xsd:integer"/>
+						<element name="INCLUDEATTACHMENTS" type="xsd:boolean"/>
+						<element name="CONTEXT" type="impl:WSO_CONTEXT"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="WR_GETSTRUCTURERequest">
+				<complexType>
+					<sequence>
+						<element name="GROUPID" type="xsd:string"/>
+						<element name="ISMOBJECT" type="xsd:boolean"/>
+						<element name="CHILDSLEVEL" type="xsd:integer"/>
+						<element name="INCLUDEATTACHMENTS" type="xsd:boolean"/>
+						<element name="CONTEXT" type="impl:WSO_CONTEXT"/>
+					</sequence>
+				</complexType>
+			</element>
+		</schema>
+	</wsdl:types>
+	<wsdl:message name="GETGROUPRequest">
+		<wsdl:part element="impl:WR_GETGROUPRequest" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="GETGROUPResponse">
+		<wsdl:part element="impl:GETGROUPReturn" name="GETGROUPReturn" /> 
+	</wsdl:message>
+	<wsdl:message name="GETPERSONRequest">
+		<wsdl:part element="impl:WR_GETPERSONRequest" name="parameters" /> 
+	</wsdl:message>
+	<wsdl:message name="GETPERSONResponse">
+		<wsdl:part element="impl:GETPERSONReturn" name="GETPERSONReturn" />
+	</wsdl:message>
+	<wsdl:message name="GETORGANIZATIONSRequest">
+		<wsdl:part element="impl:WR_GETORGANIZATIONSRequest" name="parameters" />  
+	</wsdl:message>
+	<wsdl:message name="GETORGANIZATIONSResponse">
+		<wsdl:part element="impl:GETORGANIZATIONSReturn" name="GETORGANIZATIONSReturn" />
+	</wsdl:message>	
+	<wsdl:message name="GETPERSONSRequest">
+		<wsdl:part element="impl:WR_GETPERSONSRequest" name="parameters" /> 
+	</wsdl:message>
+	<wsdl:message name="GETPERSONSResponse">
+		<wsdl:part element="impl:GETPERSONSReturn" name="GETPERSONSReturn" /> 
+	</wsdl:message>
+	<wsdl:message name="GETSTRUCTURERequest">
+		<wsdl:part element="impl:WR_GETSTRUCTURERequest" name="parameters" /> 
+	</wsdl:message>
+	<wsdl:message name="GETSTRUCTUREResponse">
+		<wsdl:part element="impl:GETSTRUCTUREReturn" name="GETSTRUCTUREReturn" />
+	</wsdl:message>
+	<wsdl:portType name="WS_StaffManager">
+		<wsdl:operation name="GETGROUP">
+			<wsdl:input message="intf:GETGROUPRequest" /> 
+			<wsdl:output message="intf:GETGROUPResponse" /> 
+		</wsdl:operation>
+		<wsdl:operation name="GETPERSON">
+			<wsdl:input message="intf:GETPERSONRequest" name="GETPERSONRequest" /> 
+			<wsdl:output message="intf:GETPERSONResponse" name="GETPERSONResponse" /> 
+		</wsdl:operation>
+		<wsdl:operation name="GETORGANIZATIONS">
+			<wsdl:input message="intf:GETORGANIZATIONSRequest" name="GETORGANIZATIONSRequest" /> 
+			<wsdl:output message="intf:GETORGANIZATIONSResponse" name="GETORGANIZATIONSResponse" /> 
+		</wsdl:operation>
+		<wsdl:operation name="GETPERSONS">
+			<wsdl:input message="intf:GETPERSONSRequest" name="GETPERSONSRequest" /> 
+			<wsdl:output message="intf:GETPERSONSResponse" name="GETPERSONSResponse" /> 
+		</wsdl:operation>
+		<wsdl:operation name="GETSTRUCTURE">
+			<wsdl:input message="intf:GETSTRUCTURERequest" name="GETSTRUCTURERequest" /> 
+			<wsdl:output message="intf:GETSTRUCTUREResponse" name="GETSTRUCTUREResponse" /> 
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="DominoSoapBinding" type="intf:WS_StaffManager">
+		<wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GETGROUP">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input>
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:input>
+			<wsdl:output>
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GETPERSON">
+			<wsdlsoap:operation soapAction="" /> 
+			<wsdl:input name="GETPERSONRequest">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:input>
+			<wsdl:output name="GETPERSONResponse">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GETORGANIZATIONS">
+			<wsdlsoap:operation soapAction="" /> 
+			<wsdl:input name="GETORGANIZATIONSRequest">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:input>
+			<wsdl:output name="GETORGANIZATIONSResponse">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GETPERSONS">
+			<wsdlsoap:operation soapAction="" /> 
+			<wsdl:input name="GETPERSONSRequest">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:input>
+			<wsdl:output name="GETPERSONSResponse">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GETSTRUCTURE">
+			<wsdlsoap:operation soapAction="" /> 
+			<wsdl:input name="GETSTRUCTURERequest">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:input>
+			<wsdl:output name="GETSTRUCTUREResponse">
+				<wsdlsoap:body use="literal" /> 
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WS_StaffManagerService">
+		<wsdl:documentation>WSBR_StaffManager service</wsdl:documentation>
+		<wsdl:port binding="intf:DominoSoapBinding" name="Domino">
+			<wsdlsoap:address location="http://localhost:8080/IReferent/WSBR_StaffManager"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

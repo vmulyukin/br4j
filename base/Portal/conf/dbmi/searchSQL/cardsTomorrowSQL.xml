@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+			-- Выборка Завтра
+-- получение карточек со временем "сегодня":
+SELECT cardID
+FROM (
+	SELECT c.card_id as cardID
+	FROM Card c
+	inner JOIN attribute_value av 	ON	(av.card_id = c.card_id)
+	inner JOIN attribute_value avUser ON (avUser.card_id = c.card_id AND avUser.number_value in (%CURRENTUSERS%)
+										)
+				WHERE 
+					-- дата : ЗАВТРА ...
+					(av.date_value = current_date+1)
+					and	
+					(
+						( 	-- Шаблон=Визирование, состояние=Согласование
+							(c.template_id=348) and (c.status_id =107)
+							-- согласующий=текущий пользователь 
+							and (avUser.attribute_code='JBR_VISA_RESPONSIBLE') 
+							-- "время выполнения"
+							and (av.attribute_code = 'JBR_VISA_TODATE')
+						)
+					or (-- Шаблон=Рассмотрение, состояние=Рассмотрение
+							(c.template_id=504) and (c.status_id =102)
+							-- рассматривающий=текущий пользователь 
+							and (avUser.attribute_code = 'JBR_RASSM_PERSON') 
+							-- "время выполнения"
+							and (av.attribute_code = 'JBR_RASSM_TODATE')
+						)
+
+						or (-- Шаблон=Подписание, состояние="На подписание"
+							(c.template_id=365) and (c.status_id =108)
+							-- подписывающий=текущий пользователь 
+							and (avUser.attribute_code ='JBR_SIGN_RESPONSIBLE') 
+							-- "время выполнения"
+							and (av.attribute_code ='JBR_SIGN_TODATE')
+						)
+
+					)
+ 
+					/*    делаем отдельно, механизм будет другой.
+						or (-- Шаблон=Ознакомление, состояние="Ознакомление"
+							(c.template_id=524) and (c.status_id =67424)
+							-- ознакамливающийся=текущий пользователь 
+							and (avUser.attribute_code ='JBR_INFD_EXECUTOR') 
+							-- "время выполнения"
+							and (av.attribute_code ='JBR_INFORM_DATA')
+						)
+					 */
+						
+		-- Template 324 Porucheniya
+		UNION SELECT c.card_id as cardID
+		FROM Card c
+			INNER JOIN attribute_value av
+				-- "время выполнения"
+				ON	(av.card_id = c.card_id and (av.attribute_code ='JBR_TCON_TERM') )
+			-- исполнитель=текущий пользователь 
+			INNER JOIN attribute_value avUser 
+				ON (	avUser.card_id = c.card_id 
+						-- (2010/05/12) OLD: and (avUser.attribute_code ='JBR_INFD_EXECUTOR') 
+						and (avUser.attribute_code ='JBR_INFD_EXEC_LINK') 
+				   )
+			INNER JOIN person p
+				ON (	p.card_id = avUser.number_value
+						AND p.person_id in (%CURRENTUSERS%) )
+		WHERE 
+			( -- Шаблон=Поручение, состояние="Исполнение"
+					(c.template_id=324) and (c.status_id =103)
+			)
+
+				-- Ознакомление
+				UNION SELECT 	avChildList.number_value	as cardID
+					--		  , av.date_value				as ctrlTime
+				FROM Card cParent
+					
+					-- "время ознакомления"
+					JOIN attribute_value av 
+						on 		(av.card_id = cParent.card_id)
+							and (av.attribute_code='JBR_INFORM_DATA')
+
+					-- "Список ознакомления" = CardLink("JBR_INFORM_LIST")
+					JOIN attribute_value avChildList 
+						on 		(avChildList.card_id = cParent.card_id)
+							and (avChildList.attribute_code='JBR_INFORM_LIST')
+
+							   			    			
+					-- карточка Ознакомления (вложенная)
+					JOIN Card cChild
+						on	(cChild.card_id = avChildList.number_value)
+
+					-- "Ознакамливающийся" из вложенной
+					JOIN attribute_value avInfoChildUser
+						on 		(avInfoChildUser.card_id = cChild.card_id) 
+							and avInfoChildUser.attribute_code='JBR_FOR_INFORMATION'
+							
+				WHERE (1=1)
+					-- and (av.date_value is not null)  -- относим пустые даты к сегодня
+	 				and (av.date_value =current_date+1)
+					-- Шаблон=Ознакомление, состояние=Ознакомление
+					and	(cChild.template_id=524) and (cChild.status_id in (67424))
+
+					-- =текущий пользователь 
+					and (avInfoChildUser.number_value in (%CURRENTUSERS%)) 
+
+	) a				
+GROUP by cardID
+			]]>
+		</sql>
+
+		<!--
+			<parameters>
+				<param name="userId" dispaly-name="User id" type="integer" />
+			</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

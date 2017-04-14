@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<reports>
+	<exportType>PDF</exportType>
+	<!-- (Smirnov A. : 26.7.12) BR4J00013529: Скрыть отчет "Справка о поступивших письменных обращениях граждан"
+	<report id="Reference_of_citizens_written_appl" title="Reference_of_citizens_written_appl" rootKit="rootKit">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="from_date" type="Date" title="startDate" require="false"/>
+				<parameter name="to_date" type="Date" title="endDate" require="false"/>
+			</kit>
+		</kits>
+	</report>
+	-->
+	<report id="QuarterlyReportFSIN-1" title="QuarterlyReportFSIN-1" rootKit="rootKit" fileName="Kvart_report_OG_FSIN-1_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+                <parameter name="org" type="Cards" title="organisation" require="true" query="jasperReports/userOrgs.xml" buttons="true" allSelected="all_organisations" defValue="userOrg"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<report id="Kvart_report_og" title="Kvart_report_og" rootKit="rootKit" fileName="Kvart_report_og_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>	
+				<parameter name="dept" type="Cards" title="department_rassm2" require="true" query="jasperReports/departments_2lvl.xml" buttons="true" allSelected="All_managements"/>
+				<parameter name="quest" type="Cards" title="question" require="true" query="jasperReports/thematicsOfQuestion.xml" buttons="true" allSelected="all_questions"/>
+				<parameter name="res_rassm" type="ValuesRefList" allDiffersFromEmpty="true" title="res_rassm" require="true" idRef="JBR_DECISION_RES_LST,JBR_REDIRECT_LIST" allGroups="all_res_rassm"/>
+            	<parameter name="reportType" type="Radio" title="reportType" require="true" multiValued="false" defValue="0">
+                    <option id="0" title="byDept"/>
+                    <option id="1" title="plain"/>
+                </parameter>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<report id="ReportOG_toPrezidentRF" title="ReportOG_toPrezidentRF" rootKit="rootKit" exportType="XLS" fileName="ReportOG_toPrezidentRF_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="date" type="Date" title="date" require="true"/>
+				<parameter name="source_type" type="ValuesRefList" title="typesrc" require="true" idRef="ADMIN_281717" allGroups="all_sources"/>
+				<parameter name="classficator" type="Cards" title="classficator" require="false" query="jasperReports/classificator/all.xml" buttons="true" allGroups="all_classificators"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="1">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<report id="PresidentRF" title="ReportOG_toPrezidentRF_2014" rootKit="rootKit" exportType="XLS" fileName="Report_Administr_@currentDate_yyyy-MM-dd@">
+		<kits>
+			<kit id="rootKit">
+            	<parameter name="searchWith" type="SelectKit" title="periodOrDate" require="true" multiValued="false" defValue="kitPeriod">
+                    <option ref="kitQuarter" title="quarter"/>
+                    <option ref="kitPeriod" title="datePeriod"/>
+                </parameter>			
+			</kit>
+            <kit id="kitQuarter">
+   				<parameter name="quarter" type="SelectKit" title="quarter" require="true" multiValued="false" currentQuarterSelected="true">
+					<option ref="1" title="quarter1"/>
+					<option ref="2" title="quarter2"/>
+					<option ref="3" title="quarter3"/>
+					<option ref="4" title="quarter4"/>	
+				</parameter>
+            </kit>
+            <kit id="kitPeriod">
+                <parameter name="from_date" type="Date" title="startDate" require="true"/>
+                <parameter name="to_date" type="Date" title="endDate" require="true"/>
+            </kit>
+		</kits>
+	</report>
+    <report id="og_registr" title="og_registr" rootKit="rootKit" fileName="Reestr_postup_OG_@currentDate_dd.MM.yyyy@">
+        <kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="person" type="Cards" title="employee" require="true" query="jasperReports/persons.xml"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+            </kit>
+        </kits>
+    </report>
+	<report id="Reference_of_citizens_appl" title="Reference_of_citizens_appl" rootKit="rootKit" fileName="Reference_of_citizens_appl_@currentDate_dd.MM.yyyy@">
+        <kits>
+            <kit id="rootKit">
+                <parameter name="from_date" type="Date" title="startDate" require="false"/>
+                <parameter name="to_date" type="Date" title="endDate" require="false"/>                
+                <parameter name="journal_reg" type="Cards" title="journalReg" require="true" query="jasperReports/ogdoc_journal.xml" buttons="true" allSelected="alljournalReg"/>
+            	<parameter name="type_of_report" type="Radio" title="type_of_report" require="false" defValue="0">
+            		<option id="111" title="territories" />
+            		<option id="222" title="sources"/>
+            		<option id="333" title="on_logs"/>
+            		<option id="444" title="type_revenue_source"/>
+            		<option id="555" title="divisional_implementing"/>
+            		<option id="666" title="by_i"/>
+            	</parameter>
+            	<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+            </kit>
+            <kit id="222">
+				<parameter name="jregs" type="Cards" title="controllers" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/controllerDoc.xml" buttons="true" allGroups="all_controllers"/>				
+				<parameter name="source_type" type="ValuesRefList" allDiffersFromEmpty="true" title="types_control" require="true" idRef="ADMIN_26975" allGroups="all_types_control"/>
+			</kit>
+			 <kit id="333">
+				<parameter name="jregs" type="Cards" title="controllers" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/controllerDoc.xml" buttons="true" allGroups="all_controllers"/>				
+				<parameter name="source_type" type="ValuesRefList" allDiffersFromEmpty="true" title="types_control" require="true" idRef="ADMIN_26975" allGroups="all_types_control"/>
+			</kit>
+			<kit id="444">
+				<parameter name="jregs" type="Cards" title="controllers" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/controllerDoc.xml" buttons="true" allGroups="all_controllers"/>				
+				<parameter name="source_type" type="ValuesRefList" allDiffersFromEmpty="true" title="types_control" require="true" idRef="ADMIN_26975" allGroups="all_types_control"/>
+			</kit>
+			<kit id="555">
+				<parameter name="jregs" type="Cards" title="controllers" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/controllerDoc.xml" buttons="true" allGroups="all_controllers"/>				
+				<parameter name="source_type" type="ValuesRefList" allDiffersFromEmpty="true" title="types_control" require="true" idRef="ADMIN_26975" allGroups="all_types_control"/>
+				<parameter name="divisions" type="Cards" title="divisions" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/departments.xml" buttons="true" allGroups="all_divisions"/>
+			</kit>
+			<kit id="666">
+				<parameter name="jregs" type="Cards" title="controllers" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/controllerDoc.xml" buttons="true" allGroups="all_controllers"/>				
+				<parameter name="source_type" type="ValuesRefList" title="types_control" allDiffersFromEmpty="true" require="true" idRef="ADMIN_26975" allGroups="all_types_control"/>
+				<parameter name="divisions" type="Cards" title="divisions" allDiffersFromEmpty="true" require="true" query="jasperReports/typeReport/departments.xml" buttons="true" allGroups="all_divisions"/>
+			</kit>			
+        </kits>
+    </report>
+    <report id="PetitionsForYear" title="PetitionsForYear" rootKit="rootKit" fileName="PetitionsForYear_@currentDate_dd.MM.yyyy@">
+        <kits>
+            <kit id="rootKit">
+                <parameter name="year" type="YearPeriod" title="year" multiValued="false" allGroups="year" startYear="2010" currentYearSelected="true" />
+                <parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+             </kit>
+        </kits>
+    </report>
+    <report id="PetitionsForMonth" title="PetitionsForMonth" rootKit="rootKit" fileName="PetitionsForMonth_@currentDate_dd.MM.yyyy@">
+        <kits>
+            <kit id="rootKit">
+                <parameter name="year" type="YearPeriod" title="year" multiValued="false" allGroups="year" startYear="2010" currentYearSelected="true" require="true"/>
+                <parameter name="month" type="SelectKit" title="month" multiValued="false" allGroups="month" currentMonthSelected="true" require="true">
+                	<!-- <option ref="364" title="outcoming"/>-->
+                	<option ref="1" title="jan"/>
+                	<option ref="2" title="feb"/>
+                	<option ref="3" title="mar"/>
+                	<option ref="4" title="apr"/>
+                	<option ref="5" title="may"/>
+                	<option ref="6" title="jun"/>
+                	<option ref="7" title="jul"/>
+                	<option ref="8" title="aug"/>
+                	<option ref="9" title="sep"/>
+                	<option ref="10" title="oct"/>
+                	<option ref="11" title="nov"/>
+                	<option ref="12" title="dec"/>
+                </parameter>
+                <parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+             </kit>
+        </kits>
+    </report>
+    <report id="reportByTypalClassificatorOG" title="reportByTypalClassificatorOG" rootKit="rootKit" fileName="reportByTypalClassificatorOG_@currentDate_dd.MM.yyyy@">
+        <kits>
+            <kit id="rootKit">
+                <parameter name="from_date" type="Date" title="startDate" require="true"/>
+                <parameter name="to_date" type="Date" title="endDate" require="true"/>
+                             
+                <parameter name="section" type="Cards" title="section" require="false" query="jasperReports/classificator/sections.xml"
+                		   buttons="true" allDiffersFromEmpty="true" allSelected="all_sections" group="1"/>
+                		   
+                <parameter name="subject" type="Cards" title="subject" require="false" query="jasperReports/classificator/subjects.xml"  dep_control="section" dep_attr="jbr.RefThemes2.parentRegion"
+                		   buttons="true" allDiffersFromEmpty="true" allSelected="all_subjects" group="1"/>
+                		   
+                <parameter name="theme" type="Cards" title="theme" require="false" query="jasperReports/classificator/themes.xml" dep_control="subject" dep_attr="jbr.RefThemes3.parentRegion"
+                		   buttons="true" allDiffersFromEmpty="true" allSelected="all_themes" group="1"/>
+                		   
+                <parameter name="question" type="Cards" title="question" require="false" query="jasperReports/classificator/questions.xml" dep_control="theme" dep_attr="jbr.ThemeOfQuery_Question"
+                		   buttons="true" allDiffersFromEmpty="true" allSelected="all_questions" group="1"/>
+                		   
+                <parameter name="subquestion" type="Cards" title="subquestion" require="false" query="jasperReports/classificator/subquestions.xml" dep_control="question" dep_attr="jbr.RefQuestion4.parentRegion"
+                		   buttons="true" allDiffersFromEmpty="true" allSelected="all_subquestions" group="1"/>
+                		   
+            	<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+            </kit>
+        </kits>
+    </report>
+    <report id="Svodka_OG(Weekly)" title="Svodka_OG(Weekly)" rootKit="rootKit" fileName="Svodka_OG(Weekly)_@currentDate_dd.MM.yyyy@" >
+    	<kits>
+            <kit id="rootKit">
+    			<parameter name="from_date" type="Date" title="startDate" require="true"/>
+        		<parameter name="to_date" type="Date" title="endDate" require="true"/>
+        		<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+    <report id="reportRecivedOgCount" title="reportRecivedOgCount" rootKit="rootKit" fileName="Report_o_kol_postup_OG_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="dept" type="Cards" title="department_rassm2" require="true" query="jasperReports/departments_2lvl.xml" buttons="true" allSelected="All_departments"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<report id="ogExecutionTimeControl" title="ogExecutionTimeControl" rootKit="rootKit" fileName="Report_po_kontrolu_srokov_OG_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="dept" type="Cards" title="department_rassm3" require="true" query="jasperReports/departments_2lvl.xml" buttons="true" allSelected="All_departments"/>
+            	<parameter name="onControl" type="SelectKit" title="controlTypes" require="true" multiValued="false" defValue="0">
+                    <option ref="1432" title="onControl"/>
+                    <option ref="1433" title="onNotControl"/>
+					<option ref="0" title="allControlTypes"/>
+                </parameter>			
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<report id="ogSpisokProsroch" title="ogSpisokProsroch" rootKit="rootKit" fileName="Spisok_Prosroch_OG_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="dept" type="Cards" title="department_rassm2" require="true" query="jasperReports/departments_2lvl.xml" buttons="true" allSelected="All_managements"/>			
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<report id="ogQuestionsReport" title="ogQuestionsReport" rootKit="rootKit" fileName="Report_Voprosi_OG_@currentDate_dd.MM.yyyy@">
+    	<kits>
+            <kit id="rootKit">
+                <parameter name="startDate" type="Date" title="startDate" require="true"/>
+                <parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="dept" type="Cards" title="department_rassm" require="true" query="jasperReports/departments_2lvl.xml" buttons="true" allSelected="All_departments"/>			
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+    	</kits>
+    </report>
+	<messages>
+		<lang code="en">
+			<message key="otchet_po_documentoob" value="Отчет по документообороту"/>
+			<message key="QuarterlyReportFSIN-1" value="Квартальный отчет по обращениям ФСИН-1"/>
+			<message key="reportType" value="Report type"/>
+			<message key="byDept" value="By departments"/>
+			<message key="plain" value="Plain"/>
+			<message key="Kvart_report_og" value="Kvart report og"/>
+			<message key="res_rassm" value="Результат рассмотрения"/>
+			<message key="month" value="Месяц"/>
+			<message key="jan" value="Январь"/>
+			<message key="feb" value="Февраль"/>
+			<message key="mar" value="Март"/>
+			<message key="apr" value="Апрель"/>
+			<message key="may" value="Май"/>
+			<message key="jun" value="Июнь"/>
+			<message key="jul" value="Июль"/>
+			<message key="aug" value="Август"/>
+			<message key="sep" value="Сентябрь"/>
+			<message key="oct" value="Октябрь"/>
+			<message key="nov" value="Ноябрь"/>
+			<message key="dec" value="Декабрь"/>
+			<message key="year" value="Год"/>
+			<message key="2010" value="2010"/>
+			<message key="2011" value="2011"/>
+			<message key="2012" value="2012"/>
+			<message key="quarter1" value="First quarter"/>
+			<message key="quarter2" value="Second quarter"/>
+			<message key="quarter3" value="Third quarter"/>
+			<message key="quarter4" value="Fourth quarter"/>
+			<message key="quarter" value="Quarter"/>
+			<message key="Reference_of_citizens_written_appl" value="The reference of citizen's written applications"/>
+			<message key="Reference_of_citizens_appl" value="The reference of citizen's applications"/>
+			<message key="ReportOG_toPrezidentRF" value="Report for Prezident of Russian Federation (deprecated since 01.01.2014)"/>
+			<message key="ReportOG_toPrezidentRF_2014" value="Report for Prezident of Russian Federation"/>
+			<message key="incomingDocsRegister" value="List of incoming correspondence"/>
+			<message key="outgoingDocsRegister" value="List of outgoing correspondence"/>
+			<message key="date" value="date"/>
+			<message key="dateReg" value="Registration date"/>
+			<message key="dateDeparture" value="Departure date"/>
+			<message key="instrsMinister" value="List of instructions minister"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Information on the coordination of projects"/>
+			<message key="Registered_Legal_Acts_report_title" value="Registered Legal Acts report"/>
+			<message key="registered_docs_list_title" value="Registered documents list"/>
+			<message key="SFA_administative_docs_help_title" value="Administative documents help"/>
+			<message key="lim_term" value="Date of execution orders"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="From"/>
+			<message key="endDate" value="Till"/>
+			<message key="onDate" value="On date"/>
+			<message key="journal" value="Journal"/>
+			<message key="curators_title" value="Curator"/>
+			<message key="document_type_title" value="Document types"/>
+			<message key="developer_title" value="Developer"/>
+			<message key="department_title" value="department"/>
+			<message key="group_by_year_title" value="Group by year"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="classficator" value="Классификатор"/>
+			<message key="journalReg" value="Журнал регистрации:"/>
+			<message key="alljournalReg" value="По всем журналам регистрации"/>
+			<message key="type_of_report" value="Тип отчёта"/>
+			<message key="PetitionsForYear" value="Отчет по обращениям граждан за год"/>
+			<message key="PetitionsForMonth" value="Отчет по обращениям граждан за месяц"/>
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>	
+			<message key="overExportReportFormat" value="Report format"/>
+			<message key="reportByTypalClassificatorOG" value="Report By Typal Classificator OG"/>
+			<message key="section" value="Section"/>
+            <message key="subject" value="Subject"/>
+            <message key="theme" value="Theme"/>
+            <message key="question" value="Question"/>
+            <message key="subquestion" value="Subquestion"/>
+            <message key="all_sections" value="All sections"/>
+            <message key="all_subjects" value="All subjects"/>
+            <message key="all_themes" value="All themes"/>
+            <message key="all_questions" value="All questions"/>
+            <message key="all_subquestions" value="All subquestions"/>
+            <message key="all_classificators" value="All classificators"/>
+            <message key="typesrc" value="Type of source"/>
+            <message key="all_sources" value="All sources"/>
+            <message key="type_of_report" value="Тип отчёта"/>	
+			<message key="territories" value="по территориям"/>
+			<message key="sources" value="по источнику поступления"/>	
+			<message key="on_logs" value="по журналам регистрации"/>
+			<message key="type_revenue_source" value="по типам источника поступления"/>
+			<message key="divisional_implementing" value="по подразделениям-исполнителям"/>
+			<message key="by_i" value="по исполнителям"/>
+			<message key="controllers" value="Контролер"/>
+			<message key="types_control" value="Тип контроля "/>
+			<message key="divisions" value="Подразделения"/>
+			<message key="all_controllers" value="По всем контролерам"/>
+			<message key="all_types_control" value="По всем типам контроля"/>
+			<message key="all_divisions" value="По всем подразделениям"/>
+			<message key="datePeriod" value="За определенный период"/>
+			<message key="periodOrDate" value="За квартал/за определенный период"/>
+			<message key="Svodka_OG(Weekly)" value="Resume by appeals (weekly)"/>
+			<message key="og_registr" value="Реестр поступивших обращений граждан"/>
+			<message key="employee" value="Сотрудник: "/>
+			<message key="reportRecivedOgCount" value="Отчет о количестве поступивших обращений"/>
+			<message key="department_title" value="Departments"/>
+			<message key="All_departments" value="All departments"/>
+			<message key="All_managements" value="All managements"/>
+			<message key="department_rassm" value="Подразделение рассмотритель"/>
+			<message key="department_rassm2" value="Подразделение-рассмотритель"/>
+			<message key="department_rassm3" value="Структурное подразделение"/>
+			<message key="controlTypes" value="Контроль:"/>
+			<message key="onControl" value="Да"/>
+			<message key="onNotControl" value="Нет"/>
+			<message key="allControlTypes" value="Все"/>
+			<message key="ogExecutionTimeControl" value="Отчет по контролю сроков исполнения Обращений граждан"/>
+			<message key="ogSpisokProsroch" value="Отчет о списке обращений, ответ на которые дан с нарушением сроков"/>
+			<message key="ogQuestionsReport" value="Отчет по данным о вопросах, содержащихся в обращениях и результатах их рассмотрения"/>
+            <message key="organisation" value="Organisation"/>
+            <message key="all_organisations" value="By all organisations"/>
+		</lang>
+		<lang code="ru">
+			<message key="otchet_po_documentoob" value="Отчет по документообороту"/>
+			<message key="QuarterlyReportFSIN-1" value="Квартальный отчет по обращениям ФСИН-1"/>
+			<message key="reportType" value="Вид отчета"/>
+			<message key="byDept" value="отдельная таблица по каждому выбранному подразделению"/>
+			<message key="plain" value="сводная таблица"/>
+			<message key="Kvart_report_og" value="Квартальный отчет по обращениям граждан"/>
+			<message key="res_rassm" value="Результат рассмотрения"/>
+			<message key="all_res_rassm" value="По всем результатам"/>
+			<message key="year" value="Год"/>
+			<message key="2010" value="2010"/>
+			<message key="2011" value="2011"/>
+			<message key="2012" value="2012"/>
+			<message key="month" value="Месяц"/>
+			<message key="jan" value="Январь"/>
+			<message key="feb" value="Февраль"/>
+			<message key="mar" value="Март"/>
+			<message key="apr" value="Апрель"/>
+			<message key="may" value="Май"/>
+			<message key="jun" value="Июнь"/>
+			<message key="jul" value="Июль"/>
+			<message key="aug" value="Август"/>
+			<message key="sep" value="Сентябрь"/>
+			<message key="oct" value="Октябрь"/>
+			<message key="nov" value="Ноябрь"/>
+			<message key="dec" value="Декабрь"/>
+			<message key="year" value="Год"/>
+			<message key="2010" value="2010"/>
+			<message key="2011" value="2011"/>
+			<message key="2012" value="2012"/>
+			<message key="quarter1" value="I квартал"/>
+			<message key="quarter2" value="II квартал"/>
+			<message key="quarter3" value="III квартал"/>
+			<message key="quarter4" value="IV квартал"/>
+			<message key="quarter" value="За квартал"/>
+			<message key="deadlinesControlOfControlDocumentsReport" value="Отчет по контролю сроков исполнения контрольных документов"/>
+			<message key="Reference_of_citizens_written_appl" value="Cправка о поступивших письменных обращениях граждан"/>
+			<message key="Reference_of_citizens_appl" value="Cправка о поступивших обращениях граждан"/>
+			<message key="ReportOG_toPrezidentRF" value="Отчет в Администрацию Президента РФ (действует до 2014г.)"/>
+			<message key="ReportOG_toPrezidentRF_2014" value="Отчет в Администрацию Президента РФ (действует с 2014г.)"/>
+			<message key="outgoingDocsRegister" value="Реестр исходящих документов"/>
+			<message key="date" value="Дата"/>
+			<message key="dateReg" value="Дата регистрации"/>
+			<message key="dateDeparture" value="Дата отправления"/>
+			<message key="instrsMinister" value="Список поручений министра"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Информация о ходе согласования проектов"/>
+			<message key="Registered_Legal_Acts_report_title" value="Отчет по принятым НПА"/>
+			<message key="registered_docs_list_title" value="Перечень зарегистрированных документов"/>
+			<message key="SFA_administative_docs_help_title" value="Справка о выпуске распорядительных документов"/>
+			<message key="lim_term" value="Дата исполнения поручений"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="С      "/>
+			<message key="endDate" value="По     "/>
+			<message key="onDate" value="На дату"/>
+			<message key="journal" value="Журнал"/>
+			<message key="curators_title" value="Куратор"/>
+			<message key="document_type_title" value="Типы документов"/>
+			<message key="developer_title" value="Разработчик"/>
+			<message key="group_by_year_title" value="Группировать по годам"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="department_title" value="Подразделение"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="classficator" value="Классификатор"/>
+			<message key="journalReg" value="Журнал регистрации"/>
+			<message key="alljournalReg" value="По всем журналам регистрации"/>
+			<message key="PetitionsForYear" value="Отчет по обращениям граждан за год"/>
+			<message key="PetitionsForMonth" value="Отчет по обращениям граждан за месяц"/>	
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>
+			<message key="overExportReportFormat" value="Формат отчета"/>
+			<message key="reportByTypalClassificatorOG" value="Отчет по типовому классификатору обращений граждан"/>
+			<message key="section" value="Раздел "/>
+            <message key="subject" value="Тематика "/>
+            <message key="theme" value="Тема "/>
+            <message key="question" value="Вопрос "/>
+            <message key="subquestion" value="Подвопрос "/>
+            <message key="all_sections" value="По всем разделам"/>
+            <message key="all_subjects" value="По всем тематикам"/>
+            <message key="all_themes" value="По всем темам"/>
+            <message key="all_questions" value="По всем вопросам"/>
+            <message key="all_subquestions" value="По всем подвопросам"/>
+            <message key="all_classificators" value="По всем классификаторам"/>
+            <message key="typesrc" value="Тип источника"/>
+            <message key="all_sources" value="Все источники"/>
+            <message key="type_of_report" value="Тип отчёта"/>	
+			<message key="territories" value="по территориям"/>
+			<message key="sources" value="по источнику поступления"/>	
+			<message key="on_logs" value="по журналам регистрации"/>
+			<message key="type_revenue_source" value="по типам источника поступления"/>
+			<message key="divisional_implementing" value="по подразделениям-исполнителям"/>
+			<message key="by_i" value="по исполнителям"/>
+			<message key="controllers" value="Контролер"/>
+			<message key="types_control" value="Тип контроля "/>
+			<message key="divisions" value="Подразделения"/>
+			<message key="all_controllers" value="По всем контролерам"/>
+			<message key="all_types_control" value="По всем типам контроля"/>
+			<message key="all_divisions" value="По всем подразделениям"/>
+			<message key="datePeriod" value="За определенный период"/>
+			<message key="periodOrDate" value="За квартал/за определенный период"/>
+			<message key="Svodka_OG(Weekly)" value="Сводка по обращениям (еженедельная)"/>
+			<message key="og_registr" value="Реестр поступивших обращений граждан"/>
+			<message key="employee" value="Сотрудник: "/>
+			<message key="reportRecivedOgCount" value="Отчет о количестве поступивших обращений"/>
+			<message key="department_title" value="Подразделение"/>
+			<message key="All_departments" value="По всем подразделениям"/>
+			<message key="All_managements" value="По всем управлениям"/>
+			<message key="department_rassm" value="Подразделение рассмотритель"/>
+			<message key="department_rassm2" value="Подразделение-рассмотритель"/>
+			<message key="department_rassm3" value="Структурное подразделение"/>
+			<message key="controlTypes" value="Контроль:"/>
+			<message key="onControl" value="Да"/>
+			<message key="onNotControl" value="Нет"/>
+			<message key="allControlTypes" value="Все"/>
+			<message key="ogExecutionTimeControl" value="Отчет по контролю сроков исполнения Обращений граждан"/>
+			<message key="ogSpisokProsroch" value="Отчет о списке обращений, ответ на которые дан с нарушением сроков"/>
+			<message key="ogQuestionsReport" value="Отчет по данным о вопросах, содержащихся в обращениях и результатах их рассмотрения"/>
+			<message key="organisation" value="Организация"/>
+			<message key="all_organisations" value="По всем организациям"/>
+		</lang>
+	</messages>
+</reports>

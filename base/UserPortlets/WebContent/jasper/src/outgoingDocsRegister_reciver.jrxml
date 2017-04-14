@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="outgoingDocsRegister_reciver" pageWidth="687" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="687" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.6500000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="organization" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+case
+    when $P{organization} is null then 'Все'
+    else
+        array_to_string(array(
+            select distinct coalesce(coalesce(av_full_name.string_value, av_short_name.string_value), coalesce(av_full_name_deep.string_value, av_short_name_deep.string_value))
+            from card c
+            left join attribute_value av_full_name on (av_full_name.card_id = c.card_id and av_full_name.attribute_code = 'JBR_DORG_FULLNAME')
+            left join attribute_value av_short_name on (av_short_name.card_id = c.card_id and av_short_name.attribute_code = 'JBR_DORG_SHORTNAME')
+            left join attribute_value av_per_org on (av_per_org.card_id = c.card_id and av_per_org.attribute_code = 'JBR_PERS_ORG')
+                left join attribute_value av_full_name_deep on (av_full_name_deep.card_id = av_per_org.number_value and av_full_name_deep.attribute_code = 'JBR_DORG_FULLNAME')
+                left join attribute_value av_short_name_deep on (av_short_name_deep.card_id = av_per_org.number_value and av_short_name_deep.attribute_code = 'JBR_DORG_SHORTNAME')
+            where c.template_id in (464, 222)
+            and c.card_id in ($P!{organization})
+        ), ', ')
+end as receiver]]>
+	</queryString>
+	<field name="receiver" class="java.lang.String"/>
+	<title>
+		<band height="15">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="0" width="687" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{receiver} == null ? "" : $F{receiver})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

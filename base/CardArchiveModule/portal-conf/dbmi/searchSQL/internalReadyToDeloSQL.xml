@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+    
+    
+-- Внутренние - готовы к списанию
+SELECT DISTINCT a.cardID
+FROM
+	(
+		SELECT c.card_id as cardID 
+		FROM Card c
+			-- Контроль
+			LEFT JOIN attribute_value av1
+				ON	(av1.card_id = c.card_id
+				AND av1.attribute_code in ('JBR_IMPL_ONCONT'))
+
+			-- все поручения исполнены
+			JOIN card c1 
+				ON /*c1.card_id = av2.number_value 
+				and */c1.template_id = 324
+				and c1.parent_card_id = c.card_id
+				and c1.status_id in (206, 303990, 1, 34145)
+			
+		WHERE 
+				-- нужный шаблон
+				c.template_id IN (784) 
+
+			 	-- на исполнении
+			 	and c.status_id in (103)
+			 	
+				-- не на контроле
+				AND coalesce(av1.value_id, -1)<>1432
+				
+                -- неисполненных поручений нет
+                and not exists(select 1 from card c12 
+                                where 	c12.template_id = 324
+                                        and c12.parent_card_id = c.card_id
+                                        and c12.status_id not in (206, 303990, 1, 34145))
+
+                -- нету рассмотрений в статусах, кроме Исполнение, В дело, Отправлен руководителем в дело
+                and not exists(select 1 from card c3 
+                                where 	c3.template_id = 504
+                                        and c3.parent_card_id = c.card_id
+                                        and c3.status_id not in (103, 104, 477681))
+		 -- WHERE
+        union all
+		select a.cardID from(
+		SELECT c.card_id as cardID,
+			count(c1.card_id) as correctResolutionCount,	-- количество поручений на исполнении с корректными отчетами для документа-основания
+			(select count(card_id) from card where parent_card_id = c.card_id and template_id = 324 and status_id in (103)) as allResolutionCount	-- общее количество поручений на исполнении для документа-основания
+		FROM Card c
+			-- Контроль
+			LEFT JOIN attribute_value av1
+				ON	(av1.card_id = c.card_id
+				AND av1.attribute_code in ('JBR_IMPL_ONCONT'))
+				
+			-- поручения на исполнении
+            JOIN card c1 
+				ON /*c1.card_id = av2.number_value 
+                and */c1.template_id = 324
+                and c1.status_id = 103
+				and c1.parent_card_id = c.card_id
+			
+			-- исполнители поручений
+			JOIN  attribute_value av3
+				ON (av3.card_id = c1.card_id
+				AND av3.attribute_code in ('JBR_INFD_EXEC_LINK'))
+
+            INNER JOIN card c2 
+				ON /*c2.card_id = av4.number_value 
+				and */c2.template_id = 1044
+				and c2.status_id in (207, 206)
+				and c2.parent_card_id = c1.card_id
+
+			-- Исполнители отчетов
+			JOIN attribute_value av5 
+				ON (av5.card_id = c2.card_id
+				AND av5.attribute_code in ('ADMIN_702335'))
+                and av3.number_value = av5.number_value
+			 
+		WHERE 
+				-- нужный шаблон
+				c.template_id IN (784) 
+
+			 	-- на исполнении
+			 	and c.status_id in (103)
+
+				-- не на контроле
+				AND coalesce(av1.value_id, -1)<>1432
+				
+                -- поручений, кроме Исполненных и на исполнении нет
+                and not exists(select 1 from card c12 
+                                where 	c12.template_id = 324
+                                        and c12.parent_card_id = c.card_id
+                                        and c12.status_id not in (103, 206, 303990, 1, 34145))
+
+                -- кроме утвержденных и исполненных, других отчетов с ответсвенными исполнителями нет
+                and not exists(select 1 from card c22 
+		                			-- Исполнители отчетов
+								JOIN attribute_value av52 
+                                  ON (av52.card_id = c22.card_id
+                                  AND av52.attribute_code in ('ADMIN_702335'))
+                                  and av3.number_value = av52.number_value
+                                where 	c22.template_id = 1044
+                                        and c22.parent_card_id = c1.card_id
+                                        and c22.status_id not in (207, 206))
+
+                -- нету рассмотрений в статусах, кроме Исполнение, В дело, Отправлен руководителем в дело
+                and not exists(select 1 from card c3 
+                                where 	c3.template_id = 504
+                                        and c3.parent_card_id = c.card_id
+                                        and c3.status_id not in (103, 104, 477681))
+		 -- WHERE
+		group by c.card_id
+		) as a
+		/* это вставка позволяет отсеять те внутренние, у которых присутсвуют хотя бы одно поручение на исполнении (помимо остальных корректных на исполнении и исполненных), 
+		у которого отчет ответсвенного исполнителя в статусе, отличном от Исполнен или Утвержден*/
+		where a.correctResolutionCount = a.allResolutionCount	
+	) AS a
+
+	order by 1
+    
+			]]>
+		</sql>
+	</query>
+</searchQuery>

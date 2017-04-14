@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<chart class="com.aplana.dbmi.chart.StackChart">
+	<query><![CDATA[
+select av_dep.string_value as dep,
+       count (distinct c.card_id) as allall, -- все поручения под контролем АД
+       count (distinct case when c.status_id in (207) then c.card_id else null end) as execute, -- исполненные
+       count (distinct case when c.status_id in (207) and av_real.date_value > av_term.date_value then c.card_id else null end) as exec_bad, -- исполненные (с нарушением срока)
+       count (distinct case when c.status_id in (207) and (av_term.date_value is null or av_real.date_value <= av_term.date_value) then c.card_id else null end) as exec_right, -- исполненные в срок
+       count (distinct case when c.status_id in (103, 206) then c.card_id else null end) as work, -- находящиеся в работе
+       count (distinct case when c.status_id in (103, 206) and (av_term.date_value is null or av_term.date_value >= sysdate) then c.card_id else null end) as work_right, -- находящиеся в работе с не истекшим сроком
+       count (distinct case when c.status_id in (103, 206) and (av_term.date_value < sysdate) then c.card_id else null end ) as work_bad -- находящиеся в работе с истекщим сроком
+from attribute_value av_c, person p, card c_p, attribute_value av_p, card c 
+    left outer join
+        attribute_value av_term on (av_term.card_id = c.card_id and av_term.attribute_code = 'JBR_TCON_TERM')
+    left outer join
+        attribute_value av_real on (av_real.card_id = c.card_id and av_real.attribute_code = 'ADMIN_234990')
+    left outer join
+-- (2010/05/12) OLD: attribute_value av_ex on (av_ex.attribute_code = 'JBR_INFD_EXECUTOR' and av_ex.card_id = c.card_id)
+		attribute_value av_ex on (av_ex.attribute_code = 'JBR_INFD_EXEC_LINK' and av_ex.card_id = c.card_id)
+
+--(2010/05/12) OLD: left outer join	person p_ex on (p_ex.person_id = av_ex.number_value)
+	left outer join	person p_ex on (p_ex.card_id = av_ex.number_value)
+
+    left outer join
+		attribute_value av_per on (av_per.attribute_code = 'JBR_PERS_DEPT_LINK' and av_per.card_id = p_ex.card_id)
+    left outer join
+		attribute_value av_dep on (av_dep.attribute_code = 'JBR_DEPT_SHORTNAME' and av_dep.card_id = av_per.number_value)
+where ( -- карточки под контролем АД
+                c.template_id = 324 and c.status_id in (103, 206, 207) and 
+                (av_c.card_id = c.card_id and av_c.attribute_code = 'JBR_TCON_INSPECTOR') and
+                (p.person_id = av_c.number_value) and
+                (c_p.card_id = p.card_id and c_p.template_id = 10) and
+                (av_p.card_id = c_p.card_id and av_p.attribute_code = 'JBR_PERS_DEPT_LINK' and av_p.number_value = 8702)
+ and not exists (select null from attribute_value av_ra where av_ra.attribute_code = 'JBR_RIMP_PARASSIG' and av_ra.card_id = c.card_id)
+)
+group by av_dep.string_value 
+	]]></query>
+	
+	<title><![CDATA[Справка по ответственным исполнителям и выполнении поручений, находящихся на контроле в АД]]></title>
+	<columnGroup column="dep"/>
+	<elements>
+		<element name="Всего"/>
+		<element name="Исп."/>
+		<element name="В раб."/>
+	</elements>
+	<kinds>
+		<kind name="С нарушением срока" color="A4376D"/>
+		<kind name="Без нарушения срока" color="9999FF"/>
+	</kinds>
+	<maps>
+		<map element="Всего" kind="Без нарушения срока" column="allall"/>
+		<map element="Исп." kind="С нарушением срока" column="exec_bad"/>
+		<map element="Исп." kind="Без нарушения срока" column="exec_right"/>
+		<map element="В раб." kind="С нарушением срока" column="work_bad"/>
+		<map element="В раб." kind="Без нарушения срока" column="work_right"/>
+	</maps>
+</chart>

@@ -1,0 +1,64 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+				select DISTINCT card_id, changed_date from 
+				(
+					select c.card_id, av_changed.date_value as changed_date
+						from 
+						card c 
+						join attribute_value av1 on av1.attribute_code = 'ADMIN_222990' and av1.card_id = c.card_id
+						join attribute_value av_changed on av_changed.attribute_code = 'CHANGED' and av_changed.card_id = c.card_id
+						join card c2 on c2.card_id = av1.number_value and c2.template_id = 704 and c2.status_id = 556656
+						join attribute_value av2 on av2.card_id = c2.card_id and av2.attribute_code = 'ADMIN_222147' and av2.value_id = 2127
+						join attribute_value av_info on av_info.card_id = c2.card_id and av_info.attribute_code = 'JBR_DIST_SEND_INFO'
+						join card c_info on av_info.number_value = c_info.card_id and c_info.template_id = 1070 and c_info.status_id = 4
+					where 
+						c.template_id = 364
+						and c.status_id = 101
+
+					UNION
+
+					--Отклонённые ГОСТ документы
+					select  c.card_id, av_changed.date_value as changed_date
+						from 
+						card c 
+						join attribute_value av1 on av1.attribute_code = 'ADMIN_222990' and av1.card_id = c.card_id
+						--ЭСР в статусе "Отклонено"
+						join card c2 on c2.card_id = av1.number_value and c2.template_id = 704 and c2.status_id = 10000002
+						--тип ГОСТ
+						join attribute_value av2 on av2.card_id = c2.card_id and av2.attribute_code = 'ADMIN_222147' and av2.value_id = 1581
+						join attribute_value av_changed on av_changed.attribute_code = 'CHANGED' and av_changed.card_id = c.card_id
+					where 
+						c.template_id = 364
+						and c.status_id = 101
+				) as rejected_docs  
+				where (changed_date >= (CURRENT_TIMESTAMP - (interval '7 days'))) and
+					  (changed_date <= (CURRENT_TIMESTAMP + (interval '1 days'))) 
+			]]>
+		</sql>
+
+	</query>
+
+</searchQuery>

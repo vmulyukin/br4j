@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="QuarterlyReportFSIN-1_questions" pageWidth="602" pageHeight="270" orientation="Landscape" columnWidth="602" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\BR4J_SOURCE\\FSIN\\branches\\01.4.006.12.000\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="org" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with table_2_quest as (
+        select c.card_id from card c
+        join attribute_value av on c.card_id = av.card_id and av.attribute_code = 'JBR_THEME_ID'
+        where c.template_id = 850 and av.string_value in
+                                ('Благодарность сотрудникам УИС',
+                                 'Вопросы, не относящиеся к компетенции ФСИН России',
+                                 'Вопросы, связанные с отбыванием наказания в ИТУ',
+                                 'О недостатках, связанных с пребыванием осужденных и подследственных в СИЗО и тюрьмах',
+                                 'Другие вопросы, относящиеся к компетенции ФСИН России',
+                                 'О медицинском обеспечении осужденных',
+                                 'Вопросы отбывания наказания условно-осужденными',
+                                 'О переводе в целях личной безопасности',
+                                 'Предложения по улучшению работы УИС'
+                                )
+  union
+  select c.card_id from card c
+    join attribute_value av on c.card_id = av.card_id and av.attribute_code = 'JBR_THEMATIC_ID'
+  where c.template_id = 851 and av.string_value in
+                                ('О ходатайстве по уголовным делам',
+                                 'О необеспечении положенным довольствием',
+                                 'О предоставлении свиданий',
+                                 'О взыскании по исполнительным листам с осужденных',
+                                 'О денежных расчетах с осужденными',
+                                 'Коммунально-бытовые вопросы',
+                                 'Нарушения при конвоировании',
+                                 'О конфликтах между осужденными',
+                                 'О нарушении режима содержания осужденных',
+                                 'О получении полиса обязательного медицинского страхования',
+                                 'О профессионально-техническом обучении',
+                                 'О розыске осужденных и их родственников',
+                                 'О страховании в системе обязательного пенсионного  страхования',
+                                 'Об изменении режима заключения',
+                                 'Перевод осужденных ближе к м/ж',
+                                 'О получении паспорта',
+                                 'Вопросы по рациону питания',
+                                 'О розыске личных вещей и денежных средств',
+                                 'Справки по вопросам отбывания наказания',
+                                 'О трудоустройстве',
+                                 'Об условно-досрочном освобождении и помиловании',
+                                 'Неудовлетворительное мед. обслуживание',
+                                 'О направлении на МСЭК',
+                                 'Об освобождении от наказания по состоянию здоровья',
+                                 'Об установлении группы инвалидности',
+                                 'Перевод в другое ИТУ (по состоянию здоровья)',
+                                 'Вопросы труда и зарплаты',
+                                 'Неправильное отношение к условно-осужденным и условно-освобожденным',
+                                 'Об условно-досрочном освобождении',
+                                 'Перевод в другое ИТУ (конфликт с администрацией)',
+                                 'О незаконном применении спецсредств',
+                                 'Незаконное водворение в ШИЗО',
+                                 'Нарушение прав осужденных в ИК',
+                                 'Перевод в другое ИТУ (конфликт с осужденными)')
+        ), docs as (select distinct c.card_id
+        from card c
+        join attribute_value reg_date on c.card_id = reg_date.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+        join attribute_value av_reg on c.card_id = av_reg.card_id and av_reg.attribute_code = 'JBR_REGD_REGISTRAR'
+        join person p_reg on av_reg.number_value = p_reg.person_id
+        join attribute_value av_d on p_reg.card_id = av_d.card_id and av_d.attribute_code = 'JBR_PERS_ORG'
+        and ($P{org} is null or av_d.number_value in ($P!{org}))
+        join attribute_value av_q on c.card_id = av_q.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+        join table_2_quest q on av_q.number_value = q.card_id
+        where c.template_id = 864 and c.status_id in (101,102,103,206,48909,104)
+        and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+        and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+        ), selection as (
+        select c.card_id, av_theme_id.string_value as theme1, av_thematic_id.string_value as thematic
+        from docs c
+        join attribute_value av_q on c.card_id = av_q.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+        left join attribute_value av_theme_id on av_theme_id.card_id = av_q.number_value and av_theme_id.attribute_code = 'JBR_THEME_ID'
+        left join attribute_value av_theme_link on av_q.number_value = av_theme_link.card_id and av_theme_link.attribute_code = 'JBR_QUEST_THEME'
+        left join attribute_value av_thematic_id on av_thematic_id.card_id = av_q.number_value and av_thematic_id.attribute_code = 'JBR_THEMATIC_ID'
+        )
+        select 32 as rown, 'Неправомерное водворение в ШИЗО, ПКТ, ЕПКТ' as title, count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Незаконное водворение в ШИЗО'
+        UNION
+        select 33 as rown, 'Перевод (направление) ближе к м/ж', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Перевод осужденных ближе к м/ж'
+        UNION
+        select 34 as rown, 'Перевод в целях личной безопасности', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.theme1 = 'О переводе в целях личной безопасности' or selection.thematic in ('Перевод в другое ИТУ (конфликт с администрацией)','Перевод в другое ИТУ (конфликт с осужденными)')
+        UNION
+        select 35 as rown, 'Перевод по состоянию здоровья', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Перевод в другое ИТУ (по состоянию здоровья)'
+        UNION
+        select 36 as rown, 'Условно-досрочное освобождение, помилование, амнистия', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Об условно-досрочном освобождении и помиловании'
+        UNION
+        select 37 as rown, 'Трудоустройство', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О трудоустройстве'
+        UNION
+        select 38 as rown, 'Денежные расчеты с осужденными', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О денежных расчетах с осужденными'
+        UNION
+        select 39 as rown, '(Не) предоставление свиданий', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О предоставлении свиданий'
+        UNION
+        select 40 as rown, 'Розыск личных вещей и денежных средств', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О розыске личных вещей и денежных средств'
+        UNION
+        select 41 as rown, '(Не) обеспечение положенными видами довольствия', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О необеспечении положенным довольствием'
+        UNION
+        select 42 as rown, 'Медицинское обеспечение', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.theme1 = 'О медицинском обеспечении осужденных' or selection.thematic in ('Об установлении группы инвалидности','О направлении на МСЭК',
+        'Неудовлетворительное мед. обслуживание','Об освобождении от наказания по состоянию здоровья')
+        UNION
+        select 43 as rown, 'Взыскания по исполнительному листу', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О взыскании по исполнительным листам с осужденных'
+        UNION
+        select 44 as rown, 'Незаконное применение физической силы и специальных средств', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О незаконном применении спецсредств'
+        UNION
+        select 45 as rown, 'Получение паспорта', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'О получении паспорта'
+        UNION
+        select 46 as rown, 'Рацион питания', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Вопросы по рациону питания'
+        UNION
+        select 47 as rown, 'Отбывание наказания условно осужденными', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.theme1 = 'Вопросы отбывания наказания условно-осужденными' or selection.thematic in ('Неправильное отношение к условно-осужденным и условно-освобожденным',
+        'О переводе','Об условно-досрочном освобождении','Вопросы труда и зарплаты','Жилищно-бытовые вопросы')
+        UNION
+        select 48 as rown, 'Нарушение прав осужденных', count(selection.card_id) as count from (select 1) as t cross join selection
+        where selection.thematic = 'Нарушение прав осужденных в ИК'
+        UNION
+        select 49 as rown, 'Другие вопросы', count(selection.card_id) as count from (select 1) as t cross join selection
+        where (selection.theme1 not in ('О переводе в целях личной безопасности','О медицинском обеспечении осужденных','Вопросы отбывания наказания условно-осужденными') or selection.theme1 is null) and
+        (selection.thematic not in ('Незаконное водворение в ШИЗО','Перевод осужденных ближе к м/ж','Перевод в другое ИТУ (конфликт с администрацией)','Перевод в другое ИТУ (конфликт с осужденными)','Перевод в другое ИТУ (по состоянию здоровья)',
+        'Об условно-досрочном освобождении и помиловании','О трудоустройстве','О денежных расчетах с осужденными','О предоставлении свиданий','О розыске личных вещей и денежных средств',
+        'О необеспечении положенным довольствием','Об установлении группы инвалидности','О направлении на МСЭК', 'Неудовлетворительное мед. обслуживание','Об освобождении от наказания по состоянию здоровья',
+        'О взыскании по исполнительным листам с осужденных','О незаконном применении спецсредств','О получении паспорта','Вопросы по рациону питания','Неправильное отношение к условно-осужденным и условно-освобожденным',
+        'О переводе','Об условно-досрочном освобождении','Вопросы труда и зарплаты','Жилищно-бытовые вопросы','Нарушение прав осужденных в ИК') or selection.thematic is null)
+        order by rown]]>
+	</queryString>
+	<field name="rown" class="java.lang.Integer"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="count" class="java.lang.Long"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="502" y="0" width="100" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="442" y="0" width="60" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rown}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="442" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

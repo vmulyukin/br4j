@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+WITH 
+reports_user_var AS
+( 
+	 Select av_user.card_id, av_user.attribute_code from attribute_value av_user where 
+	 av_user.attribute_code = 'ADMIN_702335' -- "Исполнитель"
+	 AND av_user.number_value IN (%CURRENTUSERS%) -- Id users
+	 AND av_user.template_id = 1044 -- Отчёты
+),
+reports_on_doc_var AS 
+(
+	 SELECT DISTINCT c.card_id, c.status_id FROM card c where c.card_id in (
+	  Select reports_on_doc.card_id 
+	  from attribute_value AS reports_on_doc 
+	  where reports_on_doc.attribute_code = 'ADMIN_702604' -- На документ
+	  and reports_on_doc.card_id in (Select card_id from reports_user_var)
+	 )
+),
+reports_adopted_var AS
+(
+	Select reports_adopted.card_id, reports_adopted.attribute_code, reports_adopted.string_value from attribute_value reports_adopted
+	INNER JOIN reports_on_doc_var ON
+	reports_adopted.card_id = reports_on_doc_var.card_id 
+	AND reports_on_doc_var.status_id = 702239 -- Принят
+),
+reports_adopted_ARM_var AS
+(
+	Select distinct card_id from attribute_value reports_adopted_ARM where 
+	reports_adopted_ARM.card_id in (select distinct rav.card_id from reports_adopted_var rav where rav.attribute_code != 'JBR_RPT_ARMFLAG' 
+					and rav.card_id not in (select distinct card_id from reports_adopted_var where attribute_code = 'JBR_RPT_ARMFLAG')) -- карточки без JBR_RPT_ARMFLAG
+	OR
+
+	reports_adopted_ARM.card_id in (select card_id from reports_adopted_var where attribute_code = 'JBR_RPT_ARMFLAG' and string_value != '1')
+	order by card_id
+),
+reports_incoming_date_var AS 
+(
+	 Select reports_incoming_date.card_id from attribute_value reports_incoming_date where 
+	 reports_incoming_date.attribute_code = 'JBR_INCOMEDATE' -- Дата поступления
+	 AND 
+		(
+			reports_incoming_date.card_id in (Select card_id from reports_on_doc_var where status_id IN (556656, 102)) -- Отправлен, Рассмотрение
+			OR reports_incoming_date.card_id in (Select card_id from reports_adopted_ARM_var)
+		)
+	 order by reports_incoming_date.date_value desc
+),
+reports_limit_incoming_date_var AS 
+(
+	select card_id from reports_incoming_date_var LIMIT 30
+),
+doc_more_sync_var AS
+(
+	Select doc.number_value from attribute_value doc 
+	INNER JOIN attribute_value changed ON
+	doc.number_value = changed.card_id  
+	AND doc.card_id in (select card_id from reports_limit_incoming_date_var)
+	AND doc.attribute_code = 'ADMIN_702604'
+	AND changed.template_id IN (224, 764, 784, 864, 1226, 1255) 
+	AND changed.attribute_code = 'CHANGED' 
+	AND changed.date_value > %DATE_SYNC_IN%
+)
+Select number_value from doc_more_sync_var
+]]></sql></query></searchQuery>

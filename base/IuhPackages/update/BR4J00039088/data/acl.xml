@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Исходящий" template_id="364">
+        <Permission Status="106" Rule="Регистратор ОГ">
+            <Operations>
+                <Operation permHash="a165618c19b86dd48a2359ffec16bf7f"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="f767ac82aea0b58c7bc5d238d796dee3"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="27263dd7dfa873384597660cdef2f1a7"
+                    name="no_name_workflow-355544" wfm_id="355544" Action="remove"/>
+                <WfMove permHash="0c238340a2fb2a36a260f2bbce0db2f8"
+                    name="no_name_workflow-355546->Корзина"
+                    wfm_id="355546" Action="remove"/>
+                <WfMove permHash="038e89fe6ae755aa0b39bfc775cbf998"
+                    name="Отправить на регистрацию-473554->Регистрация"
+                    wfm_id="473554" Action="remove"/>
+                <WfMove permHash="aa11ff28b998541656767c7d13d72088"
+                    name="Отправить по маршруту-355547->Согласование"
+                    wfm_id="355547" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="106" Rule="Пр_Зона ДОУ/Регистратор ОГ_SYSTEM_JBR_OG">
+            <Operations>
+                <Operation permHash="16495b73462bfeebd63cbdab77570eed"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="026b5453b98543d0a200b803944a248b"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="76cfbc286cb4c27d19f82d63da66c399"
+                    name="no_name_workflow-355544" wfm_id="355544" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Д_Исполнитель" ruleHash="bd96be14bb4f3c546c1fadd0c42a3909">
+                <RulePerson name="Д_Исполнитель"
+                    personAttributeCode="JBR_INFD_EXECUTOR" ruleHash="bd96be14bb4f3c546c1fadd0c42a3909"/>
+            </Rule>
+            <Rule name="Д_Ответственный за ДОУ" ruleHash="fc3924a5c3d12fb3bfa78f4b856787a0">
+                <RulePerson name="Д_Ответственный за ДОУ"
+                    personAttributeCode="JBR_RESP_DOW_RESP" ruleHash="fc3924a5c3d12fb3bfa78f4b856787a0"/>
+            </Rule>
+            <Rule name="Д_ФИО Подписанта" ruleHash="d8f0e55d222a680108d6d4652daed5d1">
+                <RulePerson name="Д_ФИО Подписанта"
+                    personAttributeCode="JBR_INFD_SIGNATORY" ruleHash="d8f0e55d222a680108d6d4652daed5d1"/>
+            </Rule>
+            <Rule name="Д_Читатель в архиве" ruleHash="0ebd2fa40e555988a58aaadf9d675eb9">
+                <RulePerson name="Д_Читатель в архиве"
+                    personAttributeCode="JBR_ARCH_CARD_READER" ruleHash="0ebd2fa40e555988a58aaadf9d675eb9"/>
+            </Rule>
+            <Rule name="Д_Читатель карточки" ruleHash="1aae4e231885a53e19d000521a691414">
+                <RulePerson name="Д_Читатель карточки"
+                    personAttributeCode="JBR_CARD_READER" ruleHash="1aae4e231885a53e19d000521a691414"/>
+            </Rule>
+            <Rule name="Д1_Визирующий" ruleHash="508d1efbff5e73ef8d341dccc4520dff">
+                <RulePerson name="Д1_Визирующий"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE"
+                    ruleHash="508d1efbff5e73ef8d341dccc4520dff" link="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Д1_Подписант" ruleHash="5ef97494146a8617a52ecf12b9855a53">
+                <RulePerson name="Д1_Подписант"
+                    personAttributeCode="JBR_SIGN_RESPONSIBLE"
+                    ruleHash="5ef97494146a8617a52ecf12b9855a53" link="JBR_SIGN_SIGNING"/>
+            </Rule>
+            <Rule name="Д2_Визирующий ДС" ruleHash="9a0b3461374bc6287bcfd68d4fd8724a">
+                <RulePerson name="Д2_Визирующий ДС"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE"
+                    ruleHash="9a0b3461374bc6287bcfd68d4fd8724a"
+                    link="JBR_VISA_VISA" intermedAttributeCode="ADMIN_6814498"/>
+            </Rule>
+            <Rule name="Д2_Исполнитель (На документ ссылаются)" ruleHash="33df00d532508714d5c8d6f0760c260c">
+                <RulePerson
+                    name="Д2_Исполнитель (На документ ссылаются)"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="33df00d532508714d5c8d6f0760c260c"
+                    link="ADMIN_221237" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Исполнитель (Связанные документы)" ruleHash="e3627b59870b6ad39f59688ad8f23831">
+                <RulePerson name="Д2_Исполнитель (Связанные документы)"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="e3627b59870b6ad39f59688ad8f23831"
+                    link="JBR_DOCL_RELATDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель (На документ ссылаются)" ruleHash="64d3260b649fe924bc0d632498bb6eae">
+                <RulePerson
+                    name="Д2_Соисполнитель (На документ ссылаются)"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="64d3260b649fe924bc0d632498bb6eae"
+                    link="ADMIN_221237" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель (Связанные документы)" ruleHash="4dc78b554023acc7428cfbced4478977">
+                <RulePerson
+                    name="Д2_Соисполнитель (Связанные документы)"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="4dc78b554023acc7428cfbced4478977"
+                    link="JBR_DOCL_RELATDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Исполнитель ИСХ" ruleHash="a990c634fce110588949ef8539dd6961">
+                <RuleRole name="Исполнитель ИСХ"
+                    ruleHash="a990c634fce110588949ef8539dd6961" roleCode="JBR_OUTGOING_EXEC"/>
+            </Rule>
+            <Rule name="Регистратор ИСХ" ruleHash="2a6eb0290a7fd7f54af9c89676d77c80">
+                <RuleRole name="Регистратор ИСХ"
+                    ruleHash="2a6eb0290a7fd7f54af9c89676d77c80" roleCode="JBR_OUTGOING"/>
+            </Rule>
+            <Rule name="Регистратор ОГ" ruleHash="59a0d9ef51e2e799131dd868e7e8c45f">
+                <RuleRole name="Регистратор ОГ"
+                    ruleHash="59a0d9ef51e2e799131dd868e7e8c45f" roleCode="JBR_OG"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+            <Rule name="Ст.регистратор ОГ" ruleHash="666fa0f5e914c71bbe32bbdc93652302">
+                <RuleRole name="Ст.регистратор ОГ"
+                    ruleHash="666fa0f5e914c71bbe32bbdc93652302" roleCode="JBR_OG_CHR"/>
+            </Rule>
+            <Rule name="Старший регистратор ИСХ" ruleHash="1005d0ae7728177a8a611812d986e45e">
+                <RuleRole name="Старший регистратор ИСХ"
+                    ruleHash="1005d0ae7728177a8a611812d986e45e" roleCode="JBR_OUTGOING_CHR"/>
+            </Rule>
+            <Rule name="Читатель всех документов" ruleHash="69e1fc9d9c3e31e67697883394568a65">
+                <RuleRole name="Читатель всех документов"
+                    ruleHash="69e1fc9d9c3e31e67697883394568a65" roleCode="JBR_READER"/>
+            </Rule>
+            <Rule name="Пр_Доступ к Зонам ДОУ/Зона ДОУ" ruleHash="c4baf3c452a60b994509ba2147752793">
+                <RuleProfile name="Пр_Доступ к Зонам ДОУ/Зона ДОУ"
+                    ruleHash="c4baf3c452a60b994509ba2147752793"
+                    profileAttributeCode="JBR_ZONES_DOW_ACCESS" targetAttributeCode="JBR_ZONE_DOW"/>
+            </Rule>
+            <Rule name="Пр_Зона ДОУ/Регистартор исх_SYSTEM_JBR_OUTGOING" ruleHash="49fe774d1d1da5e36693c6deb08c0b9d">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Регистартор исх_SYSTEM_JBR_OUTGOING"
+                    ruleHash="49fe774d1d1da5e36693c6deb08c0b9d"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_OUTGOING"/>
+            </Rule>
+            <Rule
+                name="Пр_Зона ДОУ/Ст.регистратор исх_SYSTEM_JBR_OUTGOING_CHR" ruleHash="e785093008e39af28f7f4e0a6f514d60">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Ст.регистратор исх_SYSTEM_JBR_OUTGOING_CHR"
+                    ruleHash="e785093008e39af28f7f4e0a6f514d60"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_OUTGOING_CHR"/>
+            </Rule>
+            <Rule
+                name="Пр_Зона ДОУ/Читатель всех исх_SYSTEM_JBR_OUTGOING_READER" ruleHash="816977d573ecaf635858321c54d3a47b">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Читатель всех исх_SYSTEM_JBR_OUTGOING_READER"
+                    ruleHash="816977d573ecaf635858321c54d3a47b"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_OUTGOING_READER"/>
+            </Rule>
+            <Rule name="Пр_Пом для/ФИО Подписанта" ruleHash="f15b7de6942ab533362f0a1a3b51fb39">
+                <RuleProfile name="Пр_Пом для/ФИО Подписанта"
+                    ruleHash="f15b7de6942ab533362f0a1a3b51fb39"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_INFD_SIGNATORY"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_67424_JBR_ZONES_DOW_ACCESS" ruleHash="fa4b192ad2c13de2d18d18a38cf3af55">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_67424_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="fa4b192ad2c13de2d18d18a38cf3af55"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_INFORM_LIST"
+                    linkedStatusId="67424" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_67425_JBR_ZONES_DOW_ACCESS" ruleHash="4183866f9bc040bfe7c58d7e64f13dea">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_67425_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="4183866f9bc040bfe7c58d7e64f13dea"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_INFORM_LIST"
+                    linkedStatusId="67425" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_73992_JBR_ZONES_DOW_ACCESS" ruleHash="62120a2198d6c52d9046bd17bd73d1ce">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Ознакомлений_SYSTEM_73992_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="62120a2198d6c52d9046bd17bd73d1ce"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_INFORM_LIST"
+                    linkedStatusId="73992" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_108_JBR_ZONES_DOW_ACCESS" ruleHash="c66fc45b1a733bbe333d13d2a544f106">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_108_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="c66fc45b1a733bbe333d13d2a544f106"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="108" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_204_JBR_ZONES_DOW_ACCESS" ruleHash="6470ae4f75af3abc30c8aef996eeb928">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_204_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="6470ae4f75af3abc30c8aef996eeb928"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="204" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_205_JBR_ZONES_DOW_ACCESS" ruleHash="ae1cb70ff3391a4919664f15f9cf38ce">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_205_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="ae1cb70ff3391a4919664f15f9cf38ce"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="205" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_41466_JBR_ZONES_DOW_ACCESS" ruleHash="a2bfe8d867414677ee23965e92d5aada">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_41466_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="a2bfe8d867414677ee23965e92d5aada"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="41466" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_477934_JBR_ZONES_DOW_ACCESS" ruleHash="ef9d53640e8245651a0b118530cde75d">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_477934_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="ef9d53640e8245651a0b118530cde75d"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="477934" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Подписаний_SYSTEM_73992_JBR_ZONES_DOW_ACCESS" ruleHash="5ce05b422a67ec24c5ed69817e018be5">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Подписаний_SYSTEM_73992_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="5ce05b422a67ec24c5ed69817e018be5"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_SIGN_SIGNING"
+                    linkedStatusId="73992" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_107_JBR_ZONES_DOW_ACCESS" ruleHash="aef1cfecf35c858815fad8ef9f28b333">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_107_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="aef1cfecf35c858815fad8ef9f28b333"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="107" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_201_JBR_ZONES_DOW_ACCESS" ruleHash="9fd4d9d3ff63b595003d7cafc8457b6b">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_201_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="9fd4d9d3ff63b595003d7cafc8457b6b"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="201" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_202_JBR_ZONES_DOW_ACCESS" ruleHash="7bd2e353414e881b46f572536a0b5234">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_202_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="7bd2e353414e881b46f572536a0b5234"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="202" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_41466_JBR_ZONES_DOW_ACCESS" ruleHash="1a02197d6d50ff752291f60ef5b6b2bf">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_41466_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="1a02197d6d50ff752291f60ef5b6b2bf"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="41466" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_6092498_JBR_ZONES_DOW_ACCESS" ruleHash="64f08ab376957e1e095b937940c72553">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_6092498_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="64f08ab376957e1e095b937940c72553"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="6092498" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_6833780_JBR_ZONES_DOW_ACCESS" ruleHash="c317c7dd71cfa70029d7f762f909867b">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_6833780_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="c317c7dd71cfa70029d7f762f909867b"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="6833780" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Зона ДОУ Согласований_SYSTEM_73992_JBR_ZONES_DOW_ACCESS" ruleHash="7cedd80f6c3b8102242cef64408ac75e">
+                <RuleProfile
+                    name="Пр1_Зона ДОУ Согласований_SYSTEM_73992_JBR_ZONES_DOW_ACCESS"
+                    ruleHash="7cedd80f6c3b8102242cef64408ac75e"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="JBR_VISA_VISA"
+                    linkedStatusId="73992" roleCode="JBR_ZONES_DOW_ACCESS"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Визирующий" ruleHash="f562ff78de2ed3945209764b61d75b28">
+                <RuleProfile name="Пр1_Пом для/Визирующий"
+                    ruleHash="f562ff78de2ed3945209764b61d75b28"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_VISA_RESPONSIBLE" linkAttributeCode="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Подписант" ruleHash="f9b7bde2753b0fc950f073f89c3a59b2">
+                <RuleProfile name="Пр1_Пом для/Подписант"
+                    ruleHash="f9b7bde2753b0fc950f073f89c3a59b2"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_SIGN_RESPONSIBLE" linkAttributeCode="JBR_SIGN_SIGNING"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Визирующий ДС" ruleHash="70a36bcc615e0c8bb8e4f5aebd6c4e24">
+                <RuleProfile name="Пр2_Пом для/Визирующий ДС"
+                    ruleHash="70a36bcc615e0c8bb8e4f5aebd6c4e24"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_VISA_RESPONSIBLE"
+                    linkAttributeCode="JBR_VISA_VISA" intermedAttributeCode="ADMIN_6814498"/>
+            </Rule>
+            <Rule name="Дел_На документ ссылаются" ruleHash="d84bb86dbb20c98bd023a59d9fb40c6c">
+                <RuleDelegation name="Дел_На документ ссылаются"
+                    ruleHash="d84bb86dbb20c98bd023a59d9fb40c6c" linkAttributeCode="ADMIN_221237"/>
+            </Rule>
+            <Rule name="Дел_Связанные документы" ruleHash="71dcd86e03fadff4f1c72a9e6f4d3ca5">
+                <RuleDelegation name="Дел_Связанные документы"
+                    ruleHash="71dcd86e03fadff4f1c72a9e6f4d3ca5" linkAttributeCode="JBR_DOCL_RELATDOC"/>
+            </Rule>
+            <Rule name="Дел_Связь с отчетом" ruleHash="55fe94e07160b2b16289ead9255a61ac">
+                <RuleDelegation name="Дел_Связь с отчетом"
+                    ruleHash="55fe94e07160b2b16289ead9255a61ac" linkAttributeCode="JBR_REPORT_LINK"/>
+            </Rule>
+            <Rule name="Пр_Зона ДОУ/Регистратор ОГ_SYSTEM_JBR_OG" ruleHash="2b9dfd7d0970622ac12042f305877766">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Регистратор ОГ_SYSTEM_JBR_OG"
+                    ruleHash="2b9dfd7d0970622ac12042f305877766"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_OG"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="В дело" status_id="104"/>
+        <Status name="Заполнение индекса дела" status_id="355554"/>
+        <Status name="Зарегистрирован" status_id="101"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Отклонен" status_id="6092498"/>
+        <Status name="Подготовка" status_id="106"/>
+        <Status name="Подписание" status_id="108"/>
+        <Status name="Проверка помощником министра" status_id="355555"/>
+        <Status name="Регистрация" status_id="200"/>
+        <Status name="Согласование" status_id="107"/>
+        <WFMoveType name="no_name_workflow-355546" wfm_id="355546"
+            wfm_from="Подготовка" wfm_to="Корзина" wfm_from_status="106" wfm_to_status="303990"/>
+        <WFMoveType name="no_name_workflow-355556" wfm_id="355556"
+            wfm_from="Подписание" wfm_to="Заполнение индекса дела"
+            wfm_from_status="108" wfm_to_status="355554"/>
+        <WFMoveType name="no_name_workflow-355557" wfm_id="355557"
+            wfm_from="Заполнение индекса дела"
+            wfm_to="Проверка помощником министра"
+            wfm_from_status="355554" wfm_to_status="355555"/>
+        <WFMoveType name="no_name_workflow-355540" wfm_id="355540"
+            wfm_from="Зарегистрирован" wfm_to="В дело"
+            wfm_from_status="101" wfm_to_status="104"/>
+        <WFMoveType name="no_name_workflow-355544" wfm_id="355544"
+            wfm_from="Подготовка" wfm_to="Зарегистрирован"
+            wfm_from_status="106" wfm_to_status="101"/>
+        <WFMoveType name="Вернуть из архива-355548" wfm_id="355548"
+            wfm_from="В дело" wfm_to="Зарегистрирован"
+            wfm_from_status="104" wfm_to_status="101"/>
+        <WFMoveType name="Вернуть на доработку-355533" wfm_id="355533"
+            wfm_from="Регистрация" wfm_to="Подготовка"
+            wfm_from_status="200" wfm_to_status="106"/>
+        <WFMoveType name="Вернуть на доработку-355543" wfm_id="355543"
+            wfm_from="Подписание" wfm_to="Подготовка"
+            wfm_from_status="108" wfm_to_status="106"/>
+        <WFMoveType name="Вернуть на доработку-355545" wfm_id="355545"
+            wfm_from="Согласование" wfm_to="Подготовка"
+            wfm_from_status="107" wfm_to_status="106"/>
+        <WFMoveType name="Вернуть на доработку-355559" wfm_id="355559"
+            wfm_from="Проверка помощником министра" wfm_to="Подготовка"
+            wfm_from_status="355555" wfm_to_status="106"/>
+        <WFMoveType name="Восстановить из корзины-355553"
+            wfm_id="355553" wfm_from="Корзина" wfm_to="Подготовка"
+            wfm_from_status="303990" wfm_to_status="106"/>
+        <WFMoveType name="Готов к регистрации-395896" wfm_id="395896"
+            wfm_from="Проверка помощником министра" wfm_to="Регистрация"
+            wfm_from_status="355555" wfm_to_status="200"/>
+        <WFMoveType name="Зарегистрировать-395895" wfm_id="395895"
+            wfm_from="Регистрация" wfm_to="Зарегистрирован"
+            wfm_from_status="200" wfm_to_status="101"/>
+        <WFMoveType
+            name="Не требует заполнения (подписано министром или его помошником)-399274"
+            wfm_id="399274" wfm_from="Заполнение индекса дела"
+            wfm_to="Регистрация" wfm_from_status="355554" wfm_to_status="200"/>
+        <WFMoveType name="Отклонить-15000005" wfm_id="15000005"
+            wfm_from="Подписание" wfm_to="Отклонен"
+            wfm_from_status="108" wfm_to_status="6092498"/>
+        <WFMoveType name="Отклонить-15000004" wfm_id="15000004"
+            wfm_from="Согласование" wfm_to="Отклонен"
+            wfm_from_status="107" wfm_to_status="6092498"/>
+        <WFMoveType name="Отправить на регистрацию-473554"
+            wfm_id="473554" wfm_from="Подготовка" wfm_to="Регистрация"
+            wfm_from_status="106" wfm_to_status="200"/>
+        <WFMoveType name="Отправить по маршруту-355541" wfm_id="355541"
+            wfm_from="Согласование" wfm_to="Подписание"
+            wfm_from_status="107" wfm_to_status="108"/>
+        <WFMoveType name="Отправить по маршруту-355547" wfm_id="355547"
+            wfm_from="Подготовка" wfm_to="Согласование"
+            wfm_from_status="106" wfm_to_status="107"/>
+        <WFMoveType name="Подписать-6100358" wfm_id="6100358"
+            wfm_from="Подписание" wfm_to="Регистрация"
+            wfm_from_status="108" wfm_to_status="200"/>
+        <WFMoveType name="Удалить в корзину-355549" wfm_id="355549"
+            wfm_from="Согласование" wfm_to="Корзина"
+            wfm_from_status="107" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить в корзину-355550" wfm_id="355550"
+            wfm_from="Подписание" wfm_to="Корзина" wfm_from_status="108" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить в корзину-355551" wfm_id="355551"
+            wfm_from="Регистрация" wfm_to="Корзина"
+            wfm_from_status="200" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить в корзину-355552" wfm_id="355552"
+            wfm_from="Зарегистрирован" wfm_to="Корзина"
+            wfm_from_status="101" wfm_to_status="303990"/>
+    </Template>
+</AccessConfig>

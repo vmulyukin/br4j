@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!--
+���� ���������������� ���� ������������ ��� ����������� ������ ������� ������ ��
+ -->
+<cardLinkPickerAttributeEditorSettings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="string">
+		<hierarchyDialog>
+			<hierarchy>
+				<cardSet alias="countries" labelAttr="name" labelAttrType="string" collapsed="true" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+				</cardSet>
+				<cardSet alias="areas" labelAttr="name" labelAttrType="string" collapsed="true" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+					<parent>
+						<link targetSet="countries" linkAttr="jbr.RefCountry.parentRegion" isReversed="false"/>
+					</parent>
+				</cardSet>
+				<cardSet  alias="districts" labelAttr="name" labelAttrType="string" collapsed="true" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+						<parent>
+							<link targetSet="areas" linkAttr="jbr.RefDistrict.parentRegion" isReversed="false"/>
+						</parent>
+				</cardSet>
+				<cardSet alias="cities" labelAttr="name" labelAttrType="string" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+					<parent>
+						<link targetSet="districts" linkAttr="jbr.RefCity.parentRegion" isReversed="false"/>
+					</parent>
+				</cardSet>
+				<cardSet stored="true" alias="citydistricts" labelAttr="name" labelAttrType="string" collapsed="true" sortAttr="name" sortAttrType="string" sortOrder="asc">
+					<parent>
+						<link targetSet="cities" linkAttr="jbr.RefCityDistrict.parentRegion" isReversed="false"/>
+					</parent>
+				</cardSet>
+			</hierarchy>
+			<noColumns value="true"/>
+			<columns>
+			</columns>
+			<actions>
+				<action title="addOrgTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandler" selectionType="none" id="addOrg">
+					<parameters>
+						<parameter name="template" value="jbr.RefCityDistrict"/>
+						<parameter name="copyToNewCard" value="link:jbr.InfAboutDocCity->link:jbr.RefCityDistrict.parentRegion"/>
+					</parameters>
+				</action>
+			</actions>
+			<!--storedCardsSearch byAttr="true">
+				<template>jbr.RefCityDistrict</template>
+			</storedCardsSearch-->
+			<selectableCardCondition>
+			</selectableCardCondition>
+			<!--cacheable reloadTime="60"/  -->
+		</hierarchyDialog>
+		<search byAttr="true"  searchAttrType="string">
+			<template>jbr.RefCityDistrict</template>
+		</search>
+		<columns>
+			<column id="jbr.RefCityDistrict.parentRegion" width="70" labelAttrId="jbr.RefCity.parentRegion->jbr.RefDistrict.parentRegion->jbr.RefCountry.parentRegion->NAME" sort="asc"/>
+			<column id="jbr.RefCityDistrict.parentRegion" width="70" labelAttrId="jbr.RefCity.parentRegion->jbr.RefDistrict.parentRegion->NAME" sort="asc"/>
+			<column id="jbr.RefCityDistrict.parentRegion" width="70" labelAttrId="jbr.RefCity.parentRegion->NAME" sort="asc"/>
+			<column id="jbr.RefCityDistrict.parentRegion" width="70" labelAttrId="NAME" isParentName="true" sort="asc"/>
+			<column id="NAME" width="300"/>
+		</columns>
+		<searchDependencies>
+			<dependency filterAttrId="jbr.RefCityDistrict.parentRegion" valueAttrId="jbr.InfAboutDocCity"/>
+		</searchDependencies>
+	</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<message key="addOrgTitle" value="�������� �����"/>
+			<message key="acceptTitle" value="Ok"/>
+			<message key="cancelTitle" value="Cancel"/>
+		</lang>	
+		<lang code="ru">
+			<message key="addOrgTitle" value="�������� �����"/>
+			<message key="acceptTitle" value="Ok"/>
+			<message key="cancelTitle" value="������"/>
+		</lang>
+	</messages>
+</cardLinkPickerAttributeEditorSettings>
+

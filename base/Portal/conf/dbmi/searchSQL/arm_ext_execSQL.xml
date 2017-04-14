@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+SELECT cardID
+FROM (
+
+	-- "Отчет об исполнении внешним исполнителем"(1064)
+	/*
+	SELECT c_otchet.card_id as cardID, av.date_value
+	FROM Card c_otchet
+
+		-- "Дата создания"='CREATED'
+		LEFT OUTER JOIN attribute_value av
+				on av.card_id = c_otchet.card_id 
+				and (av.attribute_code = 'JBR_INCOMEDATE') -- 'CREATED'
+	
+		-- (!) 1064: атрибут "Исполнитель"='ADMIN_702598'/C - внешний исполнитель
+		-- 1064: "Зам. Испонителя"/U ('ADMIN_702512')
+		JOIN attribute_value avUser
+				on avUser.card_id=c_otchet.card_id
+				and avUser.attribute_code='ADMIN_702512'
+				and avUser.number_value in (%CURRENTUSERS%)
+	WHERE
+		-- статус: "Отправлен"=556656
+		(c_otchet.template_id=1064) and (c_otchet.status_id in (556656))
+	UNION
+	 */
+
+	--------------------------------------------------------
+	-- JBOSS00000510
+	--------------------------------------------------------
+	-- для "отчетов внешних исполнителей" 1064
+	select cMain.card_id as cardID
+	 		, avPoruchDate.date_value as "date"
+	from 
+		-- для "отчетов внешних исполнителей" 1064: атрибут "На документ"='ADMIN_702602'
+		card cOtchet
+		join attribute_value avOtchet
+			on avOtchet.card_id=cOtchet.card_id
+				 -- "Отправлен"=556656
+				and cOtchet.status_id in (556656)
+				and cOtchet.template_id=1064 -- "Отчет об исполнении внешним исполнителем"=1064
+				and avOtchet.attribute_code='ADMIN_702602' -- "На документ"
+
+		-- главный документ только по указанным шаблонам...
+		-- Входящий(224), ОРД(764), Внут(784), ОГ(864)
+		join card cMain 
+			on cMain.card_id=avOtchet.number_value
+			and cMain.template_id in (224, 764, 784, 864)
+
+		-- для документа-основания: "Рассылка"='ADMIN_222990'
+		-- есть незавершенные рассылки, т.е. в статусе "Черновик"
+		join attribute_value avSend
+			on avSend.card_id=cMain.card_id
+			and avSend.attribute_code='ADMIN_222990'
+		-- в состоянии черновик
+		join card cSend on cSend.card_id=avSend.number_value
+			and cSend.status_id = 1 -- "Черновик"
+
+		-- базовое для отчета поручение (произвольного уровня относительно cMain) ...
+		-- для отчета 1064: "По поручению"(B)='ADMIN_702600'
+		join attribute_value avPoruch
+			on cOtchet.card_id = avPoruch.card_id 
+			and avPoruch.attribute_code='ADMIN_702600' 
+
+		join card cPoruch -- Поручение (324)
+			on cPoruch.card_id = avPoruch.number_value
+			-- and cPoruch.template_id = 324
+			and cPoruch.status_id=103 -- Исполнение(103)
+
+		-- + дата перевода поручения на исполнение ...
+		-- Используем текущий статус + дата изменения или создания
+		left join attribute_value avPoruchDate
+			on avPoruchDate.card_id=avPoruch.number_value
+			and avPoruchDate.attribute_code in ('CREATED', 'CHANGED')
+
+			-- нужная дата от позавчера до сегодня...
+			and ( 	(avPoruchDate.date_value <= current_date) and 
+					(avPoruchDate.date_value >= date_trunc('day', localtimestamp - interval '3 day'))
+				)
+
+		join attribute_value distr on distr.card_id=cMain.card_id and distr.attribute_code='ADMIN_222990'
+
+		join attribute_value dist_org on dist_org.card_id=distr.number_value and dist_org.attribute_code='ADMIN_222015'
+			and dist_org.number_value in (
+				select number_value from attribute_value 
+				where card_id=cPoruch.card_id and attribute_code in ('JBR_INFD_EXEC_EXT', 'JBR_INFD_COEXEC_EXT'))
+
+	ORDER by 2
+) a
+GROUP by cardID
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

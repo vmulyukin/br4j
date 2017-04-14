@@ -1,0 +1,64 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<searchQuery>
+	<query>
+		<!-- Отобрать Входящие, среди Поручений которого упоминается данный пользователь -->
+		<sql><![CDATA[
+			select distinct crd.cID
+			from
+			(
+				select distinct avMain.number_value cID, cr.status_id, cr.template_id
+
+				from card cp
+					inner join attribute_value vr on (vr.number_value = cp.card_id) 
+					inner join card cr on (cr.card_id = vr.card_id)
+					inner join attribute_value ve on (ve.card_id = cr.card_id)
+					-- inner join attribute_value vUrg on (vUrg.card_id = cr.card_id)
+					INNER JOIN attribute_value avMain ON (avMain.card_id = cp.card_id)
+				where cp.template_id = 324
+					and cp.status_id in (103,206)
+					-- Отчёты по поручениям
+					and vr.attribute_code in ('ADMIN_702311') 
+
+					--  Отчёты в статусах ...
+					and cr.template_id in (1044)
+					and cr.status_id IN (702239,556656,102)
+
+					-- Текущий пользователь = "Исполнитель"/'ADMIN_702335' в Отчёте ...
+					and ve.attribute_code in ('ADMIN_702335')
+					and ve.number_value = %CURRENTUSER%
+					
+					AND avMain.attribute_code = 'JBR_MAINDOC'
+
+					-- Срочность ...
+					-- and vUrg.attribute_code = 'JBR_HOWFAST' and vUrg.value_id = 1912
+					
+					-- Флаги "Рассмотрен в АРМ" ...
+			) crd 
+			inner join card c on c.card_id = crd.cID
+			where 
+				c.template_id in (224) 
+				-- or crd.status_id <> 67425
+				or crd.template_id in (1044, 1144)
+
+		]]>
+		</sql>
+	</query>
+</searchQuery>

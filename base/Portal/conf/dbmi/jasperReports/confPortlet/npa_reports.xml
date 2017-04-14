@@ -1,0 +1,192 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<reports>
+	<exportType>PDF</exportType>
+	<report id="Information of Negotiation Process (by Curator)" title="Information of Negotiation Process (by Curator)_title" rootKit="rootKit" fileName="Information_of_Negotiation_Process_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="from_date" type="Date" title="startDate" require="true"/>
+				<parameter name="to_date" type="Date" title="endDate" require="true"/>
+				<!--parameter name="curators" type="Persons" title="curators_title" require="false"/-->
+				<message key="kitNeg" value="Согласующая инстанция"/>
+				<parameter name="curators" type="Cards" title="curators_title" require="true" sqlxml="curators.xml" buttons="true" allSelected="All_curatots"/>/>
+				<parameter name="department" type="Cards" title="department_title" require="true" query="jasperReports/departments.xml" buttons="true" allSelected="All_developers"/>/>
+				<parameter name="negotiate_with_late" type="Boolean" title="negotiate_with_late_title" require="false" value="true"/>
+				<parameter name="negotiate_without_late" type="Boolean" title="negotiate_without_late_title" require="false" value="true"/>
+				<parameter name="on_negotiation" type="Boolean" title="on_negotiation_title" require="false" value="true"/>
+				<parameter name="not_approved" type="Boolean" title="not_approved_title" require="false" value="true"/>
+				<parameter name="document_type" type="Cards" title="document_type_title" require="true" query="jasperReports/document_type.xml" buttons="true" allSelected="All_kind_of_docs"/>/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<report id="Registered_Legal_Acts_report" title="Registered_Legal_Acts_report_title" rootKit="rootKit" fileName="Registered_Legal_Acts_report_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="from_date" type="Date" title="startDate" require="true"/>
+				<parameter name="to_date" type="Date" title="endDate" require="true"/>
+				<parameter name="document_type" type="Cards" title="document_type_title" require="false" query="jasperReports/document_type.xml" buttons="true" allSelected="All_kind_of_docs"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<report id="registered_docs_list" title="registered_docs_list_title" rootKit="rootKit" fileName="registered_docs_list_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="from_date" type="Date" title="startDate" require="true"/>
+				<parameter name="to_date" type="Date" title="endDate" require="true"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<report id="SFA_administative_docs_help" title="SFA_administative_docs_help_title" rootKit="rootKit" fileName="SFA_administative_docs_help_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="datePeriod" type="DatePeriod" title="datePeriod" require="true">
+					<option id="from_date" title="startDate" />
+					<option id="to_date" title="endDate"/>					
+					<depending>
+						<dependence id="group_by_year" condition="from=to" action="disabled"/>
+						<dependence id="group_by_year" condition="from#to" action="enabled"/>
+					</depending>					
+				</parameter>
+				<parameter name="group_by_year" type="Boolean" title="group_by_year_title" require="false" value="true"/>
+				<parameter name="document_type" type="Cards" title="document_type_title" require="true" query="jasperReports/document_type.xml" buttons="true" allSelected="All_kind_of_docs"/>
+				<parameter name="developer" type="Cards" title="developer_title" require="true" query="jasperReports/departments.xml" buttons="true" allSelected="All_developers"/>
+				<parameter name="only_direct_developer" type="Boolean" title="only_direct_developer_title" require="false" value="false"/>
+				<parameter name="overExportFormat" type="Radio" title="overExportReportFormat" require="false" defValue="0">
+					<option id="PDF" title="pdfFormat" />
+					<option id="XLS" title="xlsFormat"/>
+				</parameter>
+			</kit>
+		</kits>
+	</report>
+	<messages>
+		<lang code="en">
+			<message key="deadlinesControlOfControlDocumentsReport" value="Dead lines control of control documents report"/>
+			<message key="incomingDocsRegister" value="List of incoming correspondence"/>
+			<message key="outgoingDocsRegister" value="List of outgoing correspondence"/>
+			<message key="dateReg" value="Registration date"/>
+			<message key="dateDeparture" value="Departure date"/>
+			<message key="instrsMinister" value="List of instructions minister"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Information on the coordination of projects"/>
+			<message key="Registered_Legal_Acts_report_title" value="Registered Legal Acts report"/>
+			<message key="registered_docs_list_title" value="Registered documents list"/>
+			<message key="SFA_administative_docs_help_title" value="Administative documents help"/>
+			<message key="lim_term" value="Date of execution orders"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="From"/>
+			<message key="endDate" value="Till"/>
+			<message key="onDate" value="On date"/>
+			<message key="journal" value="Journal"/>
+			<message key="curators_title" value="Curators"/>
+			<message key="document_type_title" value="Document types"/>
+			<message key="developer_title" value="Developer"/>
+			<message key="department_title" value="Developer"/>
+			<message key="group_by_year_title" value="Group by year"/>
+			<message key="negotiate_with_late_title" value="Approved not in time"/>
+			<message key="negotiate_without_late_title" value="Approved in time"/>
+			<message key="on_negotiation_title" value="On approving"/>
+			<message key="not_approved_title" value="Not approved"/>
+			<message key="All_kind_of_docs" value="All kind of documents"/>
+			<message key="All_developers" value="All developers"/>
+			<message key="All_curatots" value="All curators"/>
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>	
+			<message key="overExportReportFormat" value="Report format"/>
+			<message key="only_direct_developer_title" value="department-direct developers"/>
+			<message key="datePeriod" value="С или По"/>
+		</lang>	
+		<lang code="ru">
+			<message key="deadlinesControlOfControlDocumentsReport" value="Отчет по контролю сроков исполнения контрольных документов"/>
+			<message key="incomingDocsRegister" value="Реестр входящих документов"/>
+			<message key="outgoingDocsRegister" value="Реестр исходящих документов"/>
+			<message key="dateReg" value="Дата регистрации"/>
+			<message key="dateDeparture" value="Дата отправления"/>
+			<message key="instrsMinister" value="Список поручений министра"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Информация о ходе согласования проектов"/>
+			<message key="Registered_Legal_Acts_report_title" value="Отчет по принятым НПА"/>
+			<message key="registered_docs_list_title" value="Перечень зарегистрированных документов"/>
+			<message key="SFA_administative_docs_help_title" value="Справка о выпуске нормативно-правовых актов"/>
+			<message key="lim_term" value="Дата исполнения поручений"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="startDate" value="С      "/>
+			<message key="endDate" value="По     "/>
+			<message key="onDate" value="На дату"/>
+			<message key="journal" value="Журнал"/>
+			<message key="curators_title" value="Кураторы"/>
+			<message key="document_type_title" value="Виды документов"/>
+			<message key="developer_title" value="Разработчик"/>
+			<message key="group_by_year_title" value="Группировать по годам"/>
+			<message key="negotiate_with_late_title" value="Согласованы с опозданием"/>
+			<message key="negotiate_without_late_title" value="Согласованы в срок"/>
+			<message key="department_title" value="Разработчик"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="on_negotiation_title" value="На согласовании"/>
+			<message key="not_approved_title" value="Не согласованы"/>
+			<message key="All_kind_of_docs" value="По всем видам документов"/>
+			<message key="All_developers" value="По всем разработчикам"/>
+			<message key="All_curatots" value="По всем кураторам"/>
+			<message key="pdfFormat" value="PDF"/>
+			<message key="xlsFormat" value="XLS"/>
+			<message key="overExportReportFormat" value="Формат отчета"/>
+			<message key="only_direct_developer_title" value="подразделения-непосредственные разработчики"/>
+			<message key="datePeriod" value="С или По"/>
+		</lang>		
+	</messages>
+</reports>

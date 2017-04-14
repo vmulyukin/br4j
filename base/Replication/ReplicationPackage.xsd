@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://aplana.com/dbmi/ReplicationPackage/"
+	targetNamespace="http://aplana.com/dbmi/ReplicationPackage/">
+	<element name="ReplicationPackage">
+		<complexType>
+			<sequence>
+				<element name="PackageType" type="tns:PackageType" minOccurs="1" maxOccurs="1" />
+				<element name="Addressee" type="string" minOccurs="1" maxOccurs="1" />
+				<element name="Sender" type="string" minOccurs="1" maxOccurs="1" />
+				<element name="DateSent" type="dateTime" minOccurs="1" maxOccurs="1" />
+				<element name="IncompleteCards" minOccurs="0" maxOccurs="1">
+					<complexType>
+						<sequence>
+							<element name="CardGuid" minOccurs="0" maxOccurs="unbounded" type="string" />
+						</sequence>
+						<attribute name="guid" type="string" use="required" />
+					</complexType>
+				</element>
+				<element name="Status" minOccurs="0" maxOccurs="1">
+					<complexType>
+						<simpleContent>
+							<extension base="string">
+								<attribute name="reason" type="string" />
+								<attribute name="guid" type="string" use="required" />
+								<attribute name="statusType" type="tns:StatusType" use="required" />
+							</extension>
+						</simpleContent>
+					</complexType>
+				</element>
+				<element name="Card" minOccurs="0" maxOccurs="1">
+					<complexType>
+						<sequence>
+							<element name="Attribute" minOccurs="1" maxOccurs="unbounded">
+								<complexType>
+									<choice>
+										<element name="StringValue"   type="string"   minOccurs="0" maxOccurs="unbounded" />
+										<element name="HtmlValue"     type="string"   minOccurs="0" maxOccurs="unbounded" />
+										<element name="NumberValue"   type="integer"  minOccurs="0" maxOccurs="unbounded" />
+										<element name="DateValue"     type="dateTime" minOccurs="0" maxOccurs="unbounded" />
+										<element name="CardLinkValue" type="string"   minOccurs="0" maxOccurs="unbounded" />
+										<element name="ListValue"  minOccurs="0" maxOccurs="unbounded" >
+											<complexType>
+												<attribute name="id" type="long" use="required" />
+												<attribute name="anotherValue" type="string" />
+											</complexType>
+										</element>
+										<element name="PersonValue" minOccurs="0" maxOccurs="unbounded">
+											<complexType>
+												<attribute name="fullName" type="string" use="required" />
+												<attribute name="login"    type="string" use="required" />
+												<attribute name="email"    type="string" use="required" />
+												<attribute name="uuid"     type="string" use="required"/>
+												<attribute name="card"     type="string" />
+											</complexType>
+										</element>
+										<element name="MaterialValue" minOccurs="0" maxOccurs="unbounded">
+											<complexType>
+												<attribute name="name"    type="string"  use="required" />
+												<attribute name="type"    type="integer" use="required" />
+												<attribute name="version" type="integer" use="required" />
+												<attribute name="file"    type="string"  use="required" />
+											</complexType>
+										</element>
+									</choice>
+									<attribute name="code" type="string" use="required" />
+								</complexType>
+							</element>
+						</sequence>
+						<attribute name="guid"       type="string" use="required" />
+						<attribute name="card_id"    type="long"   use="required" />
+						<attribute name="status"     type="long"   use="required" />
+						<attribute name="templateId" type="long"   use="required" />
+					</complexType>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<simpleType name="PackageType">
+		<annotation>
+			<documentation>Тип пакета</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="card" />
+			<enumeration value="collision" />
+			<enumeration value="request" />
+			<enumeration value="response" />
+			<enumeration value="status" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="StatusType">
+		<annotation>
+			<documentation>Тип статуса</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="created" />
+			<enumeration value="update" />
+			<enumeration value="collision" />
+			<enumeration value="error" />
+		</restriction>
+	</simpleType>
+</schema>

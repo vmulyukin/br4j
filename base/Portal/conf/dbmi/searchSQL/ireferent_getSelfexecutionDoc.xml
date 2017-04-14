@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+WITH 
+reports_user_var AS
+( 
+	 Select reports_user.card_id, reports_user.attribute_code from attribute_value reports_user --where
+	 INNER JOIN card c ON
+	 c.card_id = reports_user.card_id 
+	 AND c.status_id = 702239 -- Принят
+	 AND reports_user.attribute_code = 'ADMIN_702335' -- "Исполнитель"
+	 AND reports_user.number_value IN (%CURRENTUSERS%) -- Id users
+	 AND reports_user.template_id = 1044 -- Отчёты
+),
+reports_on_doc_var AS 
+(
+	 SELECT DISTINCT c.card_id FROM card c where c.card_id in (
+	  Select reports_on_doc.card_id 
+	  from attribute_value AS reports_on_doc 
+	  where reports_on_doc.attribute_code = 'ADMIN_702604' -- На документ
+	  and reports_on_doc.card_id in (Select card_id from reports_user_var)
+	 )
+),
+child_resolut_var AS -- Дочерние поручения
+( 
+	Select nv.number_value as card_id from attribute_value nv where 
+	nv.attribute_code = 'JBR_RIMP_RELASSIG'
+	AND nv.number_value IN 
+	(
+		 Select child_resolut.card_id from attribute_value child_resolut
+		 join card c on
+		 c.card_id = child_resolut.card_id
+		 AND child_resolut.attribute_code = 'JBR_INFD_SGNEX_LINK' -- "ФИО должность Подписавшего поручение"
+		 AND child_resolut.number_value IN (%CURRENTUSERS%) -- Id users
+		 AND child_resolut.template_id = 324 -- Поручения
+		 AND c.status_id = 103
+	)
+),
+resolut_var AS -- Поручения: с дочерними/без дочерних/с дочерними из child_resolut_var
+(
+	Select distinct report.number_value from attribute_value report where 
+	report.attribute_code = 'ADMIN_702311'
+	AND report.card_id in (Select card_id from reports_on_doc_var)),
+resolut_parent_with_chr_var AS -- Поручения, у которых есть дочерние из child_resolut_var
+(
+	select distinct av.card_id from attribute_value av where av.attribute_code = 'JBR_RIMP_RELASSIG' 
+				and av.card_id IN (select resolut.card_id from resolut_var resolut)
+				and av.number_value IN (select card_id from child_resolut_var)
+),
+resolut_parent_var AS -- Поручения, у которых нет дочерних и есть дочерние, но не из child_resolut_var
+(
+	select distinct rpv.card_id from resolut_var rpv where rpv.card_id NOT IN (select card_id from resolut_parent_with_chr_var)
+),
+resolut_term_var AS
+(
+	select rv.card_id from resolut_parent_var rv
+	INNER JOIN attribute_value av ON
+	rv.card_id = av.card_id
+	AND av.attribute_code = 'JBR_TCON_TERM'
+	order by av.date_value desc LIMIT 30
+),
+doc_more_sync_var AS
+(
+	Select distinct doc.number_value from attribute_value doc --where
+	INNER JOIN attribute_value changed ON
+	doc.number_value = changed.card_id  
+	AND doc.card_id in (Select card_id from resolut_var)
+	AND doc.attribute_code = 'JBR_MAINDOC' -- Все уровни поручений
+	AND changed.template_id IN (224, 764, 784, 864, 1226, 1255)	AND changed.date_value > %DATE_SYNC_IN%
+)
+Select card_id from doc_more_sync_var
+]]></sql></query></searchQuery>

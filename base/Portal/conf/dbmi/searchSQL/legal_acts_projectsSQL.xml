@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+SELECT DISTINCT a.cardID
+FROM
+	(
+		SELECT c.card_id as cardID 
+		FROM Card c
+
+			-- Дата создания или изменения ...
+			JOIN attribute_value av1
+				ON	(av1.card_id = c.card_id
+				AND av1.attribute_code in ('CREATED', 'CHANGED')) -- ('CREATED')
+
+			/*(BR4J00021443) У документов c зарезервированным рег. номером уже заполнен 
+				   атрибут JBR_REGD_REGNUM
+			LEFT JOIN attribute_value avRegNum
+				on (avRegNum.card_id = c.card_id
+				AND avRegNum.attribute_code in ('JBR_REGD_REGNUM'))
+			*/
+		WHERE (
+				-- нужный шаблон
+				c.template_id IN (1226, 764) 
+
+				-- Черновик,Подготовка,Согласование,Подписание,Регистрация,На ознакомлении у руководителя
+				AND c.status_id in (1, 106, 107, 108, 200, 10000120) 
+				
+				-- в требуемых временных интервалах
+				AND (
+					((av1.date_value >= (CURRENT_TIMESTAMP-(interval '7 days'))) and (av1.date_value <= (CURRENT_TIMESTAMP+(interval '3 days')))) 
+					or
+					EXISTS(select 1 from attribute_value av3 where 
+			 		(av3.card_id = c.card_id) AND 
+					 (av3.attribute_code='JBR_REGD_DATEREG') AND ( 
+						 ( (av3.date_value >= date_trunc('year', CURRENT_TIMESTAMP)) ) 
+					 ) 
+					)
+				)
+				-- Регномер не заполнен (на всякий случай, если вдруг кто-то вручную поменяет статус у карточки)
+				/*(BR4J00018281) У документов c зарезервированным рег. номером уже заполнен 
+				   атрибут JBR_REGD_REGNUM в статусе Подписание.
+				   Убираем условие
+				   
+				and avRegNum.string_value is null
+				*/
+
+		) -- WHERE
+
+		ORDER BY av1.DATE_VALUE DESC
+	) AS a
+
+
+			]]>
+		</sql>
+	</query>
+</searchQuery>

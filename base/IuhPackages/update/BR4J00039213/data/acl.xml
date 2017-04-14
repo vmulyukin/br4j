@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Список внутренних персон" template_id="1204">
+        <Permission Status="5976620" Rule="Редактор списка персон">
+            <Operations>
+                <Operation permHash="8eb4b182589de34dbf209d148a19cdb7"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="265c5fb904e5a4c6fe6769580f9b3c53"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Д_Владелец списка" ruleHash="99dea8b1c0474634e0d069f3f9d48307">
+                <RulePerson name="Д_Владелец списка"
+                    personAttributeCode="ADMIN_894716" ruleHash="99dea8b1c0474634e0d069f3f9d48307"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Работающий со списком персон" ruleHash="fd9a7617d6f9937fd73f6429b48e85c2">
+                <RuleRole name="Работающий со списком персон"
+                    ruleHash="fd9a7617d6f9937fd73f6429b48e85c2" roleCode="JBR_PERSON_WORK"/>
+            </Rule>
+            <Rule name="Редактор списка персон" ruleHash="b4dd6177b0c02ed9711b1e9073f94c95">
+                <RuleRole name="Редактор списка персон"
+                    ruleHash="b4dd6177b0c02ed9711b1e9073f94c95" roleCode="JBR_PERSON_EDIT"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Личный" status_id="5976620"/>
+        <Status name="Общий" status_id="5976621"/>
+        <WFMoveType name="Опубликовать-15000300" wfm_id="15000300"
+            wfm_from="Личный" wfm_to="Общий" wfm_from_status="5976620" wfm_to_status="5976621"/>
+        <WFMoveType name="Удалить-15000302" wfm_id="15000302"
+            wfm_from="Общий" wfm_to="Корзина" wfm_from_status="5976621" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-15000301" wfm_id="15000301"
+            wfm_from="Личный" wfm_to="Корзина" wfm_from_status="5976620" wfm_to_status="303990"/>
+    </Template>
+</AccessConfig>

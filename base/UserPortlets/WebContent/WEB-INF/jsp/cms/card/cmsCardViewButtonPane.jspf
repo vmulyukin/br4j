@@ -1,0 +1,509 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page session="true" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+
+<%@page import="javax.portlet.*"%>
+<%@page import="com.aplana.dbmi.card.*"%>
+<%@page import="com.aplana.dbmi.gui.*"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="com.aplana.dbmi.ajax.JasperReportServlet"%>
+<%@page import="com.aplana.dbmi.model.StringAttribute"%>
+<%@page import="com.aplana.dbmi.model.DateAttribute"%>
+<%@page import="com.aplana.dbmi.ajax.JasperReportServlet"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<script type="text/javascript" language="javascript">
+function submitForm(action, elem) { 
+	if (elem) elem.onclick = function() { return false }
+	document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = action;
+	document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+}
+function submitForm_Export(elem) {
+	if (elem) elem.onclick = function() { return false }
+	document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = '<%= CardPortlet.EXPORT_XLS_ACTION %>';
+	document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+}
+</script>
+	
+        <tr><!--Иконки-->
+            <td colspan="4">
+            <table class="icons">
+                <tr style="height:35px;">
+                    <td style="float:left;">  
+                    
+                    
+<%
+
+			String cardURL = "";
+
+			PortletURL backURL = renderResponse.createActionURL();
+			backURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.BACK_ACTION); 
+			backURL.setWindowState(WindowState.NORMAL);
+
+			PortletURL url = renderResponse.createRenderURL();
+
+			PortletURL newURL = renderResponse.createActionURL();
+			newURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.CREATE_CARD_ACTION); 
+			newURL.setWindowState(WindowState.MAXIMIZED);
+
+			PortletURL cloneURL = renderResponse.createActionURL();
+			cloneURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.CLONE_CARD_ACTION); 
+			cloneURL.setWindowState(WindowState.MAXIMIZED);
+
+			PortletURL editURL = renderResponse.createActionURL();
+			editURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.EDIT_CARD_ACTION); 
+			editURL.setWindowState(WindowState.MAXIMIZED);
+
+			PortletURL printURL = renderResponse.createActionURL();
+			printURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.PRINT_ACTION); 
+
+			PortletURL favoritesURL = renderResponse.createActionURL();
+			favoritesURL.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.ADD_FAVORITES_ACTION); 
+
+ %> 
+				<div class="buttonPanel">
+					<ul>
+						<li class="back"
+							onmousedown="downBackBut(this)" 
+							onmouseup="upBackButton(this)" 
+							onmouseover="overBackButton(this)" 
+							onmouseout="upBackButton(this)">
+							<a onclick="submitForm('<%= CardPortlet.BACK_ACTION %>', this);" href="#" >
+								<div class="ico_back img">&nbsp;</div>
+									<p><fmt:message key="view.page.back.link" /></p>
+							</a>
+						</li>	
+               		</ul>
+				</div>	
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td></td>
+                    <td style="float:right">
+                    	<div class="buttonPanel">
+							<ul>
+		<c:if test="${sessionBean.activeCardInfo.canChange}">					
+					<btn:button tooltipKey="tool.edit"
+								onClick="submitForm('MI_EDIT_CARD_ACTION', this);"
+								icon="ico_edit"/>					
+        </c:if>                     
+        <c:if test="${sessionBean.activeCardInfo.canCreate}">
+					<btn:button tooltipKey="tool.copy"
+						onClick="submitForm('MI_CLONE_CARD_ACTION', this);"
+						icon="ico_clone"/>						    									
+		</c:if>                        
+					<btn:button tooltipKey="tool.export.card.xls"
+						onClick="submitForm_Export(this);"
+						icon="ico_xls"/>
+						
+<%!
+	/**
+	 * метод для добавления элемента в выпадающий список
+	 * @param items - контейнер для элементов
+	 * @param item - элемент выпадающего списка
+	 * @param name - название элемента выпадающего списка
+	 * @param url - url по которому перейти при клике на элемент выпадающего списка
+	 * @param isWindow - true - обернуть ссылку в window.open, false - не оборачивать
+	 */
+	protected void addItem(List items, Map item, String name, String url, boolean isWindow) {
+		item = null;
+		item = new HashMap();
+		item.put("nameKey", name);
+		if(isWindow)
+			item.put("fun", "window.open('"+url+"')");
+		else
+			item.put("fun", url);
+		items.add(item);
+	}
+
+	protected void addItem(List items, Map item, String name, String url) {
+		addItem(items, item, name, url, true);
+	}
+%>
+
+
+<%-- --------------- начало: Мульти-кнопка Печать ------------------------------------------   --%>
+<%
+	List items = new LinkedList();
+	Map item = null;
+// -----------------------------------------------------------------------------------------	
+	// Диалог печати регистрационного штампа
+	String serverPath = (request.isSecure() ? "https" : "http") + "://" + request.getServerName() + ":" + request.getServerPort();	
+	String urlStamp = serverPath+request.getContextPath()+"/jsp/RegistrationStamp.jsp?"+
+				"namespace=" + renderResponse.getNamespace();
+%>
+		<script type="text/javascript">
+			dojo.require("dijit.Dialog");
+			
+			function execSelectRegion(pos) {
+				dijit.byId('positionStamp').hide();
+				url = '<%=urlStamp%>';
+				url = url + '&position='+pos;
+				window.open(url); 
+			}
+		</script>
+
+		<div dojoType="dijit.Dialog" id="positionStamp" title="Расположение штампа">
+			<table style="width: 150px; border-collapse: collapse;" >
+				<tr>
+					<td class="selectRegion" onClick="execSelectRegion(1)">1</td>
+					<td class="selectRegion" onClick="execSelectRegion(2)">2</td>
+					<td class="selectRegion" onClick="execSelectRegion(3)">3</td>
+					<td class="selectRegion" onClick="execSelectRegion(4)">4</td>					
+				</tr>			
+				<tr>
+					<td class="selectRegion" onClick="execSelectRegion(5)">5</td>
+					<td class="selectRegion" onClick="execSelectRegion(6)">6</td>
+					<td class="selectRegion" onClick="execSelectRegion(7)">7</td>
+					<td class="selectRegion" onClick="execSelectRegion(8)">8</td>
+				</tr>
+			</table>
+		</div>
+<%
+	ObjectId deloState = ObjectId.predefined(CardState.class, "delo");	
+	// Печать любой карточки не в статусе в дело
+	if(!card.getState().equals(deloState)){
+		addItem(items, item, "print.select.printCard", "submitForm('MI_PRINT_ACTION', this);", false);
+	}
+
+	//Кнопка "Печать регистрационного штампа" выводится только для Входящих, Исходящих и Внутренних документов
+	ObjectId incomingId = ObjectId.predefined(Template.class, "jbr.incoming");
+	ObjectId outcomingId = ObjectId.predefined(Template.class, "jbr.outcoming");
+	ObjectId innerId = ObjectId.predefined(Template.class, "jbr.interndoc");
+	ObjectId npaId = ObjectId.predefined(Template.class, "jbr.npa");
+	ObjectId ordId = ObjectId.predefined(Template.class, "jbr.ord");
+	if (card.getTemplate().equals(incomingId) || card.getTemplate().equals(outcomingId) || 
+												 card.getTemplate().equals(innerId)) {
+		
+		addItem(items, item, "print.select.printStamp", "dijit.byId('positionStamp').show()", false);
+	}
+// -----------------------------------------------------------------------------------------
+	// Печать номера и дата на бланке для карточки Исходящей
+	if (card.getTemplate().equals(outcomingId)) {
+		ObjectId attrNumReg = ObjectId.predefined(StringAttribute.class, "regnumber");
+		ObjectId attrDateReg = ObjectId.predefined(DateAttribute.class, "regdate");
+		String numReg = "S_"+((StringAttribute)card.getAttributeById(attrNumReg)).getStringValue();
+		String dateReg = "D_";
+		Date date = ((DateAttribute)card.getAttributeById(attrDateReg)).getValue();
+		if (date != null) {
+			dateReg += (new SimpleDateFormat(JasperReportServlet.DATE_FORMAT)).format(date);
+		}
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlBlank = servletPath+"nameConfig=reportChartBlank"+"&numReg="+numReg+"&dateReg="+dateReg;
+		addItem(items, item, "print.select.printReg", urlBlank);
+	}
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+// Печать формы Входящего
+	if (card.getTemplate().equals(incomingId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlIncoming = servletPath+"nameConfig=reportChartIncoming"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printIncoming", urlIncoming);
+	}
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+// Печать формы ОРД
+	//ObjectId ordId = ObjectId.predefined(Template.class, "jbr.ord");
+	if (card.getTemplate().equals(ordId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlORD = servletPath+"nameConfig=reportChartORD"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printORD", urlORD);
+	}
+	
+	// -----------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------
+	// Печать формы НПА
+		//ObjectId ordId = ObjectId.predefined(Template.class, "jbr.ord");
+		if (card.getTemplate().equals(npaId)) {
+			String card_id = "L_"+((Long)card.getId().getId()).toString();
+			String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+			String urlORD = servletPath+"nameConfig=reportChartORD"+"&card_id="+card_id;
+			addItem(items, item, "print.select.printNPA", urlORD);
+		}
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+// Печать формы Исходящего
+	if (card.getTemplate().equals(outcomingId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlOutgoing = servletPath+"nameConfig=reportChartOutgoing"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printOutgoing", urlOutgoing);
+	}
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+// Печать формы Внутренний
+	ObjectId insideId = ObjectId.predefined(Template.class, "jbr.interndoc");
+	if (card.getTemplate().equals(insideId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlInside = servletPath+"nameConfig=reportChartInside"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printInner", urlInside);
+	}
+// -----------------------------------------------------------------------------------------
+// Печать формы ОГ
+	ObjectId ogId = ObjectId.predefined(Template.class, "jbr.incomingpeople");
+	if (card.getTemplate().equals(ogId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlOG = servletPath+"nameConfig=reportChartOG"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printOG", urlOG);
+	}	
+// -----------------------------------------------------------------------------------------
+// Печать формы ИЗ
+	ObjectId izId = ObjectId.predefined(Template.class, "jbr.infreq");
+	if (card.getTemplate().equals(izId)) {
+		String card_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlIZ = servletPath+"nameConfig=reportChartIZ"+"&card_id="+card_id;
+		addItem(items, item, "print.select.printInfReq", urlIZ);
+	}
+	
+	// -----------------------------------------------------------------------------------------	
+	// Диалог печати адреса на конверте		
+	%>
+	<script type="text/javascript">
+	dojo.require("dijit.Dialog");
+	<%	ObjectId ATTR_METHOD_POST =
+		ObjectId.predefined(ReferenceValue.class, "jbr.distributionItem.method.post");
+	ObjectId ATTR_METHOD_FLINK =
+		ObjectId.predefined(ReferenceValue.class, "jbr.distributionItem.method.flink");
+	ObjectId ATTR_METHOD =
+		ObjectId.predefined(ListAttribute.class, "jbr.distributionItem.method");
+	ObjectId DISTR_LIST =
+		ObjectId.predefined(CardLinkAttribute.class, "jbr.Distribution.DistributionList");
+	ListAttribute lAttr = null;
+	ObjectId recipientId = ObjectId.predefined(Template.class, "jbr.DistributionListElement");
+	//ObjectId activeTabId=tabsManager.getActiveTab().getId();
+	%>
+	
+	
+	//функция обработки выбора формата конверта
+	function execSelectEnvelope(env) {
+		dijit.byId('choiceEnvelope').hide();
+		<%	
+		String card_id=null;
+		String servletPath_rep = request.getContextPath() + "/servlet/JasperReportServlet?";
+		//если печать конверта вызывается из карточки Рассылка
+		if(card.getTemplate().equals(recipientId)){
+			lAttr = (ListAttribute) card.getAttributeById(ATTR_METHOD);
+		if (lAttr!=null) 
+		if(lAttr.getValue()!=null){
+			if (ATTR_METHOD_POST.equals(lAttr.getValue().getId()) || ATTR_METHOD_FLINK.equals(lAttr.getValue().getId()))  {
+	   			card_id="S_"+((Long)card.getId().getId()).toString();
+			}
+		}
+		else {%>
+			dijit.byId('noSuchMethod').show();	
+		<%}
+		}
+		
+		if(card_id!=null && !card_id.equals(""))		{
+		%>
+		var urlEnvelope='<%=servletPath_rep%>';
+		urlEnvelope=urlEnvelope+'nameConfig='+env;
+		//urlEnvelope=urlEnvelope+'&exportFormat=DOCX';
+		urlEnvelope=urlEnvelope+'&card_id=';
+		urlEnvelope=urlEnvelope+'<%=card_id%>';	
+		window.open(urlEnvelope); 
+		<%
+		} else 
+		{%>
+		//dijit.byId('noSuchMethod').show();	
+		<%}%> 
+	}
+	</script>	
+
+	<!-- окошко с предупреждением, что не заполнено поле Метод отправки-->
+<div id="noSuchMethod" dojoType="dijit.Dialog" title="<fmt:message key="print.envelope.message.title"/>" style="width: 320px; height: 96px">
+		<div style="text-align: left;"><fmt:message key="print.envelope.message.text"/></div>	
+		
+		<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="print.envelope.message.ok"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					dijit.byId('noSuchMethod').hide();					
+				</script>
+			</button>			
+	</div>
+
+<!-- меню для выбора формата конверта. в данный момент доступен только формат С5 -->									
+<div dojoType="dijit.Dialog" id="choiceEnvelope" title="Печать конверта">
+			<table style="width: 150px; border-collapse: collapse;" >
+				<tr>
+					<td>Конверт C6</td>
+				</tr>
+				<tr>
+					<td>Конверт DL</td>
+				</tr>				
+				<tr>
+					<td class="selectRegion" onClick="execSelectEnvelope('reportEnvelopeC5')">Конверт C5</td>
+				</tr>				
+				<tr>
+					<td>Конверт C4</td>
+				</tr>
+				<tr>
+					<td>Конверт B4</td>
+				</tr>
+			</table>
+		</div>
+<%
+	
+// -----------------------------------------------------------------------------------------
+ // -----------------------------------------------------------------------------------------
+// Печать резолюций
+	
+	if (card.getTemplate().equals(incomingId)|| card.getTemplate().equals(ordId)||
+			card.getTemplate().equals(insideId)	|| card.getTemplate().equals(ogId)||
+			card.getTemplate().equals(izId)) {
+		
+		String card_doc_id = "L_"+((Long)card.getId().getId()).toString();
+		String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+		String urlRes = servletPath+"nameConfig=reportPrintResolution"+"&card_id="+card_doc_id;
+		addItem(items, item, "print.select.printResolution", urlRes);
+	}
+	// -----------------------------------------------------------------------------------------
+	// Отчет «Связанные документы для регистрационного номера»
+		if ((card.getTemplate().equals(outcomingId))||(card.getTemplate().equals(incomingId))||
+				card.getTemplate().equals(insideId)	|| card.getTemplate().equals(ordId) ||
+				card.getTemplate().equals(ogId)|| card.getTemplate().equals(npaId)) {
+			String card_doc_id = "L_"+((Long)card.getId().getId()).toString();
+			String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+			String urlRes = servletPath+"nameConfig=relatedDocsForTheRegNum"+"&id="+card_doc_id;
+			addItem(items, item, "print.linked.docs", urlRes);
+		}
+	
+	// -----------------------------------------------------------------------------------------
+	// Печать резолюций для входящих, внутренних, ОРД. Кнопка "Печать - резолюция".
+		ObjectId resolutionId = ObjectId.predefined(Template.class, "jbr.resolution");
+		if (card.getTemplate().equals(resolutionId)) {
+			String resolut_id = "L_"+((Long)card.getId().getId()).toString();
+			String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+			String urlRes = servletPath+"nameConfig=reportPrintAssignment"+"&card_id="+resolut_id;
+			addItem(items, item, "print.select.printAssignment", urlRes);
+		}
+	
+	// -----------------------------------------------------------------------------------------
+	// Отчет «Лист согласования»
+
+// Диалог выбора сортировки Листа согласования
+	%>
+
+	<script type="text/javascript">
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.CheckBox")
+    dojo.require("dijit.form.Button")
+    
+			
+			
+				function getCheckedValue() {
+					
+					with(dojo.byId('byDate'))
+							if (checked){
+								sort="byDate";
+							}
+					with(dojo.byId('byPerson'))
+							if (checked){
+								sort="byPerson";
+							}
+
+
+					dijit.byId('visaSortDialog').hide();
+					<%	
+					String c_doc_id = "L_"+((Long)card.getId().getId()).toString();
+					servletPath_rep = request.getContextPath() + "/servlet/JasperReportServlet?";
+					%>
+					var urlEnvelope='<%=servletPath_rep%>';
+					urlEnvelope=urlEnvelope+'nameConfig=negotiationList';
+					//urlEnvelope=urlEnvelope+'&exportFormat=DOCX';
+					urlEnvelope=urlEnvelope+'&card_id=';
+					urlEnvelope=urlEnvelope+'<%=c_doc_id%>';
+					urlEnvelope=urlEnvelope+'&sort=S_';
+					urlEnvelope=urlEnvelope+sort;
+					//dataSource - тип источника данных
+					//Формат строки - тип_источника_данных:класс_для_получения_источника_данных:параметры:путь_к_тегу_который_будет_записью
+					urlEnvelope=urlEnvelope+'&dataSource=';
+					urlEnvelope=urlEnvelope+'com.aplana.dbmi.jasperreports.NegotiationListReportXMLDataSource';	//Формат строки - тип_источника_данных:класс для получения источника данных:параметры 
+					window.open(urlEnvelope); 
+					
+					return false;
+				} 
+	</script>
+
+	
+
+		<div dojoType="dijit.Dialog" id="visaSortDialog" title="Отчет Лист Согласования">
+			<p>Сортировать лист согласования по:</p>
+			<br/>
+			<input type="radio" dojoType="dijit.form.RadioButton" name="sort" id="byDate" value="byDate" checked="checked"/>
+		    		<label for="byDate">
+		      			Дате согласования
+		    		</label>
+	    			<input type="radio" dojoType="dijit.form.RadioButton" name="sort" id="byPerson" value="byPerson" />
+	    			<label for="byPerson">
+	        			Согласующим
+	    			</label>
+	   				 <br/>
+				<br/>
+				<button onclick="getCheckedValue()">
+					Напечатать лист согласования
+				</button>
+		</div>
+		<%
+		//Кнопка "Лист согласования"   
+		outcomingId = ObjectId.predefined(Template.class, "jbr.outcoming");
+	 innerId = ObjectId.predefined(Template.class, "jbr.interndoc");
+	 npaId = ObjectId.predefined(Template.class, "jbr.npa");
+	if (
+		card.getTemplate().equals(outcomingId) || 
+		card.getTemplate().equals(innerId) ||
+		card.getTemplate().equals(npaId)||
+		card.getTemplate().equals(ordId) 
+	) {
+		addItem(items, item, "print.visa.list", "dijit.byId('visaSortDialog').show()", false);
+	  }
+	// -----------------------------------------------------------------------------------------
+	
+	// Отчет «Справка по проекту» 
+	
+		if (card.getTemplate().equals(npaId) || card.getTemplate().equals(ordId)){
+				String card_doc_id = "L_"+((Long)card.getId().getId()).toString();
+				String servletPath = request.getContextPath() + "/servlet/JasperReportServlet?";
+				String urlRes = servletPath+"nameConfig=Project_Help&exportFormat=PDF&card_id="+card_doc_id;
+				addItem(items, item, "print.project.help", urlRes);
+			}	
+				
+		
+		
+	// -----------------------------------------------------------------------------------------	
+	request.setAttribute("items", items);
+
+%>
+		<btn:selectButton textKey="button.print" id="selectPrint" icon="ico_print" items="${items}"/>
+<!-- -------------------- конец: Мульти-кнопка Печать -->
+            	</ul>
+			</div>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td style="float:right">
+						<jsp:include page="../../html/CardButtonPane.jsp"/>	
+					</td>
+                </tr>
+            </table>
+            </td>
+        </tr>

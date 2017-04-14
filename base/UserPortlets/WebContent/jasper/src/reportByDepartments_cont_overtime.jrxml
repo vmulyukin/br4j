@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportByDepartments_cont_overtime" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="s_times" isDefault="true" fontName="Times New Roman" fontSize="12" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="s_times_bold" isDefault="true" fontName="Times New Roman" fontSize="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="s_table" style="s_times">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="s_table_bold" style="s_times_bold">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="prefixSQL" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[with doc_dep (doc_id, dep_id) as (
+$P!{prefixSQL}
+)
+select
+	av_regn.string_value as regn,
+	av_dreg.date_value as dreg,
+	av_desc.string_value as desc,
+	p_inspct.full_name as inspct,
+	vl_tcont.value_rus as tcont,
+	av_deadline.date_value as dplan,
+	av_doffcont.date_value as dfact,
+	av_ndep.string_value as ndep
+from doc_dep dd
+inner join attribute_value av_cont on av_cont.card_id = dd.doc_id and av_cont.attribute_code = 'JBR_IMPL_ONCONT' -- На контроле
+inner join attribute_value av_doffcont on av_doffcont.card_id = dd.doc_id and av_doffcont.attribute_code = 'ADMIN_220912' -- Дата снятия документа с контроля (Фактическа дата)
+inner join attribute_value av_deadline on av_deadline.card_id = dd.doc_id and av_deadline.attribute_code = 'JBR_IMPL_DEADLINE' -- Срок исполнения или предоставления ответа (Плановая дата)
+left join attribute_value av_regn on av_regn.card_id = dd.doc_id and av_regn.attribute_code = 'JBR_REGD_REGNUM' -- Регистрационный номер
+left join attribute_value av_regn_d on av_regn_d.card_id = dd.doc_id and av_regn_d.attribute_code = 'JBR_REGD_REGNUM_D' -- Валовый номер
+left join attribute_value av_dreg on av_dreg.card_id = dd.doc_id and av_dreg.attribute_code = 'JBR_REGD_DATEREG' -- Дата регистрации
+left join attribute_value av_desc on av_desc.card_id = dd.doc_id and av_desc.attribute_code = 'JBR_INFD_SHORTDESC' -- Краткое содержание
+left join attribute_value av_inspct on av_inspct.card_id = dd.doc_id and av_inspct.attribute_code = 'JBR_IMPL_INSPECTOR' -- Контролер
+	left join person p_inspct on p_inspct.person_id = av_inspct.number_value
+left join attribute_value av_tcont on av_tcont.card_id = dd.doc_id and av_tcont.attribute_code = 'JBR_IMPL_TYPECONT' -- Тип контроля
+	left join values_list vl_tcont on vl_tcont.value_id = av_tcont.value_id
+left join attribute_value av_ndep on av_ndep.card_id = dd.dep_id and av_ndep.attribute_code = 'NAME'
+where av_cont.value_id = 1432 and av_doffcont.date_value > av_deadline.date_value
+and exists (select 1 from card cr where cr.card_id = dd.doc_id)
+order by av_regn_d.number_value, regn]]>
+	</queryString>
+	<field name="regn" class="java.lang.String"/>
+	<field name="dreg" class="java.util.Date"/>
+	<field name="desc" class="java.lang.String"/>
+	<field name="inspct" class="java.lang.String"/>
+	<field name="tcont" class="java.lang.String"/>
+	<field name="dplan" class="java.util.Date"/>
+	<field name="dfact" class="java.util.Date"/>
+	<field name="ndep" class="java.lang.String"/>
+	<group name="simple" isStartNewPage="true" isReprintHeaderOnEachPage="true" keepTogether="true">
+		<groupHeader>
+			<band height="60">
+				<staticText>
+					<reportElement style="s_table_bold" x="0" y="20" width="100" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Регистрационный номер ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="100" y="20" width="72" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Дата регистрации]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="172" y="20" width="162" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Краткое содержание]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="334" y="20" width="106" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Контролер]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="440" y="20" width="128" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Тип контроля]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="568" y="20" width="57" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Плановая дата]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="625" y="20" width="75" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Фактическая дата]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="700" y="20" width="102" height="40"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Подразделение]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="s_table_bold" x="0" y="0" width="802" height="20"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Контрольные документы, исполненные с опозданием]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="20"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="s_table" stretchType="RelativeToBandHeight" x="0" y="0" width="100" height="20" isPrintWhenDetailOverflows="true"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{regn} != null ? $F{regn} : ""]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="100" y="0" width="600" height="20"/>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="s_table" stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="20" isPrintWhenDetailOverflows="true"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{dreg} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{dreg}) : ""]]></textFieldExpression>
+					</textField>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="72" y="0" width="453" height="20"/>
+						<frame>
+							<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="396" height="20"/>
+							<frame>
+								<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="268" height="20"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement style="s_table" stretchType="RelativeToBandHeight" x="0" y="0" width="162" height="20" isPrintWhenDetailOverflows="true"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{desc} != null ? $F{desc} : ""]]></textFieldExpression>
+								</textField>
+								<textField isStretchWithOverflow="true">
+									<reportElement style="s_table" stretchType="RelativeToBandHeight" x="162" y="0" width="106" height="20" isPrintWhenDetailOverflows="true"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{inspct} != null ? $F{inspct} : ""]]></textFieldExpression>
+								</textField>
+							</frame>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="s_table" stretchType="RelativeToBandHeight" x="268" y="0" width="128" height="20" isPrintWhenDetailOverflows="true"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{tcont} != null ? $F{tcont} : ""]]></textFieldExpression>
+							</textField>
+						</frame>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="s_table" stretchType="RelativeToBandHeight" x="396" y="0" width="57" height="20" isPrintWhenDetailOverflows="true"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$F{dplan} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{dplan}) : ""]]></textFieldExpression>
+						</textField>
+					</frame>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="s_table" stretchType="RelativeToBandHeight" x="525" y="0" width="75" height="20" isPrintWhenDetailOverflows="true"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{dfact} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{dfact}) : ""]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="s_table" stretchType="RelativeToBandHeight" x="700" y="0" width="102" height="20" isPrintWhenDetailOverflows="true"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{ndep} != null ? $F{ndep} : ""]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

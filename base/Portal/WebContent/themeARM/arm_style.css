@@ -1,0 +1,135 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+.listnote {
+	vertical-align: top;
+}
+
+.listnote .portlet-container {
+	height: 100%;
+	margin-bottom: 45px;
+	padding: 0px;
+}
+
+div.columns {
+	height: auto;
+}
+
+.innerheader {
+	font-weight:bold;
+	text-align: left;
+}
+
+table.tbottomline {
+	table-layout: fixed;
+}
+
+table.tbottomline tr {
+	border-bottom-color: #A1B0BC;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+}
+
+div.columns hr {
+	border-color: #A1B0BC;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.listnote table.res {
+	margin-top: 0px;
+}
+
+.listnote table.res thead {
+	height: 5.5em;
+}
+
+.listnote table.res tbody tr {
+	height: 4em;
+}
+
+div.columns .pagelinks  {
+	text-align: left;
+	padding: 0;
+	width: 50%;
+}
+
+div.columns .pagebanner {
+	padding: 0;
+	float: right;
+}
+
+div#regionWEST {
+	background-image: url(/images/left-bottom-angle.png);
+}
+
+td#left-top {
+	background-image: url(./images/left-top.jpg);
+    background-repeat: no-repeat;
+}
+
+td#top-line {
+    background-image: url(./images/top-line.jpg);
+    background-repeat: repeat-x;
+}
+
+td#top-center {
+    background-image: url(./images/top-center.jpg);
+    background-repeat: no-repeat;
+}
+
+td#right-top {
+    background-image: url(./images/right-top.jpg);
+    background-repeat: no-repeat;
+}
+
+td#right-line {
+    background-image: url(./images/right-line.jpg);
+    background-repeat: repeat-y;
+}
+
+td#right-bottom {
+    background-image: url(./images/right-bottom.jpg);
+    background-repeat: no-repeat;	
+}
+
+td#bottom-line {
+    background-image: url(./images/bottom-line.jpg);
+    background-repeat: repeat-x;
+}
+
+td#bottom-center {
+    background-image: url(./images/bottom-center.jpg);
+    background-repeat: no-repeat;
+}
+
+td#left-bottom {
+    background-image: url(./images/left-bottom.jpg);
+    background-repeat: no-repeat;
+}
+
+td#left-line {
+    background-image: url(./images/left-line.jpg);
+    background-repeat: repeat-y;
+}
+
+td#center {
+    background-image: url(./images/center.jpg);
+    background-repeat: repeat-y;
+}
+
+
+

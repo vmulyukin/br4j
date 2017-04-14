@@ -1,0 +1,86 @@
+Для корректной работы системы БДМИ следует провести ручную настройку сервера приложений JBoss
+
+1. Настроить JBoss на использование кодировки UTF-8 при обработке URL'ов
+Открываем файл <Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-web.deployer/server.xml
+Ищем там определение connector'а, используемого для выполнения Http-запросов и 
+добавляем туда атрибут URIEncoding="UTF-8"
+
+Выглядеть это должно примерно так:
+    <Connector port="8084" address="${jboss.bind.address}"    
+         maxThreads="250" maxHttpHeaderSize="8192"
+         emptySessionPath="true" protocol="HTTP/1.1"
+         enableLookups="false" redirectPort="8443" acceptCount="100"
+         connectionTimeout="20000" disableUploadTimeout="true" URIEncoding="UTF-8"/>
+
+2. Настроить JBoss, чтобы для аутентификации в сервлетах можно было использовать базу пользователей портала
+
+	a. В файл <Путь к JBoss>/server/<Профиль JBoss>/conf/login-config.xml нужно добавить следующую секцию в корневой элемент policy
+    <!-- Portal authentication - should be used by servlets
+    which works with Jboss Portal Portlets
+    -->
+    <application-policy name="portal">
+       <authentication>
+            <login-module code="org.jboss.portal.identity.auth.IdentityLoginModule" flag="required">
+               <module-option name="unauthenticatedIdentity">guest</module-option>
+               <module-option name="userModuleJNDIName">java:/portal/UserModule</module-option>
+               <module-option name="roleModuleJNDIName">java:/portal/RoleModule</module-option>
+               <module-option name="userProfileModuleJNDIName">java:/portal/UserProfileModule</module-option>
+               <module-option name="membershipModuleJNDIName">java:/portal/MembershipModule</module-option>
+               <module-option name="additionalRole">Authenticated</module-option>
+            </login-module>
+       </authentication>
+    </application-policy>
+
+	b. В файле <Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-web.deployer/server.xml 
+	нужно добавить строчку:
+	<Valve className="org.jboss.web.tomcat.security.ExtendedSingleSignOn" debug="0"/>
+	Если там есть строка вида: 
+    <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+    то её нужно закомментировать
+    (Примечание ExtendedSingleSignOn доступен только начиная с версии JBoss AS 4.2.3,
+    начиная с версии 5.0 можно использовать обычный SingleSignOn)
+
+3.	Настроить JBoss на использование LoginPortlet в качестве страницы входа в систему
+	(Упомянутые ниже файлы login_dbmi.jsp и dbmiLogin.properties находятся в папке login данного проекта
+
+	a. скопировать файл login_dbmi.jsp в папку 
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/portal-server.war	
+	
+	b. отредактировать файл
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/portal-server.war/WEB-INF/web.xml
+	В секции login-config указать в качестве form-login-page и form-error-page страницу '/login_dbmi.jsp':
+		<login-config>
+			<auth-method>FORM</auth-method>
+			<realm-name>JBoss Portal</realm-name>
+			<form-login-config>
+				<form-login-page>/login_dbmi.jsp</form-login-page>
+				<form-error-page>/login_dbmi.jsp</form-error-page>
+			</form-login-config>
+		</login-config>
+	
+	Изменить servlet-mapping для jsp с /login.jsp на /login_dbmi.jsp: 
+		<servlet-mapping>
+			<servlet-name>jsp</servlet-name>
+			<url-pattern>/login_dbmi.jsp</url-pattern>
+		</servlet-mapping>
+
+   c. скопировать файл dbmiLogin.properties в папку
+   <Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf
+   В этом файле настраиваются два параметра:
+   	dbmiLoginPath - указывает путь к странице с LoginPortlet
+   	dbmiLoginAffectedPortals - список порталов (через запятую), для которых нужно использовать LoginPortlet
+   	
+4. Настроить JBoss Portal для использования в качестве портальной базы EnterpriseDB.
+	Для этого нужно правильным образом настроить объявляение базы PortalDS в JNDI-контексте (пример в файле portal-edb-ds.example.xml).
+	Кроме того потребуется поменять настройки Hibernate в JBoss Portal, для этого в следующие файлы
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf/hibernate/instance/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf/hibernate/portal/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf/hibernate/portlet/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf/hibernate/user/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/conf/hibernate/workflow/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/portal-cms.sar/conf/hibernate/cms/hibernate.cfg.xml
+	<Путь к JBoss>/server/<Профиль JBoss>/deploy/jboss-portal.sar/portal-wsrp.sar/conf/hibernate/consumer/hibernate.cfg.xml
+
+	нужно добавить строчку (в большинстве из них она уже есть - в закомментаренном виде, так что достаточно будет просто раскомментарить): 
+	<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+	

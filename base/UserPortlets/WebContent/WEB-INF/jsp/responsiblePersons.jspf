@@ -1,0 +1,208 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page import="com.aplana.dbmi.portlet.AcquaintancePortlet"%>
+<%@page session="false" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@include file="docTitleTopHeader.jspf"%>
+
+<%@include file="baseCardDataSection.jspf"%>
+
+<div class="additional_agreement">
+
+	<hr/>
+	
+
+<form id="<portlet:namespace/>_form" method="post" action="<portlet:actionURL/>">
+	<input id="<portlet:namespace/>_action" type="hidden" name="<%= ResponsiblePersonsPortlet.FIELD_ACTION %>" value=""/>
+	<input type="hidden" name="<%= ResponsiblePersonsPortlet.FIELD_NAMESPACE %>" value="<portlet:namespace/>"/>
+	
+		
+		<div class="left_column">
+            <div class="block">
+                <div class="select">
+						<h2><label class=""><fmt:message key="label.personList"/></label></h2>
+						<div id="<portlet:namespace/>_endorserSelect"></div>	                   	
+                </div>
+                <div class="list">
+                	<div class="scrollList">                	
+						<table id="<portlet:namespace/>_endorsersTable" class="res"  style="width: 100%; margin-top: 0px;">
+						</table>
+					</div>					
+        		</div>
+            </div>
+		</div>
+		<div class="right_column">
+            <div class="environment">
+                <div class="arrow"></div>
+                <div class="persons_list">
+                	<%pageContext.setAttribute("immediateEmployeesMap", sessionBean.getImmediateEmployees()); %>
+                    <ul>	
+					<c:forEach var="item" items="<%=sessionBean.getImmediateEmployees()%>">
+     	  				<li><a href="#" class="dotted" id="<portlet:namespace/>_checkLink_${item.key.id}"  onClick="<portlet:namespace/>_onImmediateEmployeeClick(this, ${item.key.id}, '${item.value}'); return false;">${item.value}</a>				   					
+	   					<input type="hidden" class="<portlet:namespace/>_immediateEmployeesId" value="${item.key.id}"/>
+					</c:forEach>
+                    </ul>
+                </div>
+            </div>
+        </div><!-- .right_column end -->
+
+	<div class="controls">
+            <div class="resolution_buttons">
+            	<div class="cancel_resolution" >
+					<a href="#"
+						onclick="<portlet:namespace/>_submitForm('<%= ResponsiblePersonsPortlet.ACTION_CANCEL %>')"  ></a>
+					</div>	
+                <div class="submit_resolution" >
+					<a  href="#"
+						onclick="<portlet:namespace/>_submitForm('<%= ResponsiblePersonsPortlet.ACTION_DONE %>')"  ></a>
+                </div>
+            </div>
+
+    </div><!-- .controls end -->
+	
+</form>
+</div>
+
+<!-- Текущий пользователь -->
+<c:set var="currentPerson" scope="page" value="<%= sessionBean.getCurrentPerson() %>"/>
+
+<script type="text/javascript">
+	dojo.require("dijit.form.SimpleTextarea");
+	dojo.require("dijit.form.Button");
+	dojo.require("dojox.data.QueryReadStore");
+	dojo.require("dijit.form.FilteringSelect");
+
+	var <portlet:namespace/>_endorsers = <%=request.getAttribute(ResponsiblePersonsPortlet.ENDORSERS)%>;
+	
+	dojo.addOnLoad(function() {
+			
+		
+		var table = dojo.byId('<portlet:namespace/>_endorsersTable');
+		
+		var dataStore = new dojox.data.QueryReadStore({
+			url :'<%=request.getContextPath() + "/servlet/SearchCardServlet"%>'
+		});
+		
+		var select = new dijit.form.FilteringSelect(
+			{
+				store: dataStore,
+				searchAttr: 'label',
+				pageSize: 15,
+				searchDelay: 500,
+				required: false,
+				autoComplete: false,
+				query: {
+					<%= QuickResolutionSearchPersonParameters.PARAM_NAMESPACE %>: '<portlet:namespace/>',
+					<%= SearchCardServlet.PARAM_CALLER %>: '<%= AdditionalEndorsementSearchPersonParameters.CALLER %>',
+					<%= SearchCardServlet.PARAM_IGNORE %>: '',
+					<%= SearchCardServlet.PARAM_QUICHR_OPTIONS %>: 'int'
+				},
+				onChange: function() { <portlet:namespace/>_endorserSelectChanged(); }
+			},
+			dojo.byId('<portlet:namespace/>_endorserSelect')
+		);
+	
+		<portlet:namespace/>_refreshControls();
+
+
+		<%
+			String message = sessionBean.getMessage();
+			if (message != null) {
+				sessionBean.setMessage(null);
+		%>
+			    alert('<%=message%>');
+		<%
+			}
+		%>
+		
+	});
+	
+	function <portlet:namespace/>_refreshControls() {
+		<portlet:namespace/>_fillTable();
+		<portlet:namespace/>_resetImmediateEmployeesColouring();
+
+		// говорим выподающему списку каких пользователей уже не надо выводить
+		// и окрашиваем персон из ближайшего окружения если они есть в списке согласующих
+		var ignoreIds = [];
+		// исключаем текущего пользователя из списка
+		<c:if test="${currentPerson ne null && currentPerson.cardId ne null}">
+			ignoreIds.push('${currentPerson.cardId.id}');
+		</c:if>
+		for (var i = 0; i < <portlet:namespace/>_endorsers.length; ++i) {
+			var curCardId = <portlet:namespace/>_endorsers[i].cardId;
+			ignoreIds.push(curCardId);
+			<portlet:namespace/>_colorImmediateEmployee(curCardId, "inactive");
+		}	
+		
+		var select = dijit.byId('<portlet:namespace/>_endorserSelect');
+		select.query.<%= SearchCardServlet.PARAM_IGNORE %> = ignoreIds.join(',');
+	}
+	
+	function <portlet:namespace/>_selectEndorser(cardId, name) {
+		var i = <portlet:namespace/>_endorsers.length;
+		<portlet:namespace/>_endorsers[i] = {cardId: cardId, name: name, order: 1};
+		<portlet:namespace/>_refreshControls();
+	}
+	
+	function <portlet:namespace/>_removeEndorser(cardId) {		
+		for (var i = 0; i < <portlet:namespace/>_endorsers.length; ++i) {
+			if (<portlet:namespace/>_endorsers[i].cardId == cardId) {
+				<portlet:namespace/>_endorsers.splice(i, 1);
+			}
+		} 		
+		<portlet:namespace/>_refreshControls();		
+	}
+	
+	function <portlet:namespace/>_endorserSelectChanged() {
+		var widget = dijit.byId('<portlet:namespace/>_endorserSelect');
+		if (widget.isValid() && widget.item != null && widget.item.i.cardId != '<%=SearchCardServlet.EMPTY_CARD_ID%>') {
+			var card = widget.item.i;
+			var name = card.label;
+			widget.attr('value', '');
+			<portlet:namespace/>_selectEndorser(card.cardId, name);
+		}
+	}
+
+	function <portlet:namespace/>_onImmediateEmployeeClick(element, cardId, name) {
+		for (var i = 0; i < <portlet:namespace/>_endorsers.length; ++i) {
+			if (<portlet:namespace/>_endorsers[i].cardId == cardId) {
+				<portlet:namespace/>_removeEndorser(cardId);
+				return;
+			}
+		}
+		<portlet:namespace/>_selectEndorser(cardId, name);
+	}
+
+	function <portlet:namespace/>_resetImmediateEmployeesColouring() {
+		dojo.forEach(dojo.query('.<portlet:namespace/>_immediateEmployeesId'),
+  			function(emplId) {
+				<portlet:namespace/>_colorImmediateEmployee(emplId.value, "dotted");
+  			}
+		);
+	}
+
+	function <portlet:namespace/>_colorImmediateEmployee(id, style) {
+		var immediateEmployee = dojo.byId('<portlet:namespace/>_checkLink_' + id);
+		if (immediateEmployee) {
+			immediateEmployee.setAttribute("class", style);
+			immediateEmployee.setAttribute("className", style); // for IE which does not recognize "class"
+		}
+	}
+	
+</script>

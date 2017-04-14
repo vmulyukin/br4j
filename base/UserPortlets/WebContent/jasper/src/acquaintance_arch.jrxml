@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming" pageWidth="555" pageHeight="782" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" isDefault="false" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" isDefault="false" style="table_header"/>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+        c_acq.status_id as status,
+        coalesce(av_sname_nm.string_value, p_acq.full_name) as name,
+    	av_date.date_value + interval '$P!{tz_hour} hour' as date_acq,
+    	status_rus.name_rus as status_rus
+from 	card c
+	join attribute_value av_acq on c.card_id = av_acq.card_id and av_acq.attribute_code = 'JBR_INFORM_LIST'
+	join card c_acq on c_acq.card_id = av_acq.number_value
+left outer join -- дата ознакомления
+	attribute_value av_date on (av_date.card_id = c_acq.card_id and av_date.attribute_code = 'ADMIN_579940')
+left outer join -- хар-ка на персону которая должна ознакомится
+	attribute_value av_p on (av_p.card_id = c_acq.card_id and av_p.attribute_code = 'JBR_FOR_INFORMATION')
+left outer join -- персона которая должна ознакомится
+	person p_acq on (p_acq.person_id = av_p.number_value)
+left outer join -- фамилия ио чел. который должен ознакомиться
+	attribute_value av_sname_nm on (av_sname_nm.card_id = p_acq.card_id and av_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+left outer join --статус
+	card_status status_rus on (status_rus.status_id=c_acq.status_id)
+where c.card_id = $P{card_id} and
+	c_acq.status_id in (67424, 67425, 73992)]]>
+	</queryString>
+	<field name="status" class="java.lang.Long"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="date_acq" class="java.util.Date"/>
+	<field name="status_rus" class="java.lang.String"/>
+	<title>
+		<band height="30" splitType="Immediate">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="191" y="0" width="180" height="30" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Дата ознакомления]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="0" y="0" width="191" height="30" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Ознакамливающийся]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="371" y="0" width="184" height="30" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Статус]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu_bold" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="191" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{name} != null ? $F{name} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu_bold" positionType="Float" stretchType="RelativeToTallestObject" x="191" y="0" width="180" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{date_acq} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{date_acq}) : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu_bold" positionType="Float" stretchType="RelativeToTallestObject" x="371" y="0" width="184" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status_rus} != null ? $F{status_rus} : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

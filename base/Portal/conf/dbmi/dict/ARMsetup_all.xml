@@ -1,0 +1,48 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<search byAttr="true">
+	<name lang="ru">Все настройки для АРМ руководителя</name>
+	<name lang="en">All active setup for ARM</name>
+	<template>boss.settings</template>
+	
+	<!-- Владелец АРМа -->
+	<column id="JBR_ARM_MANAGER" width="50" sort="asc"/>
+	
+	<!-- Помощник -->
+	<column id="JBR_ARM_ASSISTANT" width="50"/>
+	
+	<!-- Ближайшее окружение -->
+	<column id="JBR_ARM_COMPANY" width="50"/>
+	
+	<!-- Контроллер -->
+	<column id="JBR_ARM_INSPECTOR" width="50"/>
+	
+	<!-- Типовые резолюции -->
+	<column id="JBR_ARM_RESOL_LIST" labelAttrId="NAME" width="90" isParentName="true"/>
+
+	<!-- Дата создания -->
+	<column id="CREATED" width="20"/>
+
+	<!-- Дата изменения -->
+	<column id="CHANGED" width="20"/>
+
+	<!-- Статус -->
+	<column id="_STATE" width="50"/>
+</search>

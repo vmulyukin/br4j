@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<actions>
+		<!-- action id="addGroup"
+				handler="com.aplana.dbmi.card.actionhandler.multicard.AddTemplateGeneratedCardsActionHandler"
+				selectionType="none"
+				title="addGroupTitle">
+				<parameters>
+					<parameter name="template" value="jbr.inform.template"/>
+					<parameter name="target_template" value="jbr.inform"/>
+					<parameter name="mapping_package" value="com.aplana.dbmi.card.actionhandler.multicard"/>
+					<parameter name="mapping_split" value="true"/>
+					<parameter name="mapping" value="SplitCardLinkToPerson(link:jbr.inform.template.person)->(user:jbr.information.person)"/>
+				</parameters>
+		</action-->
+		<!--action id="addList"
+				handler="com.aplana.dbmi.card.actionhandler.jbr.AcquaintanceListAddHandler"
+				selectionType="none"
+				title="addListTitle"/-->
+		<!--action id="send"
+				handler="com.aplana.dbmi.card.actionhandler.jbr.AcquaintanceSendHandler"
+				selectionType="none"
+				title="sendTitle">
+				<parameters>
+					<parameter name="maindoc_deny_statuses" value="1,106,107,108,200,10000120,6092498,303990" />
+				</parameters>
+		</action-->
+	</actions>
+	<messages>
+		<lang code="en">
+			<message key="addGroupTitle" value="Add acquaintaner"/>
+			<message key="errorIntegerFieldIsEmpty" value="Order field for person {0} is empty"/>
+			<message key="errorSomePersonNotFound" value="Cards given: {0}. Person found: {1} ({2})"/>
+
+			<message key="addListTitle" value="Add acquaintance list"/>
+			<message key="sendTitle" value="Send"/>
+			
+			<message key="sendNone" value="No recipients to send document"/>
+			<message key="sendOk" value="Document successfully sent to {0} recipients"/>
+			<message key="sendError" value="Error sending document to {0}: {1}"/>
+			<message key="saveError" value="Error saving parent document"/>
+			<message key="maindoc_stateError" value="Card can be sent to acquaintance only after registration of the main document."/>
+		</lang>
+		<lang code="ru">
+			<message key="addGroupTitle" value="�������� �� ������������"/>
+			<message key="errorIntegerFieldIsEmpty" value="�� ������ ������� ������������ ��� ������������ {0}"/>
+			<message key="errorSomePersonNotFound" 
+						value="������� ��������: {0}. ������� ������������� �� ���������: {1}. ��������� ������������: {2}."/>
+			
+			<message key="addListTitle" value="�������� ������ ������������"/>
+			<message key="sendTitle" value="���������"/>
+			
+			<message key="sendNone" value="��� ������������� ��� �������� �� ������������"/>
+			<message key="sendOk" value="�������� ������� ��������� �� ������������ {0} �������������"/>
+			<message key="sendError" value="������ ��� �������� ��������� ������������ ''{0}'': {1}"/>
+			<message key="saveError" value="������ ���������� ���������-���������"/>
+			<message key="maindoc_stateError" value="��������� �������� ������������ �� ������������ ����� ������ ����� ����������� ���������."/>
+		</lang>
+	</messages>
+</settings>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Svodka_OG(Weekly)_sub2" pageWidth="65" pageHeight="20" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="65" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times_normal" isDefault="true" fontName="Times New Roman" fontSize="11"/>
+	<parameter name="beginDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="source_type" class="java.lang.String"/>
+	<parameter name="on_cont" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[with control(c_count) as (select count(distinct c.card_id) as c_count
+    from card c
+    join attribute_value av_date_reg on c.card_id = av_date_reg.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG'
+    left join attribute_value av_on_cont on c.card_id = av_on_cont.card_id and av_on_cont.attribute_code = 'JBR_IMPL_ONCONT'
+    where c.template_id = 864
+    and c.status_id in (101,102,103,206,48909,104)
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate}
+    and ($P{on_cont} is null or av_on_cont.value_id in ($P!{on_cont}))),
+
+    control_cond(c_count) as (select count(distinct c.card_id) as c_count
+    from card c
+    join attribute_value av_date_reg on c.card_id = av_date_reg.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG'
+    left join attribute_value av_source_type on c.card_id = av_source_type.card_id and av_source_type.attribute_code = 'ADMIN_281718'
+    left join attribute_value av_on_cont on c.card_id = av_on_cont.card_id and av_on_cont.attribute_code = 'JBR_IMPL_ONCONT'
+    where c.template_id = 864
+    and c.status_id in (101,102,103,206,48909,104)
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate}
+    and ($P{source_type} is null or av_source_type.value_id in ($P!{source_type}))
+    and ($P{on_cont} is null or av_on_cont.value_id in ($P!{on_cont})))
+
+    select
+            (select c_count from control) as cont,
+            (select c_count from control_cond) as cont_cond]]>
+	</queryString>
+	<field name="cont" class="java.lang.Long"/>
+	<field name="cont_cond" class="java.lang.Long"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cont} + "/" + $F{cont_cond}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

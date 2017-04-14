@@ -1,0 +1,884 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.jbr.processors">
+
+	<object type="Card">
+		<store>
+			<!--  ������ ��������� (324) -->
+<!--			<specific property="template" value="jbr.resolution">
+-->				<!-- �������� �� ������������ ����������� � ���� ������� ������������ � �������������� -->
+<!--				<pre-process class="CheckAttrsForEquals">
+					<parameter name="checkAttrsForEquals" value="link:jbr.ExtExecutor@link:jbr.person.organization;link:jbr.ExtCoExecutor@link:jbr.person.organization"/>
+					<parameter name="no_system_user" value="true"/>
+					<parameter name="must_equals" value="true"/>
+					<parameter name="equals_message" value="��� ������� ����������� ������ ���������� � ����� �����������"/>
+					<parameter name="empty_message" value="� ���� ������� ������������ ������ ���� ������� �����������"/>
+				</pre-process>
+			</specific>
+-->			<specific property="template" value="jbr.DistributionListElement">
+				<!-- ��������� UID -->
+				<post-process class="GenerateUIDProcessor"  runOrder="5">
+					<parameter name="attrId" value="string:jbr.distributionItem.uuid"/>
+					<parameter name="setIfEmptyOnly" value ="true"/>
+				</post-process>
+				<post-process class="CopyCardLink" runOrder="10">
+					<parameter name="from" value="->jbr.distributionItem.recipient.user@jbr.person.organization"/>
+					<parameter name="to" value="@jbr.distributionItem.recipient"/>
+					<parameter name="merge" value="false"/>
+				</post-process>
+				<post-process class="GenerateNameFromLinkedCards" runOrder="200">
+					<parameter name="format_1" value="{0} �� {1}" />
+					<parameter name="format_2" value="{2}"/>
+					<parameter name="linkedAttrId" value="link:jbr.distributionItem.sendInfo"/>
+					<parameter name="dstAttrId" value="string: jbr.distributionItem.ackInfo" />
+					<parameter name="srcAttrIds" value="string:jbr.gost.ack.regNumber; date: jbr.gost.ack.regDate; text: jbr.gost.ack.errorDescr"/>
+					<parameter name="forceSave" value="false" />
+				</post-process>
+			</specific>
+			<specific property="template" value="jbr.ProcessingDistribution">
+				<!-- ��������� UID -->
+				<post-process class="GenerateUIDProcessor"  runOrder="5">
+					<parameter name="attrId" value="text:uid"/>
+					<parameter name="setIfEmptyOnly" value ="true"/>
+				</post-process>
+			</specific>
+			<specific property="template" value="jbr.gost.msg">
+				<pre-process class="GenerateName" runOrder="5">
+					<parameter name="format" value="{0}" />
+					<parameter name="dstAttrId" value="string:name" />
+					<parameter name="srcAttrIds" value="text:uid" />
+				</pre-process>
+			
+			</specific>
+			<specific property="template" value="jbr.packet">
+				<specific property="state" value="jbr.importedDoc.loaded">
+					<pre-process class="GenerateName">
+						<parameter name="format" value="{0}"/>
+						<parameter name="dstAttrId" value="NAME"/>
+						<parameter name="srcAttrIds" value="string:jbr.distr.uuid"/>
+					</pre-process>
+				</specific>
+			</specific>			
+				<!-- <pre-process class="GenerateName" runOrder="10">
+					<parameter name="format" value="�������� ������� ���������� �����������" />
+					<parameter name="dstAttrId" value="string:jbr.gost.msg.standart" />
+				</pre-process>
+				<pre-process class="GenerateName" runOrder="15">
+					<parameter name="format" value="1.0" />
+					<parameter name="dstAttrId" value="string:jbr.gost.msg.version" />
+				</pre-process> -->
+		</store>
+	</object>
+
+	<!--
+		===================================================== 
+		CARDSTATE CHANGE
+		=====================================================
+	-->
+
+	<action type="ChangeState">
+		<!--
+			��� �������� ��������� �� ��������� "��������" � ���������
+			"����������":
+		-->
+		<specific property="workflowMove.id" value="jbr.commission.execute1">
+			<!-- ���� ����������� ������� ������� ���������������� �� �������� �������� ����� ��������� �� ����, �� 
+			     ����������������� ��� ��� ����������
+			-->
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� ������� ������������ �� ��������� ���� -->
+<!--		<post-process class="PopulateChildrenWithConditions" runOrder="500">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+ 				<parameter name="set" value="list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+											list:jbr.gost.msg.type.sent=jbr.gost.msg.type.mainDoc;
+						"/>
+				<parameter name="attr_link_path" value="link:jbr.ExtExecutor@link:jbr.person.organization@jbr.sending.method
+														~
+														jbr.rimp.bydoc@_TEMPLATE;"/>
+				<parameter name="attr_link_values" value="	=jbr.distributionItem.method.gost
+															~
+															=224"/>
+				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#0@link:jbr.ExtExecutor->link:jbr.distributionItem.recipient.user"/>
+				<parameter name="attach_unique" value="link:jbr.distributionItem.recipient.user;list:_STATE"/>
+				<parameter name="async" value="true"/>
+			</post-process>
+			
+			<post-process package="com.aplana.distrmanager.processors" class="AddChangeStatePostProcessorForRootQuery" runOrder="500">
+				<parameter name="parentAttr" value = "jbr.rimp.bydoc"/>
+				<parameter name="linkAttr" value="jbr.Distribution.DistributionList" />
+				<parameter name="compareCardLinks" value="jbr.distributionItem.recipient.user=jbr.ExtExecutor"/>
+				<parameter name="filters" value="
+												jbr.distributionItem.method=jbr.distributionItem.method.gost;
+												jbr.gost.msg.type.sent=jbr.gost.msg.type.mainDoc;
+												jbr.distributionItem.recipient.user#NULL;
+												jbr.distributionItem.recipient#NULL
+					"/>
+				<parameter name="affectedStates" value="draft" />
+				<parameter name="targetState" value="jbr.distributionItem.readyForSend" />
+			</post-process>
+-->			
+			<!-- post-process package="com.aplana.dbmi.jbr.processors" class="CheckAndDoDependentChangeState" runOrder="510">
+				<parameter name="parentAttr" value = "jbr.rimp.bydoc"/>
+				<parameter name="linkAttr" value="jbr.Distribution.DistributionList" />
+				<parameter name="filters" value="
+												jbr.distributionItem.method=jbr.distributionItem.method.gost;
+												jbr.gost.msg.type.sent=jbr.gost.msg.type.mainDoc;
+												jbr.distributionItem.recipient.user#NULL;
+												jbr.distributionItem.recipient#NULL
+					"/>
+				<parameter name="affectedStates" value="draft" />
+				<parameter name="targetState" value="jbr.distributionItem.readyForSend" />
+			</post-process-->
+			
+			
+				
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� ������� �������������� �� ��������� ���� -->
+<!--			<post-process class="PopulateChildrenWithConditions">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+-->				<!-- �������� ����������� � ���������-��������� -->
+				<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--				<parameter name="set" value="
+							list:jbr.distributionItem.method=modeGOST;
+							number:jbr.distributionItem.attempt=5
+						"/>
+-->				<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--				<parameter name="attr_link_path" value="link:jbr.ExtCoExecutor@link:jbr.person.organization
+														~
+														jbr.rimp.bydoc@_TEMPLATE;"/>
+-->	<!-- 
+														~
+														#2@link: jbr.Distribution.DistributionList@_STATE;
+														jbr.distributionItem.method;
+														link:jbr.distributionItem.recipient@number:_ID
+														"/-->
+<!--				<parameter name="attr_link_values" value="	#NULL;
+															~
+															=224,364,764,784,864;"/>
+-->	<!-- 														~
+															=1;
+															=1581;
+															#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+				<parameter name="async" value="true"/>
+			</post-process>
+			<post-process class="ForceSaveCardProcessor">
+			</post-process>
+-->		</specific>
+		<!--
+			�������� �������� ���������� (365) ���������, ���� �� ����
+			workflowmove.jbr.sign.send=41468 365 ������� wf=35244 wfm=41468
+			"��������� ����������": �� "�������� ������������" (41466) �
+			"����������"(108)
+		-->
+		<specific property="workflowMove.id" value="jbr.sign.send">
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--			<post-process class="PopulateChildrenWithConditions">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+-->				<!-- �������� ����������� � ���������-��������� -->
+				<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--				<parameter name="set" value="
+							list:jbr.distributionItem.method=modeGOST;
+							number:jbr.distributionItem.attempt=5
+						"/>
+-->				<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--				<parameter name="attr_link_path" value="link:jbr.sign.person.out@link:jbr.person.organization
+														~
+														jbr.sign.parent@_TEMPLATE;"/>
+-->	<!-- 
+														~
+														#2@link: jbr.Distribution.DistributionList@_STATE;
+														jbr.distributionItem.method;
+														link:jbr.distributionItem.recipient@number:_ID
+														"/-->
+<!--				<parameter name="attr_link_values" value="	#NULL;
+															~
+															=224,364,764,784,864;"/>
+-->	<!-- 														~
+															=1;
+															=1581;
+															#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+				<parameter name="async" value="true"/>
+			</post-process>									
+-->		</specific>
+
+		<!--
+			�������� �������� ���������� (365) ������������, ���� �� ����
+			workflowmove.jbr.visa.sign.to.boss.arm=73993 365 ������� wf=35244 wfm=73993
+			"� ��� ������������": �� "��������� ����������" (73992) �
+			"����������"(108)
+		-->
+		<specific property="workflowMove.id" value="jbr.visa.sign.to.boss.arm">
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--			<post-process class="PopulateChildrenWithConditions">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+-->				<!-- �������� ����������� � ���������-��������� -->
+				<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--				<parameter name="set" value="
+							list:jbr.distributionItem.method=modeGOST;
+							number:jbr.distributionItem.attempt=5
+						"/>
+-->				<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--				<parameter name="attr_link_path" value="link:jbr.sign.person.out@link:jbr.person.organization
+														~
+														jbr.sign.parent@_TEMPLATE;"/>
+-->	<!-- 
+														~
+														#2@link: jbr.Distribution.DistributionList@_STATE;
+														jbr.distributionItem.method;
+														link:jbr.distributionItem.recipient@number:_ID
+														"/-->
+<!--				<parameter name="attr_link_values" value="	#NULL;
+															~
+															=224,364,764,784,864;"/>
+-->	<!-- 														~
+															=1;
+															=1581;
+															#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+				<parameter name="async" value="true"/>
+			</post-process>					
+-->		</specific>
+
+		<!-- ������� ������������ � ������ ������������ -->
+		<specific property="workflowMove.toState" value="registration">
+<!--			<specific property="card.template" value="jbr.rassm"
+				load="true">
+-->				<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--				<post-process class="PopulateChildrenWithConditions">
+					<parameter name="template" value="jbr.DistributionListElement"/>
+					<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+					<parameter name="attach_dest_card_index" value="2"/>
+-->					<!-- �������� ����������� � ���������-��������� -->
+					<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--					<parameter name="set" value="
+								list:jbr.distributionItem.method=modeGOST;
+								number:jbr.distributionItem.attempt=5
+							"/>
+-->					<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--					<parameter name="attr_link_path" value="link:jbr.exam.person.out@link:jbr.person.organization
+															~
+															jbr.exam.parent@_TEMPLATE;"/>
+-->	<!-- 
+															~
+															#2@link: jbr.Distribution.DistributionList@_STATE;
+															jbr.distributionItem.method;
+															link:jbr.distributionItem.recipient@number:_ID
+															"/-->
+<!--					<parameter name="attr_link_values" value="	#NULL;
+																~
+																=224,364,764,784,864;"/>
+-->	<!-- 														~
+																=1;
+																=1581;
+																#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--					<parameter name="forceSaveChilds" value="true"/>
+					<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+					<parameter name="async" value="true"/>
+				</post-process>						
+			</specific>
+-->		</specific>
+
+		<!-- ������� ������������ � ������ ������������ -->
+		<specific property="workflowMove.toState" value="acquaintance">
+<!--			<specific property="card.template" value="jbr.inform_incoming"
+				load="true">
+-->				<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--				<post-process class="PopulateChildrenWithConditions">
+					<parameter name="template" value="jbr.DistributionListElement"/>
+					<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+					<parameter name="attach_dest_card_index" value="2"/>
+-->					<!-- �������� ����������� � ���������-��������� -->
+					<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--					<parameter name="set" value="
+								list:jbr.distributionItem.method=modeGOST;
+								number:jbr.distributionItem.attempt=5
+							"/>
+-->					<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--					<parameter name="attr_link_path" value="link:jbr.information.person.out@link:jbr.person.organization
+															~
+															jbr.info.parent@_TEMPLATE;"/>
+-->	<!-- 
+															~
+															#2@link: jbr.Distribution.DistributionList@_STATE;
+															jbr.distributionItem.method;
+															link:jbr.distributionItem.recipient@number:_ID
+															"/-->
+<!--					<parameter name="attr_link_values" value="	#NULL;
+																~
+																=224,364,764,784,864;"/>
+-->	<!--														~
+																=1;
+																=1581;
+																#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--					<parameter name="forceSaveChilds" value="true"/>
+					<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+					<parameter name="async" value="true"/>
+				</post-process>						
+			</specific>
+-->		</specific>
+
+		<!--
+			�������� �������� ����������� (348) ���������, ���� �� ����
+			workflowmove.jbr.visa.send=41467 348 ����������� wf=35265 wfm=41467
+			"�������� ������������": �� "�������� ������������"(41466) �
+			"������������"(107)
+		-->
+		<specific property="workflowMove.id" value="jbr.visa.send">
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--			<post-process class="PopulateChildrenWithConditions">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+-->				<!-- �������� ����������� � ���������-��������� -->
+				<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--				<parameter name="set" value="
+							list:jbr.distributionItem.method=modeGOST;
+							number:jbr.distributionItem.attempt=5
+						"/>
+-->				<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--				<parameter name="attr_link_path" value="link:jbr.visa.person.out@link:jbr.person.organization
+														~
+														jbr.visa.parent@_TEMPLATE;"/>
+-->	<!-- 
+														~
+														#2@link: jbr.Distribution.DistributionList@_STATE;
+														jbr.distributionItem.method;
+														link:jbr.distributionItem.recipient@number:_ID
+														"/-->
+<!--				<parameter name="attr_link_values" value="	#NULL;
+															~
+															=224,364,764,784,864;"/>
+-->	<!-- 														~
+															=1;
+															=1581;
+															#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+				<parameter name="async" value="true"/>
+			</post-process>			
+-->		</specific>
+		
+
+		<!--
+			�������� �������� ����������� (348) � ��� ������������, 
+			workflowmove.jbr.visa.to.boss.arm=825531 348 ����������� wf=35265 wfm=825531: 
+			�� "��������� ����������"(73992) � "������������"(107)
+		-->
+		<specific property="workflowMove.id" value="jbr.visa.to.boss.arm">
+			<!-- �������� �������� ���, ��� �������� ��������� � ����������� �������� ����������� �� ��������� ���� -->
+<!--			<post-process class="PopulateChildrenWithConditions">
+				<parameter name="template" value="jbr.DistributionListElement"/>
+				<parameter name="attach" value="jbr.Distribution.DistributionList"/>
+				<parameter name="attach_dest_card_index" value="2"/>
+-->				<!-- �������� ����������� � ���������-��������� -->
+				<!-- ������������� � ���� ��������: ������ �������� - ����, ����� ������� - 5 -->
+<!--				<parameter name="set" value="
+							list:jbr.distributionItem.method=modeGOST;
+							number:jbr.distributionItem.attempt=5
+						"/>
+-->				<!-- ������� �������� ������ ���� ����������� � ���������, ����������, ���, �� ��� �����������; � ��� ������ ���� �������� ������� ������� �����������-->
+<!--				<parameter name="attr_link_path" value="link:jbr.visa.person.out@link:jbr.person.organization
+														~
+														jbr.visa.parent@_TEMPLATE;"/>
+-->	<!-- 
+														~
+														#2@link: jbr.Distribution.DistributionList@_STATE;
+														jbr.distributionItem.method;
+														link:jbr.distributionItem.recipient@number:_ID
+														"/-->
+<!--				<parameter name="attr_link_values" value="	#NULL;
+															~
+															=224,364,764,784,864;"/>
+-->	<!-- 														~
+															=1;
+															=1581;
+															#jbr.ExtExecutor@jbr.person.organization"/-->
+<!--				<parameter name="forceSaveChilds" value="true"/>
+				<parameter name="split" value="#1@link:jbr.person.organization->link:jbr.distributionItem.recipient"/>
+				<parameter name="attach_unique" value="_STATE;link:jbr.distributionItem.recipient"/>
+				<parameter name="async" value="true"/>
+			</post-process>			
+-->		</specific>
+		
+
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ���� �� ���������, ������ ���� �� �������� � �� � ������ �������-->
+		<specific property="workflowMove.fromState" value="draft">
+<!--			<specific property="card.template" value="jbr.visa" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false">
+-->					<!-- �������� �� ������������� ������ �� �����������: �������� ��� ����������� -->
+<!--					<pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.visa.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="����������� ��� ����������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.visa.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+-->		</specific>
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ���� �� ��������� ����������, ������ ���� �� �������� � �� � ������ �������-->
+		<specific property="workflowMove.fromState" value="jbr.visa.assign">
+<!--			<specific property="card.template" value="jbr.visa" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false">
+-->					<!-- �������� �� ������������� ������ �� �����������: �������� ��� ����������� -->
+<!--					<pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.visa.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="����������� ��� ����������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.visa.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+-->		</specific>
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ������������ �� ���������, ������ ���� �� �������� � �� � ������ �������-->
+		<specific property="workflowMove.fromState" value="draft">
+<!--			<specific property="card.template" value="jbr.rassm" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false">
+-->					<!-- �������� �� ������������� ������ �� �����������: �������� ��� ����������� -->
+<!--					<pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.exam.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="��������������� ��� ��������������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.exam.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+-->		</specific>
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ������������ �� ��������� ���������� � ����� ������, ������ ���� �� ��������-->
+		<specific property="workflowMove.fromState" value="boss.assistant">
+<!--			<specific property="card.template" value="jbr.rassm" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false">
+-->					<!-- �������� �� ������������� ������ �� ���������������: �������� ��� ����������� -->
+<!--					<pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.exam.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="��������������� ��� ��������������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.exam.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+-->		</specific>
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ������� �� ���������, ������ ���� �� �������� � �� � ������ �������-->
+		<!-- <specific property="workflowMove.fromState" value="draft">
+			<specific property="card.template" value="" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false"> -->
+					<!-- �������� �� ������������� ������ �� �����������: �������� ��� ����������� -->
+					<!-- <pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.sign.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="��������� ��� ��������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.sign.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+		</specific> -->
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ������� �� ��������� ���������� � ����� ������, ������ ���� �� ��������-->
+		<!-- <specific property="workflowMove.fromState" value="jbr.sign.assistent">
+			<specific property="card.template" value="" load="true">
+				<specific property="workflowMove.toState" value="trash" equals="false"> -->
+					<!-- �������� �� ������������� ������ �� ���������������: �������� ��� ����������� -->
+					<!-- <pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.sign.person.out"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="��������� ��� ��������� (�������) ������ ���� ��������"/>
+						<parameter name="condition" value="user:jbr.sign.person=NULL"/>
+					</pre-process>
+				</specific>
+			</specific>
+		</specific>	 -->	
+
+		<!-- (YNikitin, 2012/03/30) ��� �������� ��������� � ����� ������, ������ ���� �� �������� � �� � ������ �������-->
+		<!-- <specific property="workflowMove.toState" value="trash" equals="false"> 
+			<specific property="card.template" value="" load="true">-->
+					<!-- �������� �� ������������� ������ �� �����������: �������� ��� ����������� -->
+					<!-- <pre-process class="TestEmptyAttrProcessor">
+						<parameter name="test_attr" value="link:jbr.ExtExecutor"/>
+						<parameter name="no_system_user" value="true"/>
+						<parameter name="must_empty" value="false"/>
+						<parameter name="empty_message" value="����������� ��� ������� ����������� ������ ���� ���������"/>
+						<parameter name="condition" value="user:jbr.AssignmentExecutor=NULL"/>
+					</pre-process> 
+			</specific> 
+		</specific>-->
+		<!-- =================================================================================================================== -->
+		<!-- ��� �������� ��� �������� � ���������� ��� ���������� � �������: -->
+		<specific property="card.template" value="jbr.packet">
+			<!-- � ���������� -->
+			<specific property="workflowMove.toState" value="jbr.importedDoc.processed">
+				<specific selectorBean="commonGostNotificationSelector">
+					<!-- � ������� "UUID ��������� ���������" ��� "��������" ���������� �������� �������� "JBR_UUID" ��� "��������� ����"  
+						�������� ��� "���", �������������: 
+						 - "��� ������������� ���������" � "�����������" 
+						 - "������ ��������" � "����" 
+						 - ����������� "����������" ��� �� �������� "�����������" ��� "��������" 
+							 ��������� ��� "���" ������������� � ������� ��� "��������".-->
+					<!-- ���������, ���������� ������-���� ParametersAction, ��� �������� ����� ���� ���� ���������� -->
+					<post-process class="SetParametersWithCreationCard" package="com.aplana.distrmanager.processors" runOrder="5">
+						<parameter name="template" value="jbr.DistributionListElement" />
+						<parameter name="attach" value="jbr.Distribution.DistributionList" />
+						<parameter name="attach_dest_card_index" value="0"/>
+						<parameter name="copy" value="
+								link:jbr.distr.sender->link:jbr.distributionItem.recipient;
+						" /> 
+						<parameter name="set" value="
+								list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+								list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;
+							"/>
+						<parameter name="param_updateGostBean" value="ackGostUpdater"/>
+						<parameter name="forceSaveChilds" value="true"/>
+						<parameter name="setValueInList" value="jbr.gost.ack.type.recieved" />
+					</post-process>
+				</specific>
+			</specific>
+			<!-- � ���������� � ������� -->
+			<specific property="workflowMove.id" value="jbr.importedDoc.notRecoverable">
+				<specific selectorBean="ifErrorGostNotificationSelector">
+				<!-- � ������� "UUID ��������� ���������" ��� "��������" ���������� �������� �������� "JBR_UUID" ��� "��������� ����"  
+				     �������� ��� "���", �������������: 
+				     - "��� ������������� ���������" � "�����������" 
+				     - "������ ��������" � "����" 
+				     - ����������� "����������" ��� �� �������� "�����������" ��� "��������" 
+					 ��������� ��� "���" ������������� � ������� ��� "��������".-->
+				<!-- ���������, ���������� ������-���� ParametersAction, ��� �������� ����� ���� ���� ���������� -->
+				<post-process class="SetParametersWithCreationCard" package="com.aplana.distrmanager.processors" runOrder="5">
+					<parameter name="template" value="jbr.DistributionListElement" />
+					<parameter name="attach" value="jbr.Distribution.DistributionList" /> 
+					<parameter name="attach_dest_card_index" value="0"/>
+					<parameter name="copy" value="
+							link:jbr.distr.sender->link:jbr.distributionItem.recipient;
+					" /> 
+					<parameter name="set" value="
+							list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+							list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;
+						"/>
+					<parameter name="param_updateGostBean" value="ackGostUpdater"/>
+					<parameter name="forceSaveChilds" value="true"/>
+					<parameter name="setValueInList" value="jbr.gost.ack.type.recieved" />
+				</post-process>
+			</specific>
+			</specific>
+		</specific>
+		
+		
+		<!-- ��� ��������  �� ������� "����������� �� ��" � ������ "���������������",
+			 ���������� ����������� � ����������� -->
+		<specific property="workflowMove.id" value="jbr.incoming.register">
+			<specific selectorBean="docGostNotificationSelector">
+				<validator class="CheckAttribute">
+					<parameter name="attr_test" value="jbr.incoming.sender#NULL"/>
+					<parameter name="nls_err_msgid_arg3" value="jbr.gost.check.sender"/>
+				</validator>
+				<!-- �������� ��� "���", �������������: 
+				     - "��� ������������� ���������" � "�����������" 
+				     - "������ ��������" � "����" 
+				     - ��������� "����������� ����" ����������:
+				         �) "��������������� �����" �� ���������;
+				         �) "���� �����������" �� ���������;
+					 ��������� ��� "���" ������������� � ������� ��� "��������".-->
+				<!-- ���������, ���������� ������-���� ParametersAction, ��� �������� ����� ���� ���� ���������� -->
+				<post-process class="SetParametersWithCreationCard" package="com.aplana.distrmanager.processors" runOrder="5">
+					<parameter name="template" value="jbr.DistributionListElement" />
+					<parameter name="attach" value="jbr.Distribution.DistributionList" />
+					<parameter name="attach_dest_card_index" value="1"/>
+					<parameter name="attr_link_path" value="jbr.original.source@_TEMPLATE"/>
+					<parameter name="attr_link_values" value="=jbr.packet"/>
+					<parameter name="copy" value="
+							#0@link:jbr.incoming.sender->link:jbr.distributionItem.recipient;
+					" />
+					<parameter name="set" value="
+							list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+							list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;
+						"/>
+					<parameter name="forceSaveChilds" value="true"/>
+					<parameter name="param_updateGostBean" value="ackGostUpdater"/>
+					<parameter name="setValueInList" value="jbr.gost.ack.type.registered" />
+					<parameter name="setCurrentCardParameters" value="
+																	 string:regnumber;
+																	 date:regdate;
+																	 " />
+				</post-process>
+			</specific>
+		</specific>
+		
+			<!-- �������� ��� "���", �������������: 
+				     - "��� ������������� ���������" � "�����������" 
+				     - "������ ��������" � "����" 
+				     - ��������� "����������� ����" ����������:
+				         �) ��� ������: "1";
+				         �) �������� ������: "�������� ��������� � ��������� ����������������"
+					 ��������� ��� "���" ������������� � ������� ��� "��������".-->
+				<!-- ���������, ���������� ������-���� ParametersAction, ��� �������� ����� ���� ���� ���������� -->
+		<specific property="workflowMove.id" value="jbr.incoming.registration.refuse">
+			<specific selectorBean="docRefuseGostNotificationSelector">
+				<validator class="CheckAttribute">
+					<parameter name="attr_test" value="jbr.incoming.sender#NULL"/>
+					<parameter name="nls_err_msgid_arg3" value="jbr.gost.check.sender"/>
+				</validator>
+				<post-process class="SetParametersWithCreationCard" package="com.aplana.distrmanager.processors" runOrder="5">
+					<parameter name="template" value="jbr.DistributionListElement" />
+					<parameter name="attach" value="jbr.Distribution.DistributionList" /> 
+					<parameter name="attach_dest_card_index" value="1"/>
+					<parameter name="attr_link_path" value="jbr.original.source@_TEMPLATE"/>
+					<parameter name="attr_link_values" value="=jbr.packet"/>
+					<parameter name="copy" value="
+							#0@link:jbr.incoming.sender->link:jbr.distributionItem.recipient;
+					" />
+					<parameter name="set" value="
+							list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+							list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;
+						"/>
+					<parameter name="forceSaveChilds" value="true"/>
+					<parameter name="param_updateGostBean" value="ackGostUpdater"/>
+					<parameter name="setValueInList" value="jbr.gost.ack.type.registered" />
+					<parameter name="setValuesForParameters" value="
+																	 jbr.gost.ack.errorCode=1;
+																	 jbr.gost.ack.errorDescr=�������� ��������� � ��������� ����������������;
+																	 " />
+					<parameter name="setCurrentCardParameters" value="string:medo.registration.refuse.reason" />
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!--
+			��� �������� �������� "������� ������ ��������", 
+			� ������ "����� � ��������" (1149881)  
+			-->
+			
+		<specific property="card.template" value="jbr.DistributionListElement" load="true">
+			<specific property="workflowMove.toState" value="jbr.distributionItem.readyForSend">
+				
+				<specific selectorBean="gostDistributionSelector">
+				
+					<validator package="com.aplana.distrmanager.processors" class="CheckLinkedCardTemplate" runOrder="3">
+						<parameter name="linkAttr" value="jbr.DistributionListElement.ParentDoc"/>
+						<parameter name="allowedTemplates" value="jbr.outcoming,jbr.packet,jbr.ord"/>
+						<parameter name="message" value="jbr.gost.check.illegalTemplate"/>
+					</validator>
+					
+					<validator class="CheckAttribute" runOrder="4">
+						<parameter name="attr_test" value="list:jbr.distributionItem.method#jbr.distributionItem.method.gost;list:jbr.gost.msg.type.sent#NULL"/>
+						<parameter name="nls_err_msgid_arg3" value="jbr.gost.check.msgType"/>
+					</validator>
+			
+					<!-- ��� ������ ����� ������� ������ ��� ����������, �.�. ��� ������������� ��������� = �������� ��������  -->
+					<specific selectorBean="docDistributionSelector">
+						<!-- �������������� ������ ��������� ������� � ������� ���  -->
+						<post-process class="AttributeIncrementProcessor" runOrder="5">
+							<parameter name="AttrId" value="jbr.distributionItem.lastAttempt" />
+							<parameter name="init" value="false" />
+							<parameter name="iterator" value="1" />
+						</post-process>
+				
+						<!-- �������� �������� "������" (1224) -->
+						<post-process class="PopulateChildrenWithConditions"  runOrder="10">
+							<parameter name="template" value="jbr.ProcessingDistribution" />
+							<parameter name="attach" value="jbr.distributionItem.processing" /> <!-- ������� ��������, � �������� ����� ������� ������ -->
+							<parameter name="attach_dest_card_index" value="0"/>
+							<parameter name="copy" value="jbr.distributionItem.lastAttempt->jbr.processingDestribution.count" />
+							<parameter name="forceSaveChilds" value="true"/>
+						</post-process>
+				
+						<!-- �������� �������� "��������� ����" (1500), ���� ������ �������� ���� � "��� ������������� ���������" = "��������" -->
+						<post-process class="PopulateChildrenWithConditions"  runOrder="15">
+							<parameter name="template" value="jbr.gost.msg" />
+							<parameter name="attach" value="jbr.distributionItem.msgGOST" /> <!-- ������� ��������, � �������� ����� ������� ��������� ���� -->
+							<parameter name="attach_dest_card_index" value="0"/>
+							<parameter name="copy" value="
+								string:jbr.distributionItem.uuid->text:uid;
+								list:jbr.gost.msg.type.sent->list:jbr.gost.msg.type;
+								" /> 
+							<parameter name="attr_link_path" value="string:jbr.distributionItem.uuid;
+																	link:jbr.distributionItem.msgGOST;
+								"/>
+							<parameter name="attr_link_values" value="
+																	#NULL;
+																	=NULL;
+								"/>
+							<parameter name="forceSaveChilds" value="true"/>
+							<parameter name="attach_unique" value="text:uid"/>
+						</post-process>
+
+						<!-- ���������� ��� ��������� ���� ���������� � �������� ��������� ��������� -->
+						<post-process class="ExportManager" package="com.aplana.distrmanager.processors"  runOrder="20">
+							<parameter name="idDocumentBase" value="jbr.DistributionListElement.ParentDoc"/>
+							<parameter name="updateGostBean" value="
+															jbr.incoming:incomingDocumentGostUpdater;
+															jbr.citizenrequest:incomingDocumentGostUpdater;
+															default:documentGostUpdater"/>
+						</post-process>
+						<!--
+						��������� �������� � ��������� �����������:
+						� id �������� ���������;
+						� id �������� ������� ������ ��������;
+						- ������ (���) ��������������;
+						� ������� "���������" � ��������� "������� ������ ��������" � ������ "���������" (556656).
+						-->
+						<post-process class="ExportDocument" package="com.aplana.distrmanager.processors"  runOrder="25">
+							<parameter name="idDocumentBase" value="jbr.DistributionListElement.ParentDoc"/>
+							<parameter name="conditions" value="list:jbr.gost.msg.type.sent=jbr.gost.msg.type.mainDoc;"/>
+						</post-process>
+					</specific> <!-- end of document -->
+
+					
+					<!-- ��� ������ ����� ������� ������ ��� �����������, �.�. ��� ������������� ��������� = �����������  -->
+					<specific selectorBean="notificationDistributionSelector">
+						<!-- If it's next attempt to resend notification -->
+						<specific property="workflowMove.fromState" value="jbr.distributionItem.notSent">
+							<!-- �������������� ������ ��������� ������� � ������� ���  -->
+							<post-process class="AttributeIncrementProcessor" runOrder="10">
+								<parameter name="AttrId" value="jbr.distributionItem.lastAttempt" />
+								<parameter name="init" value="false" />
+								<parameter name="iterator" value="1" />
+							</post-process>
+							<!-- �������� �������� "������" (1224) -->
+							<post-process class="PopulateChildrenWithConditions"  runOrder="15">
+								<parameter name="template" value="jbr.ProcessingDistribution" />
+								<parameter name="attach" value="jbr.distributionItem.processing" /> <!-- ������� ��������, � �������� ����� ������� ������ -->
+								<!--  <parameter name="attach_dest_card_index" value="jbr.distributionItem.lastAttempt"/>-->
+								<parameter name="attach_dest_card_index" value="0"/>
+								<parameter name="copy" value="jbr.distributionItem.lastAttempt->jbr.processingDestribution.count" />
+								<parameter name="forceSaveChilds" value="true"/>
+							</post-process>
+						</specific>	
+						<!--
+						��������� �������� � ��������� �����������:
+						� id �������� ���������;
+						� id �������� ������� ������ ��������;
+						- ������ (���) ��������������;
+						� ������� "���������" � ��������� "������� ������ ��������" � ������ "���������" (556656).
+						-->
+						<post-process class="ExportNotification" package="com.aplana.distrmanager.processors"  runOrder="20">
+							<parameter name="idDocumentBase" value="jbr.DistributionListElement.ParentDoc"/>
+							<parameter name="conditions" value="list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;"/>
+						</post-process>
+					</specific> <!-- end of notification -->
+				</specific>
+			</specific>
+		</specific>
+		<!-- �������� ���.���. ��� �������� ��������� � ������ "����������" -->
+		<!--  TODO: ���������� ���������� � ������ ������������� -->
+		<!-- specific property="card.template" value="jbr.resolution" load="true">
+				<specific property="workflowMove.toState" value="execution" load="true">
+					<post-process class="CreateOutgoingDoc">
+					</post-process>
+				</specific>
+		</specific -->  
+	</action>
+	
+	<action package="com.aplana.dmsi.action" type="ImportCardByGOST">
+		<post-process class="UpdateDistributionInfoByAcknowledgement" package="com.aplana.distrmanager.processors">
+		</post-process>
+	</action>
+	
+	<action package="com.aplana.distrmanager.action" type="ParametersAction">
+		<query package="com.aplana.distrmanager.action.query">DoParametersAction</query>
+		<!-- �������������� ������ ��������� ������� � ������� ���  -->
+		<post-process class="AttributeIncrementProcessor"  runOrder="5">
+			<parameter name="AttrId" value="jbr.distributionItem.lastAttempt" />
+			<parameter name="init" value="false" />
+			<parameter name="iterator" value="1" />
+		</post-process>
+
+		<!-- �������� �������� "������" (1224) -->
+		<post-process class="PopulateChildrenWithConditions"  runOrder="10">
+			<parameter name="template" value="jbr.ProcessingDistribution" />
+			<parameter name="attach" value="jbr.distributionItem.processing" /> <!-- ������� ��������, � �������� ����� ������� ������ -->
+			<parameter name="attach_dest_card_index" value="0"/>
+			<parameter name="copy" value="jbr.distributionItem.lastAttempt->jbr.processingDestribution.count" />
+			<parameter name="attr_link_path" value="
+												list:jbr.distributionItem.method;
+												list:jbr.gost.msg.type.sent;
+												backLink:jbr.distributionItem.foundationDoc@_TEMPLATE;
+												"/>
+	    	<parameter name="attr_link_values" value="
+	    										=jbr.distributionItem.method.gost;
+	    										=jbr.gost.msg.type.notification;
+	    										=2424, 224;
+	    										"/>
+	    	<parameter name="forceSaveMode" value="ATTRIBUTE" />
+		</post-process>
+					
+		<!-- �������� �������� "��������� ����" (1500), ���� ������ �������� ���� -->
+		<post-process class="PopulateChildrenWithConditions"  runOrder="15">
+			<parameter name="template" value="jbr.gost.msg" />
+			<parameter name="attach" value="jbr.distributionItem.msgGOST" /> <!-- ������� ��������, � �������� ����� ������� ��������� ���� -->
+			<parameter name="attach_dest_card_index" value="0"/>
+			<parameter name="copy" value="
+				string:jbr.distributionItem.uuid->text:uid;
+				list:jbr.gost.msg.type.sent->list:jbr.gost.msg.type;
+			" />
+			<parameter name="attr_link_path" value="string:jbr.distributionItem.uuid;
+													link:jbr.distributionItem.msgGOST;
+													list:jbr.distributionItem.method;
+													list:jbr.gost.msg.type.sent;
+													backLink:jbr.distributionItem.foundationDoc@_TEMPLATE;
+													"/>
+	    	<parameter name="attr_link_values" value="
+	    											#NULL;
+	    											=NULL;
+	    											=jbr.distributionItem.method.gost;
+	    											=jbr.gost.msg.type.notification;
+	    											=2424, 224;
+	    											"/>
+	    	<parameter name="forceSaveMode" value="ATTRIBUTE" />						
+			<!-- <parameter name="forceSaveChilds" value="true"/>  -->
+			<parameter name="attach_unique" value="text:uid"/>
+		</post-process>
+		<!-- ���������� ��� ��������� ���� ���������� � �������� ��������� ���������, � ��� ����� ����������� ���� -->
+		<post-process class="ExportNotificationManager" package="com.aplana.distrmanager.processors"  runOrder="20">
+			<parameter name="idDocumentBase" value="jbr.DistributionListElement.ParentDoc"/>
+			<parameter name="conditions" value="list:jbr.distributionItem.method=jbr.distributionItem.method.gost;
+												list:jbr.gost.msg.type.sent=jbr.gost.msg.type.notification;"/>
+		</post-process>
+		<post-process class="JumpStatePostProcessor" runOrder="25">
+			<parameter name="dest_wfm" value="jbr.distributionItem.ready"/>
+			<parameter name="failIfStatusIsOther"  value="false"/>
+		</post-process>
+	</action>
+</queries>		

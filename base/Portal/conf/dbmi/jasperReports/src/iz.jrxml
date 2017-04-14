@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="iz" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\malinina\\My Documents\\project\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	av_dec_sname.string_value as dec_sname,
+	av_dec_name.string_value as dec_name,
+	av_dec_mname.string_value as dec_mname,
+	av_dec_index.string_value as dec_index,
+	av_dec_addr.string_value as dec_addr,
+	av_ddoc.date_value + interval '$P!{tz_hour} hour' as ddoc,
+	av_ndoc.string_value as ndoc,
+	av_ddelivery.date_value + interval '$P!{tz_hour} hour' as ddelivery,
+	av_inum.string_value as ninc,
+	av_ddead.date_value + interval '$P!{tz_hour} hour' as ddead,
+	av_previous.string_value as previous,
+    av_content.string_value as content,
+	av_nindex.string_value as nindex,
+	av_ntom.number_value as ntom,
+	av_qpap.number_value as qpap
+from
+	card c
+left outer join -- Информация о заявителе. Фамилия
+	attribute_value av_dec_sname on (av_dec_sname.card_id = c.card_id and av_dec_sname.attribute_code = 'ADMIN_274992')
+left outer join -- Информация о заявителе. Имя
+	attribute_value av_dec_name on (av_dec_name.card_id = c.card_id and av_dec_name.attribute_code = 'ADMIN_281034')
+left outer join -- Информация о заявителе. Отчество
+	attribute_value av_dec_mname on (av_dec_mname.card_id = c.card_id and av_dec_mname.attribute_code = 'ADMIN_281035')
+left outer join -- Индекс
+	attribute_value av_dec_index on (av_dec_index.card_id = c.card_id and av_dec_index.attribute_code = 'ADMIN_277247')
+left outer join -- Адрес для предоставления ответа
+	attribute_value av_dec_addr on (av_dec_addr.card_id = c.card_id and av_dec_addr.attribute_code = 'ADMIN_277248')
+
+left outer join -- Дата документа
+	attribute_value av_ddoc on (av_ddoc.card_id = c.card_id and av_ddoc.attribute_code = 'JBR_REGD_DATEOUT')
+left outer join -- Номер документа - Номер исходящего
+	attribute_value av_ndoc on (av_ndoc.card_id = c.card_id and av_ndoc.attribute_code = 'JBR_REGD_NUMOUT')
+left outer join -- Дата поступления - Дата регистрации
+	attribute_value av_ddelivery on (av_ddelivery.card_id = c.card_id and av_ddelivery.attribute_code = 'JBR_REGD_DATEREG')
+left outer join -- Входящий номер - Регистрационный номер
+	attribute_value av_inum on (av_inum.card_id = c.card_id and av_inum.attribute_code = 'JBR_REGD_REGNUM')
+
+left outer join -- Срок ответа
+    attribute_value av_ddead on (av_ddead.card_id = c.card_id and av_ddead.attribute_code = 'JBR_IMPL_DEADLINE')
+
+left outer join -- Предыдущее обращение
+    attribute_value av_previous on (av_previous.card_id = c.card_id and av_previous.attribute_code = 'ADMIN_277616')
+
+left outer join -- Содержание обращения
+    attribute_value av_content on (av_content.card_id = c.card_id and av_content.attribute_code = 'ADMIN_277253')
+
+--
+left outer join -- Дело - Индекс номенклатуры
+	attribute_value av_indx on (av_indx.card_id = c.card_id and av_indx.attribute_code = 'JBR_REGD_INDEX')
+left outer join -- Название карточки "Номенклатура дел"
+	attribute_value av_nindex on (av_nindex.card_id = av_indx.number_value and av_nindex.attribute_code = 'NAME')
+left outer join -- Номер тома
+	attribute_value av_ntom on (av_ntom.card_id = c.card_id and av_ntom.attribute_code = 'ADMIN_222281')
+left outer join -- Количество листов основного документа
+	attribute_value av_qpap on (av_qpap.card_id = c.card_id and av_qpap.attribute_code = 'JBR_ORIG_QUANTPAP')
+where c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="dec_sname" class="java.lang.String"/>
+	<field name="dec_name" class="java.lang.String"/>
+	<field name="dec_mname" class="java.lang.String"/>
+	<field name="dec_index" class="java.lang.String"/>
+	<field name="dec_addr" class="java.lang.String"/>
+	<field name="ddoc" class="java.util.Date"/>
+	<field name="ndoc" class="java.lang.String"/>
+	<field name="ddelivery" class="java.util.Date"/>
+	<field name="ninc" class="java.lang.String"/>
+	<field name="ddead" class="java.util.Date"/>
+	<field name="previous" class="java.lang.String"/>
+	<field name="content" class="java.lang.String"/>
+	<field name="nindex" class="java.lang.String"/>
+	<field name="ntom" class="java.lang.Long"/>
+	<field name="qpap" class="java.lang.Long"/>
+	<detail>
+		<band height="330" splitType="Stretch">
+			<staticText>
+				<reportElement style="table_header" mode="Opaque" x="0" y="0" width="382" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Автор запроса]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" mode="Opaque" x="382" y="0" width="61" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Дата и № документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" mode="Opaque" x="443" y="0" width="112" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Дата поступления и входящий номер]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" x="0" y="30" width="555" height="30"/>
+				<textField>
+					<reportElement style="table" stretchType="RelativeToBandHeight" x="443" y="0" width="112" height="30"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{ddelivery} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{ddelivery}) : "")+
+                        "\n"+
+                        ($F{ninc} != null ? $F{ninc} : "")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="table" stretchType="RelativeToBandHeight" x="382" y="0" width="61" height="30"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{ddoc} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{ddoc}) : "")+
+                        " "+
+                        ($F{ndoc} != null ? $F{ndoc} : "")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="382" height="30"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA["Информация об авторе запроса: " +
+($F{dec_sname} != null ? ($F{dec_sname}+" ") : "")+
+(($F{dec_name} != null && $F{dec_name}.length() > 0) ? ($F{dec_name}.substring(0,1)+".") : "")+
+(($F{dec_mname} != null && $F{dec_mname}.length() > 0) ? ($F{dec_mname}.substring(0,1)+".") : "") +
+"\n"+
+($F{dec_index} != null && $F{dec_index}.length() > 0 ? $F{dec_index} : "") +
+($F{dec_index} != null && $F{dec_index}.length() > 0 && $F{dec_addr} != null && $F{dec_addr}.length() > 0 ? ", " : "") +
+($F{dec_addr} != null && $F{dec_addr}.length() > 0 ? $F{dec_addr} : "")]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="60" width="443" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Указания по исполнению документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="443" y="60" width="112" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Срок ответа]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" x="0" y="75" width="555" height="15"/>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="443" height="15"/>
+					<subreport>
+						<reportElement positionType="Float" x="0" y="0" width="443" height="15"/>
+						<subreportParameter name="card_id">
+							<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"values_list_instr_exe.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="443" y="0" width="112" height="15"/>
+					<textField>
+						<reportElement style="text" positionType="Float" x="0" y="0" width="112" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[($F{ddead} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{ddead}) : "")]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="105" width="443" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Сведения об обращении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="443" y="105" width="112" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Льготы]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="120" width="555" height="30"/>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="443" height="30" isPrintWhenDetailOverflows="true"/>
+					<textField>
+						<reportElement style="text" positionType="Float" x="0" y="0" width="74" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Top"/>
+						<textFieldExpression><![CDATA["Тематика:"]]></textFieldExpression>
+					</textField>
+					<subreport>
+						<reportElement positionType="Float" x="74" y="0" width="369" height="15"/>
+						<subreportParameter name="card_id">
+							<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"subject.jasper"]]></subreportExpression>
+					</subreport>
+					<textField>
+						<reportElement style="text" positionType="Float" x="0" y="15" width="443" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Top"/>
+						<textFieldExpression><![CDATA["Предыдущие обращения: " + ($F{previous} != null ? $F{previous} : "нет")]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="443" y="0" width="112" height="30" isPrintWhenDetailOverflows="true"/>
+					<subreport>
+						<reportElement style="table" positionType="Float" x="0" y="0" width="112" height="30"/>
+						<subreportParameter name="card_id">
+							<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path}+"values_list_benefit.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="165" width="555" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Содержание обращения]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" x="0" y="180" width="555" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{content} != null ? $F{content} : "нет"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="195" width="555" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Резолюции и исполнение]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="210" width="555" height="30"/>
+				<subreport>
+					<reportElement style="text" positionType="Float" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="level">
+						<subreportParameterExpression><![CDATA[new Long(4)]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"resolution.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="240" width="555" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Бумажный оригинал]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="255" width="555" height="15"/>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"paperorig.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="285" width="555" height="0"/>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="0" width="555" height="0"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"external_distribution.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="300" width="111" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Дело]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="111" y="300" width="111" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Том №]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="222" y="300" width="111" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Листы:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="333" y="300" width="111" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Акт №]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="444" y="300" width="111" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="315" width="555" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" x="0" y="0" width="111" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[$F{nindex} != null ? $F{nindex} : "нет"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="111" y="0" width="111" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[$F{ntom} != null ? $F{ntom}.toString() : ""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="222" y="0" width="111" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[$F{qpap} != null ? $F{qpap}.toString() : ""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="333" y="0" width="111" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="444" y="0" width="111" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

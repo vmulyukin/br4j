@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="harm_doc_comment" printOrder="Horizontal" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT al.log_date + interval '$P!{tz_hour} hour' as log_date,
+p.person_id as person_id,
+av_sname.string_value as sname,
+v_comment.string_value as comment,
+cv1.status_id AS start_status_id,
+csf.status_id AS end_status_id
+FROM action_log al
+JOIN card_version cv1 ON al.card_id=cv1.card_id AND cv1.version_id=
+		(SELECT version_id FROM card_version
+			WHERE card_id=al.card_id AND version_date<al.log_date order by version_date desc limit 1)
+	LEFT JOIN card_version cv2 ON al.card_id=cv2.card_id AND cv2.version_id=cv1.version_id+1
+	JOIN person p ON p.person_id=al.actor_id
+	left outer join attribute_value av_sname on
+	(av_sname.card_id = p.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+	JOIN action a ON a.action_code=al.action_code
+	JOIN card c ON c.card_id=al.card_id
+	left outer join attribute_value v_comment on
+	(v_comment.card_id = c.card_id and v_comment.attribute_code = 'ADMIN_227593')
+	LEFT JOIN card_status csb ON csb.status_id=cv1.status_id
+	LEFT JOIN card_status csf ON csf.status_id=coalesce(cv2.status_id, c.status_id)
+	JOIN template t ON t.template_id=c.template_id
+	LEFT JOIN workflow_move wfm ON wfm.workflow_id=t.workflow_id
+			AND wfm.from_status_id=cv1.status_id AND wfm.to_status_id=csf.status_id
+WHERE al.action_code='CHG_STATUS' AND al.card_id=$P{card_id}
+and cv1.status_id='355555' and csf.status_id='106']]>
+	</queryString>
+	<field name="log_date" class="java.util.Date"/>
+	<field name="person_id" class="java.lang.String"/>
+	<field name="sname" class="java.lang.String"/>
+	<field name="comment" class="java.lang.String"/>
+	<field name="start_status_id" class="java.lang.String"/>
+	<field name="end_status_id" class="java.lang.String"/>
+	<pageHeader>
+		<band height="15">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Электронное согласование документа]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="163" y="0" width="392" height="15" backcolor="#CCFFFF"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[  Решение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="0" y="0" width="163" height="15" backcolor="#CCFFFF"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Согласование]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25">
+			<frame>
+				<reportElement style="table" positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="555" height="25" isRemoveLineWhenBlank="true"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" x="0" y="0" width="163" height="25"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Замечания помощника министра"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement style="table" positionType="Float" x="163" y="0" width="392" height="25"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[(new java.text.SimpleDateFormat("dd.MM.yyyy")).format($F{log_date})+
+($F{sname}!= null ? " "+$F{sname}:"")+
+($F{comment} !=null ? ": "+$F{comment}:"")]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

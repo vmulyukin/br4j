@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.0" elementFormDefault="qualified" attributeFormDefault="qualified" targetNamespace="http://www.infpres.com/IEDMS" xmlns="http://www.infpres.com/IEDMS">
+  <xsd:element name="communication">
+    <!--���������-->
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="header">
+          <!--��������� ���������-->
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="source" type="communicationPartner">
+                <!--�������� ���������-->
+              </xsd:element>
+              <xsd:element name="operator" minOccurs="0" type="qualifiedValue">
+                <!--�������� ��������-->
+              </xsd:element>
+              <xsd:element name="comment" minOccurs="0">
+                <!--�������������� ����������(�������������� ��������)-->
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="2047"/>
+                    <xsd:minLength value="1"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="type" use="required" type="messageType">
+              <!--��� ���������-->
+            </xsd:attribute>
+            <xsd:attribute name="uid" type="globalUniqueIdentifier">
+              <!--���������� ������������� ���������-->
+            </xsd:attribute>
+            <xsd:attribute name="created" type="xsd:dateTime">
+              <!--����.����� �������� ���������-->
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:choice>
+          <!--� ����������� �� ���� ���������, ��� ���� ��:-->
+          <xsd:sequence>
+            <xsd:element name="document" type="document">
+              <!--�������� ���������-->
+            </xsd:element>
+            <xsd:element name="files">
+              <!--������ �������������� ������-->
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="file" maxOccurs="unbounded" type="associatedFile" minOccurs="0"/>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:element name="notification" type="messageNotification">
+            <!--�����������-->
+          </xsd:element>
+          <xsd:element name="acknowledgment" type="messageAcknowledgment">
+            <!--��������� � ������ ���������-->
+          </xsd:element>
+        </xsd:choice>
+        <xsd:element name="deliveryIndex" minOccurs="0">
+          <!--��������� �������� (������ ���������, ���� ��������������� ������ ���������)-->
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="destination" type="deliveryDestination" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="xsd:token" use="required">
+        <!--������ (������ XML ����� ���������)-->
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="dictionary">
+    <!--�������-->
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="clients" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="entry" minOccurs="1" maxOccurs="unbounded">
+                <!--��������� ������-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="uniqueId" type="globalUniqueIdentifier">
+                      <!--���������� �������������-->
+                    </xsd:element>
+                    <xsd:element name="localId" type="identityValue" minOccurs="0">
+                      <!--���������������: ��������� �������������-->
+                    </xsd:element>
+                    <xsd:element name="value" type="stringValue">
+                      <!--������������-->
+                    </xsd:element>
+                    <xsd:element name="comment" nillable="true" type="stringValue" minOccurs="0">
+                      <!--�����������-->
+                    </xsd:element>
+                    <xsd:element name="departId" minOccurs="0" type="identityValue">
+                      <!--���������������-->
+                    </xsd:element>
+                    <xsd:element name="startDate" type="xsd:dateTime" minOccurs="0" nillable="true">
+                      <!--���� ������ ��������/��������-->
+                    </xsd:element>
+                    <xsd:element name="mail">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:normalizedString">
+                          <xsd:maxLength value="127"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                      <!--����� ����������� �����-->
+                    </xsd:element>
+                    <xsd:element name="retro" type="xsd:boolean">
+                      <!--������� �������������-->
+                    </xsd:element>
+                    <xsd:element name="modified" type="xsd:dateTime">
+                      <!--���� �����������-->
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+          <!--����������� ����-->
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="created" type="xsd:dateTime">
+        <!--���� ���������-->
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:simpleType name="messageType">
+    <!--������������ ���������� ����� ���������. ������ ��� ���������� ���������� ����� ��������� � ���������-->
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="��������">
+        <!--��������� �������� ���������� ���������-->
+      </xsd:enumeration>
+      <xsd:enumeration value="�����������">
+        <!--��������� ����������� ������������� ��� �� �� � ���� �������� ����������� ��������� � ����  (� �������� ������� �� ������������)-->
+      </xsd:enumeration>
+      <xsd:enumeration value="���������">
+        <!--������������� � ������ ���������-->
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="identityValue">
+    <!--������������� (���) �������-->
+    <xsd:restriction base="xsd:token">
+      <xsd:minLength value="1"/>
+      <xsd:maxLength value="127"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="stringValue">
+    <xsd:restriction base="xsd:normalizedString">
+      <xsd:maxLength value="511"/>
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="shortText">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="4000"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="globalUniqueIdentifier">
+    <!--���������� ������������� ������� (GUID)-->
+    <xsd:restriction base="xsd:normalizedString">
+      <xsd:pattern value="[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:attributeGroup name="qualifiedItemAttrs">
+    <!--����� ��������� ��� �������� (�������), �������� ������������������ ���������� ���������-->
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� �������������-->
+    </xsd:attribute>
+    <xsd:attribute name="retro" type="xsd:boolean">
+      <!--�������������� ������� ���������������-->
+    </xsd:attribute>
+    <xsd:attribute name="modified" type="xsd:dateTime">
+      <!--�������������� ���� ���������� ��������� ��������-->
+    </xsd:attribute>
+  </xsd:attributeGroup>
+  <xsd:complexType name="qualifiedValue">
+    <!--��������� ��������, �������� ������������������ ���������� ���������-->
+    <xsd:simpleContent>
+      <xsd:extension base="stringValue">
+        <xsd:attributeGroup ref="qualifiedItemAttrs"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="communicationPartner">
+    <!--�������� ����������� � � ���, ����������� � ������� ����-->
+    <xsd:sequence>
+      <xsd:element name="organization" type="xsd:normalizedString">
+        <!--������������ �����������-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ������ � ��� (�������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="uid" use="required" type="globalUniqueIdentifier"/>
+  </xsd:complexType>
+  <xsd:complexType name="documentNumber">
+    <!--����� � ���� ���������-->
+    <xsd:all>
+      <xsd:element name="number">
+        <!--����� ���������-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:token">
+            <xsd:maxLength value="31"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="date" type="xsd:date" nillable="true">
+        <!--���� ���������-->
+      </xsd:element>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:complexType name="anyone">
+    <xsd:sequence>
+      <xsd:element name="region" type="qualifiedValue" minOccurs="0">
+        <!--������-->
+      </xsd:element>
+      <xsd:element name="organization" type="qualifiedValue" minOccurs="0">
+        <!--�����������-->
+      </xsd:element>
+      <xsd:element name="person" type="qualifiedValue" minOccurs="0">
+        <!--�������, ��� ��������-->
+      </xsd:element>
+      <xsd:element name="department" minOccurs="0" type="qualifiedValue">
+        <!--������������ �������������  (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="post" minOccurs="0" type="qualifiedValue">
+        <!--������������ ��������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="contactInfo" minOccurs="0">
+        <!--���������� ���������� (�������� � �.�.)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="511"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="addressee">
+    <!--������������� �������� (�����������)-->
+    <xsd:complexContent>
+      <xsd:extension base="anyone">
+        <xsd:sequence>
+          <xsd:element name="comment" minOccurs="0">
+            <!--�������������� �����������-->
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="2047"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="addresseeList">
+    <!--������ ��������� (������������)-->
+    <xsd:sequence>
+      <xsd:element name="name" maxOccurs="1">
+        <!--������������-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="250"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="contents">
+        <!--���������� ������-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="addressee" maxOccurs="unbounded" type="addressee"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="identityValue"/>
+  </xsd:complexType>
+  <xsd:complexType name="correspondent">
+    <!--������������� ��������������-->
+    <xsd:complexContent>
+      <xsd:extension base="anyone">
+        <xsd:sequence>
+          <xsd:element name="num" type="documentNumber" minOccurs="0">
+            <!--����� � ���� ���������-->
+          </xsd:element>
+          <xsd:element name="comment" minOccurs="0">
+            <!--�������������� �����������-->
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="2047"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="enclosure">
+    <!--������������� ���������� � ���������-->
+    <xsd:sequence>
+      <xsd:element name="title" type="shortText">
+        <!--������������ ���������� (��������: ������� ����������)-->
+      </xsd:element>
+      <xsd:element name="reference" minOccurs="1" type="documentReference">
+        <!--������� ���������� � ���������-->
+      </xsd:element>
+      <xsd:element name="pages" type="xsd:nonNegativeInteger">
+        <!--������ ����������-->
+      </xsd:element>
+      <xsd:element name="files" minOccurs="0" type="listOfFileLocalId">
+        <!--������ "���������" ��������������� ������, ���������� ����� ���������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ���������� (����� -���� �����������,  �������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="uid" type="globalUniqueIdentifier">
+      <!--�������������� ���������� ������������� ���������� � �� ���������-->
+    </xsd:attribute>
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� ��������� ������������� ���������� � �� ���������-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:simpleType name="linkType">
+    <!--��� ����� ���������� (������������ ����� ����������)-->
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="� ����� ��"/>
+      <xsd:enumeration value="�� ����������"/>
+      <xsd:enumeration value="��������-���������"/>
+      <xsd:enumeration value="�� �"/>
+      <xsd:enumeration value="�����"/>
+      <xsd:enumeration value="������ �"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="documentReference">
+    <!--������ �� ��������� �������� (������������ ����� ��������� + ���������� � �������������� - ����������� � �����������)-->
+    <xsd:sequence>
+      <xsd:element name="region" type="qualifiedValue" minOccurs="0">
+        <!--������-->
+      </xsd:element>
+      <xsd:element name="organization" type="qualifiedValue" minOccurs="0">
+        <!--�����������-->
+      </xsd:element>
+      <xsd:element name="person" type="qualifiedValue" minOccurs="0">
+        <!--�������, ��� ��������-->
+      </xsd:element>
+      <xsd:element name="department" minOccurs="0" type="qualifiedValue">
+        <!--������������ �������������  (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="post" minOccurs="0" type="qualifiedValue">
+        <!--������������ ��������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="num" type="documentNumber" minOccurs="1">
+        <!--����� ���������-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ���������� (����� -���� �����������,  �������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2047"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="linkedDocument">
+    <!--������������� ��� ���������� ���������-->
+    <xsd:sequence>
+      <xsd:element name="linkType" type="linkType" default="������ �">
+        <!--��� �����-->
+      </xsd:element>
+      <xsd:choice>
+        <xsd:element name="document">
+          <!--�������� ���������-->
+          <xsd:complexType>
+            <!--���������� ���������-->
+            <xsd:sequence>
+              <xsd:element name="kind" type="qualifiedValue" minOccurs="0">
+                <!--��� ��������� (�������������� ��������)-->
+              </xsd:element>
+              <xsd:element name="num" type="documentNumber">
+                <!--����� � ���� ���������-->
+              </xsd:element>
+              <xsd:element name="classification" type="qualifiedValue" minOccurs="0">
+                <!--���� �����������-->
+              </xsd:element>
+              <xsd:element name="signatories">
+                <!--�����������-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="signatory" maxOccurs="unbounded" type="signatory"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="addressees">
+                <!--�������� ��������� (���� ����������)-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="addressee" type="addressee" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="pages" type="xsd:nonNegativeInteger">
+                <!--������ ���������-->
+              </xsd:element>
+              <xsd:element name="enclosuresPages" type="xsd:nonNegativeInteger" minOccurs="0">
+                <!--������ ���������� (�������������� ��������)-->
+              </xsd:element>
+              <xsd:element name="annotation" type="shortText" nillable="true" minOccurs="1">
+                <!--���������, ����� - ������� ����������  (�������������� ��������)-->
+              </xsd:element>
+              <xsd:element name="enclosures" minOccurs="0">
+                <!--���������� � ���������-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="enclosure" type="enclosure" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="correspondents" minOccurs="0">
+                <!--�������������� (�������������� ��������)-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="correspondent" maxOccurs="unbounded" minOccurs="0" type="correspondent"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="links" minOccurs="0">
+                <!--��������� ��������� (�������������� ��������)-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="link" type="linkedDocument" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="clauses" minOccurs="0">
+                <!--������ ��������� (�������������� ��������)-->
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="clause" type="documentClause" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="comment" minOccurs="0">
+                <!--�������������� ���������� (����� -���� �����������,  �������������� ��������)-->
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="2047"/>
+                    <xsd:minLength value="1"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="reference" type="documentReference">
+          <!--������ �� ��������-->
+        </xsd:element>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="uid" type="globalUniqueIdentifier">
+      <!--���������� ������������� ���������� ��������� (���� ����)-->
+    </xsd:attribute>
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� ��������� ������������� ��������� � �� ���������-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="documentClause">
+    <!--����� ���������-->
+    <xsd:sequence>
+      <xsd:element name="designation" nillable="true" minOccurs="0">
+        <!--������������ ������ (�������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="255"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="text" type="shortText" minOccurs="0">
+        <!--���������� ������ (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="deadline" type="xsd:date" minOccurs="0">
+        <!--���� ���������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:choice minOccurs="0">
+        <!--������������� ����������� �� ������ ���������-->
+        <xsd:element name="principal" type="addressee">
+          <!--�����������-->
+        </xsd:element>
+        <xsd:element name="principals" type="addresseeList">
+          <!--������ ������������-->
+        </xsd:element>
+      </xsd:choice>
+      <xsd:element name="parcipants" minOccurs="0">
+        <!--������������� (�������������� ��������)-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:choice minOccurs="1" maxOccurs="unbounded">
+              <xsd:element name="parcipant" type="addressee">
+                <!--�������������-->
+              </xsd:element>
+              <xsd:element name="parcipants" type="addresseeList">
+                <!--������ ��������������-->
+              </xsd:element>
+            </xsd:choice>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ���������� (����� -���� �����������,  �������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="localId" type="xsd:nonNegativeInteger" use="optional">
+      <!--���������������� ����� ������ � ������ (�������������� ��������)-->
+    </xsd:attribute>
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� ��������� ������������� ������ �� �� ���������-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="signatory">
+    <!--�����������-->
+    <xsd:complexContent>
+      <xsd:extension base="anyone">
+        <xsd:sequence>
+          <xsd:element name="signed" type="xsd:date">
+            <!--���� ����������-->
+          </xsd:element>
+          <xsd:element name="comment" minOccurs="0">
+            <!--�������������� ����������-->
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="2047"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="document">
+    <!--�������� (���������� ���������)-->
+    <xsd:sequence>
+      <xsd:element name="kind" type="qualifiedValue" minOccurs="0">
+        <!--��� ��������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="num" type="documentNumber">
+        <!--����� � ���� ���������-->
+      </xsd:element>
+      <xsd:element name="classification" type="qualifiedValue" minOccurs="0">
+        <!--���� �����������-->
+      </xsd:element>
+      <xsd:element name="urgency" minOccurs="0" type="qualifiedValue">
+        <!--���������-->
+      </xsd:element>
+      <xsd:element name="insteadOfDistributed" type="xsd:boolean" minOccurs="0">
+        <!--������� "������ ������������"-->
+      </xsd:element>
+      <xsd:element name="signatories">
+        <!--�����������-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="signatory" maxOccurs="unbounded" type="signatory"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="addressees">
+        <!--�������� ��������� (���� ����������)-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="addressee" type="addressee" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="pages" type="xsd:nonNegativeInteger">
+        <!--������ ���������-->
+      </xsd:element>
+      <xsd:element name="enclosuresPages" type="xsd:nonNegativeInteger" minOccurs="0">
+        <!--������ ���������� (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="annotation" type="shortText" nillable="true" minOccurs="1">
+        <!--���������, ����� - ������� ����������  (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="enclosures" minOccurs="0">
+        <!--���������� � ���������-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="enclosure" type="enclosure" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="correspondents" minOccurs="0">
+        <!--�������������� (�������������� ��������)-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="correspondent" maxOccurs="unbounded" minOccurs="0" type="correspondent"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="links" minOccurs="0">
+        <!--��������� ��������� (�������������� �������)-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="link" type="linkedDocument" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="clauses" minOccurs="0">
+        <!--������ ��������� (�������������� �������)-->
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="clause" type="documentClause" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="executor" type="addressee" minOccurs="0">
+        <!--����������� � ������������-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ���������� (����� -���� �����������,  �������������� �������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="uid" type="globalUniqueIdentifier" use="required">
+      <!--���������� ������������� ���������-->
+    </xsd:attribute>
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� ��������� ������������� ��������� � �� ���������-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:simpleType name="fileGroup">
+    <!--������ ��������������� �����, ���������� ���������� �� ���� � ���c�� ��������� ��� � ������ ���������� � ���������-->
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="����� ���������"/>
+      <xsd:enumeration value="����� ����������"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="fileType">
+    <!--��� ������-->
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="pdf"/>
+      <xsd:enumeration value="tif"/>
+      <xsd:enumeration value="doc"/>
+      <xsd:enumeration value="txt"/>
+      <xsd:enumeration value="reference"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="associatedFile">
+    <!--�������������� ���� (� �������, ������� � �.�.)-->
+    <xsd:sequence>
+      <xsd:element name="group" type="fileGroup"/>
+      <xsd:element name="description" type="xsd:string" nillable="false" minOccurs="0">
+        <!--�������� �����-->
+      </xsd:element>
+      <xsd:element name="pages" type="xsd:nonNegativeInteger" minOccurs="0">
+        <!--������ ������-->
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="localName" type="xsd:normalizedString" use="required">
+      <!--��� �����-->
+    </xsd:attribute>
+    <xsd:attribute name="localId" type="xsd:nonNegativeInteger">
+      <!--���������������� ����� ����� � ������-->
+    </xsd:attribute>
+    <xsd:attribute name="type" type="fileType">
+      <!--��� ����� (������ �����)-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:simpleType name="reasonForRejection">
+    <xsd:restriction base="xsd:normalizedString">
+      <xsd:enumeration value="�� �������� �����������"/>
+      <xsd:enumeration value="������ ���������"/>
+      <xsd:enumeration value="�� ������ �������������"/>
+      <xsd:enumeration value="��� �������� ���������"/>
+      <xsd:enumeration value="����������� �����"/>
+      <xsd:enumeration value="��� �������"/>
+      <xsd:enumeration value="���������� �����������"/>
+      <xsd:enumeration value="������ ���������� ������ ��������"/>
+      <xsd:enumeration value="������������ ���������� ���������� � ������������ �����������"/>
+      <xsd:enumeration value="����� �� ������������� ����������"/>
+      <xsd:enumeration value="��� � � ����"/>
+      <xsd:enumeration value="�� ������ ������������"/>
+      <xsd:enumeration value="���� ��������� ������������"/>
+      <xsd:enumeration value="��������� ����� ��������� �����������"/>
+      <xsd:enumeration value="����������� (�� �����) �������"/>
+      <xsd:enumeration value="����������� ��������"/>
+      <xsd:enumeration value="�������������� ��������"/>
+      <xsd:enumeration value="� ���������� ������ ������������ ����"/>
+      <xsd:enumeration value="�������� ���"/>
+      <xsd:enumeration value="�������� �/��� ���������� ������������� � ��������"/>
+      <xsd:enumeration value="�������� ������� ���������"/>
+      <xsd:enumeration value="�������� ������� ����� �� �������� ��������"/>
+      <xsd:enumeration value="�������� ��������������� �����, ����� ������ ������������ ��������"/>
+      <xsd:enumeration value="���������� ������� � ������ ��������� �� ������������� �����������"/>
+      <xsd:enumeration value="�������������� ���������� ���������� ������ ���������"/>
+      <xsd:enumeration value="����������� ����������, ��������� � ���������"/>
+      <xsd:enumeration value="����� �����������"/>
+      <xsd:enumeration value="����� �����������"/>
+      <xsd:maxLength value="127"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="notificationType">
+    <!--��� �����������-->
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="���������������"/>
+      <xsd:enumeration value="�������� � �����������"/>
+      <xsd:enumeration value="�������� �����������"/>
+      <xsd:enumeration value="������ �����������"/>
+      <xsd:enumeration value="������ ���������"/>
+      <xsd:enumeration value="����������"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="notification">
+    <xsd:sequence>
+      <xsd:element name="time" type="xsd:dateTime">
+        <!--���� ����� �������-->
+      </xsd:element>
+      <xsd:element name="foundation" minOccurs="0" type="documentReference">
+        <!--���������� � ��������� - ���������, �������������� �������, ���� ������ ���������� ������������� ��������� � �������� ../@uid-->
+      </xsd:element>
+      <xsd:element name="clause" type="documentClause" nillable="false" minOccurs="0">
+        <!--������������ ������ (�������������� ��������)-->
+      </xsd:element>
+      <xsd:element name="correspondent" type="correspondent" minOccurs="0">
+      <!-- �������� �������, �����������, ����� ����������� �� ���� ����������� -->
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="messageNotification">
+    <!--����������� (� �������)-->
+    <xsd:sequence>
+      <xsd:choice>
+        <xsd:element name="documentAccepted">
+          <!--�������: �������� ���������������-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="num" type="documentNumber">
+                    <!--����� � ���� ���������-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="documentRefused">
+          <!--�������: �������� � �����������-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="reason" type="reasonForRejection">
+                    <!--������� ������-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="executorAssigned">
+          <!--�������: �������� ������ � ���������� (�������� �����������)-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="secretary" type="addressee">
+                    <!--������������ ��� ���������� ����������� ������������ ����-->
+                  </xsd:element>
+                  <xsd:element name="manager" type="addressee">
+                    <!--������������ ������������� ����������� ����-->
+                  </xsd:element>
+                  <xsd:element name="executor" type="addressee">
+                    <!--����������� ����-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="reportPrepared">
+          <!--�������: ������ �� ��������� ����������� (��������������� �������� ������� �� �������)-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="signatory" type="signatory">
+                    <!--����, �������� ������� ��������-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="reportSent">
+          <!--�������: ������ �� ��������� ��������� (������� ��������� �������� - �����)-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="report" type="documentReference">
+                    <!--���������� ��������� �������� (�����)-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="courseChanged">
+          <!--�������: ��������� ���� ����������-->
+          <xsd:complexType>
+            <xsd:complexContent>
+              <xsd:extension base="notification">
+                <xsd:sequence>
+                  <xsd:element name="courseText" type="shortText">
+                    <!--����� ���� ����������-->
+                  </xsd:element>
+                  <xsd:element name="reference" minOccurs="0" type="documentReference">
+                    <!--������ �� "�������������" ��������-->
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:extension>
+            </xsd:complexContent>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� ���������� (����� -���� �����������,  �������������� ��������)-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2047"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="type" type="notificationType" use="required">
+      <!--��� �����������-->
+    </xsd:attribute>
+    <xsd:attribute name="uid" type="globalUniqueIdentifier" use="required">
+      <!--������������� ���������-->
+    </xsd:attribute>
+    <xsd:attribute name="id" type="identityValue">
+      <!--�������������� ��������� ������������� ��������� � �� ��������� (���, ������� ��� ������� ����� //communication/document/@id)-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="messageAcknowledgment">
+    <!--����������, �������������� ����� ���������� ���������-->
+    <xsd:sequence>
+      <xsd:element name="time" type="xsd:dateTime" minOccurs="1">
+        <!--����/����� �������� ���������-->
+      </xsd:element>
+      <xsd:element name="accepted" type="xsd:boolean">
+        <!--������� ����, ��� ��������� �������-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <!--�������������� �����������-->
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="uid" use="required" type="globalUniqueIdentifier">
+      <!--������������� ��������� ��������� (//communication/header@uid)-->
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:simpleType name="listOfFileLocalId">
+    <xsd:list itemType="xsd:nonNegativeInteger"/>
+  </xsd:simpleType>
+  <xsd:complexType name="deliveryDestination">
+    <!--������� ��������-->
+    <xsd:sequence>
+      <xsd:element name="destination" type="communicationPartner">
+        <!--�������-->
+      </xsd:element>
+      <xsd:element name="files" maxOccurs="1" minOccurs="0" type="listOfFileLocalId" nillable="true">
+        <!--������ �������������� ������ (������������ ��������� ��������������� �������������� ������, ��. associatedFile, communication.document.files)-->
+      </xsd:element>
+      <xsd:element name="comment" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2047"/>
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

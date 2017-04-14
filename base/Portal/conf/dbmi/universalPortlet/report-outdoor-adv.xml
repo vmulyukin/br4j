@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+			SELECT
+			       CASE
+			         WHEN (DATE_TRUNC('day', de.date_value) IS NULL OR DATE_TRUNC('day', de.date_value) &gt; DATE_TRUNC('day', LOCALTIMESTAMP) + interval '7 day')
+			               AND COALESCE(DATE_TRUNC('day', ds.date_value),DATE_TRUNC('day', LOCALTIMESTAMP)) + interval '7 day' &gt;= DATE_TRUNC('day',LOCALTIMESTAMP)
+			         THEN 'New'
+		             WHEN COALESCE(DATE_TRUNC('day', ds.date_value),DATE_TRUNC(LOCALTIMESTAMP)) &lt;= DATE_TRUNC('day', LOCALTIMESTAMP)
+			               AND DATE_TRUNC('day', de.date_value) &lt;= DATE_TRUNC('day',LOCALTIMESTAMP) + interval '7 day'
+			         THEN 'Finished'
+			         ELSE ' '
+			       END as status,
+			       ds.date_value as date_start,
+			       de.date_value as date_end,
+			       rv.value_eng as region,
+			       n.string_value as name,
+			       sv.value_eng as segment, 
+			       ov.value_eng as operator,
+			       c.card_id
+			FROM card c
+			LEFT JOIN attribute_value ds ON c.card_id=ds.card_id AND ds.attribute_code='EVEN0001'
+			LEFT JOIN attribute_value de ON c.card_id=de.card_id AND de.attribute_code='EVEN0002'
+			LEFT JOIN attribute_value n ON c.card_id=n.card_id AND n.attribute_code='NAME'
+			LEFT JOIN attribute_value s ON c.card_id=s.card_id AND s.attribute_code='MARK0011'
+			     LEFT JOIN values_list sv ON s.value_id=sv.value_id
+			LEFT JOIN attribute_value o ON c.card_id=o.card_id AND o.attribute_code='MARK0014'
+			     LEFT JOIN values_list ov ON o.value_id=ov.value_id
+			LEFT JOIN attribute_value r ON c.card_id=r.card_id AND r.attribute_code='REGION'
+			     LEFT JOIN values_list rv ON r.value_id=rv.value_id
+			LEFT JOIN attribute_value g ON c.card_id=g.card_id AND g.attribute_code='EVEN0004'
+			WHERE c.template_id=8
+			  AND c.card_status='P'
+			  AND (g.value_id=151 OR g.value_id IS NULL)
+             AND (de.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                    and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC'))
+			ORDER BY o.value_id
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Start date" type="calendar" />
+             <param name="dateEnd" dispaly-name="End date" type="calendar" />
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+			SELECT
+			       CASE
+			         WHEN (DATE_TRUNC('day',de.date_value) IS NULL OR DATE_TRUNC('day',de.date_value) &gt; DATE_TRUNC('day',LOCALTIMESTAMP) + interval '7 day')
+			               AND COALESCE(DATE_TRUNC('day',ds.date_value),DATE_TRUNC('day', LOCALTIMESTAMP)) + interval '7 day' &gt;= DATE_TRUNC('day', LOCALTIMESTAMP)
+			         THEN 'Новая'
+		             WHEN COALESCE(DATE_TRUNC('day',ds.date_value),DATE_TRUNC('day',LOCALTIMESTAMP)) &lt;= DATE_TRUNC('day', LOCALTIMESTAMP)
+			               AND DATE_TRUNC('day',de.date_value) &lt;= DATE_TRUNC('day', LOCALTIMESTAMP) + interval '7 day'
+			         THEN 'Завершена'
+			         ELSE ' '
+			       END as status,
+			       ds.date_value as date_start,
+			       de.date_value as date_end,
+			       rv.value_rus as region,
+			       n.string_value as name,
+			       sv.value_rus as segment, 
+			       ov.value_rus as operator,
+			       c.card_id
+			FROM card c
+			LEFT JOIN attribute_value ds ON c.card_id=ds.card_id AND ds.attribute_code='EVEN0001'
+			LEFT JOIN attribute_value de ON c.card_id=de.card_id AND de.attribute_code='EVEN0002'
+			LEFT JOIN attribute_value n ON c.card_id=n.card_id AND n.attribute_code='NAME'
+			LEFT JOIN attribute_value s ON c.card_id=s.card_id AND s.attribute_code='MARK0011'
+			     LEFT JOIN values_list sv ON s.value_id=sv.value_id
+			LEFT JOIN attribute_value o ON c.card_id=o.card_id AND o.attribute_code='MARK0014'
+			     LEFT JOIN values_list ov ON o.value_id=ov.value_id
+			LEFT JOIN attribute_value r ON c.card_id=r.card_id AND r.attribute_code='REGION'
+			     LEFT JOIN values_list rv ON r.value_id=rv.value_id
+			LEFT JOIN attribute_value g ON c.card_id=g.card_id AND g.attribute_code='EVEN0004'
+			WHERE c.template_id=8
+			  AND c.card_status='P'
+			  AND (g.value_id=151 OR g.value_id IS NULL)
+              AND (de.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC'))
+			ORDER BY o.value_id
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Дата начала" type="calendar" />
+             <param name="dateEnd" dispaly-name="Дата окончания" type="calendar" />
+         </parameters>
+     </query>
+     <table title="Outdoor advertising report" pagesize="20">
+	     <column-description name="STATUS" display-name="Status" is-sortable="false"/>
+	     <column-description name="DATE_START" display-name="Start date" is-sortable="false"/>
+	     <column-description name="DATE_END" display-name="End date" is-sortable="false"/>
+	     <column-description name="REGION" display-name="Region" is-sortable="false"/>
+	     <column-description name="NAME" display-name="Name" is-sortable="false"/>
+	     <column-description name="SEGMENT" display-name="TA (Segment)" is-sortable="false"/>
+	     <column-description name="OPERATOR" display-name="Operator" is-sortable="false"/>
+	     <column-description name="CARD_ID" display-name="Card link" is-sortable="false" link="/wps/myportal/mi/card?MI_EDIT_CARD={0}"/>
+     </table>
+     <table lang="ru" title="Отчет по наружной рекламе" pagesize="20">
+	     <column-description name="STATUS" display-name="Статус" is-sortable="false"/>
+	     <column-description name="DATE_START" display-name="Дата запуска" is-sortable="false"/>
+	     <column-description name="DATE_END" display-name="Дата окончания" is-sortable="false"/>
+	     <column-description name="REGION" display-name="Регион" is-sortable="false"/>
+	     <column-description name="NAME" display-name="Название акции" is-sortable="false"/>
+	     <column-description name="SEGMENT" display-name="ЦА (сегмент)" is-sortable="false"/>
+	     <column-description name="OPERATOR" display-name="Оператор" is-sortable="false"/>
+	     <column-description name="CARD_ID" display-name="Ссылка на карточку активности" is-sortable="false" link="/wps/myportal/mi/card?MI_EDIT_CARD={0}"/>
+     </table>
+</universal-portlet>

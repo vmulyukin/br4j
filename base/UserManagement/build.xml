@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="war" name="User Management Portlet">
+
+    <target name="clean">
+        <delete dir="${dir.build}"/>
+    </target>
+
+    <target name="init" depends="clean">
+        <mkdir dir="${dir.classes}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac debug="true" debuglevel="${debuglevel}" 
+        	destdir="${dir.classes}" 
+        	source="${source}" 
+        	target="${target}"
+        	encoding="${encoding}">
+        	<src path="${dir.src}"/>
+        	<classpath refid="classpath" />
+        	<classpath>
+        		<pathelement location="${Model.location}/${dir.build}/${Model.name}"/>
+        		<pathelement location="${Platform.location}/${dir.build}/${Platform.name}"/>
+           		<pathelement location="${TableComponent.location}/${dir.build}/${TableComponent.name}"/>
+        		<pathelement location="${ControlsComponent.location}/${dir.build}/${ControlsComponent.name}"/>
+        	</classpath>
+        </javac>
+		<copy todir="${dir.classes}">
+			<fileset dir="${dir.src}">
+	        	<exclude name="**/*.java"/>
+	      	</fileset>
+	    </copy>
+    </target>
+
+	<target name="war" depends="compile">
+	    <war destfile="${dir.build}/${UserManagement.name}" webxml="WebContent/WEB-INF/web.xml">
+	    	<classes dir="${dir.classes}"/>
+	    	<zipfileset dir="WebContent/WEB-INF" prefix="WEB-INF">
+	    		<exclude name="**/web.xml" />
+	    	</zipfileset>
+	    	<zipfileset dir="WebContent/_UserAdminPortlets" prefix="_UserAdminPortlets"/>
+	    	<zipfileset dir="WebContent/images" prefix="images"/>
+	    </war>
+	</target>
+	
+</project>

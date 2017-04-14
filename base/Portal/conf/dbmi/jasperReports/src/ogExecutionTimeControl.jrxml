@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ogExecutionTimeControl" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="dept" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\etarakanov\\BR4J_Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="onControl" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH RECURSIVE search_up(cycle_id, cycle_number, cycle_base) AS (
+    select cast(c.card_id::bigint as numeric),1, c.card_id from card c
+    where c.status_id in (4,7) and c.template_id = 484
+    UNION ALL
+    SELECT v.number_value, su.cycle_number+1, su.cycle_base
+    FROM attribute_value v, search_up su
+    WHERE v.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    AND v.card_id = su.cycle_id
+    and exists (select 1 from attribute_value
+		where attribute_code = 'JBR_DEPT_PARENT_LINK'
+		and card_id = v.number_value)),
+
+
+departments as (select (max(ARRAY[cycle_number, cycle_id, cycle_base]))[3] as curDep,
+			(max(ARRAY[cycle_number, cycle_id, cycle_base]))[2] as depLvl2
+		from search_up
+		group by cycle_base),
+
+
+og_cards as (select reg_date.date_value  + interval '$P!{tz_hour} hour' as reg_date,
+		coalesce(reg_num.string_value,'') as reg_num,
+		reg_num_d.number_value as reg_num_d,
+		coalesce(string_agg(distinct coalesce(substring(og_author_nm.string_value for (position('(' in og_author_nm.string_value))-1),''), '; '),'') as author_og,
+		coalesce(descr.string_value,'') as descr,
+		coalesce(string_agg(distinct quest_nm.string_value, '; '),'') as quest,
+		coalesce(cs.name_rus,'') as status,
+		c.card_id as card_id
+	from card c
+	join card_status cs on c.status_id = cs.status_id
+	join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value reg_num on reg_num.card_id = c.card_id and reg_num.attribute_code = 'JBR_REGD_REGNUM'
+	join attribute_value reg_num_d on reg_num_d.card_id = c.card_id and reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D'
+	left join attribute_value og_author on og_author.card_id = c.card_id and og_author.attribute_code = 'JBR_OG_REQ_AUTHOR'
+	left join attribute_value og_author_nm on og_author_nm.card_id = og_author.number_value and og_author_nm.attribute_code = 'NAME'
+	left join attribute_value descr on descr.card_id = c.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+	left join attribute_value quest on quest.card_id = c.card_id and quest.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	left join attribute_value quest_nm on quest_nm.card_id = quest.number_value and quest_nm.attribute_code = 'NAME'
+
+	left join attribute_value on_control on on_control.card_id = c.card_id and on_control.attribute_code = 'JBR_IMPL_ONCONT'
+
+    left join attribute_value av_rassm on av_rassm.card_id = c.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    left join card c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+    left join attribute_value av_rassm_p on av_rassm_p.card_id = c_r.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+    left join attribute_value av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+    left join card c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+    left join attribute_value av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+    left join person p_rassm on av_rassm_p.number_value = p_rassm.person_id or av_res_exec.number_value = p_rassm.person_id
+    left join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+    left join departments d on d.curDep =  av_dept.number_value
+
+	where c.template_id = 864 and c.status_id in (102,103,206,48909)
+	and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+	and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+	and ($P{dept} is null or (d.depLvl2 in ($P!{dept})))
+	and (on_control.value_id = $P!{onControl} OR $P!{onControl} = 0)
+	group by  reg_date.date_value, reg_num.string_value, descr.string_value, reg_num_d.number_value, cs.name_rus, c.card_id),
+
+
+
+
+og_cards_archive as (select reg_date.date_value  + interval '$P!{tz_hour} hour' as reg_date,
+		coalesce(reg_num.string_value,'') as reg_num,
+		reg_num_d.number_value as reg_num_d,
+		coalesce(string_agg(distinct coalesce(substring(og_author_nm.string_value for (position('(' in og_author_nm.string_value))-1),''), '; '),'') as author_og,
+		coalesce(descr.string_value,'') as descr,
+		coalesce(string_agg(distinct quest_nm.string_value, '; '),'') as quest,
+		coalesce(cs.name_rus,'') as status,
+		c.card_id as card_id
+	from card c
+	join card_status cs on c.status_id = cs.status_id
+	join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value reg_num on reg_num.card_id = c.card_id and reg_num.attribute_code = 'JBR_REGD_REGNUM'
+	join attribute_value reg_num_d on reg_num_d.card_id = c.card_id and reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D'
+	left join attribute_value og_author on og_author.card_id = c.card_id and og_author.attribute_code = 'JBR_OG_REQ_AUTHOR'
+	left join attribute_value og_author_nm on og_author_nm.card_id = og_author.number_value and og_author_nm.attribute_code = 'NAME'
+	left join attribute_value descr on descr.card_id = c.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+	left join attribute_value quest on quest.card_id = c.card_id and quest.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	left join attribute_value quest_nm on quest_nm.card_id = quest.number_value and quest_nm.attribute_code = 'NAME'
+
+	left join attribute_value on_control on on_control.card_id = c.card_id and on_control.attribute_code = 'JBR_IMPL_ONCONT'
+
+    left join attribute_value_archive av_rassm on av_rassm.card_id = c.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    left join card_archive c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+    left join attribute_value_archive av_rassm_p on av_rassm_p.card_id = c_r.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+    left join attribute_value_archive av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+    left join card_archive c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+    left join attribute_value_archive av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+    left join person p_rassm on av_rassm_p.number_value = p_rassm.person_id or av_res_exec.number_value = p_rassm.person_id
+    left join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+    left join departments d on d.curDep =  av_dept.number_value
+
+	where c.template_id = 864 and c.status_id in (104)
+	and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+	and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+	and ($P{dept} is null or (d.depLvl2 in ($P!{dept})))
+	and (on_control.value_id = $P!{onControl} OR $P!{onControl} = 0)
+	group by  reg_date.date_value, reg_num.string_value, descr.string_value,reg_num_d.number_value, cs.name_rus, c.card_id),
+
+
+
+res_couple as (
+	select
+
+	c_og.card_id as og,
+	card_raasm.card_id as rassm,  -- карточки card_id рассмотрение (в doc_couple для group_by)
+	c_res1.card_id as level_res -- карточки card_id документ-основание
+
+	from og_cards c_og
+
+	-- карточки рассматривающих из card через av.атрибут по ог
+	left join attribute_value av_rassm on c_og.card_id = av_rassm.card_id
+	-- "Рассмотрение"
+	and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+
+	join card card_raasm on card_raasm.card_id = av_rassm.number_value and card_raasm.status_id != 34145
+
+	-- "Документ-основание"
+	join attribute_value av_res1 on av_res1.number_value = c_og.card_id and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join card c_res1 on av_res1.card_id = c_res1.card_id and c_res1.status_id in (1,103,206)
+
+	UNION
+	select t.og, t.rassm, c_link_res.card_id
+	from res_couple t
+	join attribute_value av_link_res on t.level_res = av_link_res.number_value
+	-- "Родительcкое поручение"
+	and av_link_res.attribute_code = 'JBR_RIMP_PARASSIG'
+	join card c_link_res on av_link_res.card_id = c_link_res.card_id and c_link_res.status_id in (1,103,206)
+
+
+),
+
+
+
+
+doc_couple as (
+	select
+	cpl.og as og,
+	cpl.rassm,
+	(max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat
+	from res_couple cpl
+	--"Связанные документы"
+	join attribute_value av_relat on av_relat.number_value = cpl.og and av_relat.attribute_code = 'JBR_DOCL_RELATDOC'
+
+	join card c_relat on av_relat.card_id = c_relat.card_id
+
+	--"Исполнитель"
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	-- "Исполнитель", "Соисполнители"
+	-- level_res = карточки * документ-основание
+	join attribute_value av_res_exec on cpl.level_res = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+		and av_res_exec.number_value = av_exec.number_value
+	--"Дата регистрации"
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	-- "Родительcкое поручение"
+	left join attribute_value av_test on cpl.level_res = av_test.number_value and av_test.attribute_code = 'JBR_RIMP_PARASSIG'
+	left join card c_test on av_test.card_id = c_test.card_id and c_test.status_id in (103,206)
+	-- "Ответственный рассматривающий"
+	left join attribute_value av_rmain on av_rmain.card_id = cpl.rassm and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER'
+	where c_test.card_id is null
+	and (av_rmain.value_id = 1449 and c_relat.template_id = 364 and c_relat.status_id in (101, 104) and av_relat.value_id = 1502
+		or
+		av_rmain.value_id = 1450 and c_relat.template_id = 784 and c_relat.status_id in (101, 102, 103, 206, 104, 48909) and av_relat.value_id != 1502)
+
+
+	group by
+	cpl.og, cpl.rassm),
+
+
+src_columm as (
+select
+	av_reg_date.date_value + interval '$P!{tz_hour} hour' as factDate,
+	av_reg_num.string_value	as regNumber,
+	dc.og as card_id,
+	dc.rassm
+
+	from doc_couple as dc
+
+	left join attribute_value av_reg_date on av_reg_date.card_id = dc.relat and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	left join attribute_value av_reg_num on dc.relat = av_reg_num.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+
+),
+
+
+src_rassm_col as (
+select
+
+c.card_id,
+av_rassm.number_value as rassm,
+(dept_short_name.string_value || '(' || av_pers_sname.string_value
+|| ' ' || av_pers_name.string_value || ' ' || av_pers_mname.string_value
+|| ')' || ' ' || coalesce(otv.otv,''))
+as rassmotritel,
+av_rassm_todate.date_value + interval '$P!{tz_hour} hour' as planDate
+
+
+from og_cards as c
+
+-- "Рассмотрение" - находим из ав карточки рассмотрение, исп-ся для  вытаск-я ФИО, пдановой даты
+join attribute_value av_rassm on c.card_id = av_rassm.card_id and  av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+
+-- "Ответственный рассматривающий" - для последней колонки
+join attribute_value responce_consider on av_rassm.number_value = responce_consider.card_id and responce_consider.attribute_code = 'JBR_RESPONS_CONSIDER'
+
+--"Рассмотреть до:" для плановой даты
+join attribute_value av_rassm_todate on av_rassm.number_value = av_rassm_todate.card_id and  av_rassm_todate.attribute_code = 'JBR_RASSM_TODATE'
+
+-- вытаскиваем ФИО 		"Рассматривающий"
+join attribute_value av_rassm_person on av_rassm.number_value = av_rassm_person.card_id and  av_rassm_person.attribute_code = 'JBR_RASSM_PERSON'
+join person rassm_person on av_rassm_person.number_value = rassm_person.person_id
+join attribute_value av_pers_sname on av_pers_sname.card_id = rassm_person.card_id and av_pers_sname.attribute_code = 'JBR_PERS_SNAME'
+join attribute_value av_pers_name on av_pers_name.card_id = rassm_person.card_id and av_pers_name.attribute_code = 'JBR_PERS_NAME'
+join attribute_value av_pers_mname on av_pers_mname.card_id = rassm_person.card_id and av_pers_mname.attribute_code = 'JBR_PERS_MNAME'
+
+-- вытаскиваем сокр. для подразделения				"Подразделение"
+join attribute_value av_dept on av_dept.card_id = rassm_person.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+left join departments d on d.curDep =  av_dept.number_value
+-- "Сокращенное название"
+left join attribute_value dept_short_name on d.depLvl2 = dept_short_name.card_id and dept_short_name.attribute_code = 'JBR_DEPT_SHORTNAME'
+-- просто "Отв"
+left join (select '(Отв.)'::text as otv) as otv on responce_consider.value_id = 1449
+),
+
+
+res_couple_archive as (
+	select c_og.card_id as og, card_raasm.card_id as rassm, c_res1.card_id as level_res
+	from og_cards_archive c_og
+	left join attribute_value_archive av_rassm on c_og.card_id = av_rassm.card_id
+		and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card_archive card_raasm on card_raasm.card_id = av_rassm.number_value and card_raasm.status_id != 34145
+	join attribute_value_archive av_rmain on av_rmain.card_id = card_raasm.card_id
+		and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER' and av_rmain.value_id = 1449
+	join attribute_value_archive av_rassm_p on av_rassm_p.card_id = card_raasm.card_id
+		and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+
+	join attribute_value_archive av_res1 on av_res1.number_value = c_og.card_id
+		and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join card_archive c_res1 on av_res1.card_id = c_res1.card_id and c_res1.status_id in (103,206)
+
+	join attribute_value_archive av_res_signer on av_res1.card_id = av_res_signer.card_id
+		and av_res_signer.attribute_code = 'JBR_INFD_SGNEX_LINK' and av_res_signer.number_value = av_rassm_p.number_value
+
+	UNION
+
+	select t.og, t.rassm, c_link_res.card_id
+	from res_couple_archive t
+	join attribute_value_archive av_link_res on t.level_res = av_link_res.number_value and av_link_res.attribute_code = 'JBR_RIMP_PARASSIG'
+	join card_archive c_link_res on av_link_res.card_id = c_link_res.card_id and c_link_res.status_id in (103,206)
+),
+
+
+
+
+doc_couple_archive as (
+	select cpl.og, cpl.rassm, (max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat
+	from res_couple_archive cpl
+	join attribute_value av_relat on av_relat.number_value = cpl.og and av_relat.attribute_code = 'JBR_DOCL_RELATDOC'
+	join card c_relat on av_relat.card_id = c_relat.card_id
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	join attribute_value_archive av_res_exec on cpl.level_res = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+		and av_res_exec.number_value = av_exec.number_value
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	left join attribute_value_archive av_test on cpl.level_res = av_test.number_value and av_test.attribute_code = 'JBR_RIMP_PARASSIG'
+	left join card_archive c_test on av_test.card_id = c_test.card_id and c_test.status_id in (103,206)
+	-- "Ответственный рассматривающий"
+	left join attribute_value_archive av_rmain on av_rmain.card_id = cpl.rassm and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER'
+	where c_test.card_id is null
+	and (av_rmain.value_id = 1449 and c_relat.template_id = 364 and c_relat.status_id in (101, 104) and av_relat.value_id = 1502
+		or
+		av_rmain.value_id = 1450 and c_relat.template_id = 784 and c_relat.status_id in (101, 102, 103, 206, 104, 48909) and av_relat.value_id != 1502)
+	group by
+	cpl.og, cpl.rassm
+),
+
+
+
+src_columm_archive as (
+select
+	av_reg_date.date_value + interval '$P!{tz_hour} hour' as factDate,
+	av_reg_num.string_value	as regNumber,
+	dc.og as card_id,
+	dc.rassm
+
+	from doc_couple_archive as dc
+
+	left join attribute_value av_reg_date on av_reg_date.card_id = dc.relat and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	left join attribute_value av_reg_num on dc.relat = av_reg_num.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+
+),
+
+
+src_rassm_col_archive as (
+select
+
+c.card_id,
+av_rassm.number_value as rassm,
+(dept_short_name.string_value || '(' || av_pers_sname.string_value
+|| ' ' || av_pers_name.string_value || ' ' || av_pers_mname.string_value
+|| ')' || ' ' || coalesce(otv.otv,''))
+as rassmotritel,
+av_rassm_todate.date_value + interval '$P!{tz_hour} hour' as planDate
+
+
+
+from og_cards_archive as c
+
+-- "Рассмотрение" - находим из ав карточки рассмотрение, исп-ся для  вытаск-я ФИО, пдановой даты
+join attribute_value_archive av_rassm on c.card_id = av_rassm.card_id and  av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+
+-- "Ответственный рассматривающий" - для последней колонки
+join attribute_value_archive responce_consider on av_rassm.number_value = responce_consider.card_id and responce_consider.attribute_code = 'JBR_RESPONS_CONSIDER'
+
+--"Рассмотреть до:" для плановой даты
+join attribute_value_archive av_rassm_todate on av_rassm.number_value = av_rassm_todate.card_id and  av_rassm_todate.attribute_code = 'JBR_RASSM_TODATE'
+
+
+
+-- вытаскиваем ФИО 		"Рассматривающий"
+join attribute_value_archive as av_rassm_person on av_rassm.number_value = av_rassm_person.card_id and  av_rassm_person.attribute_code = 'JBR_RASSM_PERSON'
+join person as rassm_person on av_rassm_person.number_value = rassm_person.person_id
+
+
+
+join attribute_value av_pers_sname on av_pers_sname.card_id = rassm_person.card_id and av_pers_sname.attribute_code = 'JBR_PERS_SNAME'
+join attribute_value av_pers_name on av_pers_name.card_id = rassm_person.card_id and av_pers_name.attribute_code = 'JBR_PERS_NAME'
+join attribute_value av_pers_mname on av_pers_mname.card_id = rassm_person.card_id and av_pers_mname.attribute_code = 'JBR_PERS_MNAME'
+
+-- вытаскиваем сокр. для подразделения				"Подразделение"
+join attribute_value av_dept on av_dept.card_id = rassm_person.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+left join departments d on d.curDep =  av_dept.number_value
+-- "Сокращенное название"
+left join attribute_value dept_short_name on d.depLvl2 = dept_short_name.card_id and dept_short_name.attribute_code = 'JBR_DEPT_SHORTNAME'
+-- просто "Отв"
+left join (select '(Отв.)'::text as otv) as otv on responce_consider.value_id = 1449
+)
+
+
+
+
+
+select
+
+c.reg_num_d as rnd,
+c.reg_date as reg_date,
+c.reg_num,
+c.author_og,
+c.descr,
+c.quest,
+c.status,
+sr_c.rassmotritel,
+sr_c.planDate,
+sc.factDate,
+extract (DAY FROM (sc.factDate - sr_c.planDate))::NUMERIC
+as overDate,
+sc.regNumber
+
+
+from src_rassm_col as sr_c
+left join og_cards as c on c.card_id = sr_c.card_id
+left join src_columm as sc on sc.rassm = sr_c.rassm
+
+
+
+UNION ALL
+
+
+
+select
+
+c.reg_num_d as rnd,
+c.reg_date as reg_date,
+c.reg_num,
+c.author_og,
+c.descr,
+c.quest,
+c.status,
+sr_c.rassmotritel,
+sr_c.planDate,
+sc.factDate,
+extract (DAY FROM (sc.factDate - sr_c.planDate))::NUMERIC
+as overDate,
+sc.regNumber
+
+
+from src_rassm_col_archive  as sr_c
+left join og_cards_archive  as c on c.card_id = sr_c.card_id
+left join src_columm_archive  as sc on sc.rassm = sr_c.rassm
+
+order by rnd asc]]>
+	</queryString>
+	<field name="reg_date" class="java.sql.Timestamp"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="author_og" class="java.lang.String"/>
+	<field name="descr" class="java.lang.String"/>
+	<field name="quest" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="rassmotritel" class="java.lang.String"/>
+	<field name="plandate" class="java.sql.Timestamp"/>
+	<field name="factdate" class="java.sql.Timestamp"/>
+	<field name="overdate" class="java.lang.Integer"/>
+	<field name="regnumber" class="java.lang.String"/>
+	<title>
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Отчет по контролю сроков исполнения Обращений граждан]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с " + (new SimpleDateFormat("dd.MM.yyyy").format($P{startDate})) + " по " + (new SimpleDateFormat("dd.MM.yyyy").format($P{endDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="45" width="802" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="60" width="802" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Подразделение-рассмотритель: " + ($P{dept}!=null ? ((new com.aplana.dbmi.jasperreports.GenerateDepartmentsHeaders()).generateString($P{REPORT_CONNECTION},$P{dept})) + "\n": "Все")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="75" width="416" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["На контроле: " + ($P{onControl}.equals("1432")?"Да":"") + ($P{onControl}.equals("1433")?"Нет":"") + ($P{onControl}.equals("0")?"Все":"")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="45">
+			<staticText>
+				<reportElement style="def" x="0" y="0" width="66" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Дата регистрации]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="66" y="0" width="61" height="45"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Рег. номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="215" y="0" width="90" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Содержание]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="127" y="0" width="88" height="45"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ф.И.О. заявителя]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="305" y="0" width="102" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Вопрос]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="407" y="0" width="75" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Стадия рассмотрения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="623" y="0" width="62" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Фактическая дата исполнения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="567" y="0" width="56" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Плановая дата исполнения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="743" y="0" width="59" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Исходящий номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="482" y="0" width="85" height="45" isRemoveLineWhenBlank="true"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Times New Roman" size="10" isBold="true" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Рассмотритель(структурное подразделение)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="685" y="0" width="58" height="45"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Просрочено в днях]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{reg_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="66" y="0" width="61" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_num}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="127" y="0" width="88" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{author_og} + "\n" + "\r"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="215" y="0" width="90" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descr}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="102" height="0"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quest} + "\n" + "\r"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="407" y="0" width="75" height="0"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status} + "\n" + "\r"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="482" y="0" width="85" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rassmotritel}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="567" y="0" width="56" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{plandate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{plandate}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="623" y="0" width="62" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{factdate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{factdate}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="685" y="0" width="58" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdate} <= 0 ? "":$F{overdate}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="743" y="0" width="59" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{regnumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

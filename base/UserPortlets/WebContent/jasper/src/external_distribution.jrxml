@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="external_distribution" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" isDefault="false" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" isDefault="false" style="dejavu_bold"/>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+    cr_dist.status_id as status
+	,av_org_name.string_value as name_org
+	,av_dist_dsend.date_value + interval '$P!{tz_hour} hour' as dsend
+	,vl_method.value_rus as method
+from	attribute_value av_base_dist -- Лист рассылки
+        ,card cr_dist -- Элемент списка рассылки
+	-- Название организации
+left outer join
+	attribute_value av_dist_org on (av_dist_org.card_id = cr_dist.card_id and av_dist_org.attribute_code = 'ADMIN_222015')
+left outer join
+	card cr_org on (cr_org.card_id = av_dist_org.number_value)
+left outer join
+	attribute_value av_org_name on ((cr_org.template_id = 222 and av_org_name.card_id = cr_org.card_id and av_org_name.attribute_code = 'JBR_DORG_FULLNAME')
+					or (cr_org.template_id = 464 and av_org_name.card_id = cr_org.card_id and av_org_name.attribute_code = 'NAME'))
+	-- Дата отправки
+left outer join
+	attribute_value av_dist_dsend on (av_dist_dsend.card_id = cr_dist.card_id and av_dist_dsend.attribute_code = 'ADMIN_222019')
+	-- Способ отправки
+left outer join
+	attribute_value av_dist_method on (av_dist_method.card_id = cr_dist.card_id and av_dist_method.attribute_code = 'ADMIN_222147')
+left outer join
+	values_list vl_method on (vl_method.value_id = av_dist_method.value_id)
+where	av_base_dist.card_id = $P{card_id} and av_base_dist.attribute_code = 'ADMIN_222990'
+	and cr_dist.card_id = av_base_dist.number_value]]>
+	</queryString>
+	<field name="status" class="java.lang.Long"/>
+	<field name="name_org" class="java.lang.String"/>
+	<field name="dsend" class="java.util.Date"/>
+	<field name="method" class="java.lang.String"/>
+	<title>
+		<band height="30">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Внешняя рассылка]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Transparent" x="0" y="15" width="255" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[ Корреспондент]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="255" y="15" width="150" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[ Способ отправки]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="405" y="15" width="150" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[ Дата отправки]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="555" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="255" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{name_org} != null ? $F{name_org} : "-")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="255" y="0" width="150" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{method} != null ? $F{method} : "-")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="405" y="0" width="150" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " +
+($F{status}.longValue() == 556656
+    ? ($F{dsend} != null
+        ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{dsend})
+        : "-")
+    : "-")]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

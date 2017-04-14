@@ -1,0 +1,12 @@
+[PropertyInfo]
+m_permission,org.aplana.br4j.dynamicaccess.xmldef.Permission,false,false, , ,false,<default>
+m_role,String,false,false, , ,false,<default>
+m_state,String,false,false, , ,false,<default>
+m_template,org.aplana.br4j.dynamicaccess.xmldef.Template,false,false, , ,false,<default>
+permission,org.aplana.br4j.dynamicaccess.xmldef.Permission,false,false, , ,true,<default>
+permissionComponent,org.aplana.br4j.dynamicaccess.PermissionComponent,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

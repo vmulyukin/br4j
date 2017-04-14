@@ -1,0 +1,164 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.io.*;
+import org.tmatesoft.svn.core.wc.*;
+import org.tmatesoft.svn.core.auth.*;
+
+buildscript {
+    apply from: 'dependencies.gradle', to: buildscript
+}
+
+ext.env 		   = System.env
+ext.svnUrl         = env.svnUrl      ?: svnUrl
+ext.sourcePath     = env.sourcePath  ?: (project.hasProperty("sourcePath") ? project["sourcePath"] : "trunk")
+ext.releaseCode    = env.releaseCode ?: releaseCode
+ext.revisions 	   = env.revisions   ?: revisions
+ext.workspace      = env.WORKSPACE   ?: workspace
+ext.workspaceSrc   = "${workspace}/src"
+ext.workspaceBase  = "${workspaceSrc}/base"
+ext.workspaceConf  = "${workspaceSrc}/configurations"
+ext.workspaceTest  = "${workspaceSrc}/tests"
+ext.workspaceGrdl  = "${workspaceSrc}/build"
+ext.workspaceIuh   = "${workspaceSrc}/iuh"
+ext.workspaceBuild = "${workspace}/build"
+ext.workspaceArch  = "${workspace}/archive"
+ext.workspaceRls   = "${workspace}/releases"
+ext.logsDir        = "${workspace}/logs"
+ext.signProps      = env.signProps      ?: signProps
+ext.patchAncestor  = env.patchAncestor  ?: patchAncestor
+ext.JBossDir       = env.JBossDir       ?: JBossDir
+ext.br4jAppVersion = env.br4jAppVersion ?: (project.hasProperty("br4jAppVersion") ? project["br4jAppVersion"] : "3.0")
+ext.needVpnUp      = env.needVpnUp      ?: (project.hasProperty("needVpnUp")      ? project["needVpnUp"]      : false)
+ext.needVpnDown    = env.needVpnDown    ?: (project.hasProperty("needVpnDown")    ? project["needVpnDown"]    : false)
+ext.userPass       = env.userPass       ?: (project.hasProperty("userPass")       ? project["userPass"]       : '')
+ext.checkModules   = env.checkModules   ?: (project.hasProperty("checkModules")   ? project["checkModules"]   : '')
+
+
+/**
+* build sql/txt/groovy params 
+*/
+ext.readmeProjectName        = "Docs/notes"
+ext.readmeBuildDirectory     = "readme_instructions"
+ext.readmePackageDirectory   = "instructions"
+ext.updatesProjectName       = "IuhPackages/update"
+ext.updatesBuildDirectory    = "packages_update"
+ext.installBuildDirectory    = "packages_install"
+ext.updatesPackageDirectory  = "packages_update"
+ext.installPackageDirectory  = "packages_install"
+ext.iuhPackagePassport_ins   = "update-set_install.id"
+ext.iuhPackagePassport_upd   = "update-set_update.id"
+ext.iuhBasePackageDirectory  = "IuhPackages/base"
+ext.migrateGroovyDir         = "06.MigrateSQL"
+ext.databaseProjectName      = "Database/migrate"
+ext.databaseBuildDirectory   = "db_update"
+ext.databasePackageDirectory = "db_update"
+ext.dumpProjectName          = "Database/sql"
+ext.dumpBuildDirectory       = "db_dump"
+ext.dumpPackageDirectory     = "db"
+ext.iuhProjectName           = "iuh"
+ext.iuhBuildDirectory        = "iuh_artifact"
+ext.iuhArtifactDirectory     = "iuh"
+/**
+* build sql/txt/groovy params 
+*/
+
+
+/**
+* archive params 
+*/
+ext.appDir         = 'app'
+ext.aclDir         = 'acl_tool'
+ext.changeListFile = 'change_list.txt'
+ext.passportFile   = 'passport.txt'
+/**
+* archive params 
+*/
+
+
+ext.trunkUrl       = "${svnUrl}/${sourcePath}"
+ext.releaseUrl     = "${svnUrl}/releases"
+ext.tagUrl         = "${svnUrl}/tags/releases"
+
+//SVNKit init
+ext.svnLogin       = "${env.svnLogin ?: svnLogin}"
+ext.svnPass        = "${env.svnPass  ?: svnPass}"
+def options        = SVNWCUtil.createDefaultOptions(true)
+def authManager    = new BasicAuthenticationManager(svnLogin, svnPass)
+ext.clientManager  = SVNClientManager.newInstance(options, authManager)
+ext.diffClient     = clientManager.diffClient
+ext.logClient      = clientManager.logClient
+ext.copyClient     = clientManager.copyClient
+
+//sftp
+ext.sftpHost = env.sftpHost ?: (project.hasProperty("sftpHost") ? project["sftpHost"] : null)
+ext.sftpPort = env.sftpPort ?: (project.hasProperty("sftpPort") ? project["sftpPort"] : null)
+ext.sftpUser = env.sftpUser ?: (project.hasProperty("sftpUser") ? project["sftpUser"] : null)
+ext.sftpPass = env.sftpPass ?: (project.hasProperty("sftpPass") ? project["sftpPass"] : null)
+ext.sftpPath = env.sftpPath ?: (project.hasProperty("sftpPath") ? project["sftpPath"] : null)
+
+//валидация входных параметров
+ext.paths = releaseCode.split("\\.")
+if (paths.length > 7 || paths.length < 6) {
+    throw new IllegalArgumentException("Неверный запрашиваемый код релиза/сборки/патча: ${releaseCode}")
+}
+if (!paths[5].startsWith("r")) {
+    throw new IllegalArgumentException("Неверный номер сборки релиза (должен быть rXX): ${paths[5]}")
+}
+try {
+    Integer.parseInt(paths[5].substring(1))
+} catch (NumberFormatException ex) {
+    throw new IllegalArgumentException("Неверный номер сборки релиза (должен быть rXX): ${paths[5]}")
+}
+if (paths.length == 7) {
+    if (!paths[6].startsWith("p")) {
+        throw new IllegalArgumentException("Неверный номер патча (должен быть pXX): ${paths[6]}")
+    }
+    try {
+        Integer.parseInt(paths[6].substring(1))
+    } catch (NumberFormatException ex) {
+        throw new IllegalArgumentException("Неверный номер патча (должен быть pXX): ${paths[6]}")
+    }
+}
+ext.br4j_version    = paths[0]
+ext.br4j_branch     = paths[1]
+ext.configuration   = paths[2]
+ext.major           = paths[3]
+ext.minor           = paths[4]
+ext.buildNum        = paths[5]
+ext.patchNum        = paths.length == 7 ? paths[6] : null
+ext.releaseName     = "${br4j_version}.${br4j_branch}.${configuration}.${major}.${minor}"
+
+//svn urls
+ext.releaseSvnUrl           = SVNURL.parseURIEncoded("${releaseUrl}/${releaseName}")
+ext.releaseBuildSvnUrl      = SVNURL.parseURIEncoded("${releaseUrl}/${releaseName}/${buildNum}")
+ext.releaseBuildBaseSvnUrl  = SVNURL.parseURIEncoded("${releaseUrl}/${releaseName}/${buildNum}/base")
+ext.releaseBuildConfSvnUrl  = SVNURL.parseURIEncoded("${releaseUrl}/${releaseName}/${buildNum}/configurations/default")
+ext.trunkSvnUrl             = SVNURL.parseURIEncoded("${trunkUrl}")
+ext.trunkBaseSvnUrl         = SVNURL.parseURIEncoded("${trunkUrl}/base")
+ext.trunkConfSvnUrl         = SVNURL.parseURIEncoded("${trunkUrl}/configurations/${configuration}")
+ext.trunkTestSvnUrl         = SVNURL.parseURIEncoded("${trunkUrl}/tests")
+ext.trunkScriptsSvnUrl      = SVNURL.parseURIEncoded("${trunkUrl}/build")
+ext.trunkIuhSvnUrl          = SVNURL.parseURIEncoded("${trunkUrl}/iuh")
+ext.tagReleaseSvnUrl        = SVNURL.parseURIEncoded("${tagUrl}/${releaseName}/${buildNum}")
+ext.tagReleaseBuildSvnUrl   = SVNURL.parseURIEncoded("${tagUrl}/${releaseName}/${buildNum}/release")
+ext.tagReleaseBaseSvnUrl    = SVNURL.parseURIEncoded("${tagUrl}/${releaseName}/${buildNum}/release/base")
+ext.tagPatchSvnUrl          = SVNURL.parseURIEncoded("${tagUrl}/${releaseName}/${buildNum}/${patchNum}")
+
+ext.buildUrl = patchNum == null ? tagReleaseBuildSvnUrl : tagPatchSvnUrl
+ext.br4jAncestorProp = "br4j:ancestor"
+ext.br4jVersionProp  = "br4j:version"

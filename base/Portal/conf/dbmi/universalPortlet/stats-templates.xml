@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+			SELECT t.template_id, t.template_name_eng as name,
+				COUNT(case when l.action_code='GET_CARD' then 1 else null end) as views, 
+				COUNT(case when l.action_code='GET_FILE' then 1 else null end) as downloads,
+				COUNT(case when l.action_code='PUB_CARD' then 1 else null end) as pubs
+			FROM action_log l
+				LEFT JOIN card c ON l.card_id=c.card_id
+				LEFT JOIN template t ON c.template_id=t.template_id
+            WHERE l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			GROUP BY t.template_id, t.template_name_eng
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Start date" type="calendar" />
+             <param name="dateEnd" dispaly-name="End date" type="calendar" />
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+			SELECT t.template_id, t.template_name_eng as name,
+				COUNT(case when l.action_code='GET_CARD' then 1 else null end) as views, 
+				COUNT(case when l.action_code='GET_FILE' then 1 else null end) as downloads,
+				COUNT(case when l.action_code='PUB_CARD' then 1 else null end) as pubs
+			FROM action_log l
+				LEFT JOIN card c ON l.card_id=c.card_id
+				LEFT JOIN template t ON c.template_id=t.template_id
+            WHERE l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			GROUP BY t.template_id, t.template_name_eng
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Дата начала" type="calendar" />
+             <param name="dateEnd" dispaly-name="Дата окончания" type="calendar" />
+         </parameters>
+     </query>
+     <table title="Material statistics grouped by template" pagesize="20">
+	     <column-description name="NAME" display-name="Name" is-sortable="true"/>
+	     <column-description name="VIEWS" display-name="Views" is-sortable="true"/>
+	     <column-description name="DOWNLOADS" display-name="Downloads" is-sortable="true"/>
+	     <column-description name="PUBS" display-name="Published" is-sortable="true"/>
+     </table>
+     <table lang="ru" title="Статистика материалов с группировкой по шаблонам" pagesize="20">
+	     <column-description name="NAME" display-name="Название" is-sortable="true"/>
+	     <column-description name="VIEWS" display-name="Просмотров" is-sortable="true"/>
+	     <column-description name="DOWNLOADS" display-name="Скачиваний" is-sortable="true"/>
+	     <column-description name="PUBS" display-name="Опубликовано" is-sortable="true"/>
+     </table>
+</universal-portlet>

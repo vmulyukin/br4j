@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<bean id="visaDocManager" class="com.aplana.dbmi.module.docflow.DocumentManager"/>
+	<bean id="signDocManager" class="com.aplana.dbmi.module.docflow.DocumentManager"/>
+	<bean id="examDocManager" class="com.aplana.dbmi.module.docflow.DocumentManager"/>
+	<bean id="cancelDocManager" class="com.aplana.dbmi.module.docflow.DocumentManager"/>
+
+	<bean id="visaConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/visa.properties"/>
+	</bean>
+	<bean id="signConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/sign.properties"/>
+	</bean>
+	<bean id="examConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/exam.properties"/>
+	</bean>
+	<bean id="toArchiveConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/toArchive.properties"/>
+	</bean>
+	<bean id="cancelConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/cancelvisa.properties"/>
+	</bean>
+	<bean id="cancelTaskConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/canceltask.properties"/>
+	</bean>
+	
+	<bean id="syncVisaProcessor" class="com.aplana.dbmi.module.docflow.VisaProcessor" scope="prototype">
+		<property name="config" ref="visaConfig"/>
+	</bean>
+	<bean id="asyncVisaProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="visaDocManager"/>
+		<property name="processingBean" ref="syncVisaProcessor"/>
+	</bean>
+	
+	<bean id="syncSignProcessor" class="com.aplana.dbmi.module.docflow.VisaProcessor" scope="prototype">
+		<property name="config" ref="signConfig"/>
+	</bean>
+	<bean id="asyncSignProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="signDocManager"/>
+		<property name="processingBean" ref="syncSignProcessor"/>
+	</bean>
+	
+	<bean id="syncExamProcessor" class="com.aplana.dbmi.module.docflow.VisaProcessor" scope="prototype">
+		<property name="config" ref="examConfig"/>
+	</bean>
+	<bean id="syncArchiveProcessor" class="com.aplana.dbmi.module.docflow.VisaProcessor" scope="prototype">
+		<property name="config" ref="toArchiveConfig"/>
+	</bean>
+	<bean id="asyncExamProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="examDocManager"/>
+		<property name="processingBean" ref="syncExamProcessor"/>
+	</bean>
+	
+<!-- Отмена согласования (пропустить) -->		
+	<bean id="syncCancelProcessor" class="com.aplana.dbmi.module.docflow.CancelVisaProcessor" scope="prototype">
+		<property name="config" ref="cancelConfig"/>
+	</bean>
+	<bean id="asyncCancelProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="cancelDocManager"/>
+		<property name="processingBean" ref="syncCancelProcessor"/>
+	</bean>
+	
+	<!-- Отмена согласований поручений -->		
+	<bean id="syncCancelTaskVisaProcessor" class="com.aplana.dbmi.module.docflow.CancelTaskVisaProcessor" scope="prototype">
+		<property name="taskConfig" ref="cancelTaskConfig"/>
+		<property name="config" ref="cancelConfig"/>
+	</bean>
+	<bean id="asyncCancelTaskVisaProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="cancelDocManager"/>
+		<property name="processingBean" ref="syncCancelTaskVisaProcessor"/>
+	</bean>
+	
+	<!-- Исполнение документов -->
+	<bean id="execDocManager" class="com.aplana.dbmi.module.docflow.DocumentManager"/>
+	<bean id="docExecConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/docexec.properties"/>
+	</bean>
+	<bean id="execConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/exec.properties"/>
+	</bean>
+	<bean id="acquaintConfig" class="com.aplana.dbmi.module.docflow.VisaConfiguration" lazy-init="true">
+		<property name="config" value="/acquaint.properties"/>
+	</bean>
+	
+	<bean id="syncDocExecProcessor" class="com.aplana.dbmi.module.docflow.ExecutionProcessor" scope="prototype">
+		<property name="config" ref="docExecConfig"/>
+	</bean>
+	<bean id="asyncDocExecProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="execDocManager"/>
+		<property name="processingBean" ref="syncDocExecProcessor"/>
+	</bean>
+	
+	<bean id="syncExecProcessor" class="com.aplana.dbmi.module.docflow.ExecutionProcessor" scope="prototype">
+		<property name="config" ref="execConfig"/>
+	</bean>
+	<bean id="asyncExecProcessor" class="com.aplana.dbmi.module.docflow.AsyncVisaProcessor" scope="prototype">
+		<property name="documentManager" ref="signDocManager"/>
+		<property name="processingBean" ref="syncExecProcessor"/>
+	</bean>
+</beans>

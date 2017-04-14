@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description package="com.aplana.dmsi.types.delo">
+	
+	<config forClass="Header" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.ImportedDocument</template>
+		<field name="sourceFile" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+			<type name="File"/>
+		</field>
+  		<field name="acknowledgement" newCard="true">
+   			<valueSources>
+    			<attribute type="backLink">ImportedDocument.document</attribute>
+   			</valueSources>
+ 			<type name="Acknowledgement"/>
+  		</field>
+  		<field name="standart" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.standart_type</attribute>
+			</valueSources>
+		</field>		
+		<field name="version" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.standart_version</attribute>
+			</valueSources>
+		</field>		
+		<field name="time">
+			<valueSources>
+				<attribute type="date">ImportedDocument.message_creation_time</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="msgId" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.message_id</attribute>
+			</valueSources>
+		</field>
+		<field name="fromOrgId" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.sender_id</attribute>
+			</valueSources>
+		</field>
+		<field name="fromOrganization" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.sender_organization</attribute>
+			</valueSources>
+		</field>
+		<field name="fromDepartment" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.sender_department</attribute>
+			</valueSources>
+		</field>
+		<field name="fromSysId" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.sender_system_id</attribute>
+			</valueSources>
+		</field>
+		<field name="fromSystem" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.sender_dms</attribute>
+			</valueSources>
+		</field>
+		<field name="fromSystemDetails" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.details_sender_dms</attribute>
+			</valueSources>
+		</field>
+		<field name="toOrgId" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.receiver_id</attribute>
+			</valueSources>
+		</field>
+		<field name="toOrganization" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.receiver_organization</attribute>
+			</valueSources>
+		</field>
+		<field name="toDepartment" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.receiver_department</attribute>
+			</valueSources>
+		</field>
+		<field name="toSysId" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.receiver_system_id</attribute>
+			</valueSources>
+		</field>
+		<field name="toSystem" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.receiver_dms</attribute>
+			</valueSources>
+		</field>
+		<field name="toSystemDetails" >
+			<valueSources>
+				<attribute type="string">ImportedDocument.details_receiver_dms</attribute>
+			</valueSources>
+		</field>
+		<field name="msgType">
+			<valueSources>
+				<attribute type="list">ImportedDocument.message_type</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.HeaderMessageEnumListAttributeConverter">
+				<parameter name="ACKNOWLEDGEMENT">dmsiMessageType.acknowledgement</parameter>
+				<parameter name="DOCUMENT">dmsiMessageType.document</parameter>
+				<parameter name="DOCUMENT_ADDITIONS">dmsiMessageType.documentAdditions</parameter>
+				<parameter name="ANSWER_DOCUMENT">dmsiMessageType.answerDocument</parameter>
+				<parameter name="ANSWER_DOCUMENT_ADDITIONS">dmsiMessageType.answerDocumentAdditions</parameter>
+			</converter>
+		</field>
+		<field name="msgAcknow">
+			<valueSources>
+				<attribute type="list">ImportedDocument.acknowledgement_sent_neccessity</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.HeaderAsknowEnumListAttributeConverter">
+				<parameter name="NO">dmsiSendAck.no</parameter>
+				<parameter name="IF_ERRORS">dmsiSendAck.ifErrors</parameter>
+				<parameter name="ALWAYS">dmsiSendAck.always</parameter>
+			</converter>
+		</field>
+		<field name="name">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+		<field name="processingResult">
+			<valueSources>
+				<attribute type="text">JBR_IMP_DOC_RES</attribute>
+			</valueSources>		
+		</field>
+	</config>
+	<config forClass="ExportedOGDocumentType" extendsConfigOf="com.aplana.dmsi.types.ExportedDocumentType">
+		<template>jbr.citizenrequest</template>
+		<field name="regNumber">
+			<valueSources>
+				<config forClass="com.aplana.dmsi.types.RegNumber">
+					<field name="value">
+						<valueSources>
+							<attribute type="string">jbr.incoming.outnumber</attribute>
+							<attribute type="string">regnumber</attribute>
+						</valueSources>
+						<converter class="com.aplana.dmsi.value.converters.StringConverter"/>
+					</field>
+					<field name="regdate">
+						<valueSources>
+							<attribute type="date">jbr.incoming.outdate</attribute>
+							<attribute type="date">regdate</attribute>
+						</valueSources>
+						<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<field name="signer">
+			<valueSources>
+				<attribute type="link">jbr.signext</attribute>
+			</valueSources>
+			<type name="PrivatePerson" />
+		</field>
+		<field name="author">
+			<valueSources>
+				<attribute type="link">jbr.ReqAuthor</attribute>
+			</valueSources>
+			<type name="Author"/>
+		</field>
+		<field name="writer">
+			<valueSources>
+				<attribute type="user">jbr.outgoing.registrar</attribute>
+			</valueSources>
+			<type name="Writer"/>
+		</field>
+		<field name="rubric">
+			<valueSources>
+				<attribute type="link">jbr.QuestionOfQuery</attribute>
+			</valueSources>
+			<type name="Rubric"/>
+		</field>
+		<field name="taskList">
+			<valueSources>
+				<config forClass="com.aplana.dmsi.types.TaskListType">
+					<field name="task">
+						<valueSources>
+							<group>
+								<attribute type="link">jbr.allResolutions</attribute>
+							</group>
+						</valueSources>
+						<type name="Task"/>
+						<filter class="com.aplana.dmsi.value.filters.TaskFilter">
+							<parameter name="states">com.aplana.dmsi.types.TaskFromResolution:execution</parameter>
+						</filter>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Task" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.externalResolution</template>
+		<field name="taskText">
+			<valueSources>
+				<attribute type="text">jbr.externalResolution.text</attribute>
+			</valueSources>
+		</field>
+		<field name="executorsDescription">
+			<valueSources>
+				<attribute type="text">jbr.externalResolution.executor</attribute>
+			</valueSources>
+		</field>
+		<field name="coExecutorsDescription">
+			<valueSources>
+				<attribute type="text">jbr.externalResolution.coexecutors</attribute>
+			</valueSources>
+		</field>
+		<field name="authorsDescription">
+			<valueSources>
+				<attribute type="text">jbr.externalResolution.author</attribute>
+			</valueSources>
+		</field>
+		<field name="taskNumber">
+			<valueSources>
+				<config forClass="com.aplana.dmsi.types.TaskNumber">
+					<field name="taskDate">
+						<valueSources>
+							<attribute type="date">jbr.externalResolution.creationDate</attribute>
+						</valueSources>    					
+						<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+					</field>    				
+				</config>
+			</valueSources>
+		</field>
+		<field name="deadline">
+			<valueSources>
+				<attribute type="date">jbr.externalResolution.plannedDueDate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+	</config>
+	
+	<config forClass="TaskFromResolution" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.resolution</template>
+		<field name="idnumber" readonly="true">
+			<valueSources>
+				<attribute type="number">_ID</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.StringConverter"/>
+		</field>
+		<field name="deadline">
+			<valueSources>
+				<attribute type="date">jbr.resolutionTerm</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="taskText">
+			<valueSources>
+				<attribute type="text">jbr.resolutionText</attribute>
+			</valueSources>
+		</field>
+		<field name="taskNumber">
+			<valueSources>
+				<config forClass="com.aplana.dmsi.types.TaskNumber">
+					<field name="taskDate">
+						<valueSources>
+							<attribute type="date">jbr.resolution.SignDate</attribute>
+						</valueSources>
+						<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<field name="referred">
+			<valueSources>
+				<attribute type="link">jbr.rimp.byrimp</attribute>
+			</valueSources>
+			<type name="Referred"/>
+		</field>
+		<field name="authorOrganization">
+			<valueSources>
+				<attribute type="user">jbr.resolution.FioSign</attribute>
+			</valueSources>
+			<type name="AuthorOrganization"/>
+		</field>
+		<field name="executor">
+			<valueSources>
+				<group>
+					<attribute type="user">jbr.CoExecutor</attribute>
+					<attribute type="link">jbr.ExtExecutor</attribute>
+				</group>
+			</valueSources>
+			<type name="TaskExecutor"/>
+		</field>
+		<field name="mainExecutor">
+			<valueSources>
+				<attribute type="user">jbr.AssignmentExecutor</attribute>
+			</valueSources>
+			<type name="TaskExecutor"/>
+		</field>
+		<field name="docTransfer">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+			<type name="File"/>
+			<filter class="com.aplana.dmsi.value.filters.ByStatesFilter">
+				<parameter name="states">com.aplana.dmsi.types.LinkDocTransfer:active</parameter>
+			</filter>
+		</field>
+	</config>
+</description>

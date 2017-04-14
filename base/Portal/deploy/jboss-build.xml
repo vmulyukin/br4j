@@ -1,0 +1,943 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="deploy" name="Deploy to JBoss Server">
+	<dirname file="${ant.file}" property="dir.buildfile" />
+	<property file="${dir.buildfile}/jboss-build.properties" />
+	<property name="JBossLib" value="${JBossDir}/server/${JBossServer}/lib" />
+	<property name="JBossDeploy" value="${JBossDir}/server/${JBossServer}/deploy" />
+	<property name="JBossConf" value="${JBossDir}/server/${JBossServer}/conf" />
+	<property name="JBossPortalSAR" value="${JBossDir}/server/${JBossServer}/deploy/${JBossPortalSAR.name}" />
+	<property name="TransportAgent.archive.name" value="${ArchivePackage.location}/TransportAgent.zip" />
+
+	<property name="dir.build" value="build" />
+	<property name="dir.target" value="target" />
+	<property name="dir.classes" value="${dir.build}/classes" />
+	<property name="dir.target.classes" value="${dir.target}/classes" />
+	<property name="dir.src" value="src" />
+	<property name="dir.src.main.java" value="src/main/java" />
+	<property name="dir.src.main.resources" value="src/main/resources" />
+	<property name="dir.ejb" value="ejbModule" />
+	<property name="dir.ear" value="EarContent" />
+	<property name="dir.doc" value="doc" />
+	<property name="dir.web" value="WebContent" />
+	<property name="dir.lib" value="lib" />
+
+	<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${SharedLib.location}/build/jarjar-1.0.jar" />
+
+	<path id="JBossPortal Library">
+		<fileset dir="${JBossPortalSAR}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="JBossRuntime Library">
+		<fileset dir="${JBossDir}/client">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${JBossLib}">
+			<include name="**/*.jar" />
+			<exclude name="**/DBMI-*.jar" />
+			<exclude name="**/iText-*.jar" />
+			<exclude name="**/itext-*.jar" />
+		</fileset>
+	</path>
+
+	<path id="Shared Library">
+		<fileset dir="${SharedLib.location}">
+			<include name="**/*.jar" />
+			<exclude name="itext-1.3.jar" />
+			<exclude name="iText-2.1.7.jar" />
+			<exclude name="solr/**" />
+		</fileset>
+	</path>
+
+	<path id="itext-old">
+		<fileset dir="${SharedLib.location}">
+			<include name="itext-1.3.jar" />
+		</fileset>
+	</path>
+
+	<path id="itext-new">
+		<fileset dir="${SharedLib.location}">
+			<include name="iText-2.1.7.jar" />
+		</fileset>
+	</path>
+
+	<path id="classpath">
+		<path refid="Shared Library" />
+		<path refid="JBossRuntime Library" />
+		<path refid="JBossPortal Library" />
+	</path>
+
+	<path id="iText">
+		<path refid="itext-new" />
+	</path>
+
+	<path id="EarLibFiles">
+		<fileset dir="${SharedLib.location}">
+			<include name="**/*.jar" />
+			<exclude name="build/**" />
+			<exclude name="test/**" />
+			<exclude name="solr/**" />
+			<exclude name="itext-1.3.jar" />
+			<exclude name="xalan.jar" />
+			<exclude name="xml-apis.jar" />
+			<exclude name="jaxb-api.jar" />
+			<exclude name="jaxb-xjc.jar" />
+
+			<exclude name="commons-beanutils-1.7.0.jar" />
+			<exclude name="commons-io-1.4.jar" />
+			<exclude name="commons-logging-1.1.1.jar" />
+			<exclude name="iText-2.1.7.jar" />
+			<exclude name="ghost4j-0.5.1.jar" />
+			<exclude name="jna.jar" />
+			<exclude name="xmlgraphics-commons-1.4.jar" />
+			<exclude name="jaxb-impl.jar" />
+		</fileset>
+	</path>
+
+	<path id="sharedLibFiles">
+		<fileset dir="${SharedLib.location}">
+			<include name="commons-beanutils-1.7.0.jar" />
+			<include name="commons-io-1.4.jar" />
+			<include name="commons-logging-1.1.1.jar" />
+			<include name="iText-2.1.7.jar" />
+			<include name="ghost4j-0.5.1.jar" />
+			<include name="jna.jar" />
+			<include name="xmlgraphics-commons-1.4.jar" />
+		</fileset>
+		<fileset dir="${ArchivePackage.location}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" depends="clearArchives">
+		<ant dir="${LinksPortlet.location}" inheritAll="true" target="clean" />
+		<ant dir="${Login.location}" inheritAll="true" target="clean" />
+		<ant dir="${SubscriptionBuilder.location}" inheritAll="true" target="clean" />
+		<ant dir="${TaskControl.location}" inheritAll="true" target="clean" />
+		<ant dir="${TemplateBuilder.location}" inheritAll="true" target="clean" />
+		<ant dir="${UniversalPortlet.location}" inheritAll="true" target="clean" />
+		<ant dir="${UserManagement.location}" inheritAll="true" target="clean" />
+		<ant dir="${UserPortlets.location}" inheritAll="true" target="clean" />
+
+		<ant dir="${Portal.location}" inheritAll="true" target="clean" />
+		<ant dir="${AccessComponent.location}" inheritAll="true" target="clean" />
+		<ant dir="${CommonUtils.location}" inheritAll="true" target="clean"/>
+		<ant dir="${PortalUtils.location}" inheritAll="true" target="clean"/>
+		<ant dir="${ControlsComponent.location}" inheritAll="true" target="clean" />
+		<ant dir="${TableComponent.location}" inheritAll="true" target="clean" />
+		<ant dir="${Transport.location}" inheritAll="true" target="clean" />
+		<ant dir="${PlatformJBoss.location}" inheritAll="true" target="clean" />
+		<ant dir="${Platform.location}" inheritAll="true" target="clean" />
+		<ant dir="${PDFAConverter.location}" inheritAll="true" target="clean" />
+		<ant dir="${DirectSQLModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${JBRModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${SolrModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${UserSyncModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${MailModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${NotificationModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${Model.location}" inheritAll="true" target="clean" />
+		<ant dir="${DataService.location}" inheritAll="true" target="clean" />
+		<ant dir="${Kernel.location}" inheritAll="true" target="clean" />
+		<ant dir="${Numerator.location}" inheritAll="true" target="clean" />
+		<ant dir="${CryptoModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${mmsc.location}" inheritAll="true" target="clean" />
+		<ant dir="${scanner-applet.location}" inheritAll="true" target="clean" />
+		<ant dir="${MaterialSyncModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${AutoUnlockModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${ChangeAttributeModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${TasksModule.location}" inheritAll="true" target="clean"/>
+		<ant dir="${MEDOModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${CryptoServer.location}" inheritAll="true" target="clean" />
+		<ant dir="${MEDOGateModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${TransportAgent.location}" inheritAll="true" target="clean" />
+		<ant dir="${SOZExchangeModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${CardArchiveModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${DBMI-Services.location}" inheritAll="true" target="clean" />
+		<ant dir="${Replication.location}" inheritAll="true" target="clean" />
+		<ant dir="${DistrManagerModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${ARMSupportActions.location}" inheritAll="true" target="clean" />
+		<ant dir="${Quartz.location}" inheritAll="true" target="clean" />
+		<ant dir="${GostStatisticClientModule.location}" inheritAll="true" target="clean" />
+		<ant dir="${GostStatisticService.location}" inheritAll="true" target="clean" />
+		<ant dir="${OWriterModule.location}" inheritAll="true" target="clean" />
+    	<ant dir="${DigitalSignature.location}" inheritAll="true" target="clean"/>
+	</target>
+
+	<target name="clearArchives">
+		<delete dir="${ArchivePackage.location}" />
+		<mkdir dir="${ArchivePackage.location}" />
+		<delete file="${Archive.name}"/>
+		<delete file="${TransportAgent.archive.name}"/>
+	</target>
+
+	<target name="clearTempWork">
+		<delete dir="${JBossDir}/server/${JBossServer}/tmp" />
+		<delete dir="${JBossDir}/server/${JBossServer}/work" />
+		<mkdir dir="${JBossDir}/server/${JBossServer}/tmp" />
+		<mkdir dir="${JBossDir}/server/${JBossServer}/work" />
+	</target>
+	
+	<target name="init" depends="clean, clearDataEARContents" />
+
+	<target name="prebuild.check">
+		<available file="${config.location}/deploy/prebuild.xml" property="prebuildConf.isExists" />
+	</target>
+	<target name="postbuild.check">
+		<available file="${config.location}/deploy/postbuild.xml" property="postbuildConf.isExists" />
+	</target>
+
+	<target name="prebuild" depends="prebuild.check" if="prebuildConf.isExists">
+		<echo message="Aditional configuration found! Executing prebuild script..." />
+		<ant dir="${config.location}/deploy" antfile="prebuild.xml" />
+	</target>
+	<target name="postbuild" depends="postbuild.check" if="postbuildConf.isExists">
+		<echo message="Aditional configuration found! Executing postbuild script..." />
+		<ant dir="${config.location}/deploy" antfile="postbuild.xml" />
+	</target>
+
+	<target name="buildPlatform">
+		<ant dir="${Platform.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${PlatformJBoss.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<jar destfile="${Platform.location}/${dir.build}/${Platform.name}">
+			<fileset dir="${Platform.location}/${dir.classes}">
+				<exclude name="**/http/*" />
+			</fileset>
+			<fileset dir="${PlatformJBoss.location}/${dir.classes}" />
+		</jar>
+		<jar destfile="${ArchivePackage.location}/${PlatformModel.name}">
+			<fileset dir="${Platform.location}/${dir.classes}">
+				<include name="**/http/*" />
+			</fileset>
+		</jar>
+		<copy file="${Platform.location}/${dir.build}/${Platform.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildPDFAConverter">
+		<ant dir="${PDFAConverter.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<!--jar destfile="${ArchivePackage.location}/${PDFAConverter.name}">
+			<!-jar destfile="${DataService.location}/${dir.ear}/${PDFAConverter.name}"->
+			<fileset dir="${PDFAConverter.location}/${dir.classes}" />
+		</jar-->
+		<copy file="${PDFAConverter.location}/${dir.build}/${PDFAConverter.name}" todir="${ArchivePackage.location}" />
+	</target>
+
+	<target name="buildModel" depends="buildPlatform">
+		<ant dir="${Model.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${Model.location}/${dir.build}/${Model.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildKernel" depends="buildModel">
+		<ant dir="${Kernel.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+	</target>
+
+	<target name="buildARMSupportActions" depends="buildKernel">
+		<ant dir="${ARMSupportActions.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+	</target>
+
+	<target name="buildNumerator" depends="buildKernel">
+		<ant dir="${Numerator.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+	</target>
+
+	<target name="buildCryptoServer" depends="buildPlatform, buildCryptoModule">
+		<ant dir="${CryptoServer.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<mkdir dir="${ArchivePackage.location}/CryptoServer" />
+		<copy todir="${ArchivePackage.location}/CryptoServer" file="${CryptoServer.location}/${dir.build}/${CryptoServer.name}" overwrite="ture" />
+	</target>
+
+	<target name="buildDigitalSignature" depends="buildCryptoModule">
+		<ant dir="${DigitalSignature.location}" inheritAll="true">
+			<reference refid="classpath"/>
+		</ant>
+		<copy file="${DigitalSignature.location}/${dir.build}/${SharedCryptoModule.name}" todir="${DataService.location}/${dir.ear}"/>
+	</target>
+
+	<target name="clearDataEARContents">
+		<delete>
+			<fileset dir="${DataService.location}/${dir.ear}">
+				<include name="**/*.war" />
+				<include name="**/*.jar" />
+				<include name="**/*.sar" />
+			</fileset>
+		</delete>
+		<delete dir="${DataService.location}/${dir.ear}/${dir.lib}" />
+	</target>
+	<target name="buildDataEAR" depends="clearDataEARContents, buildTagLibrary, buildDataService, buildCardImportService, buildGostStatisticService, buildIReferentServices, buildLinksPortlet, buildLoginPortlet, buildPortal, 
+		buildSOZExchangeModule, buildSubscriptionBuilderPortlet, buildTaskControlPortlet, buildTemplateBuilderPortlet, buildTransportAgent, 
+		buildUserManagementPortlet, buildUserPortlets, buildUniversalPortlet, buildWorkflowBuilderPortlet, buildQuartz, buildDBMIServices">
+
+		<copy file="${SharedLib.location}/${Solr.location}/${Solr.name}" todir="${DataService.location}/${dir.ear}" />
+
+		<mkdir dir="${DataService.location}/${dir.ear}/${dir.lib}" />
+
+		<copy todir="${DataService.location}/${dir.ear}/${dir.lib}">
+			<path refid="EarLibFiles" />
+		</copy>
+
+		<ant dir="${DataService.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+
+		<copy file="${DataService.location}/${dir.build}/${DataService.name}" todir="${ArchivePackage.location}" />
+	</target>
+
+	<target name="buildDataService" depends="buildComponents, buildKernel, buildNumerator, buildCardExchange, buildDigitalSignature, buildPDFAConverter">
+		<ant dir="${DirectSQLModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${JBRModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${SolrModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${NotificationModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${MailModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${DocFlowModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${UserSyncModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${CardExchangeModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${MaterialSyncModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${AutoUnlockModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${ChangeAttributeModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${DMSIModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${MEDOModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${MEDOGateModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${SOZExchangeModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${CardArchiveModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+			<reference refid="iText" />
+		</ant>
+		<ant dir="${TasksModule.location}" inheritAll="true">
+			<reference refid="classpath"/>
+		</ant>
+		<ant dir="${DistrManagerModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${Replication.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${ARMSupportActions.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${GostStatisticClientModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+
+		<copy file="${ARMSupportActions.location}/${dir.build}/${ARMSupportActions.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${AutoUnlockModule.location}/${dir.build}/${AutoUnlockModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${CardArchiveModule.location}/${dir.build}/${CardArchiveModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${CardExchangeModule.location}/${dir.build}/${CardExchangeModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${ChangeAttributeModule.location}/${dir.build}/${ChangeAttributeModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${DistrManagerModule.location}/${dir.build}/${DistrManagerModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${DirectSQLModule.location}/${dir.build}/${DirectSQLModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${DMSIModule.location}/${dir.build}/${DMSIModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${DocFlowModule.location}/${dir.build}/${DocFlowModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${JBRModule.location}/${dir.build}/${JBRModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${Kernel.location}/${dir.build}/${Kernel.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${MailModule.location}/${dir.build}/${MailModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${MaterialSyncModule.location}/${dir.build}/${MaterialSyncModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${MEDOGateModule.location}/${dir.build}/${MEDOGateModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${MEDOModule.location}/${dir.build}/${MEDOModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${NotificationModule.location}/${dir.build}/${NotificationModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${Numerator.location}/${dir.build}/${Numerator.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${Replication.location}/${dir.build}/${Replication.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${SolrModule.location}/${dir.build}/${SolrModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${TasksModule.location}/${dir.build}/${TasksModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${SOZExchangeModule.location}/${dir.build}/${SOZExchangeClientModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${UserSyncModule.location}/${dir.build}/${UserSyncModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${GostStatisticClientModule.location}/${dir.build}/${GostStatisticClientModule.name}" todir="${DataService.location}/${dir.ear}" />
+
+		<copy todir="${Portal.location}/WebContent/WEB-INF">
+			<fileset dir="${CardArchiveModule.location}/WebContent/WEB-INF">
+				<include name="delo-portal-object.xml" />
+				<include name="operation-archive-portal-object.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="buildCardArchiveModule" depends="buildDataService">
+		<ant dir="${CardArchiveModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+			<reference refid="iText" />
+		</ant>
+		<copy todir="${Portal.location}/WebContent/WEB-INF">
+			<fileset dir="${CardArchiveModule.location}/WebContent/WEB-INF">
+				<include name="delo-portal-object.xml" />
+				<include name="operation-archive-portal-object.xml" />
+			</fileset>
+		</copy>
+		<copy file="${CardArchiveModule.location}/${dir.build}/${CardArchiveModule.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildComponents" depends="buildModel">
+		<ant dir="${AccessComponent.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${CommonUtils.location}" inheritAll="true">
+			<reference refid="classpath"/>		
+		</ant>
+		<ant dir="${PortalUtils.location}" inheritAll="true">
+					<reference refid="classpath"/>		
+		</ant>
+		<ant dir="${ControlsComponent.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<ant dir="${TableComponent.location}" inheritAll="true">
+			<reference refid="classpath" />
+			<reference refid="itext-old" />
+		</ant>
+		<ant dir="${Transport.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${AccessComponent.location}/${dir.build}/${AccessComponent.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${CommonUtils.location}/${dir.build}/${CommonUtils.name}" todir="${DataService.location}/${dir.ear}"/>
+		<copy file="${PortalUtils.location}/${dir.build}/${PortalUtils.name}" todir="${DataService.location}/${dir.ear}"/>
+		<copy file="${ControlsComponent.location}/${dir.build}/${ControlsComponent.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${TableComponent.location}/${dir.build}/${TableComponent.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${Transport.location}/${dir.build}/${Transport.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildTagLibrary" depends="buildModel">
+		<ant dir="${TagLibrary.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${TagLibrary.location}/${dir.build}/${TagLibrary.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildPortal" depends="buildUserPortlets">
+		<ant dir="${Portal.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<delete file="${Portal.location}/WebContent/WEB-INF/delo-portal-object.xml" />
+		<delete file="${Portal.location}/WebContent/WEB-INF/operation-archive-portal-object.xml" />
+
+		<copy file="${Portal.location}/${dir.build}/${Portal.name}" todir="${DataService.location}/${dir.ear}" />
+
+		<copy todir="${ArchivePackage.location}">
+			<fileset dir="${Portal.location}/deploy">
+				<include name="jboss-portal.sar/**" />
+			</fileset>
+		</copy>
+		<copy todir="${ArchivePackage.location}">
+			<fileset dir="${Portal.location}/deploy">
+				<include name="jboss-web.deployer/**" />
+			</fileset>
+		</copy>
+		<copy todir="${ArchivePackage.location}/jboss-portal.sar/conf">
+			<fileset dir="${Portal.location}/login">
+				<include name="dbmiLogin.properties" />
+			</fileset>
+		</copy>
+		<copy todir="${ArchivePackage.location}/jboss-portal.sar/portal-server.war">
+			<fileset dir="${Portal.location}/login">
+				<include name="login_dbmi.jsp" />
+			</fileset>
+		</copy>
+		<copy file="${Portal.location}/${dir.build}/${JasperReportFonts.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildLinksPortlet" depends="buildModel">
+		<ant dir="${LinksPortlet.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${LinksPortlet.location}/${dir.build}/${LinksPortlet.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildLoginPortlet" depends="buildModel">
+		<ant dir="${Login.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${Login.location}/${dir.build}/${Login.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildSubscriptionBuilderPortlet" depends="buildComponents">
+		<ant dir="${SubscriptionBuilder.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${SubscriptionBuilder.location}/${dir.build}/${SubscriptionBuilder.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildTaskControlPortlet" depends="buildModel">
+		<ant dir="${TaskControl.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${TaskControl.location}/${dir.build}/${TaskControl.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildTemplateBuilderPortlet" depends="buildComponents, buildTagLibrary">
+		<ant dir="${TemplateBuilder.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${TemplateBuilder.location}/${dir.build}/${TemplateBuilder.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildUniversalPortlet" depends="buildComponents, buildTagLibrary">
+		<ant dir="${UniversalPortlet.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${UniversalPortlet.location}/${dir.build}/${UniversalPortlet.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildUserManagementPortlet" depends="buildComponents">
+		<ant dir="${UserManagement.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${UserManagement.location}/${dir.build}/${UserManagement.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildUserPortlets" depends="buildTagLibrary, buildScannerApplet, buildARMResolutions, buildDataService, buildOWriterModule">
+		<ant dir="${UserPortlets.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${UserPortlets.location}/${dir.build}/${JasperReportModule.name}" todir="${DataService.location}/${dir.ear}" />
+		<copy file="${UserPortlets.location}/${dir.build}/${UserPortlets.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildTransportAgent">
+		<ant dir="${TransportAgent.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy todir="${ArchivePackage.location}/">
+			<fileset dir="${TransportAgent.location}/${dir.build}">
+				<include name="TransportAgent/**"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="buildCryptoModule" depends="buildPlatform">
+		<ant dir="${CryptoModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${CryptoModule.location}/${dir.build}/${CryptoModule.name}" todir="${UserPortlets.location}/${dir.build}" overwrite="true" />
+	</target>
+
+	<target name="buildARMResolutions">
+		<ant dir="${ARMResolutions.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${ARMResolutions.location}/${dir.build}/${ARMResolutions.name}" todir="${UserPortlets.location}/${dir.build}" />
+	</target>
+
+	<target name="buildMmsc">
+		<ant dir="${mmsc.location}" inheritAll="true" />
+	</target>
+
+	<target name="buildScannerApplet" depends="buildMmsc">
+		<ant dir="${scanner-applet.location}" inheritAll="true" />
+		<copy file="${scanner-applet.location}/target/${scanner-applet.name}" todir="${UserPortlets.location}/${dir.build}" />
+	</target>
+
+	<target name="buildWorkflowBuilderPortlet" depends="buildComponents, buildTagLibrary">
+		<ant dir="${WorkflowBuilder.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${WorkflowBuilder.location}/${dir.build}/${WorkflowBuilder.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildQuartz">
+		<ant dir="${Quartz.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<jar destfile="${DataService.location}/${dir.ear}/${Quartz.name}" basedir="${Quartz.location}/${dir.build}">
+		</jar>
+	</target>
+
+	<target name="buildDBMIServices" depends="buildKernel">
+		<ant dir="${DBMI-Services.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${DBMI-Services.location}/${dir.build}/${DBMI-Services.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildCardExchange" depends="buildModel">
+		<ant dir="${CardExchange.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${CardExchange.location}/${dir.build}/${CardExchange.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildCardImportService" depends="buildKernel, buildCardExchange">
+		<ant dir="${CardImportService.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${CardImportService.location}/${dir.build}/${CardImportService.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildGostStatisticService" depends="buildKernel">
+		<ant dir="${GostStatisticService.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${GostStatisticService.location}/${dir.build}/${GostStatisticService.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildDynamicAccessRule" depends="buildKernel">
+		<echo message="${DynamicAccessRule.location}/${dir.build}" />
+		<ant dir="${DynamicAccessRule.location}/${dir.build}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+	</target>	
+
+	<target name="buildIReferentServices" depends="buildKernel, buildComponents">
+		<ant dir="${IReferentServicesModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${IReferentServicesModule.location}/${dir.build}/${IReferentServicesModule.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildSOZExchangeModule" depends="buildPlatform">
+		<ant dir="${SOZExchangeModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${SOZExchangeModule.location}/${dir.build}/${SOZExchangeServiceModule.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildOWriterModule">
+		<ant dir="${OWriterModule.location}" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${OWriterModule.location}/${dir.build}/${OWriterModule.name}" todir="${DataService.location}/${dir.ear}" />
+	</target>
+
+	<target name="buildDoc" depends="buildPlatform">
+		<javadoc destdir="${ArchivePackage.location}/${dir.doc}" classpathref="classpath">
+			<classpath>
+				<pathelement location="${ArchivePackage.location}/${Platform.name}" />
+			</classpath>
+			<packageset dir="${Model.location}/${dir.ejb}">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${Kernel.location}/${dir.ejb}">
+				<include name="**" />
+			</packageset>
+		</javadoc>
+	</target>
+
+	<!-- Предварительное копирование: отчёты и конфиги из CardArchive -->
+	<target name="copyArchiveConf">
+		<!-- Копируем отчёты для того чтобы они скомпилились сами -->
+		<mkdir dir="${ArchivePackage.location}/conf/dbmi" />
+		<copy todir="${Portal.location}/conf/dbmi/jasperReports">
+			<fileset dir="${CardArchiveModule.location}/portal-conf/dbmi/jasperReports" />
+		</copy>
+
+		<!-- Копируем конфиги архива -->
+		<copy todir="${ArchivePackage.location}/conf/dbmi">
+			<fileset dir="${CardArchiveModule.location}/portal-conf/dbmi/" />
+		</copy>
+	</target>
+
+	<target name="buildConf">
+		<mkdir dir="${ArchivePackage.location}/conf/dbmi" />
+		<copy todir="${ArchivePackage.location}/conf/dbmi" overwrite="yes">
+			<cutdirsmapper dirs="3" />
+			<fileset dir="${basedir}/../..">
+				<include name="*/conf/dbmi/**" />
+			</fileset>
+		</copy>
+		<!-- копирование подотчетов в conf-директорию портала-->
+		<copy todir="${ArchivePackage.location}/conf/dbmi/jasperReports/subReports" overwrite="yes">
+			<fileset dir="${UserPortlets.location}/WebContent/jasper" />
+		</copy>
+		<copy todir="${ArchivePackage.location}" overwrite="yes">
+			<fileset dir="${Portal.location}">
+				<include name="*-ds.xml" />
+				<include name="*-mail-service.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="buildScript">
+		<!--mkdir dir="${ArchivePackage.location}/script" /-->
+		<!--copy todir="${ArchivePackage.location}/script" overwrite="yes">
+			<fileset dir="${DatabaseModule.location}/migrate" includes="*.sql"/>
+			<fileset dir="${DatabaseModule.location}/migrate/ARM" includes="upgradeArm.sql"/>
+	   	</copy-->
+		<!--copy todir="${ArchivePackage.location}/script/data" overwrite="yes">
+			<fileset dir="${DatabaseModule.location}/migrate/data" includes="*" />
+		</copy-->
+	</target>
+	<target name="buildDynamicAccessRuleTool" depends="buildDynamicAccessRule">
+		<mkdir dir="${ArchivePackage.location}/tool/DynamicAccessRule" />
+		<copy todir="${ArchivePackage.location}/tool" overwrite="yes">
+			<fileset dir="${Doc.location}/NewAccess" includes="*.pdf" />
+		</copy>
+		<copy todir="${ArchivePackage.location}/tool/DynamicAccessRule" overwrite="yes">
+			<fileset dir="${DynamicAccessRule.location}/${dir.build}" includes="DynamicAccessRule.*" />
+			<fileset dir="${DynamicAccessRule.location}/resources" includes="ac.xml" />
+			<fileset dir="${DynamicAccessRule.location}/${dir.build}" includes="jars/postgresql-9.0-801.jdbc3.jar" />
+		</copy>
+		<copy todir="${ArchivePackage.location}/tool/DynamicAccessRule/conf" overwrite="yes">
+			<fileset dir="${DynamicAccessRule.location}" includes="*.xml" />
+		</copy>
+	</target>
+
+	<target name="build" depends="init, prebuild, buildDynamicAccessRuleTool, 
+		buildCryptoServer, copyArchiveConf, buildDataEAR, buildConf, buildScript, postbuild" />
+
+	<target name="undeployLegacyApps">
+		<delete file="${JBossDeploy}/${CardImportService.name}" />
+		<delete file="${JBossDeploy}/${IReferentServicesModule.name}" />
+		<delete file="${JBossDeploy}/${LinksPortlet.name}" />
+		<delete file="${JBossDeploy}/${Login.name}" />
+		<delete file="${JBossDeploy}/${Portal.name}" />
+		<delete file="${JBossDeploy}/${Solr.name}" />
+		<delete file="${JBossDeploy}/${SOZExchangeServiceModule.name}" />
+		<delete file="${JBossDeploy}/${SubscriptionBuilder.name}" />
+		<delete file="${JBossDeploy}/${TaskControl.name}" />
+		<delete file="${JBossDeploy}/${TemplateBuilder.name}" />
+		<delete file="${JBossDeploy}/${TransportAgent.name}" />
+		<delete file="${JBossDeploy}/${UniversalPortlet.name}" />
+		<delete file="${JBossDeploy}/${UserManagement.name}" />
+		<delete file="${JBossDeploy}/${UserPortlets.name}" />
+		<delete file="${JBossDeploy}/${WorkflowBuilder.name}" />
+		<delete file="${JBossDeploy}/${Quartz.name}" />
+		<delete file="${JBossDeploy}/${Services.location}/${DBMI-Services.name}" />
+		
+		<delete file="${JBossLib}/${AccessComponent.name}" />
+		<delete file="${JBossLib}/${CardExchange.name}" />
+		<delete file="${JBossLib}/${ControlsComponent.name}" />
+		<delete file="${JBossLib}/${CommonUtils.name}"/>
+		<delete file="${JBossLib}/${PortalUtils.name}"/>
+		<delete file="${JBossLib}/${TableComponent.name}" />
+		<delete file="${JBossLib}/${TagLibrary.name}" />
+		<delete file="${JBossLib}/${Transport.name}" />
+		<delete file="${JBossLib}/${Platform.name}" />
+		<delete file="${JBossLib}/${Model.name}" />
+		<delete file="${JBossLib}/${JasperReportModule.name}" />
+		<delete file="${JBossLib}/${JasperReportFonts.name}" />
+		<delete file="${JBossLib}/${SharedCryptoModule.name}" />
+	</target>
+
+	<target name="undeploy">
+		<delete file="${JBossDeploy}/${MailServiceXML.name}" />
+		<delete file="${JBossDeploy}/${DataSourceXML.name}" />
+		<delete dir="${JBossConf}/dbmi" />
+		<delete file="${JBossDeploy}/${DataService.name}" />
+	</target>
+
+	<target name="deploy" depends="deployApps">
+		<!--
+		Changing jboss-portal.sar/META-INF/META-INF/jboss-service.xml
+
+		<attribute name="TargetContextPath">/portal-core</attribute>
+		<attribute name="HeaderPath">/WEB-INF/jsp/header/header.jsp</attribute>
+		<attribute name="TabsPath">/WEB-INF/jsp/header/tabs.jsp</attribute>
+
+		to
+
+		<attribute name="TargetContextPath">/Portal</attribute>
+		<attribute name="HeaderPath">/WEB-INF/header/header.jsp</attribute>
+		<attribute name="TabsPath">/WEB-INF/header/tabs.jsp</attribute> 
+
+		unicode symbols:
+
+	    <replace file="${JBossPortalSAR}/META-INF/jboss-service.xml" token="a\u0022a" value="AAAAAAA"/>
+		-->
+	</target>
+
+	<target name="deployApps" depends="deployShared">
+		<mkdir dir="${JBossConf}/dbmi" />
+		<copy todir="${JBossConf}/dbmi">
+			<fileset dir="${ArchivePackage.location}/conf/dbmi" />
+			<fileset dir="${ArchivePackage.location}/TransportAgent/conf/dbmi" />
+		</copy>
+		<copy todir="${JBossDeploy}">
+			<fileset dir="${ArchivePackage.location}">
+				<include name="*-ds.xml" />
+				<include name="*-mail-service.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${JBossDeploy}">
+			<fileset dir="${ArchivePackage.location}">
+				<include name="jboss-web.deployer/**" />
+			</fileset>
+		</copy>
+		<copy todir="${JBossDeploy}">
+			<fileset dir="${ArchivePackage.location}">
+				<include name="${DataService.name}" />
+			</fileset>
+			<fileset dir="${ArchivePackage.location}/TransportAgent/deploy">
+				<include name="${TransportAgent.name}" />
+			</fileset>
+		</copy>
+		<copy todir="${JBossDeploy}/${Services.location}">
+			<fileset dir="${ArchivePackage.location}/${Services.location}">
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deployShared" depends="undeployLegacyApps, build, clearTempWork">
+		<copy todir="${JBossLib}">
+			<path refid="sharedLibFiles" />
+		</copy>
+		<!--copy todir="${JBossDir}/lib/endorsed">
+			<fileset dir="${SharedLib.location}" includes="xml-apis.jar" />
+			<fileset dir="${SharedLib.location}" includes="jaxb-api.jar" />
+		</copy-->
+		<copy todir="${JBossDir}/server/${JBossServer}/solr">
+			<fileset dir="${SharedLib.location}/solr">
+				<include name="**/*" />
+				<exclude name="solr.war" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deployDataEAR" depends="buildDataEAR">
+		<copy todir="${JBossDeploy}">
+			<fileset dir="${ArchivePackage.location}">
+				<include name="${DataService.name}" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="archiveAll" depends="build">
+		<delete file="${Archive.name}" quiet="true" />
+		<mkdir dir="./sharedLibFiles" />
+		<copy todir="./sharedLibFiles">
+			<path refid="sharedLibFiles" />
+		</copy>
+		<!--mkdir dir="./endorsedLibFiles" />
+		<copy todir="./endorsedLibFiles">
+			<fileset dir="${SharedLib.location}">
+				<include name="xml-apis.jar" />
+			</fileset>
+		</copy-->
+		<copy todir="${ArchivePackage.location}/solr">
+			<fileset dir="${SharedLib.location}/solr">
+				<include name="**/*" />
+				<exclude name="solr.war" />
+			</fileset>
+		</copy>
+
+		<zip destfile="${Archive.name}" level="9">
+			<zipfileset dir="${ArchivePackage.location}" includes="conf/**" />
+			<zipfileset dir="./sharedLibFiles" prefix="lib" />
+			<!--zipfileset dir="./endorsedLibFiles" prefix="endorsed" /-->
+			<zipfileset dir="${ArchivePackage.location}" includes="${DataService.name}" prefix="deploy" />
+			<zipfileset dir="${ArchivePackage.location}/CryptoServer" includes="*.war" prefix="CryptoServer" />
+			<zipfileset dir="${ArchivePackage.location}/TransportAgent" includes="**/*" prefix="TransportAgent" />
+			<!--zipfileset dir="${ArchivePackage.location}/script" includes="*.sql" prefix="script" />
+			<zipfileset dir="${ArchivePackage.location}/script/data" includes="*.csv, *.txt" prefix="script/data" /-->
+			<zipfileset dir="${ArchivePackage.location}/solr" prefix="solr" />
+			<zipfileset dir="${ArchivePackage.location}/${Services.location}" prefix="deploy/${Services.location}" />
+			<zipfileset dir="${ArchivePackage.location}" includes="tool/**" />
+			<zipfileset dir="${Portal.location}" includes="README.txt" />
+		</zip>
+		<delete dir="./sharedLibFiles" />
+		<!--delete dir="./endorsedLibFiles" /-->
+	</target>
+
+	<target name="buildStandaloneMEDOGate">
+		<ant dir="${MEDOGateModule.location}" target="standalone-jar" inheritAll="true">
+			<reference refid="classpath" />
+		</ant>
+		<copy file="${MEDOGateModule.location}/${dir.build}/MEDOGate" todir="${ArchivePackage.location}" />
+	</target>
+
+	<target name="makeConfigurationWorkspace">
+		<delete dir="${tempSource.location}" />
+		<copy overwrite="true" todir="${tempSource.location}">
+			<fileset dir="${projects.root}">
+				<exclude name="**/.svn" />
+				<exclude name=".metadata/" />
+				<exclude name="**/build/" />
+				<exclude name="SharedLib/" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" todir="${tempSource.location}">
+			<fileset dir="${projects.root}">
+				<include name="SharedLib/" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" todir="${tempSource.location}/Portal/deploy">
+			<fileset dir="${Portal.location}/deploy">
+				<include name="jboss-build.xml" />
+				<include name="jboss-build.properties" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" todir="${tempSource.location}">
+			<fileset dir="${projects.root}">
+				<include name="DynamicAccessRule/build" />
+				<include name="DynamicAccessRule/build/*.*" />
+				<include name="DynamicAccessRule/build/**/*.*" />
+			</fileset>
+		</copy>
+		<!--ant dir="${tempSource.location}/Portal/deploy" inheritAll="true" target="prebuild" antfile="jboss-build.xml" /-->
+	</target>
+	
+	<target name="standaloneTransportAgent" depends="clearArchives, buildTransportAgent">
+		<copy todir="${ArchivePackage.location}/">
+			<fileset dir="${Portal.location}">
+				<include name="conf/dbmi/transportAgent/**" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="archiveStandaloneTransportAgent" depends="standaloneTransportAgent">
+		<zip destfile="${TransportAgent.archive.name}" level="9">
+			<zipfileset dir="${ArchivePackage.location}/TransportAgent" includes="**/*"/>
+		</zip>
+	</target>
+
+</project>
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery>
+	<query>
+		<sql><![CDATA[
+			SELECT p.card_id
+			FROM attribute_value p
+			INNER JOIN attribute a on (a.attribute_code = p.attribute_code and a.data_type = 'C')
+			join attribute_value inDate on inDate.card_id = p.number_value and inDate.attribute_code = 'JBR_INCOMEDATE'
+			WHERE p.number_value IN (
+				SELECT c.card_id
+				FROM card c
+				JOIN attribute_value vp ON c.card_id=vp.card_id
+					AND vp.attribute_code IN ('JBR_RASSM_PERSON', 'JBR_SIGN_RESPONSIBLE','JBR_VISA_RESPONSIBLE')
+				JOIN attribute_value vu ON c.card_id=vu.card_id
+					AND vu.attribute_code='JBR_HOWFAST'
+				WHERE vp.number_value in (%CURRENTUSERS%)
+					AND vu.value_id=1912
+					AND c.status_id IN (102, 107, 108)
+			)
+			order by inDate.date_value
+		]]>
+		</sql>
+	</query>
+</searchQuery>

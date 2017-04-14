@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Поручение" template_id="324">
+        <Permission Status="103" Rule="Регистратор ВХ">
+            <Operations/>
+            <WfMoves>
+                <WfMove permHash="abf4e6fe175f5b7baaed50c88ba9d6fc"
+                    name="no_name_workflow-408274" wfm_id="408274" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="103" Rule="Старший регистратор">
+            <Operations>
+                <Operation permHash="3c3a4ab247a166a35b5b67510a872195"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="5c87894c271677961650b8e7ab02f80a"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="cc5f3aba666cb44cca3a8ea13dfb7d14"
+                    name="Исполнено-34147" wfm_id="34147" Action="add"/>
+                <WfMove permHash="48719a20d160c4573eb88903f2250c41"
+                    name="no_name_workflow-408274" wfm_id="408274" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="103" Rule="Старший регистратор ВХ">
+            <Operations/>
+            <WfMoves>
+                <WfMove permHash="7a00307ea39e6c7079cb952e5c32d8ec"
+                    name="no_name_workflow-408274" wfm_id="408274" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д1_Визирующие" ruleHash="508d1efbff5e73ef8d341dccc4520dff">
+                <RulePerson name="Д1_Визирующие"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE"
+                    ruleHash="508d1efbff5e73ef8d341dccc4520dff" link="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Д1_Исполнители доч.резолюций 1ур" ruleHash="cd3a86c6887c4f5d2d9f3bd569d00676">
+                <RulePerson name="Д1_Исполнители доч.резолюций 1ур"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="cd3a86c6887c4f5d2d9f3bd569d00676" link="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д1_Исполнители род.резолюций 1ур" ruleHash="df1f96d547520d4d1a0d8c50ccd5ac3f">
+                <RulePerson name="Д1_Исполнители род.резолюций 1ур"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="df1f96d547520d4d1a0d8c50ccd5ac3f" link="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д1_Контролер доч.резолюций 1ур" ruleHash="0ec80bebc3e0044932281c62ca22a4ff">
+                <RulePerson name="Д1_Контролер доч.резолюций 1ур"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="0ec80bebc3e0044932281c62ca22a4ff" link="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д1_Контролер по документу ВН" ruleHash="bdfaa27e082a090d8e28417b168cf03c">
+                <RulePerson name="Д1_Контролер по документу ВН"
+                    personAttributeCode="JBR_IMPL_INSPECTOR"
+                    ruleHash="bdfaa27e082a090d8e28417b168cf03c" link="JBR_DOCB_BYDOC"/>
+            </Rule>
+            <Rule name="Д1_Контролер род.резолюций 1ур" ruleHash="c92b767778b04f7c5580aefc93285256">
+                <RulePerson name="Д1_Контролер род.резолюций 1ур"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="c92b767778b04f7c5580aefc93285256" link="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д1_Подписант доч.резолюций 1ур" ruleHash="3d99c2b0e58469c2d62bc9f5abfad5fc">
+                <RulePerson name="Д1_Подписант доч.резолюций 1ур"
+                    personAttributeCode="JBR_INFD_SGNEX_LINK"
+                    ruleHash="3d99c2b0e58469c2d62bc9f5abfad5fc" link="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д1_ Подписант род.резолюций 1ур" ruleHash="875ac592b12909807f24a2249c9e5759">
+                <RulePerson name="Д1_ Подписант род.резолюций 1ур"
+                    personAttributeCode="JBR_INFD_SGNEX_LINK"
+                    ruleHash="875ac592b12909807f24a2249c9e5759" link="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д1_Регистратор_ДО-ВН" ruleHash="d0f63f2f2838f793f6bf02ae3cb03311">
+                <RulePerson name="Д1_Регистратор_ДО-ВН"
+                    personAttributeCode="JBR_REGD_REGISTRAR"
+                    ruleHash="d0f63f2f2838f793f6bf02ae3cb03311" link="JBR_DOCB_BYDOC"/>
+            </Rule>
+            <Rule name="Д1_Соисполнители род.резолюций 1 ур" ruleHash="965f2109024ffd005353ef49bbb397cf">
+                <RulePerson name="Д1_Соисполнители род.резолюций 1 ур"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="965f2109024ffd005353ef49bbb397cf" link="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д1_Соисполнитель доч.резолюций 1ур" ruleHash="bfcf464204971c88930ecb943d96f943">
+                <RulePerson name="Д1_Соисполнитель доч.резолюций 1ур"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="bfcf464204971c88930ecb943d96f943" link="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule
+                name="Д2_Исполнители всех резолюций документа основания" ruleHash="cce3288ebc88fb599721b5b156c2496d">
+                <RulePerson
+                    name="Д2_Исполнители всех резолюций документа основания"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="cce3288ebc88fb599721b5b156c2496d"
+                    link="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Исполнители доч.резолюций" ruleHash="5f0d9a7c8ef48d9a1b68ba02aa45adbb">
+                <RulePerson name="Д2_Исполнители доч.резолюций"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="5f0d9a7c8ef48d9a1b68ba02aa45adbb"
+                    link="JBR_RIMP_RELASSIG" intermedAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д2_Исполнитель род.резолюции 2ур" ruleHash="8b4e328a33ac743476cd61c3f95a4962">
+                <RulePerson name="Д2_Исполнитель род.резолюции 2ур"
+                    personAttributeCode="JBR_INFD_EXEC_LINK"
+                    ruleHash="8b4e328a33ac743476cd61c3f95a4962"
+                    link="JBR_RIMP_PARASSIG" intermedAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д2_Контролер всех резолюции документа основания" ruleHash="d1b41e86c39602fd666e358640122d3a">
+                <RulePerson
+                    name="Д2_Контролер всех резолюции документа основания"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="d1b41e86c39602fd666e358640122d3a"
+                    link="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Контролер доч.резолюции" ruleHash="b432fc9cf2e4f8fca03d67437bf89903">
+                <RulePerson name="Д2_Контролер доч.резолюции"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="b432fc9cf2e4f8fca03d67437bf89903"
+                    link="JBR_RIMP_RELASSIG" intermedAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д2_Контролер род.резолюции" ruleHash="9e2e75efc6a4a2fb1b4f771d62333a00">
+                <RulePerson name="Д2_Контролер род.резолюции"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="9e2e75efc6a4a2fb1b4f771d62333a00"
+                    link="JBR_RIMP_PARASSIG" intermedAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д2_Подписант доч.резолюций 2ур" ruleHash="4f6251caa5a4d93db0a3ba3bdb188c71">
+                <RulePerson name="Д2_Подписант доч.резолюций 2ур"
+                    personAttributeCode="JBR_INFD_SGNEX_LINK"
+                    ruleHash="4f6251caa5a4d93db0a3ba3bdb188c71"
+                    link="JBR_RIMP_RELASSIG" intermedAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д2_Подписант род.резолюций 2ур" ruleHash="2eb95f9b8314b47cb8cfafb91c273c1e">
+                <RulePerson name="Д2_Подписант род.резолюций 2ур"
+                    personAttributeCode="JBR_INFD_SGNEX_LINK"
+                    ruleHash="2eb95f9b8314b47cb8cfafb91c273c1e"
+                    link="JBR_RIMP_PARASSIG" intermedAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д2_Рассматривающий ДО-ВН" ruleHash="88a76c952f27d027ee0877abe1f0aecf">
+                <RulePerson name="Д2_Рассматривающий ДО-ВН"
+                    personAttributeCode="JBR_IMPL_ACQUAINTERS"
+                    ruleHash="88a76c952f27d027ee0877abe1f0aecf"
+                    link="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_IMPL_ACQUAINT"/>
+            </Rule>
+            <Rule
+                name="Д2_Соисполнители всех резолюций документа основания" ruleHash="aad17fea112cf1340912132ff388ec93">
+                <RulePerson
+                    name="Д2_Соисполнители всех резолюций документа основания"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="aad17fea112cf1340912132ff388ec93"
+                    link="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель доч.резолюции" ruleHash="7929e94d5d7aac5de79ef3a82dc30e4b">
+                <RulePerson name="Д2_Соисполнитель доч.резолюции"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="7929e94d5d7aac5de79ef3a82dc30e4b"
+                    link="JBR_RIMP_RELASSIG" intermedAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель род.резолюции" ruleHash="3d8510109258de3c3c6ab3e7eb212e50">
+                <RulePerson name="Д2_Соисполнитель род.резолюции"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="3d8510109258de3c3c6ab3e7eb212e50"
+                    link="JBR_RIMP_PARASSIG" intermedAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Д_Исполнитель" ruleHash="9633fca09f45fe8c22e67f1cfa387a1c">
+                <RulePerson name="Д_Исполнитель"
+                    personAttributeCode="JBR_INFD_EXEC_LINK" ruleHash="9633fca09f45fe8c22e67f1cfa387a1c"/>
+            </Rule>
+            <Rule name="Д_Контролер" ruleHash="63194d16e29a7c1d0a95cf003fdd0814">
+                <RulePerson name="Д_Контролер"
+                    personAttributeCode="JBR_TCON_INSPECTOR" ruleHash="63194d16e29a7c1d0a95cf003fdd0814"/>
+            </Rule>
+            <Rule name="Д_Подписант поручения" ruleHash="11b62d53283e9d79e012a094ddd85519">
+                <RulePerson name="Д_Подписант поручения"
+                    personAttributeCode="JBR_INFD_SGNEX_LINK" ruleHash="11b62d53283e9d79e012a094ddd85519"/>
+            </Rule>
+            <Rule name="Д_Соисполнители" ruleHash="24f7a1077654eaee5945b51d3d32c1bd">
+                <RulePerson name="Д_Соисполнители"
+                    personAttributeCode="ADMIN_255974" ruleHash="24f7a1077654eaee5945b51d3d32c1bd"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Исполнитель поручений с правом перепоручения" ruleHash="987c2c8e83e139819a55a6e4c65ed2e6">
+                <RuleRole
+                    name="Исполнитель поручений с правом перепоручения"
+                    ruleHash="987c2c8e83e139819a55a6e4c65ed2e6" roleCode="JBR_INSTR_EXEC_INSTR"/>
+            </Rule>
+            <Rule name="Помощник руководителя" ruleHash="4de9036f0d0a0e1cc9ee60739603042b">
+                <RuleRole name="Помощник руководителя"
+                    ruleHash="4de9036f0d0a0e1cc9ee60739603042b" roleCode="JBR_MH"/>
+            </Rule>
+            <Rule name="Регистратор" ruleHash="6e7274e128c0b4fadb05753594d7937a">
+                <RuleRole name="Регистратор"
+                    ruleHash="6e7274e128c0b4fadb05753594d7937a" roleCode="JBR"/>
+            </Rule>
+            <Rule name="Регистратор ВН" ruleHash="9b0c524893417a22e1451fe0ceee2381">
+                <RuleRole name="Регистратор ВН"
+                    ruleHash="9b0c524893417a22e1451fe0ceee2381" roleCode="JBR_INTERNAL"/>
+            </Rule>
+            <Rule name="Регистратор ВХ" ruleHash="878c9d4ba359a05651524e5c94cf14c9">
+                <RuleRole name="Регистратор ВХ"
+                    ruleHash="878c9d4ba359a05651524e5c94cf14c9" roleCode="JBR_INCOMING"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+            <Rule name="Старший регистратор" ruleHash="de5d0962786dd481fc7cc645be1d35b1">
+                <RuleRole name="Старший регистратор"
+                    ruleHash="de5d0962786dd481fc7cc645be1d35b1" roleCode="JBR_CHR"/>
+            </Rule>
+            <Rule name="Старший регистратор ВХ" ruleHash="d88fb39b6ea3e77baf773702de8b7baf">
+                <RuleRole name="Старший регистратор ВХ"
+                    ruleHash="d88fb39b6ea3e77baf773702de8b7baf" roleCode="JBR_INCOMING_CHR"/>
+            </Rule>
+            <Rule name="Читатель всех документов" ruleHash="69e1fc9d9c3e31e67697883394568a65">
+                <RuleRole name="Читатель всех документов"
+                    ruleHash="69e1fc9d9c3e31e67697883394568a65" roleCode="JBR_READER"/>
+            </Rule>
+            <Rule
+                name="Пр1_Пом для/Исполнители всех резолюций документа основания" ruleHash="37621ccbdf617c57c1998409016b55ef">
+                <RuleProfile
+                    name="Пр1_Пом для/Исполнители всех резолюций документа основания"
+                    ruleHash="37621ccbdf617c57c1998409016b55ef"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_INFD_EXEC_LINK"
+                    linkAttributeCode="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Исполнитель доч.резолюции" ruleHash="02924e30f4c7296b249169df0b6b15a6">
+                <RuleProfile
+                    name="Пр1_Пом для/Исполнитель доч.резолюции"
+                    ruleHash="02924e30f4c7296b249169df0b6b15a6"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_INFD_EXECUTOR" linkAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Исполнитель род.резолюции" ruleHash="ba904f046843c40918ddfcc02d6ba6aa">
+                <RuleProfile
+                    name="Пр1_Пом для/Исполнитель род.резолюции"
+                    ruleHash="ba904f046843c40918ddfcc02d6ba6aa"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_INFD_EXEC_LINK" linkAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule
+                name="Пр1_Пом для/Контроллер всех резолюций документа основания" ruleHash="190bae83ca65fa0160c650a46ed1f986">
+                <RuleProfile
+                    name="Пр1_Пом для/Контроллер всех резолюций документа основания"
+                    ruleHash="190bae83ca65fa0160c650a46ed1f986"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_TCON_INSPECTOR"
+                    linkAttributeCode="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule
+                name="Пр1_Пом для/Соисполнитель всех резолюций документа основания" ruleHash="07f0846e522d8878da0def541d8e26a9">
+                <RuleProfile
+                    name="Пр1_Пом для/Соисполнитель всех резолюций документа основания"
+                    ruleHash="07f0846e522d8878da0def541d8e26a9"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="ADMIN_255974"
+                    linkAttributeCode="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_ALL_RESOLUTIONS"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Соисполнитель доч.резолюции" ruleHash="7ed2028a48c524dba0c2558f3908c604">
+                <RuleProfile
+                    name="Пр1_Пом для/Соисполнитель доч.резолюции"
+                    ruleHash="7ed2028a48c524dba0c2558f3908c604"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="ADMIN_255974" linkAttributeCode="JBR_RIMP_RELASSIG"/>
+            </Rule>
+            <Rule name="Пр1_Пом для/Соисполнитель род.резолюции" ruleHash="9f678f3acf563bb9b58e91a3b78723da">
+                <RuleProfile
+                    name="Пр1_Пом для/Соисполнитель род.резолюции"
+                    ruleHash="9f678f3acf563bb9b58e91a3b78723da"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="ADMIN_255974" linkAttributeCode="JBR_RIMP_PARASSIG"/>
+            </Rule>
+            <Rule name="Пр2_Пом для\Рассматривающий ДО-ВН" ruleHash="5595372a55c6c553982de11cfe4e1bf5">
+                <RuleProfile name="Пр2_Пом для\Рассматривающий ДО-ВН"
+                    ruleHash="5595372a55c6c553982de11cfe4e1bf5"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_IMPL_ACQUAINTERS"
+                    linkAttributeCode="JBR_DOCB_BYDOC" intermedAttributeCode="JBR_IMPL_ACQUAINT"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Исполнитель" ruleHash="5776db05210491487464e0a6111903fd">
+                <RuleProfile name="Пр_Пом для/Исполнитель"
+                    ruleHash="5776db05210491487464e0a6111903fd"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_INFD_EXECUTOR"/>
+            </Rule>
+            <Rule name="Пр_ Пом для/Подписант поручения" ruleHash="de76a6d2be59d48d6e7f43cf5d28d456">
+                <RuleProfile name="Пр_ Пом для/Подписант поручения"
+                    ruleHash="de76a6d2be59d48d6e7f43cf5d28d456"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_INFD_SGNEX_LINK"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Соисполнитель" ruleHash="02e65a663bd466dcaf2f70d3ebdc9809">
+                <RuleProfile name="Пр_Пом для/Соисполнитель"
+                    ruleHash="02e65a663bd466dcaf2f70d3ebdc9809"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="ADMIN_255974"/>
+            </Rule>
+            <Rule name="Дел_Документ-основание" ruleHash="e6fda027d772fe0b8d4fa22195d0fccf">
+                <RuleDelegation name="Дел_Документ-основание"
+                    ruleHash="e6fda027d772fe0b8d4fa22195d0fccf" linkAttributeCode="JBR_MAINDOC"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Закрыто в связи с завершением родительского" status_id="43697"/>
+        <Status name="Исполнен" status_id="206"/>
+        <Status name="Исполнение" status_id="103"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Отменен" status_id="34145"/>
+        <Status name="Проект согласован" status_id="10001050"/>
+        <Status name="Согласование" status_id="107"/>
+        <Status name="Утвержден" status_id="207"/>
+        <Status name="Черновик" status_id="1"/>
+        <WFMoveType name="no_name_workflow-408274" wfm_id="408274"
+            wfm_from="Исполнение" wfm_to="Отменен" wfm_from_status="103" wfm_to_status="34145"/>
+        <WFMoveType name="no_name_workflow-408275" wfm_id="408275"
+            wfm_from="Черновик" wfm_to="Корзина" wfm_from_status="1" wfm_to_status="303990"/>
+        <WFMoveType name="Завершить зависимые-43733" wfm_id="43733"
+            wfm_from="Черновик"
+            wfm_to="Закрыто в связи с завершением родительского"
+            wfm_from_status="1" wfm_to_status="43697"/>
+        <WFMoveType name="Закрыть-43698" wfm_id="43698"
+            wfm_from="Исполнение"
+            wfm_to="Закрыто в связи с завершением родительского"
+            wfm_from_status="103" wfm_to_status="43697"/>
+        <WFMoveType name="Исполнено-34147" wfm_id="34147"
+            wfm_from="Исполнение" wfm_to="Исполнен"
+            wfm_from_status="103" wfm_to_status="206"/>
+        <WFMoveType name="На исполнение 1-1160791" wfm_id="1160791"
+            wfm_from="Черновик" wfm_to="Исполнение" wfm_from_status="1" wfm_to_status="103"/>
+        <WFMoveType name="Направить проект на согласование-409000"
+            wfm_id="409000" wfm_from="Черновик" wfm_to="Согласование"
+            wfm_from_status="1" wfm_to_status="107"/>
+        <WFMoveType name="Отклонить-34149" wfm_id="34149"
+            wfm_from="Исполнен" wfm_to="Исполнение"
+            wfm_from_status="206" wfm_to_status="103"/>
+        <WFMoveType name="Отменить-409040" wfm_id="409040"
+            wfm_from="Проект согласован" wfm_to="Отменен"
+            wfm_from_status="10001050" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-34151" wfm_id="34151"
+            wfm_from="Черновик" wfm_to="Отменен" wfm_from_status="1" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-409030" wfm_id="409030"
+            wfm_from="Согласование" wfm_to="Отменен"
+            wfm_from_status="107" wfm_to_status="34145"/>
+        <WFMoveType name="Проект согласован-409010" wfm_id="409010"
+            wfm_from="Согласование" wfm_to="Проект согласован"
+            wfm_from_status="107" wfm_to_status="10001050"/>
+        <WFMoveType name="Согласование завершено-409020" wfm_id="409020"
+            wfm_from="Проект согласован" wfm_to="Черновик"
+            wfm_from_status="10001050" wfm_to_status="1"/>
+        <WFMoveType name="Технический-409050" wfm_id="409050"
+            wfm_from="Согласование" wfm_to="Черновик"
+            wfm_from_status="107" wfm_to_status="1"/>
+        <WFMoveType name="Утвердить-34148" wfm_id="34148"
+            wfm_from="Исполнен" wfm_to="Утвержден" wfm_from_status="206" wfm_to_status="207"/>
+    </Template>
+</AccessConfig>

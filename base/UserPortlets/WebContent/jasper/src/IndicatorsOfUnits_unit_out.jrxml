@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IndicatorsOfUnits_unit_in" pageWidth="555" pageHeight="500" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" fontName="Times New Roman" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="def2" fontName="Times New Roman" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="card_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select vl.value_rus,
+	CASE
+		WHEN	counting.count is NULL 	THEN '0'
+		ELSE counting.count
+	END as "count",
+	CASE
+		WHEN	counting_day.count is NULL 	THEN '0'
+		ELSE counting_day.count
+	END as "count_day"
+ from values_list vl
+	LEFT OUTER JOIN (select av_typeName.value_rus, av_recType.value_id, count (av_typeName.value_rus) from card c
+			JOIN attribute_value av_n on c.card_id = av_n.card_id and av_n.attribute_code = 'JBR_REGD_REGNUM'
+			JOIN attribute_value av_d on c.card_id = av_d.card_id and av_d.attribute_code = 'JBR_REGD_DATEREG'
+			JOIN attribute_value av_rec on c.card_id = av_rec.card_id and av_rec.attribute_code = 'JBR_INFD_EXECUTOR'
+			JOIN person p on av_rec.number_value = p.person_id
+			JOIN attribute_value av_recCard on p.card_id = av_recCard.card_id and av_recCard.attribute_code = 'JBR_PERS_DEPT_LINK'
+
+			JOIN attribute_value av_list on c.card_id = av_list.card_id and av_list.attribute_code = 'ADMIN_222990'
+			JOIN card list_card on av_list.number_value = list_card.card_id
+			JOIN attribute_value av_recType on list_card.card_id = av_recType.card_id and av_recType.attribute_code = 'ADMIN_222147'
+			JOIN values_list av_typeName on av_recType.value_id = av_typeName.value_id
+	where c.template_id = 364 AND
+			list_card.status_id = 556656 and
+			av_recCard.number_value in ($P!{card_id}) and
+			av_d.date_value >=date_trunc('year',$P{date}::timestamp) and
+			av_d.date_value <date_trunc('year',$P{date}::timestamp) + INTERVAL '1 YEAR'
+	GROUP BY av_recType.value_id, av_typeName.value_rus
+	) as counting
+		on vl.value_id = counting.value_id
+	LEFT OUTER JOIN (select av_typeName.value_rus, av_recType.value_id, count (av_typeName.value_rus) from card c
+			JOIN attribute_value av_n on c.card_id = av_n.card_id and av_n.attribute_code = 'JBR_REGD_REGNUM'
+			JOIN attribute_value av_d on c.card_id = av_d.card_id and av_d.attribute_code = 'JBR_REGD_DATEREG'
+			JOIN attribute_value av_rec on c.card_id = av_rec.card_id and av_rec.attribute_code = 'JBR_INFD_EXECUTOR'
+			JOIN person p on av_rec.number_value = p.person_id
+			JOIN attribute_value av_recCard on p.card_id = av_recCard.card_id and av_recCard.attribute_code = 'JBR_PERS_DEPT_LINK'
+
+			JOIN attribute_value av_list on c.card_id = av_list.card_id and av_list.attribute_code = 'ADMIN_222990'
+			JOIN card list_card on av_list.number_value = list_card.card_id
+			JOIN attribute_value av_recType on list_card.card_id = av_recType.card_id and av_recType.attribute_code = 'ADMIN_222147'
+			JOIN values_list av_typeName on av_recType.value_id = av_typeName.value_id
+	where c.template_id = 364 AND
+			list_card.status_id = 556656 and
+			av_recCard.number_value in ($P!{card_id}) and
+			av_d.date_value >=date_trunc('day',$P{date}::timestamp) and
+			av_d.date_value <date_trunc('day',$P{date}::timestamp) + INTERVAL '1 DAY'
+	GROUP BY av_recType.value_id, av_typeName.value_rus
+	) as counting_day
+		on vl.value_id = counting_day.value_id
+where vl.ref_code = 'ADMIN_222146'
+ORDER BY vl.value_rus]]>
+	</queryString>
+	<field name="value_rus" class="java.lang.String"/>
+	<field name="count" class="java.lang.Long"/>
+	<field name="count_day" class="java.lang.Long"/>
+	<variable name="variable1" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{variable1}+1]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="15">
+			<staticText>
+				<reportElement style="def2" x="26" y="0" width="309" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[      - По способу отправки:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def2" x="335" y="0" width="110" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def2" x="445" y="0" width="110" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def2" x="0" y="0" width="26" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[7]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement style="def2" x="26" y="0" width="309" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["         "+$F{value_rus}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def2" x="335" y="0" width="110" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def2" x="445" y="0" width="110" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count_day}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def2" x="0" y="0" width="26" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["7."+$V{variable1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

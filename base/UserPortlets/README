@@ -1,0 +1,24 @@
+  Настройка JBoss
+===================
+
+1. Чтобы DownloadServlet не возвращал ошибку 404 при обращении из ContentPortlet,
+необходимо произвести настройку сервера приложений JBoss:
+в файле $JBOSS_HOME/server/default/deploy/jboss-web.deployer/server.xml
+раскомментировать строку
+
+<Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+
+
+2. Если при открытии портлета просмотра карточки выдаётся ошибка
+"Unable to compile class for JSP", необходимо добавить следующие
+инициализационные параметры сервлету jsp
+(файл $JBOSS_HOME/server/default/deploy/jboss-web.deployer/conf/web.xml):
+
+<init-param>
+   <param-name>compilerSourceVM</param-name>
+   <param-value>1.5</param-value>
+</init-param>
+<init-param>
+   <param-name>compilerTargetVM</param-name>
+   <param-value>1.5</param-value>
+</init-param>

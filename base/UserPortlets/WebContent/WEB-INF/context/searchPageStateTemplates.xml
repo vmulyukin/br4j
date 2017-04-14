@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="templateInternal" class="com.aplana.dbmi.model.Template" >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="784" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="templateIncome" class="com.aplana.dbmi.model.Template" >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="224" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="templateOutcome" class="com.aplana.dbmi.model.Template">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="364" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="templateCitizenRequest" class="com.aplana.dbmi.model.Template" >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="864" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="templateNPA" class="com.aplana.dbmi.model.Template" >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="1226" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Приказы - ОРД -->
+	<bean id="templateOrders" class="com.aplana.dbmi.model.Template" >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="764" />
+			</bean>
+		</property>
+	</bean>
+
+	
+	<bean id="inStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="incomingTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="income" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="ordersStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="ordersTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="orders" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="npaStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="npaTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="npa" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="indepResStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="indepResTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="indep" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Входящий шаблон -->
+	<bean id="incomingTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="224" />
+			</bean>
+		</property>
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.incomingTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.incomingTemplate" />
+		
+	</bean>
+	
+	<!-- Приказы(ОРД) шаблон -->
+	<bean id="ordersTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="764" />
+			</bean>
+		</property>
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="search.orders" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.orders" />
+		
+	</bean>
+	
+	<!-- НПА шаблон -->
+	<bean id="npaTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="1226" />
+			</bean>
+		</property>
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="search.npa" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.npa" />
+		
+	</bean>
+	
+	<!-- Независимое поручение шаблон -->
+	<bean id="indepResTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="1255" />
+			</bean>
+		</property>
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="search.indep" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.indep" />
+		
+	</bean>
+	
+	<bean id="outStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="outgoingTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="outcome" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Исходящий шаблон -->
+	<bean id="outgoingTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="364" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.outgoingTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.outgoingTemplate" />
+		
+	</bean>
+			
+	<bean id="interStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="internalTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="internal" />
+			</bean>
+		</constructor-arg>
+	</bean>
+			
+	<!-- Внутренний шаблон -->
+	<bean id="internalTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="784" />
+			</bean>
+		</property>
+		
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.internalTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.internalTemplate" />
+		
+	</bean>
+	
+	<bean id="ordStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="ordTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="ord" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	
+	<!-- ОРД шаблон -->
+	<bean id="ordTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="764" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.ordTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.ordTemplate" />
+		
+	</bean>
+
+	<bean id="citizenRequestStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="citizenRequestTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="citizenReq" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Обращения Граждан шаблон -->
+	<bean id="citizenRequestTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="864" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.ogTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.ogTemplate" />
+		
+	</bean>
+	
+	<bean id="responseToCitizenRequestStateSearchItemTemplateWS" class="com.aplana.dbmi.model.TemplateStateSearchItem"  scope="prototype">
+		<constructor-arg ref="responseToCitizenRequestTemplateWS" />
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateStateSearchItem" />
+				<constructor-arg value="response" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Исходящий на обращения Граждан шаблон -->
+	<bean id="responseToCitizenRequestTemplateWS" class="com.aplana.dbmi.model.Template"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.Template" />
+				<constructor-arg value="777" />
+			</bean>
+		</property>
+		
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.ogAnswerTemplate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.ogAnswerTemplate" />
+		
+	</bean>				
+	
+	<!--Тип документа(шаблон) -->
+	<bean id="templateWS" class="com.aplana.dbmi.model.MultipleStateSearchItemAttribute"  scope="prototype">
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.documentType" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.documentType" />
+	
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" />
+				<constructor-arg value="_TEMPLATE_SEARCH_WS" />
+			</bean>
+		</property>
+		<property name="values">
+			<list>
+				<ref bean="inStateSearchItemTemplateWS" />
+				<ref bean="outStateSearchItemTemplateWS" />
+				<ref bean="interStateSearchItemTemplateWS" />
+				<ref bean="ordStateSearchItemTemplateWS" />
+				<ref bean="citizenRequestStateSearchItemTemplateWS" />
+				<ref bean="indepResStateSearchItemTemplateWS" />
+			</list>	
+		</property>
+		
+	</bean>
+	
+	<bean id="pCabinetTemplateId" parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" />
+				<constructor-arg value="_TEMPLATE_SEARCH_PCABINET" />
+	</bean>
+	
+	
+	<!--Тип документа(шаблон) для Личного кабинета -->
+	<bean id="pCabinetTemplateWS" class="com.aplana.dbmi.model.MultipleStateSearchItemAttribute"  scope="prototype">
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.documentType" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.documentType" />
+		
+		<property name="initState" value="CHECKED"/>
+		<property name="showSelectAll" value="true"/>
+	
+		<property name="id" ref="pCabinetTemplateId"/>
+		<property name="values">
+			<list>
+				<ref bean="inStateSearchItemTemplateWS" />
+				<ref bean="outStateSearchItemTemplateWS" />
+				<ref bean="interStateSearchItemTemplateWS" />
+				<ref bean="citizenRequestStateSearchItemTemplateWS" />
+				<ref bean="ordersStateSearchItemTemplateWS" />
+			</list>	
+		</property>
+		
+	</bean>	
+	
+	
+	<!-- Статус : согласование -->
+	<bean id="approvingStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="107" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус : подписание -->
+	<bean id="singingStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="108" />
+			</bean>
+		</property>
+	</bean>	
+	
+	
+	<!-- Согласование -->
+	<bean id="coordinationStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="visaPrepare" />
+			</bean>
+		</constructor-arg>
+		<!-- key in property file -->
+		<property name="name" value="search.coordination" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="approvingStatusWS" />
+			</list>	
+		</property>
+	</bean>
+	
+	<!-- Подписание -->
+	<bean id="singingStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="signPrepare" />
+			</bean>
+		</constructor-arg>
+		<!-- key in property file -->
+		<property name="name" value="search.singing" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="singingStatusWS" />
+			</list>	
+		</property>
+	</bean>	
+	
+	<!-- Регистрация -->
+	<bean id="registrationStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="registration" />
+			</bean>
+		</constructor-arg>
+		<!-- key in property file -->
+		<property name="name" value="search.registration" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="registrationStatusWS" />
+			</list>	
+		</property>
+	</bean>			
+	
+	
+	<!-- согласование/подписание -->
+	<bean id="approveSignCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="approveSign" />
+			</bean>
+		</constructor-arg>
+		<!-- key in property file -->
+		<property name="name" value="workstation.search.status.signApprove" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="approvingStatusWS" />
+				<ref bean="singingStatusWS" />
+				
+			</list>	
+		</property>
+	</bean>
+	
+	<!-- Статус : Заполнение индекса дела -->
+	<bean id="indexFillingStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="355554" />
+			</bean>
+		</property>
+	</bean>	
+	
+	<!-- Статус : Проверка помощником министра -->
+	<bean id="ministerAssistantCheckStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="355555" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус : регистрация -->
+	<bean id="registrationStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="200" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус : зарегистрирован -->
+	<bean id="registeredStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="101" />
+			</bean>
+		</property>
+	</bean>			
+	
+	<!-- регистрация/зарегистрирован -->
+	<bean id="registrationSignCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="registration" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="workstation.search.status.registerRegistered" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="indexFillingStatusWS" />
+				<ref bean="ministerAssistantCheckStatusWS" />
+				<ref bean="registrationStatusWS" />
+				<ref bean="registeredStatusWS" />
+			</list>	
+		</property>
+	</bean>
+	
+	<!-- Зарегистрирован/рассмотрение -->
+	<bean id="registrationConsiderationCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="registrationConsider" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.registered" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="registeredStatusWS" />
+				<ref bean="considerationStatusWS" />
+			</list>	
+		</property>
+	</bean>	
+	
+		<!-- Зарегистрирован -->
+	<bean id="registeredCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="registrationConsider" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.registered" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="registeredStatusWS" />
+			</list>	
+		</property>
+	</bean>	
+	
+		<!-- рассмотрение -->
+	<bean id="considerationCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="сonsider" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.consider" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="considerationStatusWS" />
+			</list>	
+		</property>
+	</bean>	
+	
+	<!-- Статус : Рассмотрение -->
+	<bean id="considerationStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="102" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус : Исполнение -->
+	<bean id="executionStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="103" />
+			</bean>
+		</property>
+	</bean>		
+	
+	<!-- рассмотрение/исполнение -->
+	<bean id="considerExecCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="execution" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="workstation.search.status.execution" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="considerationStatusWS" />
+				<ref bean="executionStatusWS" />
+				
+			</list>	
+		</property>
+	</bean>
+	
+	<!-- Исполнение -->
+	<bean id="executionCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="execution" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.status.execution" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="executionStatusWS" />
+				
+			</list>	
+		</property>
+	</bean>	
+	
+	<!-- Статус : Исполнен -->
+	<bean id="executedStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="206" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус : Готов к списанию в дело -->
+	<bean id="readyStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="48909" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Статус :  в дело -->
+	<bean id="InDeloStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="104" />
+			</bean>
+		</property>
+	</bean>		
+	
+	
+	<!-- Черновик -->
+	<bean id="draftStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="1" />
+			</bean>
+		</property>
+	</bean>	
+	
+	<!-- Подготовка -->
+	<bean id="prepareStatusWS" class="com.aplana.dbmi.model.CardState"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardState" />
+				<constructor-arg value="106" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Черновик/подготовка -->
+	<bean id="draftPrepareStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="draftPrepare" />
+			</bean>
+		</constructor-arg>
+		<!-- key in property file -->
+		<property name="name" value="search.draft" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="draftStatusWS" />
+				<ref bean="prepareStatusWS" />
+				
+			</list>	
+		</property>
+	</bean>
+	
+	
+	
+	
+	
+	<!-- Исполнен/В дело -->
+	<bean id="executedCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="executed" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="workstation.search.status.executed" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="executedStatusWS" />
+				<ref bean="readyStatusWS" />
+				<ref bean="InDeloStatusWS" />
+				
+				
+			</list>	
+		</property>
+	</bean>
+	
+	<!-- Исполнен-->
+	<bean id="executedReadyCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="executedReady" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.status.executedReady" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="executedStatusWS" />
+				<ref bean="readyStatusWS" />
+			</list>	
+		</property>
+	</bean>				
+	
+	<!-- Исполнен-->
+	<bean id="inDeloCardStatusListStateSearchItemWS" class="com.aplana.dbmi.model.CardStatusListStateSearchItem"  scope="prototype">
+		<constructor-arg>
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardStatusListStateSearchItem" />
+				<constructor-arg value="inDelo" />
+			</bean>
+		</constructor-arg>
+	
+		<!-- key in property file -->
+		<property name="name" value="search.status.inDelo" />
+		
+		<property name="cardStates">
+			<list>
+				<ref bean="InDeloStatusWS" />
+				
+				
+			</list>	
+		</property>
+	</bean>	
+
+</beans>

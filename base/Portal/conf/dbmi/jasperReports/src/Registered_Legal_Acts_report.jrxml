@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Registered_Legal_Acts_report" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<parameter name="from_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[java.lang.Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\RB\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+vl.string_value as doc_type,
+regnumber.string_value as register_code,
+(
+    select actual_sign.date_value + interval '$P!{tz_hour} hour' from card c1
+    left outer join attribute_value signing on signing.card_id = c1.card_id and signing.attribute_code = 'JBR_SIGN_SIGNING'
+    left outer join attribute_value actual_sign on actual_sign.card_id = signing.number_value and actual_sign.attribute_code = 'JBR_SIGN_DATE'
+    where c1.card_id = c.card_id
+    order by actual_sign.date_value
+    limit 1
+) as actual_sign_date,
+descr.string_value as descryption
+from card c
+left outer join attribute_value regnumber on c.card_id = regnumber.card_id and regnumber.attribute_code = 'JBR_REGD_REGNUM'
+left outer join attribute_value regnumber_d on c.card_id = regnumber_d.card_id and regnumber_d.attribute_code = 'JBR_REGD_REGNUM_D'
+left outer join attribute_value regdate on c.card_id = regdate.card_id and regdate.attribute_code = 'JBR_REGD_DATEREG'
+left outer join attribute_value descr on c.card_id = descr.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+left outer join attribute_value doctype on c.card_id = doctype.card_id and doctype.attribute_code = 'JBR_INFD_TYPEDOC'
+left outer join --values_list vl on doctype.value_id = vl.value_id
+				attribute_value vl on (vl.card_id = doctype.number_value and vl.attribute_code = 'NAME' )
+where
+	c.template_id = 1226
+    and c.status_id in (101,103,206,48909,104)
+	and date_trunc('day', regdate.date_value + interval '$P!{tz_hour} hour') >= $P{from_date}
+	and date_trunc('day', regdate.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+	and ($P{document_type} is null or doctype.number_value in ($P!{document_type}))
+ORDER BY regnumber_d.number_value DESC, register_code DESC]]>
+	</queryString>
+	<field name="doc_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="register_code" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="actual_sign_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="descryption" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="75" splitType="Stretch">
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="32" y="40" width="500" height="30"/>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="500" height="30"/>
+					<subreportParameter name="document_type">
+						<subreportParameterExpression><![CDATA[$P{document_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "Registered_Legal_Acts_report_doctypes.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement x="0" y="0" width="565" height="37"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="def" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="37"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+					<textFieldExpression><![CDATA["Принятые нормативно-правовые акты" + '\n' +
+"за период c " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " +
+(new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="37" height="35"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[№ п/п]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="37" y="0" width="127" height="35"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Регистрационный номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="164" y="0" width="122" height="35"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата принятия]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="286" y="0" width="279" height="35"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Краткое содержание]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="37" height="34"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="37" y="0" width="127" height="34"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{register_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="164" y="0" width="122" height="34"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd.MM.yyyy HH:mm").format($F{actual_sign_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="286" y="0" width="279" height="34"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left">
+					<paragraph firstLineIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descryption}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

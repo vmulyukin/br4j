@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Project Help_subreport" pageWidth="802" pageHeight="802" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="com.aplana.dbmi.module.docflow.calendar.CalendarAPI"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+dep.number_value as depid,
+(
+	p_name.string_value || ' - '
+	|| pos.string_value
+	) negotiation_instance,
+in_date.date_value as incoming_date,
+plan_neg_date.date_value as planned_negotiation_date,
+neg_date.date_value as negotiation_date,
+cs.name_rus as status,
+case when sol.long_binary_value is not null and sol.long_binary_value <> '' and c.status_id in (1, 204, 205, 477934) then
+	xmlserialize(content (xpath(cast('/report/part[text()!=""][last()]/text()' as varchar),
+	cast(encode(sol.long_binary_value, 'escape') as xml)))[1] as varchar)
+else ''
+end
+as decision,
+
+case
+	when c.status_id in (1, 205, 41466, 477933)  or plan_neg_date.date_value is null then false
+	when neg_date.date_value is null and CURRENT_DATE > date_trunc('day', plan_neg_date.date_value) then true
+	when date_trunc('day', neg_date.date_value) > date_trunc('day', plan_neg_date.date_value) then true
+	else false
+end
+as overdue,
+stage.number_value as sign_stage
+from card c
+join attribute_value pcard on c.card_id = pcard.number_value and pcard.attribute_code = 'JBR_SIGN_SIGNING'
+join card pc on pcard.card_id = pc.card_id
+left outer join attribute_value neg_inst on pcard.number_value = neg_inst.card_id and neg_inst.attribute_code  = 'JBR_SIGN_RESPONSIBLE'
+left outer join attribute_value stage on c.card_id = stage.card_id and stage.attribute_code = 'JBR_SIGN_NUMBER'
+
+left outer join person p on neg_inst.number_value = p.person_id
+left outer join attribute_value p_name on p_name.card_id = p.card_id and p_name.attribute_code = 'JBR_PERS_SNAME_NM'
+left outer join attribute_value dep on p.card_id = dep.card_id and dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+left outer join attribute_value dep_name on dep.number_value = dep_name.card_id and dep_name.attribute_code = 'NAME'
+left outer join attribute_value dep_chief on dep.number_value = dep_chief.card_id and dep_chief.attribute_code = 'JBR_DEPT_CHIEF' --chief's card
+left outer join attribute_value chief_name on chief_name.card_id = dep_chief.card_id and chief_name.attribute_code = 'JBR_PERS_SNAME_NM'
+left outer join attribute_value pos on p.card_id = pos.card_id and pos.attribute_code = 'JBR_PERS_POSITION'
+left outer join attribute_value in_date on pcard.number_value = in_date.card_id and in_date.attribute_code = 'JBR_INCOMEDATE' --Date
+left outer join attribute_value plan_neg_date on c.card_id = plan_neg_date.card_id and plan_neg_date.attribute_code = 'JBR_VISA_TODATE'--Date
+left outer join attribute_value neg_date on c.card_id = neg_date.card_id and neg_date.attribute_code = 'JBR_ACTAUL_DATE_SIGN'--Date
+left outer join card_status cs on c.status_id = cs.status_id
+left outer join attribute_value sol on c.card_id = sol.card_id and sol.attribute_code = 'JBR_SIGN_COMMENT'
+
+where pcard.card_id = $P{card_id} and c.status_id<>303990]]>
+	</queryString>
+	<field name="depid" class="java.lang.Long"/>
+	<field name="negotiation_instance" class="java.lang.String"/>
+	<field name="incoming_date" class="java.sql.Timestamp"/>
+	<field name="planned_negotiation_date" class="java.sql.Timestamp"/>
+	<field name="negotiation_date" class="java.sql.Timestamp"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="decision" class="java.lang.String"/>
+	<field name="overdue" class="java.lang.Boolean"/>
+	<field name="sign_stage" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="34" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="34" y="0" width="161" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new com.aplana.dbmi.jasperreports.Get2LevelDept()).print($P{REPORT_CONNECTION}, $F{depid}) + $F{negotiation_instance}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="195" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{incoming_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{incoming_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="255" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{negotiation_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{planned_negotiation_date}).toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="325" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{negotiation_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{negotiation_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="395" y="0" width="114" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="509" y="0" width="254" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{decision}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="763" y="0" width="39" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{overdue}.equals(Boolean.FALSE) ? "" :
+$F{planned_negotiation_date} == null ? "" :
+$F{negotiation_date} == null ?
+String.valueOf(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, new Date())
+)
+:
+String.valueOf(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, $F{negotiation_date})
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

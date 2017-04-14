@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<project name="Replication java from xsd generator" default="generate" basedir=".">
+	<description>Builds, tests, and runs the project Core-api.</description>
+
+	<target name="init">
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+			<classpath>
+				<fileset dir="${basedir}/../SharedLib">
+					<include name="commons-logging-1.1.1.jar" />
+					<include name="commons-lang-2.6.jar" />
+					<include name="jaxb-api.jar" />
+					<include name="jaxb-impl.jar" />
+					<include name="jaxb-xjc.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>
+	</target>
+
+	<target name="generate" depends="init"> 
+		<delete dir="${basedir}/ejbModule/com/aplana/dbmi/replication/servernodeconfig" />
+		<xjc destdir="${basedir}/ejbModule" package="com.aplana.dbmi.replication.servernodeconfig">
+			<schema dir="${basedir}" includes="ReplicationNodeConfig.xsd" />
+		</xjc>
+		<delete dir="${basedir}/ejbModule/com/aplana/dbmi/replication/templateconfig" />
+		<xjc destdir="${basedir}/ejbModule" package="com.aplana.dbmi.replication.templateconfig">
+			<schema dir="${basedir}" includes="ReplicationTemplateConfig.xsd" />
+		</xjc>
+		<delete dir="${basedir}/ejbModule/com/aplana/dbmi/replication/packageconfig" />
+		<xjc destdir="${basedir}/ejbModule" package="com.aplana.dbmi.replication.packageconfig">
+			<schema dir="${basedir}" includes="ReplicationPackage.xsd" />
+		</xjc>
+	</target>
+
+</project>

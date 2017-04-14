@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+							select distinct crds.card_id from (
+							
+							-- 1044(ADMIN_702311) -> 324('JBR_DOCB_BYDOC','JBR_MAINDOC') -> До
+							select c.card_id from card as c							
+							--  ДО у поручения (number_value = c.card_id)
+							join attribute_value as av_324 on av_324.number_value = c.card_id
+								and av_324.attribute_code in ('JBR_DOCB_BYDOC','JBR_MAINDOC')
+								and av_324.template_id = 324
+							-- По поручению у отчета
+							join attribute_value as av_1044 on av_1044.number_value = av_324.card_id 
+								and av_1044.attribute_code = 'ADMIN_702311'								
+							-- статусы отчета
+							join card as c_1044 on c_1044.card_id = av_1044.card_id and c_1044.status_id in (206,207,34145)
+								and c_1044.template_id = 1044
+							-- Исполнитель в отчете
+							join attribute_value as av_1 on av_1.card_id = c_1044.card_id 
+								and av_1.attribute_code in ('ADMIN_702335') and av_1.number_value = (%CURRENTUSERS%)							
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_1044.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))									
+												
+							union all
+						
+							-- До(JBR_IMPL_ACQUAINT) -> 504
+							select c.card_id from card as c 
+							-- рассмотрения в ДО (av_do.number_value)
+							join attribute_value as av_do on av_do.card_id = c.card_id and av_do.attribute_code = 'JBR_IMPL_ACQUAINT'
+							-- статусы рассмотрений 
+							join card as c_504 on c_504.card_id = av_do.number_value and c_504.status_id in (477679,477681,104,103,34145)
+								and c_504.template_id = 504
+							-- рассматривающий в рассмотрении
+							join attribute_value as av_1 on av_1.card_id = c_504.card_id 
+								and av_1.attribute_code in ('JBR_RASSM_PERSON') and av_1.number_value = (%CURRENTUSERS%)						
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_504.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))							
+												
+							union all
+					
+							-- До(JBR_INFORM_LIST) -> 524
+							select c.card_id from card as c 
+							-- ознакомление в ДО (av_do.number_value)
+							join attribute_value as av_do on av_do.card_id = c.card_id and av_do.attribute_code = 'JBR_INFORM_LIST'
+							-- статусы ознакомления 
+							join card as c_524 on c_524.card_id = av_do.number_value and c_524.status_id in (67425)
+								and c_524.template_id = 524
+							-- ознакамливающийся в ознакомлении
+							join attribute_value as av_1 on av_1.card_id = c_524.card_id
+								and av_1.attribute_code in ('JBR_FOR_INFORMATION') and av_1.number_value = (%CURRENTUSERS%)
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_524.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))							
+												
+							union all
+							
+							-- До(JBR_SIGN_SIGNING) -> 365
+							select c.card_id from card as c 
+							-- подписание в ДО (av_do.number_value)
+							join attribute_value as av_do on av_do.card_id = c.card_id and av_do.attribute_code = 'JBR_SIGN_SIGNING'
+							-- статусы подписания 
+							join card as c_365 on c_365.card_id = av_do.number_value and c_365.status_id in (204,477934,205,1)
+								and c_365.template_id = 365
+							-- подписант
+							join attribute_value as av_1 on av_1.card_id = c_365.card_id 
+								and av_1.attribute_code in ('JBR_SIGN_RESPONSIBLE') and av_1.number_value = (%CURRENTUSERS%)
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_365.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))
+							-- повторный статус
+							where exists (select 1 from card_version  as c_ver
+									join action_log as act_l on act_l.action_log_id = c_ver.action_log_id
+										and act_l.action_code = 'CHG_STATUS'
+									where c_ver.card_id = c_365.card_id
+									and c_ver.status_id = c_365.status_id)
+
+							union all
+
+							-- До(JBR_VISA_VISA) -> 348
+							select c.card_id from card as c 
+							-- визирование в ДО (av_do.number_value)
+							join attribute_value as av_do on av_do.card_id = c.card_id and av_do.attribute_code = 'JBR_VISA_VISA'
+							-- статусы визирования 
+							join card as c_348 on c_348.card_id = av_do.number_value and c_348.status_id in (201,6092498,202,1)
+								and c_348.template_id = 348
+							-- согласующий
+							join attribute_value as av_1 on av_1.card_id = c_348.card_id 
+								and av_1.attribute_code in ('JBR_VISA_RESPONSIBLE') and av_1.number_value = (%CURRENTUSERS%)
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_348.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))							
+							-- повторный статус	
+							where exists (select 1 from card_version  as c_ver
+									join action_log as act_l on act_l.action_log_id = c_ver.action_log_id
+										and act_l.action_code = 'CHG_STATUS'
+									where c_ver.card_id = c_348.card_id
+									and c_ver.status_id = c_348.status_id)
+					
+							union all
+
+							-- 2344(JBR_ADO_DOCBASE) -> До
+							select c.card_id from card as c 
+							-- До в проекте согл-я
+							join attribute_value as av_2344 on av_2344.number_value = c.card_id 
+								and av_2344.attribute_code = 'JBR_ADO_DOCBASE'
+							-- статусы проекта согл-я 
+							join card as c_2344 on c_2344.card_id = av_2344.card_id and c_2344.status_id in (201,34145)
+								and c_2344.template_id = 2344
+							-- согласующий
+							join attribute_value as av_1 on av_1.card_id = c_2344.card_id 
+								and av_1.attribute_code in ('JBR_VISA_RESPONSIBLE') and av_1.number_value = (%CURRENTUSERS%)
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_2344.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))															
+					
+							union all
+					
+							-- 1144(ADMIN_726877) -> До
+							select c.card_id from card as c 
+							-- До в ознакомлении 
+							join attribute_value as av_1144 on av_1144.number_value = c.card_id 
+								and av_1144.attribute_code = 'ADMIN_726877'
+							-- статусы ознакомления 
+							join card as c_1144 on c_1144.card_id = av_1144.card_id and c_1144.status_id in (67425)
+								and c_1144.template_id = 1144
+							-- ознакамливающийся
+							join attribute_value as av_1 on av_1.card_id = c_1144.card_id 
+								and av_1.attribute_code in ('ADMIN_726874') and av_1.number_value = (%CURRENTUSERS%)
+							-- интервал времени
+							join attribute_value as av_created on av_created.card_id = c_1144.card_id
+								and av_created.attribute_code ='CREATED' and av_created.date_value >= (CURRENT_TIMESTAMP - (interval '30 days'))
+							
+							
+					
+					) as crds
+			]]>
+		</sql>
+	</query>
+</searchQuery>

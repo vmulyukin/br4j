@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.jbr.processors">
+
+	<!-- =====================================================
+					CARDSTATE CHANGE
+		 ===================================================== 
+	-->
+	<action type="ChangeState">
+		<specific property="workflowMove.toState" value="delo" async="true" priority="0">
+			<specific property="card.template" value="jbr.ord">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process>			
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.document.executor;
+						link:jbr.visa.set->user:jbr.visa.person;
+						link:jbr.visa.set->user:jbr.visa.actual_consent;
+						link:jbr.visa.set->user:jbr.visa.previous.person;
+						link:jbr.sign.set->user:jbr.sign.person;
+						link:jbr.sign.set->user:jbr.sign.actual_signer;
+						link:jbr.sign.set->user:jbr.sign.previous.person;
+						backLink:jbr.allResolutions->user:jbr.resolution.FioSign;
+						backLink:jbr.allResolutions->user:jbr.AssignmentExecutor;
+						backLink:jbr.allResolutions->user:jbr.CoExecutor;
+						backLink:jbr.allResolutions->user:jbr.commission.inspector;
+						link:jbr.inform.list->user:jbr.information.person;
+						backLink:jbr.allResolutions->link:jbr.resolution.FyiReport->user:jbr.adnotamCommission.person;
+						user:jbr.incoming.inspector;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+					<parameter name="updateDB" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.visa,jbr.visa.ext,jbr.reservationRequest,jbr.medo_og.requestObject,jbr.sign,jbr.paperaction,
+											jbr.externalResolution,jbr.resolution,jbr.report.internal,jbr.paperaction,jbr.rassm,jbr.inform,
+											jbr.report.external" />
+					<parameter name="includedLinks" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor"  runOrder="15">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					
+					<parameter name="templatesToRemove" value="jbr.visa;jbr.visa.ext;jbr.reservationRequest;jbr.medo_og.requestObject;jbr.sign;jbr.paperaction;
+											jbr.externalResolution;jbr.resolution;jbr.report.internal;jbr.paperaction;jbr.rassm;jbr.inform;jbr.report.external"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					
+					<parameter name="linksToRemove" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent"/>
+					<parameter name="removeRootCardHistory" value="true"/>		
+				</post-process>  
+				<post-process class="DoDependentChangeState" runOrder="20">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process>
+			</specific>
+			<specific property="card.template" value="jbr.npa"> 
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process>
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.document.executor;
+						link:jbr.visa.set->user:jbr.visa.person;
+						link:jbr.visa.set->user:jbr.visa.actual_consent;
+						link:jbr.visa.set->user:jbr.visa.previous.person;
+						link:jbr.sign.set->user:jbr.sign.person;
+						link:jbr.sign.set->user:jbr.sign.actual_signer;
+						link:jbr.sign.set->user:jbr.sign.previous.person;
+						backLink:jbr.allResolutions->user:jbr.resolution.FioSign;
+						backLink:jbr.allResolutions->user:jbr.AssignmentExecutor;
+						backLink:jbr.allResolutions->user:jbr.CoExecutor;
+						backLink:jbr.allResolutions->user:jbr.commission.inspector;
+						link:jbr.inform.list->user:jbr.information.person;
+						backLink:jbr.allResolutions->link:jbr.resolution.FyiReport->user:jbr.adnotamCommission.person;
+						user:jbr.incoming.inspector;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+					<parameter name="updateDB" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.visa,jbr.visa.ext,jbr.reservationRequest,jbr.medo_og.requestObject,jbr.sign,jbr.paperaction,
+											jbr.externalResolution,jbr.resolution,jbr.report.internal,jbr.paperaction,jbr.rassm,jbr.inform,
+											jbr.report.external" />
+					<parameter name="includedLinks" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor"  runOrder="15">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					
+					<parameter name="templatesToRemove" value="jbr.visa;jbr.visa.ext;jbr.reservationRequest;jbr.medo_og.requestObject;jbr.sign;jbr.paperaction;
+											jbr.externalResolution;jbr.resolution;jbr.report.internal;jbr.paperaction;jbr.rassm;jbr.inform;jbr.report.external"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					
+					<parameter name="linksToRemove" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent"/>
+					<parameter name="removeRootCardHistory" value="true"/>	
+				</post-process>  
+				<post-process class="DoDependentChangeState" runOrder="20">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process>
+			</specific>
+			<specific property="card.template" value="jbr.outcoming"> 
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process>
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.document.executor;
+						link:jbr.visa.set->user:jbr.visa.person;
+						link:jbr.visa.set->user:jbr.visa.actual_consent;
+						link:jbr.visa.set->user:jbr.visa.previous.person;
+						link:jbr.sign.set->user:jbr.sign.person;
+						link:jbr.sign.set->user:jbr.sign.actual_signer;
+						link:jbr.sign.set->user:jbr.sign.previous.person;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+					<parameter name="updateDB" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.visa,jbr.visa.ext,jbr.reservationRequest,jbr.medo_og.requestObject,jbr.sign,jbr.paperaction" />
+					<parameter name="includedLinks" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor" runOrder="15">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					
+					<parameter name="templatesToRemove" value="jbr.visa;jbr.visa.ext;jbr.reservationRequest;jbr.medo_og.requestObject;jbr.sign;jbr.paperaction"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					
+					<parameter name="linksToRemove" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction"/>
+					<parameter name="removeRootCardHistory" value="true"/>		
+				</post-process> 
+				<post-process class="DoDependentChangeState" runOrder="20">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process> 
+			</specific>
+			<specific property="card.template" value="jbr.interndoc">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process>
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.document.executor;
+						user:jbr.incoming.addressee;
+						link:jbr.exam.set->user:jbr.exam.person;
+						link:jbr.exam.set->user:jbr.exam.previous.person;
+						link:jbr.exam.set->user:jbr.exam.last.previous.person;
+						link:jbr.visa.set->user:jbr.visa.person;
+						link:jbr.visa.set->user:jbr.visa.actual_consent;
+						link:jbr.visa.set->user:jbr.visa.previous.person;
+						link:jbr.sign.set->user:jbr.sign.person;
+						link:jbr.sign.set->user:jbr.sign.actual_signer;
+						link:jbr.sign.set->user:jbr.sign.previous.person;
+						backLink:jbr.allResolutions->user:jbr.resolution.FioSign;
+						backLink:jbr.allResolutions->user:jbr.AssignmentExecutor;
+						backLink:jbr.allResolutions->user:jbr.CoExecutor;
+						backLink:jbr.allResolutions->user:jbr.commission.inspector;
+						link:jbr.inform.list->user:jbr.information.person;
+						backLink:jbr.allResolutions->link:jbr.resolution.FyiReport->user:jbr.adnotamCommission.person;
+						user:jbr.incoming.inspector;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+					<parameter name="updateDB" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.visa,jbr.visa.ext,jbr.reservationRequest,jbr.medo_og.requestObject,jbr.sign,jbr.paperaction,
+											jbr.externalResolution,jbr.resolution,jbr.report.internal,jbr.paperaction,jbr.rassm,jbr.inform,
+											jbr.report.external" />
+					<parameter name="includedLinks" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor" runOrder="15">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					
+					<parameter name="templatesToRemove" value="jbr.visa;jbr.visa.ext;jbr.reservationRequest;jbr.medo_og.requestObject;jbr.sign;jbr.paperaction;
+											jbr.externalResolution;jbr.resolution;jbr.report.internal;jbr.paperaction;jbr.rassm;jbr.inform;jbr.report.external"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					
+					<parameter name="linksToRemove" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent"/>
+					<parameter name="removeRootCardHistory" value="true"/>	
+				</post-process>   
+				<post-process class="DoDependentChangeState" runOrder="20">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process>
+			</specific>
+			<specific property="card.template" value="jbr.incoming">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process> 
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.incoming.addressee;
+						link:jbr.exam.set->user:jbr.exam.person;
+						link:jbr.exam.set->user:jbr.exam.previous.person;
+						link:jbr.exam.set->user:jbr.exam.last.previous.person;
+						backLink:jbr.allResolutions->user:jbr.resolution.FioSign;
+						backLink:jbr.allResolutions->user:jbr.AssignmentExecutor;
+						backLink:jbr.allResolutions->user:jbr.CoExecutor;
+						backLink:jbr.allResolutions->user:jbr.commission.inspector;
+						link:jbr.inform.list->user:jbr.information.person;
+						backLink:jbr.allResolutions->link:jbr.resolution.FyiReport->user:jbr.adnotamCommission.person;
+						user:jbr.incoming.inspector;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+					<parameter name="updateDB" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.externalResolution,jbr.medo_og.requestObject,jbr.resolution,jbr.report.internal,
+								jbr.paperaction,jbr.rassm,jbr.inform,jbr.report.external" />
+					<parameter name="includedLinks" value="jbr.extResolutions;jbr.medo_og.reqObject;jbr.medo_og.initReqObject;
+							jbr.main.doc;jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor" runOrder="30">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					<parameter name="templatesToRemove" value="jbr.externalResolution;jbr.medo_og.requestObject;jbr.resolution;jbr.report.internal;
+								jbr.paperaction;jbr.rassm;jbr.inform;jbr.report.external"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					<parameter name="linksToRemove" value="jbr.extResolutions;jbr.medo_og.reqObject;jbr.medo_og.initReqObject;
+							jbr.main.doc;jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent"/>
+					<parameter name="removeRootCardHistory" value="true"/>
+				</post-process>
+				<post-process class="DoDependentChangeState" runOrder="40">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process>
+			</specific>
+			<specific property="card.template" value="jbr.citizenrequest">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="3">
+					<parameter name="dateAttributeId" value="jbr.doc.arch.date"/>
+				</post-process>
+				<post-process class="CopyPersonFromPaths" runOrder="5">
+					<parameter name="targetAttr" value="jbr.card.reader" />
+					<parameter name="paths"
+						value="user:jbr.incoming.addressee;
+						link:jbr.exam.set->user:jbr.exam.person;
+						link:jbr.exam.set->user:jbr.exam.previous.person;
+						link:jbr.exam.set->user:jbr.exam.last.previous.person;
+						backLink:jbr.allResolutions->user:jbr.resolution.FioSign;
+						backLink:jbr.allResolutions->user:jbr.AssignmentExecutor;
+						backLink:jbr.allResolutions->user:jbr.CoExecutor;
+						backLink:jbr.allResolutions->user:jbr.commission.inspector;
+						link:jbr.inform.list->user:jbr.information.person;
+						backLink:jbr.allResolutions->link:jbr.resolution.FyiReport->user:jbr.adnotamCommission.person;
+						user:jbr.incoming.inspector;
+						user:jbr.incoming.registrar;
+						user:author
+					" />
+					<parameter name="replaceTargetAttrList" value="true"/>
+				</post-process>
+				<post-process class="SetAssistantCard" runOrder="6">
+					<parameter name="chiefAttrId" value="[C+][A+]jbr.card.reader" />
+					<parameter name="assistantsAttrId" value="jbr.card.reader" />
+					<parameter name="assistantsPreclear" value="true"/>
+					<parameter name="forceSave" value="true"/>
+				</post-process>
+				<post-process class="ExportToXMLCardProcessor" runOrder="10">
+					<parameter name="exportableNestedCardTemplates" 
+						value="jbr.visa,jbr.visa.ext,jbr.reservationRequest,jbr.medo_og.requestObject,jbr.sign,jbr.paperaction,
+											jbr.externalResolution,jbr.resolution,jbr.report.internal,jbr.paperaction,jbr.rassm,jbr.inform,
+											jbr.report.external,jbr.request.change" />
+					<parameter name="includedLinks" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent;
+								jbr.maindoc.request" />	
+				</post-process>
+				<post-process class="ArchiveCardsProcessor" runOrder="30">
+					<parameter name="reverseCardTreeTemplates" value="true"/>
+					
+					<parameter name="templatesToRemove" value="jbr.visa;jbr.visa.ext;jbr.reservationRequest;jbr.medo_og.requestObject;jbr.sign;jbr.paperaction;
+											jbr.externalResolution;jbr.resolution;jbr.report.internal;jbr.paperaction;jbr.rassm;jbr.inform;jbr.report.external;
+											jbr.request.change"/>
+					<parameter name="reverseRemoveTemplates" value="false"/>
+					<parameter name="reverseRemoveAttr" value="false"/>
+					
+					<parameter name="linksToRemove" value="jbr.visa.set;jbr.visa.enclosedSet;jbr.visa.ext.set;jbr.doc.reservationRequests;jbr.medo_og.reqObject;
+								jbr.medo_og.initReqObject;jbr.sign.set;jbr.paperaction;jbr.extResolutions;jbr.main.doc;
+								jbr.report.int.parent;jbr.paperaction;jbr.acquant;jbr.inform.list;jbr.report.ext.parent;
+								jbr.maindoc.request"/>
+					<parameter name="removeRootCardHistory" value="true"/>
+				</post-process> 
+				<post-process class="DoDependentChangeState" runOrder="40">
+					<parameter name="linkAttr" value="jbr.replication.replicatedDocLink"/>
+					<parameter name="targetState" value="delo"/>
+				</post-process>
+			</specific>
+		</specific>
+	</action>
+	
+	<!-- CardArchiveModule actions -->
+	
+	<action type="CreateArchReports">
+		<query>DoCreateArchReports</query>
+	</action>
+
+	<action type="RebindFileCards">
+		<query>DoRebindFileCards</query>
+	</action>
+	
+	<action type="RemoveCard">
+		<query>DoRemoveCard</query>
+	</action>
+	
+	<action type="GetCardsTree">
+		<query>DoGetCardsTree</query>
+	</action>
+	
+	<action type="GetNestedCardsByTemplate">
+        <query>DoGetNestedCardsByTemplate</query>
+    </action>
+    
+    <action type="GetActionLog">
+        <query>DoGetActionLog</query>
+    </action>
+    
+    <action type="GetCardVersionHistory">
+        <query>DoGetCardVersionHistory</query>
+    </action>
+    
+    <action type="AddToArchive">
+        <query>DoAddToArchive</query>
+    </action>
+    
+</queries>

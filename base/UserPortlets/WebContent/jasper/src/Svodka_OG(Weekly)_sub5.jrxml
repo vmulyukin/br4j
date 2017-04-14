@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Svodka_OG(Weekly)_sub5" pageWidth="90" pageHeight="20" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="90" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times_normal" isDefault="true" fontName="Times New Roman" fontSize="11"/>
+	<parameter name="beginDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="category" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="decision" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[
+    
+WITH RECURSIVE ud_depts as (
+    select c.card_id from card c
+    join attribute_value av_name on c.card_id = av_name.card_id and av_name.attribute_code = 'JBR_DEPT_FULLNAME'
+     where c.status_id in (4,7) and c.template_id = 484
+    and trim(av_name.string_value) = 'Управление делами'
+    UNION ALL
+    select av_child.card_id
+    from ud_depts su
+    join attribute_value av_child on av_child.number_value = su.card_id and av_child.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    join card c_child on av_child.card_id = c_child.card_id and c_child.status_id in (4,7)
+), persons as (
+    select p.person_id from person p
+    join attribute_value av_dept on p.card_id = av_dept.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+    join ud_depts ud on ud.card_id = av_dept.number_value
+), main as (
+    select  c.card_id, av_rassm_per_p.person_id as rassm_p, av_all_res.card_id as res
+    from card c
+    join attribute_value av_date_reg on c.card_id = av_date_reg.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG'
+    join attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    join card c_rassm on c_rassm.card_id = av_rassm.number_value
+    join attribute_value av_rassm_per on av_rassm.number_value = av_rassm_per.card_id and av_rassm_per.attribute_code = 'JBR_RASSM_PERSON'
+    join persons av_rassm_per_p on av_rassm_per.number_value = av_rassm_per_p.person_id
+    join attribute_value av_category on c.card_id = av_category.card_id and av_category.attribute_code = 'JBR_COMPLAINT_REASON'
+    join attribute_value av_link on c.card_id = av_link.number_value and av_link.attribute_code = 'JBR_DOCL_RELATDOC'
+    join card cc_link on av_link.card_id = cc_link.card_id
+    join attribute_value av_link_exec on av_link.card_id = av_link_exec.card_id and av_link_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+    join attribute_value av_res_rassm on cc_link.card_id = av_res_rassm.card_id and av_res_rassm.attribute_code = 'ADMIN_283926'
+    join attribute_value av_res_rassm_des on av_res_rassm.number_value = av_res_rassm_des.card_id and av_res_rassm_des.attribute_code = 'JBR_ACC_DECISION'
+    join attribute_value av_all_res on c.card_id = av_all_res.number_value and av_all_res.attribute_code = 'JBR_MAINDOC'
+    left join attribute_value av_bottom_level on av_all_res.card_id = av_bottom_level.number_value and av_bottom_level.attribute_code = 'JBR_RIMP_PARASSIG'
+    join attribute_value av_exec on av_all_res.card_id = av_exec.card_id and av_exec.attribute_code = 'JBR_INFD_EXEC_LINK'
+    left join attribute_value av_coexec on av_all_res.card_id = av_coexec.card_id and av_coexec.attribute_code = 'ADMIN_255974'
+    where c.template_id = 864
+    and c.status_id in (101,102,103,206,48909)
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate}
+    and c_rassm.status_id not in (34145,303990)
+    and ($P{category} is null or av_category.value_id in ($P!{category}))
+    and ((cc_link.template_id = 784 and cc_link.status_id in (101,102,103,206,48909,104)) or (cc_link.template_id = 364 and cc_link.status_id in (101,104)))
+    and ($P{decision} is null or (av_res_rassm_des.value_id is not null and av_res_rassm_des.value_id in ($P!{decision})))
+    and av_bottom_level.number_value is null
+    and (av_link_exec.number_value = av_exec.number_value or (av_coexec.number_value is not null and av_link_exec.number_value = av_coexec.number_value))
+), main_r as (
+    select m.card_id, m.rassm_p, m.res, av.card_id is not null as exist
+    from main m
+    left join attribute_value av on av.card_id = m.res and av.attribute_code = 'JBR_INFD_SGNEX_LINK' and av.number_value = m.rassm_p
+    union
+    select mr.card_id, mr.rassm_p, av.number_value::numeric(9,0), av.card_id is not null from main_r mr
+    join attribute_value av_p on mr.res = av_p.card_id and av_p.attribute_code = 'JBR_RIMP_PARASSIG'
+    left join attribute_value av on av.card_id = av_p.number_value and av.attribute_code = 'JBR_INFD_SGNEX_LINK' and av.number_value = mr.rassm_p
+), ar_main as (
+    select  c.card_id, av_rassm_per_p.person_id as rassm_p, av_all_res.card_id as res
+    from card c
+    join attribute_value av_date_reg on c.card_id = av_date_reg.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG'
+    join attribute_value_archive av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    join card_archive c_rassm on c_rassm.card_id = av_rassm.number_value
+    join attribute_value_archive av_rassm_per on av_rassm.number_value = av_rassm_per.card_id and av_rassm_per.attribute_code = 'JBR_RASSM_PERSON'
+    join persons av_rassm_per_p on av_rassm_per.number_value = av_rassm_per_p.person_id
+    join attribute_value av_category on c.card_id = av_category.card_id and av_category.attribute_code = 'JBR_COMPLAINT_REASON'
+    join attribute_value av_link on c.card_id = av_link.number_value and av_link.attribute_code = 'JBR_DOCL_RELATDOC'
+    join card cc_link on av_link.card_id = cc_link.card_id
+    join attribute_value av_link_exec on av_link.card_id = av_link_exec.card_id and av_link_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+    join attribute_value av_res_rassm on cc_link.card_id = av_res_rassm.card_id and av_res_rassm.attribute_code = 'ADMIN_283926'
+    join attribute_value av_res_rassm_des on av_res_rassm.number_value = av_res_rassm_des.card_id and av_res_rassm_des.attribute_code = 'JBR_ACC_DECISION'
+    join attribute_value_archive av_all_res on c.card_id = av_all_res.number_value and av_all_res.attribute_code = 'JBR_MAINDOC'
+    left join attribute_value_archive av_bottom_level on av_all_res.card_id = av_bottom_level.number_value and av_bottom_level.attribute_code = 'JBR_RIMP_PARASSIG'
+    join attribute_value_archive av_exec on av_all_res.card_id = av_exec.card_id and av_exec.attribute_code = 'JBR_INFD_EXEC_LINK'
+    left join attribute_value_archive av_coexec on av_all_res.card_id = av_coexec.card_id and av_coexec.attribute_code = 'ADMIN_255974'
+    where c.template_id = 864
+    and c.status_id in (104)
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate}
+    and c_rassm.status_id not in (34145,303990)
+
+    and ($P{category} is null or av_category.value_id in ($P!{category}))
+    and ((cc_link.template_id = 784 and cc_link.status_id in (101,102,103,206,48909,104)) or (cc_link.template_id = 364 and cc_link.status_id in (101,104)))
+    and ($P{decision} is null or (av_res_rassm_des.value_id is not null and av_res_rassm_des.value_id in ($P!{decision})))
+    and av_bottom_level.number_value is null
+    and (av_link_exec.number_value = av_exec.number_value or (av_coexec.number_value is not null and av_link_exec.number_value = av_coexec.number_value))
+), ar_main_r as (
+    select m.card_id, m.rassm_p, m.res, av.card_id is not null as exist
+    from ar_main m
+    left join attribute_value_archive av on av.card_id = m.res and av.attribute_code = 'JBR_INFD_SGNEX_LINK' and av.number_value = m.rassm_p
+    union
+    select mr.card_id, mr.rassm_p, av.number_value::numeric(9,0), av.card_id is not null from ar_main_r mr
+    join attribute_value_archive av_p on mr.res = av_p.card_id and av_p.attribute_code = 'JBR_RIMP_PARASSIG'
+    left join attribute_value_archive av on av.card_id = av_p.number_value and av.attribute_code = 'JBR_INFD_SGNEX_LINK' and av.number_value = mr.rassm_p
+)
+Select count(cc.card_id) as c_count from (
+
+    select card_id from main_r where exist = true
+
+    UNION
+
+    select card_id from ar_main_r where exist = true
+) as cc]]>
+	</queryString>
+	<field name="c_count" class="java.lang.Long"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="90" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

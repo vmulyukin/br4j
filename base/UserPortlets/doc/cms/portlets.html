@@ -1,0 +1,84 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>БДМИ/СУСС - Портлеты</title>
+</head>
+<body>
+<h1>Портлеты</h1>
+
+<p>Портлеты
+<a href="templates.html">Шаблоны</a>
+<a href="tags.html">Теги</a>
+</p>
+
+<hr>
+<a name="ContentViewPortlet"></a>
+<h2>Просмотр материала (ContentViewPortlet)</h2>
+
+<p>Отображает содержимое поля "Представление материала" из карточки, созданной по шаблону
+"Представление материала". Конкретная карточка представления определяется исходя из выбранного
+документа и текущего раздела сайта.
+<p>Порядок определения документа таков:
+<ul>
+<li>документ, заданный в настройке <i>item</i> портлета;</li>
+<li>текущий документ (определяется параметром <i>item</i> запроса);</li>
+<li>документ, заданный по умолчанию для текущего раздела сайта.</li>
+</ul>
+<p>Для определения карточки представления используется поле
+<a href="templates.html#SiteArea-Templates">"Представления"</a> из карточки
+текущего раздела сайта. Из списка карточек представлений выбирается та, в поле "Тип материала"
+которой записано имя шаблона выбранного документа. Если таковая не найдена, используется поле
+"Представления" карточки родительского раздела сайта и далее, вплоть до корневого. При невозможности
+найти соответствующее представление не отображается ничего.</p>
+<p>Отображаемое поле может содержать текст, любые теги HTML, а также специальные
+<a href="tags.html">теги</a>, обрабатываемые системой управления содержимым сайта БДМИ
+
+<p><i>Настройки портлета</i></p>
+<dt>item</dt>
+<dd>Номер карточки документа, используемой данным портлетом.</dd>
+<dt>views</dt>
+<dd>Список номеров карточек представлений (через запятую), используемых для поиска представления
+выбранного документа. Если нужное представление не найдено, используется обычный механизм определения
+через текущий раздел сайта.</dd>
+<dt>search</dt>
+<dd><i>Устаревшая настройка.</i></dd>
+
+<hr>
+<a name="NavigationPortlet"></a>
+<h2>Навигация (NavigationPortlet)</h2>
+
+<p>Предназначен для отображения наборов ссылок на разделы сайта в соответствии с его структурой.</p>
+<p>Портлет обязательно должен быть настроен на карточку по шаблону "Навигация по сайту".
+Подробное описание ее использования см. в описании шаблона
+<a href="templates.html#Navigator">"Навигация по сайту".</a></p>
+
+<p><i>Настройки портлета</i></p>
+<dt>navigator</dt>
+<dd><b>Обязательная.</b> Номер карточки с настройками для отображения навигации.</dd>
+
+<hr>
+<p>Портлеты
+<a href="templates.html">Шаблоны</a>
+<a href="tags.html">Теги</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="/Kernel"/>
+	<classpathentry kind="src" path="/Model"/>
+	<classpathentry kind="src" path="/Platform"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/jboss-remoting.jar"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/spring.jar" sourcepath="/home/chepiov/Workspace/Branches/Libs-source/spring-src.zip"/>
+	<classpathentry kind="src" path="/JBRModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Portal"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

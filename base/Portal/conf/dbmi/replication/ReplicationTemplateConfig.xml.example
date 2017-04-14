@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<!-- 
+	Конфигурационный файл для настройки правил репликации текущего узла.
+	Чтобы деактивировать репликацию, достаточно удалить настройки для всех шаблонов
+	или просто удалить конфигурационный файл ReplicationTemplateConfig.xml
+-->
+
+<tns:ReplicationTemplateConfig xmlns:tns="http://aplana.com/dbmi/ReplicationTemplateConfig/">
+	
+	<!-- Персона внутренняя, все карточки со всеми взаимодействующими сторонами -->
+	<Template id="10">
+		<Keywords>
+			<KeyAttribute>JBR_PERS_SNAME</KeyAttribute>
+			<KeyAttribute>JBR_PERS_NAME</KeyAttribute>
+			<KeyAttribute>JBR_PERS_MNAME</KeyAttribute>
+		</Keywords>
+	</Template>
+
+	<!-- Персона внешнняя, все карточки со всеми взаимодействующими сторонами -->
+	<Template id="464">
+		<Keywords>
+			<KeyAttribute>JBR_PERS_NAME</KeyAttribute>
+			<KeyAttribute>JBR_PERS_SNAME</KeyAttribute>
+			<KeyAttribute>JBR_PERS_MNAME</KeyAttribute>
+			<KeyAttribute>JBR_PERS_ORG</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Вид документа -->
+	<Template id="2300">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Тип автора -->
+	<Template id="924">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Источник поступления -->
+	<Template id="904">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Департамент -->
+	<Template id="484">
+		<Keywords>
+			<KeyAttribute>JBR_DEPT_FULLNAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Организация -->
+	<Template id="222">
+		<Keywords>
+			<KeyAttribute>JBR_DORG_FULLNAME</KeyAttribute>
+			<KeyAttribute>JBR_DORG_SHORTNAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Должность -->
+	<Template id="1206">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Автор обращения -->
+	<Template id="780">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+		<Attributes>
+			<Exclude>JBR_RECEIVER</Exclude>
+		</Attributes>
+	</Template>
+	
+	<!-- Страна -->
+	<Template id="806">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Регион -->
+	<Template id="807">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Округ -->
+	<Template id="808">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Город -->
+	<Template id="824">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Район -->
+	<Template id="830">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Улица -->
+	<Template id="13">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Район города -->
+	<Template id="2325">
+		<Keywords>
+			<KeyAttribute>NAME</KeyAttribute>
+		</Keywords>
+	</Template>
+	
+	<!-- Входящий документ -->
+	<Template id="224">
+		<Root/>
+		<StopCondition>
+			<Attribute name="_STATE" condition="enum">
+				<value>48909</value>
+				<value>104</value>
+			</Attribute>
+		</StopCondition>
+		<Attributes>
+			<Exclude>JBR_REGD_REGJOURN</Exclude>
+			<Exclude>JBR_REGD_INDEX</Exclude>
+			<Exclude>REGISTRATION_PLACE</Exclude>
+			<!-- <Exclude>JBR_REGD_REGNUM_D</Exclude> -->
+			<Exclude>JBR_MANUALLY_NUMBER</Exclude>
+			<Exclude>ADMIN_221237</Exclude>
+			<Exclude>JBR_DOCL_RELATDOC</Exclude>
+			<Exclude>JBR_REPORT_LINK</Exclude>
+			<Exclude>ADMIN_221249</Exclude>
+			<Exclude>ADMIN_894715</Exclude>
+			<Exclude>JBR_INFORM_DATA</Exclude>
+			<Exclude>JBR_INFORM_LIST</Exclude>
+			<Exclude>JBR_INFORM_PERSONS</Exclude>
+			<Exclude>ADMIN_222990</Exclude>
+			<Exclude>LETTER THEME</Exclude>
+			<Exclude>JBR_ORIG_STORAGE</Exclude>
+			<Exclude>JBR_ORIG_WORKPAP</Exclude>
+			<Exclude>ADMIN_222280</Exclude>
+			<Exclude>ADMIN_222281</Exclude>
+			<Exclude>ADMIN_222282</Exclude>
+			<Exclude>ADMIN_222283</Exclude>
+			<Exclude>JBR_PAPER_STORE</Exclude>
+			<Exclude>JBR_ZONE_DOW</Exclude>
+			<Exclude>EDITOR</Exclude>
+			<Exclude>JBR_MEDO_TYPE</Exclude>
+			<Exclude>JBR_MEDO_IN_NOTIFY</Exclude>
+			<Exclude>JBR_MEDO_NOTIFY</Exclude>
+			<Exclude>JBR_MEDO_REASON_RFS</Exclude>
+			<Exclude>JBR_MEDO_SRVC_KIND</Exclude>
+			<Exclude>JBR_TICKET</Exclude>
+			<Exclude>JBR_MEDO_ADDR</Exclude>
+			<Exclude>JBR_MEDO_CLASSIF</Exclude>
+			<Exclude>JBR_MEDO_CORRESP</Exclude>
+			<Exclude>JBR_MEDO_CREATE_DATE</Exclude>
+			<Exclude>JBR_MEDO_DISTR_INST</Exclude>
+			<Exclude>JBR_MEDO_DOC_TYPE</Exclude>
+			<Exclude>JBR_MEDO_SIGN_DATE</Exclude>
+			<Exclude>JBR_MEDO_UID_MES</Exclude>
+			<Exclude>JBR_MEDO_URGENCY</Exclude>
+			<Exclude>EZHELN_9619045</Exclude>
+			<Exclude>EZHELN_9619046</Exclude>
+			<Exclude>JBR_HOWFAST</Exclude>
+			<Exclude>JBR_RESP_DOW_EXTERN</Exclude>
+			<Exclude>JBR_RESP_DOW_MAINDOC</Exclude>
+			<Exclude>JBR_RESP_DOW_RESOL</Exclude>
+			<Exclude>JBR_RESP_DOW_RESP</Exclude>
+			<Exclude>JBR_HISTORY</Exclude>
+		</Attributes>
+	</Template>
+	
+	<!-- ОГ -->
+	<Template id="864">
+		<Root/>
+		<StopCondition>
+			<Attribute name="_STATE" condition="enum">
+				<value>48909</value>
+				<value>104</value>
+			</Attribute>
+		</StopCondition>
+		<Attributes>
+			<Exclude>JBR_REGD_REGJOURN</Exclude>
+			<Exclude>JBR_REGD_INDEX</Exclude>
+			<Exclude>REGISTRATION_PLACE</Exclude>
+			<!-- <Exclude>JBR_REGD_REGNUM_D</Exclude> -->
+			<Exclude>JBR_MANUALLY_NUMBER</Exclude>
+			<Exclude>ADMIN_221237</Exclude>
+			<Exclude>JBR_DOCL_RELATDOC</Exclude>
+			<Exclude>JBR_REPORT_LINK</Exclude>
+			<Exclude>ADMIN_221249</Exclude>
+			<Exclude>ADMIN_894715</Exclude>
+			<Exclude>JBR_INFORM_DATA</Exclude>
+			<Exclude>JBR_INFORM_LIST</Exclude>
+			<Exclude>JBR_INFORM_PERSONS</Exclude>
+			<Exclude>ADMIN_222990</Exclude>
+			<Exclude>LETTER THEME</Exclude>
+			<Exclude>JBR_ORIG_STORAGE</Exclude>
+			<Exclude>JBR_ORIG_WORKPAP</Exclude>
+			<Exclude>ADMIN_222280</Exclude>
+			<Exclude>ADMIN_222281</Exclude>
+			<Exclude>ADMIN_222282</Exclude>
+			<Exclude>ADMIN_222283</Exclude>
+			<Exclude>JBR_PAPER_STORE</Exclude>
+			<Exclude>JBR_ZONE_DOW</Exclude>
+			<Exclude>EDITOR</Exclude>
+			<Exclude>JBR_MEDO_TYPE</Exclude>
+			<Exclude>JBR_MEDO_IN_NOTIFY</Exclude>
+			<Exclude>JBR_MEDO_NOTIFY</Exclude>
+			<Exclude>JBR_MEDO_REASON_RFS</Exclude>
+			<Exclude>JBR_MEDO_SRVC_KIND</Exclude>
+			<Exclude>JBR_TICKET</Exclude>
+			<Exclude>JBR_MEDO_ADDR</Exclude>
+			<Exclude>JBR_MEDO_CLASSIF</Exclude>
+			<Exclude>JBR_MEDO_CORRESP</Exclude>
+			<Exclude>JBR_MEDO_CREATE_DATE</Exclude>
+			<Exclude>JBR_MEDO_DISTR_INST</Exclude>
+			<Exclude>JBR_MEDO_DOC_TYPE</Exclude>
+			<Exclude>JBR_MEDO_SIGN_DATE</Exclude>
+			<Exclude>JBR_MEDO_UID_MES</Exclude>
+			<Exclude>JBR_MEDO_URGENCY</Exclude>
+			<Exclude>EZHELN_9619045</Exclude>
+			<Exclude>EZHELN_9619046</Exclude>
+			<Exclude>JBR_HOWFAST</Exclude>
+			<Exclude>JBR_RESP_DOW_EXTERN</Exclude>
+			<Exclude>JBR_RESP_DOW_MAINDOC</Exclude>
+			<Exclude>JBR_RESP_DOW_RESOL</Exclude>
+			<Exclude>JBR_RESP_DOW_RESP</Exclude>
+			<Exclude>JBR_HISTORY</Exclude>
+			<!-- Последующие обращения -->
+			<Exclude>ADMIN_277618</Exclude>
+			<!-- Предыдущие обращения -->
+			<Exclude>ADMIN_277616</Exclude>
+		</Attributes>
+	</Template>	
+
+	<!-- Поручение -->
+	<Template id="324">
+		<Root>
+			<Path>JBR_MAINDOC</Path>
+		</Root>
+		<ChildCards>
+			<!-- Документ-основание -->
+			<LinkAttribute>JBR_MAINDOC</LinkAttribute>
+			<!-- Отчеты об исполнении -->
+			<LinkAttribute>^ADMIN_702311</LinkAttribute>
+			<!-- Отчеты об исполнении внешние -->
+			<LinkAttribute>^ADMIN_702600</LinkAttribute>
+		</ChildCards>
+		<Attributes>
+			<Exclude>JBR_HISTORY</Exclude>
+		</Attributes>
+	</Template>
+	
+	<!-- Рассмотрение -->
+	<Template id="504">
+		<Root>
+			<Path>JBR_RASSM_PARENT_DOC</Path>
+		</Root>
+		<StartCondition>		
+			<Attribute name="_STATE" condition="enum">
+				<Attribute name="JBR_RASSM_PERSON.JBR_PERS_ORG.ORG_REPL_UUID" condition="notEnum">
+					<value>${JBR_RASSM_PARENT_DOC.JBR_REGD_REGISTRAR.JBR_PERS_ORG.ORG_REPL_UUID}</value>
+				</Attribute>
+				<value>102</value>
+				<value>73992</value>
+				<value>477679</value>
+				<value>477681</value>
+			</Attribute>
+		</StartCondition>
+		<Addressee>
+			<AttributeGUID>JBR_RASSM_PERSON.JBR_PERS_ORG.ORG_REPL_UUID</AttributeGUID>
+		</Addressee>
+		<ChildCards>
+			<!--Док.осн.-->
+			<LinkAttribute>JBR_RASSM_PARENT_DOC</LinkAttribute>
+		</ChildCards>
+	</Template>
+	
+	<!-- Отчет об исполнении -->
+	<Template id="1044">
+		<Root>
+			<Path>ADMIN_702604</Path>
+		</Root>
+		<StartCondition>
+			<Attribute name="_STATE" condition="enum">
+				<Attribute name="ADMIN_702335.JBR_PERS_ORG.ORG_REPL_UUID" condition="notEnum">
+					<value>${ADMIN_702604.JBR_REGD_REGISTRAR.JBR_PERS_ORG.ORG_REPL_UUID}</value>
+				</Attribute>
+				<value>556656</value>
+				<value>73992</value>
+				<value>102</value>
+				<value>702239</value>
+			</Attribute>
+		</StartCondition>
+		<Addressee>
+			<AttributeGUID>ADMIN_702335.JBR_PERS_ORG.ORG_REPL_UUID</AttributeGUID>
+		</Addressee>
+		<ChildCards>
+			<!-- Документ-основание -->
+			<LinkAttribute>ADMIN_702604</LinkAttribute>
+			<!-- Поручение -->
+			<LinkAttribute>ADMIN_702311</LinkAttribute>
+		</ChildCards>
+	</Template>
+	
+	<!-- Отчет об исполнении внешним исполнителем -->
+	<Template id="1064">
+		<Root>
+			<Path>ADMIN_702602</Path>
+		</Root>
+	</Template>
+	
+	<!-- Ознакомление с поручением -->
+	<Template id="1144">
+		<Root>
+			<Path>ADMIN_726877</Path>
+		</Root>
+	</Template>
+	
+	<!-- Файл -->
+	<Template id="284">
+		<Root>
+			<Path>^DOCLINKS</Path>
+		</Root>
+	</Template>
+	
+	<!-- Информация о регистрации -->
+	<Template id="2284">
+		<Root>
+			<Path>^JBR_REG_LAST_REG</Path>
+		</Root>
+	</Template>
+	
+	<!-- Перенаправление ОГ -->
+	<Template id="931">
+		<Root>
+			<Path>^JBR_REDIRECTED_REQ</Path>
+		</Root>
+	</Template>
+	
+	<!-- Результаты рассмотрения -->
+	<Template id="925">
+		<Root>
+			<Path>^ADMIN_283926</Path>
+		</Root>
+	</Template>
+	
+	<!-- Внешняя резолюция -->
+	<Template id="2324">
+		<Root>
+			<Path>^JBR_EXT_RESOL</Path>
+		</Root>
+	</Template>
+
+</tns:ReplicationTemplateConfig>

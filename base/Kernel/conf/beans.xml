@@ -1,0 +1,159 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<import resource="aspects.xml"/>
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:/jdbc/DBMIDS"/>
+	</bean>
+	<bean id="dataSourceEvent" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:/jdbc/DBMIDS_EVENT"/>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<bean id="transactionManagerEvent" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceEvent"/>
+	</bean>
+	<bean id="logeventTarget" class="com.aplana.dbmi.service.impl.LogEventBeanImpl">
+		<property name="dataSource" ref="dataSourceEvent"/>
+	</bean>
+	<bean id="originDatabaseTarget" class="com.aplana.dbmi.service.impl.DatabaseBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="queryFactory" ref="queryFactory"/>
+		<property name="logEventBean" ref="logevent"/>
+	</bean>	
+	<bean id="asyncDatabaseTarget" class="com.aplana.dbmi.service.impl.AsyncDatabaseBeanDecorator">
+		<constructor-arg ref="originDatabaseTarget"/>
+		<property name="queue" ref="asyncQueriesQueue"/>
+		<property name="lockManagement" ref="lockManagement"/>
+		<property name="activeQueryBases" ref="activeQueryBases"/>
+	</bean>
+	
+	<bean id="cardFilteringCacheDataReader" class="com.aplana.dbmi.service.impl.cache.CardFilteringCacheDataReader">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- bean id="database" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="databaseTarget"/>
+		<property name="proxyInterfaces">
+			<value>com.aplana.dbmi.service.impl.Database</value>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,-DataException</prop>
+			</props>
+		</property>
+	</bean-->
+	
+	<bean id="asyncDatabase" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="asyncDatabaseTarget"/>
+		<property name="proxyInterfaces">
+			<value>com.aplana.dbmi.service.impl.DatabaseEx</value>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,-DataException</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="logevent" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManagerEvent"/>
+		<property name="target" ref="logeventTarget"/>
+		<property name="proxyInterfaces">
+			<value>com.aplana.dbmi.service.impl.LogEventBean</value>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRES_NEW, -Exception</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="queryFactory" class="com.aplana.dbmi.service.impl.QueryFactory" >
+		<property name="xmlFile" value="classpath*:queries.xml"/>
+		<property name="useCache" value="true"/>
+		<!--property name="useAsynchMode" value="true"/-->
+	</bean>
+
+	<bean id="cloner" class="com.rits.cloning.Cloner"/>	
+
+	<bean id="delegateManager" class="com.aplana.dbmi.access.delegate.DelegatorBean">
+		<!-- property name="jndiName" value="java:/dbmi/delegate"/ -->
+		<property name="dataSource" ref="dataSource"/>
+		<property name="database" ref="asyncDatabase"/>
+		<!-- property name="queryFactory" ref="queryFactory"/ -->
+	</bean>
+
+	<bean id="smartSaveConfig" class="com.aplana.dbmi.service.impl.ConfigSmartSaveAttributesBean">
+		<!-- property name="jndiName" value="java:/dbmi/smartSaveConfig"/ -->
+
+		<property name="enSmartSaveMode" value="true"/>
+		<property name="enChkWriteByRead" value="false"/>
+		<!-- параметр hardSaveAttributes - атрибуты, значения которых надо обязательно перезаписать -->
+		<!-- JBR_INFD_EXECUTOR - "Исполнитель",ADMIN_255974- "Соисполнитель",ADMIN_255979 - "К сведению" -->
+		<property name="hardSaveAttributes" value="JBR_INFD_EXECUTOR,ADMIN_255974,ADMIN_255979"/>
+		<!-- реакция при обнаружении проблем во время ReadAfterSave: actIgnore | actSwitchToSimpleMode | actRaise -->
+		<property name="actionOnErrorCheckWriteByRead" value="actRaise"/>
+
+		<!-- config file inside "<portal>/conf/dbmi/" -->
+		<!-- property name="configFileName" value="smartSave.xml"/ -->
+	</bean>
+	
+	<bean id="queryContainerComparator" class="com.aplana.dbmi.service.impl.async.QueryPriorityComparator"/>
+
+	<!--bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+    	<property name="beans">
+	        <map>
+           		<entry key="br4j:name=resultStorage"		value-ref="resultStorage"/>
+           		<entry key="br4j:name=asyncPerformerBean"	value-ref="asyncPerformerBean"/>
+           		<entry key="br4j:name=asyncQueriesQueue"	value-ref="asyncQueriesQueue"/>
+           		<entry key="br4j:name=lockManagement"		value-ref="lockManagement"/>
+        	</map>
+    	</property>
+    	<property name="assembler">
+        	<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
+        		<property name="interfaceMappings">
+					<map>
+						<entry key="br4j:name=resultStorage"		value="com.aplana.dbmi.service.impl.async.ResultStorage"/>
+						<entry key="br4j:name=asyncQueriesQueue"	value="com.aplana.dbmi.service.impl.async.QueriesQueueMBean"/>
+						<entry key="br4j:name=asyncPerformerBean"	value="com.aplana.dbmi.service.impl.async.MBeanCustomizable"/>
+						<entry key="br4j:name=lockManagement"		value="com.aplana.dbmi.service.impl.locks.LockManagementMBean"/>
+					</map>
+				</property>
+      		</bean>
+    	</property>
+	</bean-->
+	
+	<bean id="cardFilteringCache" class="com.aplana.dbmi.service.impl.cache.CardFilteringCache"/>
+	
+	<bean id="systemDataServiceFacade" class="com.aplana.dbmi.service.client.DataServiceFacade" init-method="setSystemUser" lazy-init="true">
+		<property name="database" ref="asyncDatabase"/>
+		<property name="queryFactory" ref="queryFactory"/>
+	</bean>
+	
+	<import resource="policies.xml"/>
+	<import resource="mbeans.xml"/>
+	<import resource="arm.xml"/>
+</beans>

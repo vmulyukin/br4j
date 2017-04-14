@@ -1,0 +1,42 @@
+====
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+====
+
+Зауск Dynamic Access Utility через коммандную строку
+
+ Параметры:
+   url - путь подключения к БД;
+   userName - учетная запись пользователя БД;
+   userPassword- пароль пользователя БД;
+   command - комманда для выполнения;
+   config - файл xml содержащий конфигурацию правил и прав доступа для всех шаблонов (AccessConfig);
+   template - файл xml содержащий конфигурацию правил и прав доступа для одного шаблона (Template);
+   ruleNames - список имен правил;
+   statusIDs - список статусов карточки;
+   help - вывод справки.
+
+ Доступно выполнение следующих операций:
+  - частичная перезапись прав и правил в БД и пересчет соотвествующих прав (- c rlrcPartial -m filename.xml);
+  - перезаписать все права и правила в БД (- c rlACR -m filename.xml);
+  - перезаписать права и правила для шаблона в БД (- c rlTmpl -t filename.xml);
+  - пересчитать права (- c rcACL);
+  - перезаписать указанные правила шаблона в БД и пересчитать права (- c rlrcACR -t filename.xml -r Role1,Role2,Role3...RoleN);
+  - перезаписать указанные правила для указанных статусов шаблона в БД и пересчитать права (- c rlrcACRByStatus -t filename.xml -r Role1,Role2,Role3...RoleN -s Status1,Status2,Status3...StatusN).
+
+ Пример запуска:
+  java -cp C:\Users\etarakanov\FSIN_base\DynamicAccessRule\build\jars/postgresql-9.0-801.jdbc3.jar;c:\Project\BossRef\_Build\tool\DynamicAccessRule\DynamicAccessRule.jar org.aplana.br4j.dynamicaccess.DynamicAccessCLI -command rcACL -url jdbc:postgresql://localhost:5432/dev -userName postgres -userPassword XXXXXXX
+
+

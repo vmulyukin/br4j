@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<cardLinkPickerAttributeEditorSettings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="string">
+			<search byAttr="true">
+				<template>jbr.incoming</template>
+				<template>jbr.citizenrequest</template>
+			</search>
+			<hierarchyDialog>
+				<hierarchy>
+					<cardSet stored="true" alias="root" collapsed="false" sortAttr="NAME" sortAttrType="text" sortOrder="asc" labelAsLink="true">
+					</cardSet>
+				</hierarchy>
+                <noColumns value="true"/>
+                <!-- 1 ������� ���������, �.�. �������� noColumns �� ������� �������� �������� ������� -->
+				<columns>
+					<column id="jbr.organization.code" width="50" sort="asc" />
+				</columns>
+				<selectableCardCondition/>
+				<cacheable reloadTime="300"/>
+			</hierarchyDialog>
+			<columns>
+				<column id="NAME" width="400" />
+			</columns>
+		</variant>
+	</variants>
+	<dropdawnlists>
+		<dropdawnlist id ="states">
+			<item value="registration"/> <!-- ��������������� (101) -->
+			<item value="consideration"/> <!-- ������������ (102) -->
+			<item value="execution"/> <!-- ���������� (103) -->
+			<item value="delo"/> <!-- � ���� (104) -->
+			<item value="done"/> <!-- �������� (206) -->
+			<item value="ready-to-write-off"/> <!-- ����� � �������� � ���� (48909) -->
+		</dropdawnlist>
+	</dropdawnlists>
+	<mapItems>
+		<templates>
+			<item key="jbr.incoming" value="jbr.medo_og.jbrReqOrg"/> <!-- ��������  -->
+			<item key="jbr.citizenrequest" value="jbr.medo_og.reqAuthor"/> <!-- ��  -->
+			<item key="jbr.medo_og.requestObject" value="jbr.medo_og.objectFound"/> <!-- ������ �������  -->
+		</templates>
+		<attributes>
+			<item key="jbr.medo_og.jbrReqOrg" value="jbr.incoming.sender"/>
+			<item key="jbr.medo_og.reqAuthor" value="jbr.ReqAuthor"/>
+		</attributes>
+	</mapItems>
+	<messages>
+		<lang code="en">
+			<message key="acceptTitle" value="Add Link"/>
+			<message key="cancelTitle" value="Cancel"/>
+		</lang>
+		<lang code="ru">
+			<message key="acceptTitle" value="�������"/>
+			<message key="cancelTitle" value="������"/>
+		</lang>
+	</messages>
+</cardLinkPickerAttributeEditorSettings>

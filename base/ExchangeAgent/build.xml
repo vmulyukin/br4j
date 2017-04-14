@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="war" name="Transport Agent">
+	<property name="dir.src" value="src" />
+	<property name="dir.test" value="test" />
+	<property name="dir.conf" value="conf" />
+	
+	<target name="generate" depends="init"> 
+		<delete dir="${basedir}/src/com/aplana/agent/conf/replication" />
+		<xjc destdir="${basedir}/src" package="com.aplana.agent.conf.replication">
+			<schema dir="${Replication.location}" includes="ReplicationPackage.xsd" />
+		</xjc>
+		
+		<delete dir="${basedir}/src/com/aplana/agent/conf/envelope" />
+		<xjc destdir="${basedir}/src" package="com.aplana.agent.conf.envelope">
+			<schema dir="${basedir}/conf" includes="letter_scheme.xsd" />
+		</xjc>
+		
+		<delete dir="${basedir}/src/com/aplana/agent/conf/delivery" />
+		<xjc destdir="${basedir}/src" package="com.aplana.agent.conf.delivery">
+			<schema dir="${basedir}/conf" includes="deliveryLog.xsd" />
+		</xjc>
+		
+		<delete dir="${basedir}/src/com/aplana/agent/conf/routetable" />
+		<xjc destdir="${basedir}/src" package="com.aplana.agent.conf.routetable">
+			<schema dir="${basedir}/dbmi/transportAgent" includes="routeTable.xsd" />
+		</xjc>
+
+        <!--<delete dir="${basedir}/src/com/aplana/ws/soz/model/communication" />
+		<xjc destdir="${basedir}/src" package="com.aplana.ws.soz.model.communication">
+			<schema dir="${basedir}/conf" includes="IEDMS.xsd" />
+		</xjc>
+		-->
+	</target>
+
+	<target name="clean">
+		<delete dir="${dir.build}" />
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${dir.classes}"/>
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+			<classpath>
+				<fileset dir="${SharedLib.location}">
+					<include name="activation.jar" />
+					<include name="jaxb-api.jar" />
+					<include name="jaxb-impl.jar" />
+					<include name="jaxb-xjc.jar" />
+					<include name="commons-logging-1.1.1.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>
+	</target>
+
+	<target name="compile" depends="generate">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${dir.classes}" source="${source}" target="${target}" encoding="${encoding}" nowarn="${nowarn}">
+			<src path="${dir.src}" />
+			<src path="${dir.test}" />
+			<classpath refid="classpath" />
+			<classpath>
+					<fileset dir="${basedir}/lib">
+						<include name="junit-4.10.jar" />
+					</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${dir.classes}">
+			<fileset dir="${dir.src}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="war" depends="compile">
+		<mkdir dir="${dir.build}/TransportAgent/conf/dbmi"/>
+		<mkdir dir="${dir.build}/TransportAgent/deploy"/>
+		<copy todir="${dir.build}/TransportAgent/conf/dbmi">
+			<fileset dir="dbmi"/>
+		</copy>
+		<copy todir="${dir.build}/TransportAgent" file="INSTALL"/>
+		<war destfile="${dir.build}/TransportAgent/deploy/${TransportAgent.name}" webxml="WEB-INF/web.xml">
+			<classes dir="${dir.classes}" />
+			<zipfileset dir="WEB-INF">
+				<exclude name="**/web.xml" />
+			</zipfileset>
+			<zipfileset dir="WEB-INF" prefix="WEB-INF/classes">
+				<include name="log4j.properties" />
+			</zipfileset>
+			<zipfileset dir="conf" prefix="WEB-INF/classes/conf">
+				<include name="*" />
+				<type type="file"/>
+			</zipfileset>
+			<zipfileset dir="${Replication.location}" prefix="WEB-INF/classes/conf">
+				<include name="ReplicationPackage.xsd" />
+			</zipfileset>
+			<zipfileset dir="lib" prefix="WEB-INF/lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${SharedLib.location}" prefix="WEB-INF/lib">
+				<include name="spring.jar" />
+				<include name="ini4j-0.5.2-SNAPSHOT.jar" />
+				<include name="commons-io-1.4.jar" />
+				<include name="commons-lang-2.6.jar" />
+				<include name="commons-codec-1.6.jar" />
+				<include name="commons-logging-1.1.1.jar" />
+				<include name="commons-collections-3.2.1.jar" />
+				<include name="cloning-1.8.5.jar" />
+				<include name="objenesis-1.2.jar" />
+			</zipfileset>
+			
+			<fileset file="${dir.build}/*.jar" />
+			<manifest>
+				<attribute name="Class-path" value="" />
+			</manifest>
+		</war>
+	</target>
+</project>

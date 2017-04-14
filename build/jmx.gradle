@@ -1,0 +1,275 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.jboss.system.ServiceMBean;
+
+buildscript {
+    apply from: 'dependencies.gradle', to: buildscript
+}
+
+/**
+ * Gets {@link InitialContext} from given server and port.
+ * 
+ * @param hostName Name of the server connect to
+ * @param jndiPort Port number of naming service
+ * 
+ * @return Obtained InitialContext, or RuntimeException will thrown.
+ */
+ext.getInitialContext = { def hostName, def jndiPort -> 
+	def props = [:]
+	props['java.naming.factory.initial']  = 'org.jnp.interfaces.NamingContextFactory'
+	props['java.naming.factory.url.pkgs'] = 'org.jboss.naming:org.jnp.interfaces'
+	props['java.naming.provider.url']     = hostName+':'+jndiPort
+	try {
+		return new InitialContext(props as Properties)
+	} catch (NamingException e) {
+		throw new RuntimeException("Unable to instantiate naming context: ${e.message}", e)
+	}
+}
+
+/**
+ * Gets Managed Beans server for given naming context.
+ * 
+ * @param ctx {@link InitialContext} used to lookup.
+ * @param listener used only for logging purpose
+ * @param timeout timeout of connection in seconds
+ * 
+ * @return server connection or exception will thrown if failed
+ */
+ext.getMBeanServer = { InitialContext ctx, def timeout ->
+	MBeanServerConnection server
+	NamingException ne
+	
+	long startTime = System.currentTimeMillis()
+	while (System.currentTimeMillis() - startTime < timeout * 1000) {
+		try {
+			Thread.sleep(500)
+			server = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor")
+			break
+		} catch (NamingException e) {
+			ne = e
+		} catch (InterruptedException e) {
+			println "Thread interrupted while waiting for MBean connection: ${e.message}"
+			return server
+		}
+	}
+
+	if (server == null) {
+		
+		Throwable exceptionTCause
+		Throwable tempException = ne.cause
+		
+		def innerBlock = {
+			exceptionTCause = tempException
+			tempException = tempException.cause
+
+			if (exceptionTCause instanceof java.rmi.ConnectException) {//server started without right parameters
+				throw new RuntimeException(
+					"Unable to get JBoss JMX MBean connection (perhaps the server is running with the wrong parameters) in $timeout seconds.", ne)
+			} else {
+				if (exceptionTCause instanceof javax.naming.ServiceUnavailableException){//server is shutdown
+					return server
+				}
+			}	
+		}
+
+		innerBlock()
+		while (tempException != null) {
+			return innerBlock()
+		}
+		
+		throw new RuntimeException("Unable to get JBoss JMX MBean connection in $timeout seconds.", ne)
+	}
+	return server
+}
+
+/**
+ * Checks if Server is up using given MBean server connection.
+ * @param server given {@link MBeanServerConnection}
+ * @return true if server is up, false otherwise
+ * @throws Exception A few types of exception can be thrown.
+ */
+ext.isServerStarted = { def server ->
+	ObjectName serverMBeanName = new ObjectName("jboss.system:type=Server")
+	return ((Boolean) server.getAttribute(serverMBeanName, "Started")).booleanValue()
+}
+
+/**
+ * Waits for server status.
+ * 
+ * If server is not started checks status every second for 'timeout'. 
+ * 
+ * @param hostName name of the server connect to
+ * @param jndiPort port number of naming service
+ * @param timeout how long will we wait for server start
+ * @param ignoreErrors if true any connection problems will be ignored
+ * 
+ * @return true if server is up, false otherwise
+ */
+ext.checkServerStatus = { def hostName, def jndiPort, def timeout, boolean ignoreErrors ->
+	boolean started = false
+	try {
+		InitialContext ctx = getInitialContext(hostName, jndiPort)
+		MBeanServerConnection server = getMBeanServer(ctx, timeout)
+		
+		//case when server is shutdown
+		if(server == null) {
+			return false
+		}
+		
+		// Wait until server startup is complete
+		long startTime = System.currentTimeMillis()
+		while (!started && (System.currentTimeMillis() - startTime < timeout * 1000)) {
+			Thread.sleep(1000)
+			started = isServerStarted(server)
+		}
+	} catch (RuntimeException e) {
+		if (!ignoreErrors) {
+			throw e
+		}
+	}
+	return started
+}
+
+ext.JBossShutdown = { def hostName, def jndiPort, def timeoutCheckStatus ->
+    println "SHUTDOWN: Checking if server is running (max ${timeoutCheckStatus} seconds)..."
+	if (!checkServerStatus(hostName, jndiPort, timeoutCheckStatus, false)) {
+		println "SHUTDOWN: JBoss AS is not working."
+		return false
+	}
+	return true
+}
+
+ext.JBossStart = { def hostName, def jndiPort, def timeout, def timeoutCheckStatus ->
+	println "START: Checking if server is already running (max ${timeoutCheckStatus} seconds)..."
+	if(checkServerStatus(hostName, jndiPort, timeoutCheckStatus, false)) {
+		println "START: JBoss AS already started."
+		return false
+	}
+	println "START: Going to start server with timeout ${timeout} seconds..."
+	return true
+}
+
+ext.JBossWait = { def hostName, def jndiPort, def timeout ->
+	println "WAIT: Waiting while JBoss AS starting..."
+	long startJbossServerTime = System.currentTimeMillis()
+	boolean ret = checkServerStatus(hostName, jndiPort, timeout, false)
+    startJbossServerTime = System.currentTimeMillis() - startJbossServerTime
+	if (ret) {
+		println "WAIT: JBoss AS started for ${startJbossServerTime/1000.0} sec !"
+	} else {
+		println "WAIT: JBoss AS is not started before timeout (${timeout} sec) has expired!"
+	}
+	return ret
+}
+
+/**
+ * Checks if given modules have been correctly deployed.
+ * 
+ * @param hostName name of the server connect to
+ * @param jndiPort port number of naming service
+ * @param timeout how long will we wait for server start
+ * 
+ * @return true if gone fine, false if any module have deployment problem
+ */
+ext.JBossCheckDeploy = { def hostName, def jndiPort, def timeout, def modules ->
+	println "Verification of deplyed modules started"
+	InitialContext ctx = getInitialContext(hostName, jndiPort)
+	MBeanServerConnection server = getMBeanServer(ctx, timeout)
+
+	boolean deployed = true
+	modules.each { moduleName ->
+		if (moduleName.endsWith(".ear")) {
+			deployed &= checkEARDeploymentState(server, moduleName)
+			println "Verifying deployment of the EAR '${moduleName}' ... ${deployed?'SUCCESS':'FAILED'}"
+		} else if (moduleName.endsWith(".jar")) {
+			deployed &= checkEJBDeploymentState(server, moduleName)
+			println "Verifying deployment of the EJB '${moduleName}' ... ${deployed?'SUCCESS':'FAILED'}"
+		} else if (moduleName.endsWith(".war")) {
+			deployed &= checkWARDeploymentState(server, moduleName)
+			println "Verifying deployment of the WAR '${moduleName}' ... ${deployed?'SUCCESS':'FAILED'}"
+		} else {
+			println "Unknown type of the module '${moduleName}'. Cannot verify deployment."
+			deployed = false
+		}
+	}
+	println "Verification finished."
+	return deployed
+}
+
+/**
+ * Checks if single WAR is deployed with no problems.
+ * To check other states take a look on {@link ServiceMBean}.
+ * 
+ * @param server given {@link MBeanServerConnection}
+ * @param warName the name of the WAR to be checked
+ * 
+ * @return true if started, false otherwise 
+ */
+ext.checkWARDeploymentState = { def server, String warName ->
+	try {
+		def objectPattern = "jboss.web.deployment:*,war=${warName}"
+		def set = server.queryNames(new ObjectName(objectPattern), null)
+		if (!set) {
+			return false // no instance
+		}
+		def serverMBeanName = set.iterator().next() // only first
+		return ServiceMBean.STARTED == server.getAttribute(serverMBeanName, "State")
+	} catch (Exception e) {
+		return false
+	}
+}
+
+/**
+ * Checks if single EAR is deployed with no problems.
+ * To check other states take a look on {@link ServiceMBean}.
+ * 
+ * @param server given {@link MBeanServerConnection}
+ * @param earName the name of the EAR to be checked
+ * 
+ * @return true if started, false otherwise 
+ */
+ext.checkEARDeploymentState = { def server, def earName ->
+	try {
+		def serverMBeanName = new ObjectName("jboss.j2ee:service=EARDeployment,url='${earName}'")
+		return ServiceMBean.STARTED == server.getAttribute(serverMBeanName, "State")
+	} catch (Exception e) {
+		return false
+	}
+}
+
+/**
+ * Checks if single EJB module is deployed with no problems.
+ * To check other states take a look on {@link ServiceMBean}.
+ * 
+ * @param server given {@link MBeanServerConnection}
+ * @param ejbName the name of the EJB module to be checked
+ * 
+ * @return true if started, false otherwise 
+ */
+ext.checkEJBDeploymentState = { def server, def ejbName ->
+	try {
+		def serverMBeanName = new ObjectName("jboss.j2ee:service=EjbModule,module=${ejbName}")
+		return ServiceMBean.STARTED == server.getAttribute(serverMBeanName, "State")
+	} catch (Exception e) {
+		return false
+	}
+}

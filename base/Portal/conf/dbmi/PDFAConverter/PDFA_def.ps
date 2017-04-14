@@ -1,0 +1,55 @@
+%   Licensed to the Apache Software Foundation (ASF) under one or more
+%   contributor license agreements.  See the NOTICE file distributed with
+%   this work for additional information regarding copyright ownership.
+%   The ASF licenses this file to you under the Apache License, Version 2.0
+%   (the "License"); you may not use this file except in compliance with
+%   the License.  You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+
+%!
+% This is a sample prefix file for creating a PDF/A document.
+% Feel free to modify entries marked with "Customize".
+% This assumes an ICC profile to reside in the file (sRGB.icc),
+% unless the user modifies the corresponding line below.
+
+% Define entries in the document Info dictionary :
+/ICCProfile (D:/br4j/jboss-portal-2.6.8.GA/server/default_localdb_fsin/conf/dbmi/PDFAConverter/ICCProfiles/sRGB.icc) % Customize
+def
+
+[ /Title (Title)       % Customize
+  /DOCINFO pdfmark
+
+% Define an ICC profile :
+
+[/_objdef {icc_PDFA} /type /stream /OBJ pdfmark
+[{icc_PDFA}
+<<
+  /N currentpagedevice /ProcessColorModel known {
+    currentpagedevice /ProcessColorModel get dup /DeviceGray eq
+    {pop 1} {
+      /DeviceRGB eq
+      {3}{4} ifelse
+    } ifelse
+  } {
+    (ERROR, unable to determine ProcessColorModel) == flush
+  } ifelse
+>> /PUT pdfmark
+[{icc_PDFA} ICCProfile (r) file /PUT pdfmark
+
+% Define the output intent dictionary :
+
+[/_objdef {OutputIntent_PDFA} /type /dict /OBJ pdfmark
+[{OutputIntent_PDFA} <<
+  /Type /OutputIntent             % Must be so (the standard requires).
+  /S /GTS_PDFA1                   % Must be so (the standard requires).
+  /DestOutputProfile {icc_PDFA}            % Must be so (see above).
+  /OutputConditionIdentifier (sRGB)      % Customize
+>> /PUT pdfmark
+[{Catalog} <</OutputIntents [ {OutputIntent_PDFA} ]>> /PUT pdfmark

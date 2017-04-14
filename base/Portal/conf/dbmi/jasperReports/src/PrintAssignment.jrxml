@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PrintAssignment" pageWidth="297" pageHeight="421" columnWidth="273" leftMargin="12" rightMargin="12" topMargin="14" bottomMargin="14" isFloatColumnFooter="true">
+	<property name="ireport.zoom" value="2.1961500000000007"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\FSIN\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locale" class="java.util.Locale">
+		<defaultValueExpression><![CDATA[new Locale("ru", "RU")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+ c_res.card_id,
+av_exec_name.string_value as exec_name,
+av_exec_dative_name.string_value as exec_dative_name,
+av_exec_namef.string_value as exec_f,
+av_exec_namei.string_value as exec_i,
+av_exec_nameo.string_value as exec_o,
+av_sgnex_pos.string_value as sgnex_pos,
+av_sgnex_namef.string_value as sgnex_f,
+av_sgnex_namei.string_value as sgnex_i,
+av_sgnex_nameo.string_value as sgnex_o,
+av_sgnex_fio.string_value as sgnex_d,
+av_resolut.string_value as resolut,
+av_regnum.string_value as regnum,
+av_regdate.date_value + interval '$P!{tz_hour} hour' as regdate
+from
+	card c_prnt -- Родительская карточка: Входящий или Резолюция
+left outer join attribute_value av_res -- указывает на дочерние резолюции
+	on (	(c_prnt.template_id <> 324) and
+			(av_res.number_value = c_prnt.card_id and av_res.attribute_code = 'JBR_MAINDOC')
+		) or
+		(	c_prnt.template_id = 324 and
+		(av_res.number_value = c_prnt.card_id and av_res.attribute_code = 'JBR_MAINDOC')
+		)
+left outer join card c_res -- Карточка резолюции
+	on c_res.card_id = av_res.card_id
+left outer join attribute_value av_exec_link on c_res.card_id = av_exec_link.card_id and av_exec_link.attribute_code = 'JBR_INFD_EXEC_LINK'
+left outer join person p_exec on p_exec.person_id = av_exec_link.number_value
+left outer join attribute_value av_exec_dative_name on av_exec_dative_name.card_id = p_exec.card_id and av_exec_dative_name.attribute_code = 'JBR_PERS_SNAME_DATIV'
+left outer join attribute_value av_exec_namef on av_exec_namef.card_id = p_exec.card_id and av_exec_namef.attribute_code = 'JBR_PERS_SNAME'
+left outer join attribute_value av_exec_namei on av_exec_namei.card_id = p_exec.card_id and av_exec_namei.attribute_code = 'JBR_PERS_NAME'
+left outer join attribute_value av_exec_nameo on av_exec_nameo.card_id = p_exec.card_id and av_exec_nameo.attribute_code = 'JBR_PERS_MNAME'
+left outer join attribute_value av_exec_name on av_exec_name.card_id = p_exec.card_id and av_exec_name.attribute_code = 'JBR_PERS_SNAME_NM'
+
+left outer join attribute_value av_sgnex_link on c_res.card_id = av_sgnex_link.card_id and av_sgnex_link.attribute_code = 'JBR_INFD_SGNEX_LINK'
+left join person persLink on av_sgnex_link.number_value = persLink.person_id
+left outer join attribute_value av_sgnex_pos on av_sgnex_pos.card_id = persLink.card_id and av_sgnex_pos.attribute_code = 'JBR_PERS_POSITION'
+left outer join attribute_value av_sgnex_namef on av_sgnex_namef.card_id = persLink.card_id and av_sgnex_namef.attribute_code = 'JBR_PERS_SNAME'
+left outer join attribute_value av_sgnex_namei on av_sgnex_namei.card_id = persLink.card_id and av_sgnex_namei.attribute_code = 'JBR_PERS_NAME'
+left outer join attribute_value av_sgnex_nameo on av_sgnex_nameo.card_id = persLink.card_id and av_sgnex_nameo.attribute_code = 'JBR_PERS_MNAME'
+left outer join attribute_value av_sgnex_fio on av_sgnex_fio.card_id = persLink.card_id and av_sgnex_fio.attribute_code = 'JBR_PERS_SNAME_NM'
+
+left outer join attribute_value av_resolut on c_res.card_id = av_resolut.card_id and av_resolut.attribute_code = 'JBR_GIPA_RESOLUT'
+
+left outer join attribute_value av_regnum on c_prnt.card_id = av_regnum.card_id and av_regnum.attribute_code = 'JBR_REGD_REGNUM'
+left outer join attribute_value av_regdate on c_prnt.card_id = av_regdate.card_id and av_regdate.attribute_code = 'JBR_REGD_DATEREG'
+
+where
+	c_res.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="card_id" class="java.math.BigDecimal"/>
+	<field name="exec_name" class="java.lang.String"/>
+	<field name="exec_dative_name" class="java.lang.String"/>
+	<field name="exec_f" class="java.lang.String"/>
+	<field name="exec_i" class="java.lang.String"/>
+	<field name="exec_o" class="java.lang.String"/>
+	<field name="sgnex_pos" class="java.lang.String"/>
+	<field name="sgnex_f" class="java.lang.String"/>
+	<field name="sgnex_i" class="java.lang.String"/>
+	<field name="sgnex_o" class="java.lang.String"/>
+	<field name="sgnex_d" class="java.lang.String"/>
+	<field name="resolut" class="java.lang.String"/>
+	<field name="regnum" class="java.lang.String"/>
+	<field name="regdate" class="java.sql.Timestamp"/>
+	<background>
+		<band height="393"/>
+	</background>
+	<title>
+		<band height="75" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="55" width="273" height="15" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{sgnex_pos} != null) && !($F{sgnex_pos}.trim().equals("")))?
+$F{sgnex_pos}.toUpperCase() : ""]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="0" y="71" width="273" height="1" forecolor="#000000"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<image onErrorType="Blank">
+				<reportElement x="111" y="0" width="51" height="55"/>
+				<imageExpression><![CDATA[$P{path} + "images/fsin_gerb_small_black.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="43">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="11" y="6" width="260" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{exec_dative_name} != null) && !($F{exec_dative_name}.trim().equals("")))
+    ? $F{exec_dative_name}.trim().toUpperCase()
+    :
+    (
+        (($F{exec_name} != null) && !($F{exec_name}.trim().equals("")))
+            ? $F{exec_name}.trim().toUpperCase()
+            :
+            (
+                (
+                    ($F{exec_f} != null && $F{exec_f}.trim().length() > 0) ?
+                    ($F{exec_f}.trim().toUpperCase()) : ""
+                )
+                +
+                (($F{exec_i} != null && $F{exec_i}.trim().length() > 0) ?
+                    (
+                        " " + $F{exec_i}.trim().substring(0,1).toUpperCase() + "." +
+                        (($F{exec_o} != null && $F{exec_o}.trim().length() > 0) ?
+                        (" " + $F{exec_o}.trim().substring(0,1).toUpperCase() + ".") : "")
+                    ) : ""
+                )
+            )
+    )]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="11" y="18" width="220" height="12"/>
+				<subreportParameter name="offset">
+					<subreportParameterExpression><![CDATA[0]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="card_id">
+					<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "PrintAssignment_coexec.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="137" y="18" width="220" height="12"/>
+				<subreportParameter name="offset">
+					<subreportParameterExpression><![CDATA[15]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="card_id">
+					<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "PrintAssignment_coexec.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="11" y="30" width="250" height="13"/>
+				<box topPadding="0">
+					<topPen lineWidth="0.0" lineColor="#33FF33"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="11" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{resolut} != null
+    ? "\n      " + $F{resolut}
+    : ""
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<pageFooter>
+		<band height="60">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1" y="3" width="245" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{sgnex_d} != null) && !($F{sgnex_d}.trim().equals("")))
+    ? $F{sgnex_d}.trim().toUpperCase()
+    :
+    (
+        (
+        ($F{sgnex_f} != null && $F{sgnex_f}.trim().length() > 0) ?
+            ($F{sgnex_f}.trim().toUpperCase()) : ""
+        )
+        +
+        (($F{sgnex_i} != null && $F{sgnex_i}.trim().length() > 0) ?
+            (
+                " " +$F{sgnex_i}.trim().substring(0,1).toUpperCase() + "." +
+                (($F{sgnex_o} != null && $F{sgnex_o}.trim().length() > 0) ?
+                    (" " + $F{sgnex_o}.trim().substring(0,1).toUpperCase() + ".") : "")
+            ) : ""
+        )
+    )]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1" y="30" width="272" height="15"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="11" isBold="true" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["«____»____________" +
+(new SimpleDateFormat("yyyy").format(new Date())) +
+" г."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="1" y="45" width="272" height="15"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="11" isBold="true" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{regnum} != null && !$F{regnum}.trim().equals("") && $F{regdate} != null) ?
+    ("к № " + $F{regnum} + " от «" + (new SimpleDateFormat("dd")).format($F{regdate}) + "» " +
+            (
+                ((new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).endsWith("ь")
+                  || (new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).endsWith("й")) ?
+                    (new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).toLowerCase().substring(0, (new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).length() - 1) + "я " : "" +
+                  (
+                    ((new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).endsWith("т"))
+                        ? (new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).toLowerCase() + "а "
+                        : (new SimpleDateFormat("MMMMM", $P{locale})).format($F{regdate}).toLowerCase() + " "
+                  )
+            )
+            + (new SimpleDateFormat("yyyy")).format($F{regdate}) + " г."
+    ) : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

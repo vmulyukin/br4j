@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Class-Path: DBMI-Model.jar 
+ DBMI-Platform.jar 
+ jnpserver.jar 
+ jboss-common.jar 
+ jboss-j2ee.jar 
+ concurrent.jar 
+ jboss.jar 
+ jboss-serialization.jar 
+ jboss-remoting.jar 
+ jbosssx.jar 
+ jboss-transaction.jar 
+ commons-logging.jar
+Main-Class: com.aplana.dbmi.cardinterchange.Main
+

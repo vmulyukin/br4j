@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<ejb-jar id="ejb-jar_ID" version="2.1" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
+	<display-name>Recalculation Zone DOW Module</display-name>
+	<enterprise-beans>
+		<session id="RecalcZoneDOW">
+			<ejb-name>RecalcZoneDOW</ejb-name>
+			<home>com.aplana.dbmi.task.TaskHome</home>
+			<remote>com.aplana.dbmi.task.Task</remote>
+			<ejb-class>com.aplana.dbmi.module.recalczonedow.RecalculateZoneDOWTask</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+		</session>
+		<session id="ORDMove">
+            <ejb-name>ORDMove</ejb-name>
+            <home>com.aplana.dbmi.task.TaskHome</home>
+            <remote>com.aplana.dbmi.task.Task</remote>
+            <ejb-class>com.aplana.dbmi.module.ordmove.ORDMoveTaskBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+        </session>
+        <session id="ArchiveRemovedCardsFromXML">
+            <ejb-name>ArchiveRemovedCardsFromXML</ejb-name>
+            <home>com.aplana.dbmi.task.TaskHome</home>
+            <remote>com.aplana.dbmi.task.Task</remote>
+            <ejb-class>com.aplana.dbmi.module.archive.ArchiveRemovedCardsFromXML</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+        </session>
+        <session id="OutcomingDelivery">
+            <ejb-name>OutcomingDelivery</ejb-name>
+            <home>com.aplana.dbmi.task.TaskHome</home>
+            <remote>com.aplana.dbmi.task.Task</remote>
+            <ejb-class>com.aplana.dbmi.module.delivery.OutcomingDelivery</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+        </session>
+        <session id="MassSaveCard">
+            <ejb-name>MassSaveCard</ejb-name>
+            <home>com.aplana.dbmi.task.TaskHome</home>
+            <remote>com.aplana.dbmi.task.Task</remote>
+            <ejb-class>com.aplana.dbmi.module.masssave.MassSaveCardTask</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+        </session>
+		<session id="UpdateRulesByRole">
+			<ejb-name>UpdateRulesByRole</ejb-name>
+			<home>com.aplana.dbmi.task.TaskHome</home>
+			<remote>com.aplana.dbmi.task.Task</remote>
+			<ejb-class>com.aplana.dbmi.module.recalcRules.RecalculateRulesByRoleTask</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+		</session>
+	</enterprise-beans>
+</ejb-jar>

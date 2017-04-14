@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../../dtd/spring-beans.dtd">
+<beans>
+    <bean id="templatesController" class="com.aplana.dbmi.admin.TemplatesPortlet">
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="templateBean"/>
+        <property name="commandClass" value="com.aplana.dbmi.admin.WebTemplateBean"/>
+        <property name="formView" value="templates"/>
+        <property name="successView" value="templates"/>
+		<property name="editAccessRoles" value="A,A_TEMPLATES"/>
+        <property name="redirectAction" value="true"/>
+    </bean>
+
+    <bean id="templateAttributesController" class="com.aplana.dbmi.admin.TemplateAttributesPortlet">
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="templateAttributesBean"/>
+        <property name="commandClass" value="com.aplana.dbmi.admin.WebTemplateAttributesBean"/>
+        <property name="formView" value="templateAttributes"/>
+        <property name="successView" value="templateAttributes"/>
+    </bean>
+
+    <bean id="templateRWAttributesController" class="com.aplana.dbmi.admin.TemplateRWAttributesPortlet">
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="templateRWAttributesBean"/>
+        <property name="commandClass" value="com.aplana.dbmi.admin.WebTemplateRWAttributesBean"/>
+        <property name="formView" value="templateRWAttributes"/>
+        <property name="successView" value="templateRWAttributes"/>
+    </bean>
+
+    <bean id="templateWorkflowMovesReqAttrController" class="com.aplana.dbmi.admin.TemplateWorkflowMovesReqAttrPortlet">
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="templateWorkflowMovesReqAttrBean"/>
+        <property name="commandClass" value="com.aplana.dbmi.admin.WebTemplateWorkflowMovesReqAttrBean"/>
+        <property name="formView" value="templateWorkflowMovesReqAttr"/>
+        <property name="successView" value="templateWorkflowMovesReqAttr"/>
+    </bean>
+    
+    <bean id="templateAccessController" class="com.aplana.dbmi.admin.TemplateAccessPortlet">
+    	<property name="sessionForm" value="true"/>
+    	<property name="commandName" value="templateAccessBean"/>
+    	<property name="commandClass" value="com.aplana.dbmi.admin.WebTemplateAccessBean"/>
+	   	<property name="formView" value="templateAccess"/>
+    	<property name="successView" value="templates"/>
+    </bean>
+
+	<bean id="portletActionParameterInterceptor" class= "org.springframework.web.portlet.handler.ParameterMappingInterceptor">
+		<property name="parameterName" value="portlet_action"/>
+	</bean>
+	
+	<bean id="actionParameterInterceptor" class= "org.springframework.web.portlet.handler.ParameterMappingInterceptor">
+		<property name="parameterName" value="action"/>
+	</bean>
+    
+    <!-- Handler Mapping -->
+    <bean id="portletModeParameterHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
+        <property name="order" value="1"/>	
+     	<property name="parameterName" value="portlet_action"/>
+		<property name="interceptors">
+			<list>
+				<ref bean="portletActionParameterInterceptor" />
+				<ref bean="actionParameterInterceptor" />
+			</list>
+		</property>
+        <property name="portletModeParameterMap">
+            <map>
+                <entry key="view">
+                    <map>
+                        <entry key="editTemplateAttr" value-ref="templateAttributesController"/>
+                        <entry key="editTemplateAccess" value-ref="templateAccessController"/>
+                        <entry key="editTemplateRWAttr" value-ref="templateRWAttributesController"/>
+                        <entry key="editTemplateWorkflowMovesReqAttr" value-ref="templateWorkflowMovesReqAttrController"/>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="order" value="2"/>    
+        <property name="portletModeMap">
+            <map>
+                <entry key="view">
+                    <ref bean="templatesController"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Exceptions Handler -->
+    <bean id="defaultExceptionHandler" parent="defaultExceptionHandlerTemplate"/>
+</beans>

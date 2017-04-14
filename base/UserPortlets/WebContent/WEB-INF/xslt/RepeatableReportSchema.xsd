@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- Схема хранения информации в атрибуте jbr.report.text
+Пример:
+<report>
+	<part round="1" timestamp="2010-07-06T12:22:13">Первая часть отчёта</part>
+	<part round="2" timestamp="2010-07-09T14:55:12">Вторая часть отчёта</part>
+	<part round="3" timestamp="2010-07-09T17:38:42">Последняя часть отчёта</part>
+</report> 
+Части хранятся в хронологическом порядке-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<element name="report"><complexType><sequence>
+		<element name="part" maxOccurs="unbounded" minOccurs="0">
+			<complexType><simpleContent>
+   				<extension base="string">
+    				<attribute name="round" type="integer" use="required"/>
+    				<attribute name="main-round" type="integer" use="optional"/>
+    				<attribute name="timestamp" type="dateTime" use="required"/>
+    				<attribute name="fact-user" type="string" use="required"/>
+    				<attribute name="action" type="string" use="optional"/>
+    				<attribute name="to-state" type="string" use="optional"/>
+    				<attribute name="order" type="decimal" use="optional"/>
+    				<attribute name="plan-user" type="string" use="optional"/>
+   				</extension>
+  			</simpleContent></complexType>
+ 		</element>
+		<element name="raw-part" maxOccurs="1" minOccurs="0">
+			<complexType><simpleContent>
+   				<extension base="string"/>
+  			</simpleContent></complexType>
+ 		</element>
+	</sequence></complexType></element>
+</schema>

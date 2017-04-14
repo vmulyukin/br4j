@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SpravkaRemindexexcutorReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDateExec" class="java.util.Date"/>
+	<parameter name="endDateExec" class="java.util.Date"/>
+	<parameter name="inspectors" class="java.lang.String"/>
+	<parameter name="authors" class="java.lang.String"/>
+	<parameter name="executors" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\EclipseJ2ee\\pr-indigo-asyncation-branches\\br4j\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="docGroup" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
+	<parameter name="responsibleExecutor" class="java.lang.Boolean"/>
+	<parameter name="ext_int" class="java.lang.String"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- таблица ссылок на непосредственый вышестоящий департамент
+-- id - департамент, pid - непосредлственно вышестоящий департамент
+with dep_parent (id, pid) as (
+	select cr.card_id as id, av_parent.number_value as pid
+	from card cr
+	left join attribute_value av_parent on av_parent.card_id = cr.card_id and av_parent.attribute_code = 'JBR_DEPT_PARENT_LINK'
+	where cr.template_id = 484
+),
+-- таблица ссылок на все вышестоящие департаменты + на саму себя
+dep_all_parent (id, pid) as (
+	with recursive dep_all_parent_rec (b_id, id, pid) as (
+		select id, id, pid
+		from dep_parent
+		union
+		select dap.b_id, dp.id, dp.pid
+		from dep_all_parent_rec dap, dep_parent dp
+		where dap.pid = dp.id
+	)
+	select b_id, id
+	from dep_all_parent_rec
+),
+-- таблица поручение - документ основание
+res_doc_base (res_id, doc_id) as (
+	with recursive res_doc_base_rec (res_id, doc_id) as (
+		select av.card_id, doc.card_id
+		from card doc
+		inner join attribute_value av on av.number_value = doc.card_id and av.attribute_code = 'JBR_DOCB_BYDOC'
+		where doc.template_id in ($P!{docGroup}) or $P{docGroup} is null
+		union
+		select av.card_id, res_doc.doc_id
+		from res_doc_base_rec res_doc
+		inner join attribute_value av on av.number_value = res_doc.res_id and av.attribute_code = 'JBR_RIMP_PARASSIG'
+	)
+	select res_id, doc_id
+	from res_doc_base_rec
+)
+SELECT distinct
+c.card_id as card_id,
+av_reg_num.string_value as reg_num,
+av_reg_date.date_value + interval '$P!{tz_hour} hour' as parent_date,
+av_par_desc.string_value as par_desc,
+av_exec_date.date_value + interval '$P!{tz_hour} hour' as exec_date,
+av_resolution_text1.string_value as resolution_text1,
+authors_val.full_name as author,
+authors.vals as authors,
+inspectors.vals as inspectors,
+groups.vals as groups,
+position.string_value as position,
+department.string_value as department,
+av_sender.string_value as sender,
+signer_val.string_value as signer,
+av_ext_number.string_value as ext_number,
+ av_ext_date.date_value + interval '$P!{tz_hour} hour' as ext_date,
+crParent.card_id as docId
+From card c
+
+-- документ основание
+JOIN res_doc_base res_doc on res_doc.res_id = c.card_id
+JOIN card crParent ON crParent.card_id = res_doc.doc_id
+
+--на контроле
+JOIN attribute_value av_on_ctrl on (av_on_ctrl.card_id = c.card_id and av_on_ctrl.attribute_code = 'JBR_TCON_ONCONT')
+    JOIN values_list vl_on_ctrl on (vl_on_ctrl.value_id = av_on_ctrl.value_id and vl_on_ctrl.value_id = 1449)
+
+--срок исполения
+LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+
+--Текст резолюции
+LEFT JOIN attribute_value av_resolution_text1 on (av_resolution_text1.card_id = c.card_id and av_resolution_text1.attribute_code = 'JBR_GIPA_RESOLUT')
+
+--контролёр
+LEFT JOIN attribute_value inspector on c.card_id = inspector.card_id and inspector.attribute_code = 'JBR_TCON_INSPECTOR'
+LEFT JOIN person inspectors_val on inspector.number_value = inspectors_val.person_id
+
+--автор
+LEFT JOIN attribute_value author on c.card_id = author.card_id and author.attribute_code = 'JBR_INFD_SGNEX_LINK'
+LEFT JOIN person authors_val on author.number_value = authors_val.person_id
+--должность автора
+LEFT JOIN attribute_value position on authors_val.card_id = position.card_id and  position.attribute_code = 'JBR_PERS_POSITION'
+
+--исполнитель
+LEFT JOIN attribute_value executor on c.card_id = executor.card_id and executor.attribute_code = 'JBR_INFD_EXEC_LINK'
+LEFT JOIN person executors_val on executor.number_value = executors_val.person_id
+LEFT JOIN attribute_value executor_dep on  executor_dep.card_id = executors_val.card_id and executor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+LEFT JOIN attribute_value department  on  department.card_id =  executor_dep.number_value and department.attribute_code = 'JBR_DEPT_FULLNAME'
+left join dep_all_parent dep on dep.id = department.card_id
+
+--coисполнитель
+LEFT JOIN attribute_value coexecutor on c.card_id = coexecutor.card_id and coexecutor.attribute_code = 'ADMIN_255974'
+LEFT JOIN person coexecutors_val on coexecutor.number_value = coexecutors_val.person_id
+LEFT JOIN attribute_value coexecutor_dep on  coexecutor_dep.card_id = coexecutors_val.card_id and coexecutor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+LEFT JOIN attribute_value codepartment  on  codepartment.card_id =  coexecutor_dep.number_value and codepartment.attribute_code = 'JBR_DEPT_FULLNAME'
+left join dep_all_parent codep on codep.id = codepartment.card_id
+
+--документ основание(рег. номер)
+LEFT JOIN attribute_value av_reg_num on av_reg_num.card_id = crParent.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+LEFT JOIN attribute_value av_reg_date on av_reg_date.card_id = crParent.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+LEFT JOIN attribute_value av_par_desc on av_par_desc.card_id = crParent.card_id and av_par_desc.attribute_code = 'JBR_INFD_SHORTDESC'
+
+--Отправитель
+LEFT JOIN attribute_value av_par_send on av_par_send.card_id = crParent.card_id and av_par_send.attribute_code = 'JBR_INFD_SENDER'
+LEFT JOIN attribute_value av_sender on av_sender.card_id = av_par_send.number_value and av_sender.attribute_code = 'JBR_DORG_FULLNAME'
+
+--Должность, ФИО лица, подписавшего документ
+LEFT JOIN attribute_value av_signer on crParent.card_id =  av_signer.card_id and  av_signer.attribute_code = 'JBR_INFD_SIGN_EXT'
+LEFT JOIN attribute_value signer_val on signer_val.card_id =  av_signer.number_value and   signer_val.attribute_code = 'NAME'
+
+--Номер исходящего
+LEFT JOIN attribute_value av_ext_number on crParent.card_id =  av_ext_number.card_id and  av_ext_number.attribute_code = 'JBR_REGD_NUMOUT'
+
+--Дата документа
+LEFT JOIN attribute_value av_ext_date on crParent.card_id =  av_ext_date.card_id and  av_ext_date.attribute_code = 'JBR_REGD_DATEOUT'
+
+--статус
+LEFT JOIN card_status status on c.status_id = status.status_id
+
+--исполнители внешние
+LEFT JOIN attribute_value av_ext_exec  on c.card_id =  av_ext_exec.card_id and  av_ext_exec.attribute_code = 'JBR_INFD_EXEC_EXT'
+
+JOIN card parentCard on parentCard.card_id= crParent.card_id and (parentCard.template_id in ($P!{docGroup}) or $P{docGroup} is null)
+
+--авторы через запятую
+CROSS JOIN
+(select array_to_string (array(select coalesce(name.string_value, p.full_name)  as ctrl from person p
+	LEFT JOIN attribute_value name on name.card_id = p.card_id and name.attribute_code = 'JBR_PERS_SNAME_NM'
+	where p.card_id in ($P!{authors})), ', ') as vals) as authors
+
+--контролеры с телефонами и должностями через запятую
+CROSS JOIN
+(select array_to_string (array(select coalesce(name1.string_value, p1.full_name)  as ctrl from person p1
+	LEFT JOIN attribute_value name1 on name1.card_id = p1.card_id and name1.attribute_code = 'JBR_PERS_SNAME_NM'
+	where p1.card_id in ($P!{inspectors})), ', ') as vals) as inspectors
+
+--группы документов через запятую
+CROSS JOIN
+(SELECT array_to_string (array(select template_name_rus from template where template_id in ($P!{docGroup})), ',') as vals) AS groups
+
+WHERE
+c.template_id=324 and
+ date_trunc( 'day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+date_trunc( 'day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+(inspectors_val.card_id in ($P!{inspectors}) or $P{inspectors} is null) and
+(authors_val.card_id in ($P!{authors}) or $P{authors} is null) and
+
+(dep.pid in ($P!{department}) or $P{department} is null) and
+(($P{ext_int}='kitInt' and (( executors_val.card_id in ($P!{executors}) or (coexecutors_val.card_id in ($P!{executors}) and $P{responsibleExecutor} is null ) ) or $P{executors} is null )) or
+($P{ext_int}='kitExt' and av_ext_exec.number_value is not null and (av_ext_exec.number_value in ($P!{executors}) or $P{executors} is null)  )) and
+c.status_id=103
+
+order by department, exec_date]]>
+	</queryString>
+	<field name="card_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="reg_num" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="exec_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="author" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="authors" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="position" class="java.lang.String"/>
+	<field name="inspectors" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="parent_date" class="java.util.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="par_desc" class="java.lang.String"/>
+	<field name="resolution_text1" class="java.lang.String"/>
+	<field name="department" class="java.lang.String"/>
+	<field name="sender" class="java.lang.String"/>
+	<field name="signer" class="java.lang.String"/>
+	<field name="ext_number" class="java.lang.String"/>
+	<field name="ext_date" class="java.util.Date"/>
+	<field name="groups" class="java.lang.String"/>
+	<field name="docId" class="java.lang.Integer"/>
+	<variable name="number" class="java.lang.Integer" incrementType="Column" calculation="Count"/>
+	<group name="ex">
+		<groupExpression><![CDATA[$F{department}]]></groupExpression>
+		<groupHeader>
+			<band height="94">
+				<staticText>
+					<reportElement x="0" y="33" width="28" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[№ п/п]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="33" width="35" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Рег. номер/дата]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="362" y="33" width="60" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Срок исполнения]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="63" y="33" width="79" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Корреспондент
+/Подписант
+/Заявитель]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="422" y="33" width="143" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Исполнитель]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="142" y="33" width="125" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Краткое содержание]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="267" y="33" width="95" height="61"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Поручение]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="334" height="33" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{department}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="351" y="0" width="214" height="33" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy kk:mm")).format(new Date())]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="565" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Справка-напоминание об исполнении поручений"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="565" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["срок исполнения с "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{startDateExec})+" по "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{endDateExec})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="28" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="28" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ex_COUNT} + "."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="362" y="0" width="60" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{exec_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{exec_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="267" y="0" width="95" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{position} != null ? $F{position}: "")+" "+$F{author}+"/"+($F{resolution_text1} != null ? $F{resolution_text1}: "")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="422" y="0" width="143" height="28"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="143" height="28" isPrintWhenDetailOverflows="true">
+						<printWhenExpression><![CDATA[new String($P{ext_int}).equals("kitInt")]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="responsibleExecutor">
+						<subreportParameterExpression><![CDATA[$P{responsibleExecutor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SpravkaRemindExecutor_sub.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="143" height="28">
+						<printWhenExpression><![CDATA[new String($P{ext_int}).equals("kitExt")]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SpravkaRemindExecutor_sub2.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="63" y="0" width="79" height="28" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="79" height="28"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[(new com.aplana.dbmi.jasperreports.GetDocFromRes()).getDocId($P{REPORT_CONNECTION},$F{docId})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "SpravkaRemindexexcutorReport_sub3.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="28" y="0" width="35" height="28" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="35" height="28"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[(new com.aplana.dbmi.jasperreports.GetDocFromRes()).getDocId($P{REPORT_CONNECTION},$F{docId})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "SpravkaRemindexexcutorReportRegNum.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="142" y="0" width="125" height="28" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="124" height="28"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[(new com.aplana.dbmi.jasperreports.GetDocFromRes()).getDocId($P{REPORT_CONNECTION},$F{docId})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "SpravkaRemindexexcutorReportShortDesc.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="51" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="0" width="565" height="51"/>
+				<subreportParameter name="authors">
+					<subreportParameterExpression><![CDATA[$P{authors}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inspectors">
+					<subreportParameterExpression><![CDATA[$P{inspectors}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="docGroup">
+					<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path}+ "SpravkaRemindExecutor_agc_sub1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

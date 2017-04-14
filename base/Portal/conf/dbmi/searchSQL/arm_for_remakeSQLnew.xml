@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+						select distinct crds.card_id from (
+						
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('JBR_INFD_EXECUTOR', 'JBR_IMPL_INSPECTOR') 
+									and av_1.number_value = (%CURRENTUSERS%)
+						
+								where c.template_id in (224,364,784,864,764,775,777,1226) 
+								and c.status_id = 106
+								-- повторный статус	
+								and exists (select 1 from card_version  as c_ver
+											join action_log as act_l on act_l.action_log_id = c_ver.action_log_id
+												and act_l.action_code = 'CHG_STATUS'
+											where c_ver.card_id = c.card_id
+											and c_ver.status_id = c.status_id)
+						
+								union all
+						
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('JBR_IMPL_INSPECTOR', 'JBR_IMPL_FOIV') 
+									and av_1.number_value = (%CURRENTUSERS%)
+						
+								where c.template_id in (865) 
+								and c.status_id = 1
+								-- повторный статус	
+								and exists (select 1 from card_version  as c_ver
+										join action_log as act_l on act_l.action_log_id = c_ver.action_log_id
+											and act_l.action_code = 'CHG_STATUS'
+										where c_ver.card_id = c.card_id
+										and c_ver.status_id = c.status_id)
+						
+								union all
+						
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('ADMIN_702335') and av_1.number_value = (%CURRENTUSERS%)
+						
+								where c.template_id in (1044) 
+								and c.status_id in (102,556656)				
+								-- повторный статус
+								and exists (select 1 from card_version  as c_ver
+										join action_log as act_l on act_l.action_log_id = c_ver.action_log_id
+											and act_l.action_code = 'CHG_STATUS'
+										where c_ver.card_id = c.card_id
+										and c_ver.status_id = c.status_id)
+						
+						) as crds
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

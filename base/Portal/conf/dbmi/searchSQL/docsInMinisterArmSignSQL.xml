@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- (2) Документы в АРМе министра на подписи --
+SELECT cardID
+FROM
+	(
+		SELECT DISTINCT c.card_id as cardID, coalesce(av_u.value_id, 2000000000), av.date_value
+		FROM Card c
+			LEFT OUTER JOIN attribute_value av
+				ON	av.card_id = c.card_id 
+				and (av.attribute_code in ('JBR_RASSM_TODATE', 'JBR_SIGN_TODATE'))
+
+			-- "срочность"
+			LEFT JOIN attribute_value av_u
+				on	(av_u.card_id = c.card_id)
+				and (av_u.attribute_code = 'JBR_HOWFAST')
+
+			INNER JOIN attribute_value avUser 
+				ON (avUser.card_id = c.card_id) 
+					and avUser.attribute_code in ('JBR_SIGN_RESPONSIBLE')
+					and ( 
+						-- avUser.number_value in (%CURRENTUSERS%) -- текущий пользователь = исполнитель
+						-- или помошник для персоны из avUser.number_value 
+						exists (
+							select 1 
+							from attribute_value av_m join attribute_value av_a
+									on av_a.card_id = av_m.card_id
+								join card arm_c on arm_c.card_id = av_a.card_id
+							where	av_m.attribute_code = 'JBR_ARM_MANAGER'
+									and av_m.number_value = avUser.number_value
+									and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+									and av_a.number_value in (%CURRENTUSERS%)
+									and arm_c.status_id not in (34145, 6)
+						)
+					)
+		WHERE 
+			(
+				(-- Шаблон=Подпись (365), состояние="Подписание"(108)
+					(c.template_id=365) and (c.status_id=108)
+					-- -- Помощники подписанта (скрытые) ('ADMIN_478058')
+					-- Подписант ('JBR_SIGN_RESPONSIBLE')
+					-- and (avUser.attribute_code ='JBR_SIGN_RESPONSIBLE') 
+					-- "время выполнения" and (av.attribute_code ='JBR_IMPL_DEADLINE')
+				)
+			) -- /WHERE
+
+		ORDER BY 2 ASC, 3 DESC -- av.date_value
+
+ 	) AS a
+--	ORDER by 1 DESC
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming" pageWidth="555" pageHeight="782" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="table_header"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[    select
+	dt.iter_num,
+	dt.order_num,
+	array_to_string(xpath('//@round',dt.report::xml),'')::text as round,
+	array_to_string(xpath('//@action',dt.report::xml),'') as act,
+	array_to_string(xpath('//@fact-user',dt.report::xml),'') as fact_user,
+	array_to_string(xpath('//@timestamp',dt.report::xml),'')::text::timestamp as data_s,
+	array_to_string(xpath('/part/text()',dt.report::xml),'') as sol_text,
+	dt.solution,
+	dt.date,
+	dt.num,
+	dt.fname,
+	dt.num2,
+	dt.sname
+	from (
+select
+
+av_iter_num.number_value as iter_num,
+av_order_num.number_value as order_num,
+unnest(xpath('/report/part',convert_from((av_act.long_binary_value ), 'UTF8')::xml)) as report,
+av_solution.string_value as solution,
+av_date.date_value as date,
+---
+av_fvisa.number_value as num,
+av_fvname.string_value as fname,
+av_svisa.number_value as num2,
+coalesce(av_svname.string_value,p_name.full_name) as sname
+
+from card c_out
+
+left join attribute_value av_visa on (av_visa.card_id=c_out.card_id and av_visa.attribute_code='JBR_SIGN_SIGNING')
+-- Номер итерации
+left join attribute_value av_iter_num on (av_iter_num.card_id=av_visa.number_value and av_iter_num.attribute_code='JBR_SIGN_SIGN_RND')
+-- Порядковый номер
+left join attribute_value av_order_num on (av_order_num.card_id=av_visa.number_value and av_order_num.attribute_code='JBR_SIGN_NUMBER')
+-- Действие ?
+
+--Фактический подписант
+left join attribute_value av_fvisa on (av_fvisa.card_id=av_visa.number_value and av_fvisa.attribute_code='ADMIN_888054')
+-- Фамилия лица подписавшее документ
+left outer join attribute_value av_fvname on (av_fvname.card_id = (select card_id from person where person_id=av_fvisa.number_value limit 1) and av_fvname.attribute_code = 'JBR_PERS_SNAME_NM')
+
+
+--Подписант
+left join attribute_value av_svisa on (av_svisa.card_id=av_visa.number_value and av_svisa.attribute_code='JBR_SIGN_RESPONSIBLE')
+-- Фамилия лица подписавшее документ
+left outer join attribute_value av_svname on (av_svname.card_id = (select card_id from person where person_id=av_svisa.number_value limit 1) and av_svname.attribute_code = 'JBR_PERS_SNAME_NM')
+left join person p_name on p_name.person_id = av_svisa.number_value
+--Решение
+left join attribute_value av_solution on (av_solution.card_id=av_visa.number_value and av_solution.attribute_code='ADMIN_14759970')
+
+--Действие
+left join attribute_value av_act on (av_act.card_id=av_visa.number_value and av_act.attribute_code='JBR_SIGN_COMMENT')
+--Дата
+left join attribute_value av_date on (av_date.card_id=av_visa.number_value and av_date.attribute_code='JBR_ACTAUL_DATE_SIGN')
+WHERE
+c_out.card_id = $P{card_id}
+) as dt
+ORDER BY round, order_num, data_s]]>
+	</queryString>
+	<field name="iter_num" class="java.math.BigDecimal"/>
+	<field name="order_num" class="java.math.BigDecimal"/>
+	<field name="round" class="java.lang.String"/>
+	<field name="act" class="java.lang.String"/>
+	<field name="fact_user" class="java.lang.String"/>
+	<field name="data_s" class="java.sql.Timestamp"/>
+	<field name="sol_text" class="java.lang.String"/>
+	<field name="solution" class="java.lang.String"/>
+	<field name="date" class="java.sql.Timestamp"/>
+	<field name="num" class="java.math.BigDecimal"/>
+	<field name="fname" class="java.lang.String"/>
+	<field name="num2" class="java.math.BigDecimal"/>
+	<field name="sname" class="java.lang.String"/>
+	<title>
+		<band height="30">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="52" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Номер Итерации]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="52" y="0" width="68" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Порядковый номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="220" y="0" width="85" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Фактический подписант]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="466" y="0" width="89" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Решение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="120" y="0" width="100" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Действие]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="305" y="0" width="91" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Подписант]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="396" y="0" width="70" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="220" y="0" width="85" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{fact_user}==null?"": $F{fact_user})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="466" y="0" width="89" height="30" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{sol_text}==null?"":$F{sol_text}.trim())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="52" y="0" width="68" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{order_num}==null?"":$F{order_num}.toString())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="52" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{round}==null?"":$F{round})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="120" y="0" width="100" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{act}==null?"": $F{act})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="305" y="0" width="91" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{sname}==null?"": $F{sname})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="396" y="0" width="70" height="30" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_s} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{data_s}) : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

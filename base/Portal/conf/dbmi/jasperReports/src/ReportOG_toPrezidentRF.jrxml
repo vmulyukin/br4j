@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportOG_toPrezidentRF" pageWidth="1206" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="1176" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0245201830476058"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="ФОИВ/Форма 1а"/>
+	<parameter name="date" class="java.sql.Timestamp">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date1" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer($P{date}.getMonth()  <3 ? 1 : new Integer($P{date}.getMonth()  >2 && $P{date}.getMonth()  <6 ? 2 :
+    new Integer($P{date}.getMonth()  >5 && $P{date}.getMonth()  <9 ? 3 :  new Integer($P{date}.getMonth()  >8 && $P{date}.getMonth()  <12 ? 4 : 0))))]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer($P{date}.getYear()+1900)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Work_projects\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="source_type" class="java.lang.String"/>
+	<parameter name="classficator" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select 1]]>
+	</queryString>
+	<variable name="quarter" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[new String($P{date}.getMonth()  <3 ? "I" : new String($P{date}.getMonth()  >2 && $P{date}.getMonth()  <6 ? "II" :
+    new String($P{date}.getMonth()  >5 && $P{date}.getMonth()  <9 ? "III" :  new String($P{date}.getMonth()  >8 && $P{date}.getMonth()  <12 ? "IV" : "0"))))]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="1176" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Информация за "+$V{quarter}+" Квартал "+($P{date}.getYear()+1900)+" Года о рассмотрении поступивших из администрации Президента РФ обращений граждан, организаций (юридических лиц) и общественных объединений, адресованных Президенту РФ"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="45" width="1176" height="5"/>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="year">
+					<subreportParameterExpression><![CDATA[$P{year}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="date1">
+					<subreportParameterExpression><![CDATA[$P{date1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="classficator">
+					<subreportParameterExpression><![CDATA[$P{classficator}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "ReportOG_toPrezidentRF_FOIV.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1">
+			<break>
+				<reportElement x="0" y="0" width="1176" height="1"/>
+			</break>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="1176" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Информация за "+$V{quarter}+" Квартал "+($P{date}.getYear()+1900)+" Года о рассмотрении поступивших из администрации Президента РФ обращений граждан, организаций (юридических лиц) и общественных объединений, адресованных Президенту РФ"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="45" width="1176" height="5"/>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="source_type">
+					<subreportParameterExpression><![CDATA[$P{source_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="year">
+					<subreportParameterExpression><![CDATA[$P{year}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="date1">
+					<subreportParameterExpression><![CDATA[$P{date1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="classficator">
+					<subreportParameterExpression><![CDATA[$P{classficator}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "ReportOG_toPrezidentRF_Forma1a.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="1"/>
+	</detail>
+</jasperReport>

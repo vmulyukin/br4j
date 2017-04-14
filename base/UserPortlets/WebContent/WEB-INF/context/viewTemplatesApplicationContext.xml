@@ -1,0 +1,1839 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+    <!-- base definitions -->
+    <bean id="attribute" class="com.aplana.cms.view_template.ViewAttribute" abstract="true"/>
+    <bean id="linkAttribute" class="com.aplana.cms.view_template.LinkViewAttribute" abstract="true"/>
+    <bean id="column" class="com.aplana.cms.view_template.LinkViewAttribute$Column" abstract="true"/>
+    <bean id="view" class="com.aplana.cms.view_template.CardViewData" abstract="true"/>
+    
+
+
+
+    <bean id="view43541" parent="view">
+        <property name="viewId" value="43541"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+				<ref bean="attrJBR_REGD_DATEREG"/>
+				<ref bean="attrJBR_INFD_SIGNATORY"/>
+				<ref bean="attrJBR_INFD_RECEIVER"/>				
+				<ref bean="attrJBR_INFD_EXECUTOR"/>
+				<ref bean="attrJBR_INFD_SHORTDESC"/>
+				<ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_TYPECONT"/>
+				<ref bean="attrJBR_IMPL_DEADLINE"/>
+				<ref bean="attrJBR_HOWFAST"/>
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_HIDDEN_CHIEF"/>
+				<ref bean="attrJBR_MANAGER_COMMENT"/>								
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrJBR_HIDDEN_CHIEF"/>
+				<ref bean="attrJBR_MANAGER_COMMENT"/>
+				<ref bean="attrJBR_DT_RTRN_CHF_ACQ"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>
+				<!-- /8553 -->
+                <!-- begin 8001 -->
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+                <!--<ref bean="attrJBR_PAPER_VISAS"/>-->
+				<ref bean="attrADMIN_893724"/>
+				<!-- end 8001 -->
+				<ref bean="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST"/>
+				<ref bean="attrJBR_RET_REASON"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- bean id="view8022" parent="view">
+     	<property name="viewId" value="8022"/>
+     	<property name="attributes">
+            <list>                
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+				<ref bean="attrMATERIAL_NAME_linked_from_DOCLINKS"/>
+				<ref bean="attrMATERIAL_NAME_linked_from_ADMIN_702358"/>				
+            </list>
+        </property>     	
+    </bean-->
+    
+    <bean id="view43540" parent="view">
+        <property name="viewId" value="43540"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+				<ref bean="attrJBR_REGD_DATEREG"/>
+				<ref bean="attrJBR_INFD_SIGNATORY"/>
+				<ref bean="attrJBR_INFD_RECEIVER"/>				 
+				<ref bean="attrJBR_INFD_EXECUTOR"/>
+				<ref bean="attrJBR_INFD_SHORTDESC"/>
+				<ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_TYPECONT"/>
+				<ref bean="attrJBR_IMPL_DEADLINE"/>
+				<ref bean="attrJBR_HOWFAST"/>
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrADMIN_473929"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>
+				<!-- /8553 -->
+                <!-- begin 8001 -->
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+                <!--<ref bean="attrJBR_PAPER_VISAS"/>-->
+				<ref bean="attrADMIN_893724"/>
+				<!-- end 8001 -->
+				<ref bean="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST"/>
+				<ref bean="attrJBR_RET_REASON"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8636" parent="view">
+        <property name="viewId" value="8636"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_PERS_NAME"/>
+                <ref bean="attrJBR_PERS_MNAME"/>
+                <ref bean="attrJBR_PERS_SNAME"/>
+                <ref bean="attrJBR_PERS_POSITION"/>
+                <ref bean="attrJBR_INFD_SIGNATORY"/>
+                <ref bean="attrJBR_PERS_PHONE"/>
+                <ref bean="attrJBR_PERSON_PHONE"/>
+                <ref bean="attrJBR_DEPT_SHORTNAME_linked_from_JBR_PERS_DEPT_LINK"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8559" parent="view">
+        <property name="viewId" value="8559"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_PERS_NAME"/>
+                <ref bean="attrJBR_PERS_MNAME"/>
+                <ref bean="attrJBR_PERS_SNAME"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8638" parent="view">
+        <property name="viewId" value="8638"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_PERS_NAME"/>
+                <ref bean="attrJBR_PERS_MNAME"/>
+                <ref bean="attrJBR_PERS_SNAME"/>
+                <ref bean="attrJBR_DORG_SHORTNAME_linked_from_JBR_PERS_ORG"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8561" parent="view">
+        <property name="viewId" value="8561"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_DORG_SHORTNAME"/>
+                <ref bean="attrJBR_DORG_FULLNAME"/>
+                <ref bean="attrJBR_DORG_FULLNAME_linked_from_JBR_PERS_ORG"/>
+                <ref bean="attrJBR_PERS_SNAME"/>
+                <ref bean="attrJBR_PERS_NAME"/>
+                <ref bean="attrJBR_PERS_MNAME"/>
+                <ref bean="attrADMIN_274992"/>
+                <ref bean="attrADMIN_281034"/>
+                <ref bean="attrADMIN_281035"/>
+                <ref bean="attrNAME_linked_from_ADMIN_277245"/>
+                <ref bean="attrNAME"/>
+            </list>
+        </property>
+    </bean>
+    
+	<bean id="view8962" parent="view">
+        <property name="viewId" value="8962"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_274992"/>
+                <ref bean="attrADMIN_281034"/>
+                <ref bean="attrADMIN_281035"/>
+                <ref bean="attrNAME_linked_from_ADMIN_277245"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view10142" parent="view">
+        <property name="viewId" value="10142"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME"/>
+                <ref bean="attrDOCLINKS"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view6555" parent="view">
+        <property name="viewId" value="6555"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8577" parent="view">
+        <property name="viewId" value="8577"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrJBR_TCON_TERM"/>				
+				<ref bean="attrJBR_TCON_ONCONT"/>	
+            </list>
+        </property>
+    </bean>
+    <bean id="view11873956" parent="view">
+        <property name="viewId" value="11873956"/>
+        <property name="attributes">
+            <list>
+				<ref bean="attrJBR_VISA_RESPONSIBLE"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="view11873957" parent="view">
+        <property name="viewId" value="11873957"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrJBR_TCON_TERM"/>				
+				<ref bean="attrJBR_TCON_ONCONT"/>	
+				<ref bean="attrJBR_VISA_VISA"/>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <bean id="view542334" parent="view">
+        <property name="viewId" value="542334"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_SIGN_RESPONSIBLE"/>
+                <ref bean="attrJBR_SIGN_SIGN_RND"/>
+                <ref bean="attrJBR_SIGN_COMMENT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8579" parent="view">
+        <property name="viewId" value="8579"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_VISA_RESPONSIBLE"/>
+                <ref bean="attrJBR_VISA_VISA_RND"/>
+                <ref bean="attrJBR_VISA_SOLUTION"/>
+                <ref bean="attrJBR_VISA_NUMBER"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view542012" parent="view">
+        <property name="viewId" value="542012"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_VISA_RESPONSIBLE"/> 
+                <ref bean="attrADMIN_893446"/>
+				<ref bean="attrNAME_linked_from_ADMIN_893444"/>				
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view42740" parent="view">
+        <property name="viewId" value="42740"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_1082454"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+                <ref bean="attrADMIN_255979"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view41880" parent="view">
+        <property name="viewId" value="41880"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+                <ref bean="attrDOCLINKS"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view41800" parent="view">
+        <property name="viewId" value="41800"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_RIMP_REPORT"/>                
+                <ref bean="attrADMIN_713517"/>
+                <ref bean="attrJBR_RIMP_RELASSIG"/>
+				<!-- 45303 -->
+				<ref bean="attrJBR_INFD_SGNEX_LINK"/>
+                <ref bean="attrJBR_INFD_DTSGN_LINK"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+				<ref bean="attrJBR_TCON_ONCONT"/>				
+                <ref bean="attrJBR_EXEC_SENDER"/>
+                <ref bean="attrVISA_VPERSON"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+				<!-- /45303 -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view28690" parent="view">
+        <property name="viewId" value="28690"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view41820" parent="view">
+        <property name="viewId" value="41820"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_14763370" />
+                <ref bean="attrRREASON"/>
+                <ref bean="attrADMIN_6888758"/>
+                <ref bean="attrADMIN_702354"/>
+                <ref bean="attrJBR_RPT_ARMFLAG"/>
+                <ref bean="attrJBR_RIMP_RELASSIG"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view42540" parent="view">
+        <property name="viewId" value="42540"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_RPT_ARMFLAG2"/>
+                <ref bean="attrJBR_RIMP_RELASSIG"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view41462" parent="view">
+        <property name="viewId" value="41462"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>				
+                <ref bean="attrJBR_REGD_DATEREG"/>
+				<ref bean="attrNAME_linked_from_JBR_INFD_SIGN_EXT"/>
+				<ref bean="attrJBR_DORG_SHORTNAME_linked_from_JBR_INFD_SENDER"/>
+				<ref bean="attrJBR_DORG_FULLNAME_linked_from_JBR_INFD_SENDER"/>
+				<ref bean="attrJBR_INFD_RECEIVER"/>				
+				<ref bean="attrJBR_INFD_SHORTDESC"/>				
+				<ref bean="attrJBR_IMPL_ONCONT"/>
+				<ref bean="attrJBR_IMPL_TYPECONT"/>				
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_HOWFAST"/>
+                <ref bean="attrJBR_IMPL_INRES"/>
+                <ref bean="attrJBR_INFD_ACTL_SENDER"/>                
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrJBR_EXT_RESOL"/>
+				<ref bean="attrADMIN_473929"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>
+				<!-- /8553 -->
+				<ref bean="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST"/>		
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543812" parent="view">
+        <property name="viewId" value="543812"/>
+        <property name="attributes">
+            <list>
+				<ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>                
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+				<ref bean="attrJBR_REGD_DATEREG"/>
+				<ref bean="attrJBR_INFD_SIGNATORY"/>
+				<ref bean="attrJBR_INFD_RECEIVER"/>				 
+				<ref bean="attrJBR_INFD_EXECUTOR"/>
+				<ref bean="attrJBR_INFD_SHORTDESC"/>
+				<ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_TYPECONT"/>
+				<ref bean="attrJBR_IMPL_DEADLINE"/>
+				<ref bean="attrJBR_TEXT"/>
+    			<ref bean="attrADMIN_6075258"/>
+    			<ref bean="attrNAME_linked_from_ADMIN_6079618"/>
+    			<ref bean="attrJBR_HOWFAST"/>
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrJBR_HIDDEN_CHIEF"/>
+				<ref bean="attrJBR_MANAGER_COMMENT"/>
+				<ref bean="attrJBR_DT_RTRN_CHF_ACQ"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>
+				<!-- /8553 -->
+                <!-- begin 8001 -->
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+                <!--<ref bean="attrJBR_PAPER_VISAS"/>-->
+				<ref bean="attrADMIN_893724"/>
+				<!-- end 8001 -->
+				<ref bean="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST"/>
+				<ref bean="attrJBR_RET_REASON"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543813" parent="view">
+        <property name="viewId" value="543813"/>
+		<property name="attributes">
+            <list>
+				<ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>   
+                <ref bean="attrJBR_INFD_EXECUTOR"/> 
+                <ref bean="attrCREATED"/>   
+                <ref bean="attrNAME_linked_from_JBR_AUTHOR"/>
+				<ref bean="attrJBR_INFD_SHORTDESC"/>
+				<ref bean="attrJBR_INFD_SIGNATORY"/>
+				<!-- 8001 -->
+				<ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+                <!--<ref bean="attrJBR_PAPER_VISAS"/>-->
+				<ref bean="attrADMIN_893724"/>	
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<!-- /8001 -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view29021" parent="view">
+        <property name="viewId" value="29021"/>
+        <property name="attributes">
+            <list>                
+            	<ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>								
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>				
+				<ref bean="attrJBR_IMPL_DEADLINE"/>	
+				<ref bean="attrJBR_IMPL_RESOLUT"/>		
+				<ref bean="attrJBR_IMPL_ONCONT"/>
+				<ref bean="attrJBR_IMPL_INSPECTOR"/>
+				<ref bean="attrJBR_RIMP_REPORT"/>
+				<!-- 45303 -->
+				<ref bean="attrJBR_INFD_SGNEX_LINK"/>
+                <ref bean="attrJBR_INFD_DTSGN_LINK"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>               						
+                <ref bean="attrJBR_EXEC_SENDER"/>
+                <ref bean="attrVISA_VPERSON"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+				<!-- /45303 -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8608" parent="view">
+        <property name="viewId" value="8608"/>
+        <property name="attributes">
+            <list>
+            	<ref bean="attrDOCLINKS"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8617" parent="view">
+        <property name="viewId" value="8617"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+                <ref bean="attrJBR_RIMP_REPORT"/>
+            </list>
+        </property>
+    </bean>
+       
+    <bean id="view8578" parent="view">
+        <property name="viewId" value="8578"/>
+        <property name="attributes">
+            <list>
+				<ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>   
+                <ref bean="attrJBR_INFD_EXECUTOR"/>                 
+                <ref bean="attrCREATED"/>
+                <ref bean="attrJBR_INFD_SHORTDESC"/>
+				<ref bean="attrJBR_INFD_SIGNATORY"/>
+				<ref bean="attrJBR_RECEIVER_EXT_USR"/>
+				<ref bean="attrJBR_RECEIVER_EXT"/>
+				<ref bean="attrJBR_HOWFAST"/>
+				<ref bean="attrJBR_INFD_RECEIVER_CA"/>
+				<!-- 8001 -->
+				<ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_VISA_VISA_HIDDEN"/>
+                <!--<ref bean="attrJBR_PAPER_VISAS"/>-->
+				<ref bean="attrADMIN_893724"/>	
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<!-- /8001 -->
+				<ref bean="attrJBR_RET_REASON"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view43340" parent="view">
+        <property name="viewId" value="43340"/>
+        <property name="attributes">
+            <list>                
+				<ref bean="attrADMIN_274992"/>
+				<ref bean="attrADMIN_281034"/>
+				<ref bean="attrADMIN_281035"/>
+				<ref bean="attrADMIN_277253"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrADMIN_283122"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_IMPL_ONCONT"/>         
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>				
+				<!-- /8553 -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view42743" parent="view">
+        <property name="viewId" value="42743"/>
+		<property name="attributes">
+            <list>				
+				<ref bean="attrADMIN_274992"/>
+				<ref bean="attrADMIN_281034"/>
+				<ref bean="attrADMIN_281035"/>
+				<ref bean="attrNAME_linked_from_ADMIN_277224"/>
+				<ref bean="attrNAME_linked_from_ADMIN_277245"/>				
+				<ref bean="attrJBR_INFD_SHORTDESC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrADMIN_283122"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_TYPECONT"/>
+                <ref bean="attrJBR_EXT_RESOL"/>
+                <ref bean="attrJBR_INFD_ACTL_SENDER"/>  
+				<!-- 8553 -->
+				<ref bean="attrJBR_IMPL_ACQUAINT"/>
+				<ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrJBR_INFORM_LIST"/>				
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>	
+				<ref bean="attrJBR_ALL_RESOLUTIONS"/>
+				<ref bean="attrADMIN_473929"/>
+				<ref bean="attrADMIN_277616"/>
+				<ref bean="attrADMIN_277618"/>
+				<!-- /8553 -->
+				<ref bean="attrJBR_OG_REQ_AUTHOR"/>
+				<ref bean="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view45040" parent="view">
+        <property name="viewId" value="45040"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_INRES"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view45060" parent="view">
+        <property name="viewId" value="45060"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_RSLT_DR_EXECS"/>
+                <ref bean="attrJBR_RIMP_REPORT"/>                
+                <!-- 45303 -->
+				<ref bean="attrJBR_INFD_SGNEX_LINK"/>
+                <ref bean="attrJBR_INFD_DTSGN_LINK"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+				<ref bean="attrJBR_TCON_ONCONT"/>				
+                <ref bean="attrJBR_EXEC_SENDER"/>
+				<!-- /45303 -->                
+                <ref bean="attrJBR_RIMP_RELASSIG"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view46040" parent="view">
+        <property name="viewId" value="46040"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_702335"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrADMIN_702354"/>
+                <ref bean="attrADMIN_702355"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view46261" parent="view">
+        <property name="viewId" value="46261"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_INFD_RECEIVER"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+				<ref bean="attrADMIN_473929"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view46380" parent="view">
+        <property name="viewId" value="46380"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543792" parent="view">
+        <property name="viewId" value="543792"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_283122"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_IMPL_ONCONT"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543793" parent="view543792">
+        <property name="viewId" value="543793"/>
+    </bean>
+    
+    <bean id="view46500" parent="view">
+        <property name="viewId" value="46500"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view46260" parent="view">
+        <property name="viewId" value="46260"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_INFD_RECEIVER"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_IMPL_DEADLINE"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view45300" parent="view">
+        <property name="viewId" value="45300"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543794" parent="view">
+        <property name="viewId" value="543794"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view45302" parent="view">
+        <property name="viewId" value="45302"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_SGNEX_LINK"/>
+                <ref bean="attrJBR_RIMP_REPORT"/>
+                <ref bean="attrJBR_TCON_INSPECTOR"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrJBR_RIMP_RELASSIG"/>
+                <!-- 45303 -->
+				<ref bean="attrJBR_INFD_SGNEX_LINK"/>
+                <ref bean="attrJBR_INFD_DTSGN_LINK"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+				<ref bean="attrJBR_TCON_ONCONT"/>				
+                <ref bean="attrJBR_EXEC_SENDER"/>
+				<!-- /45303 -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view45301" parent="view">
+        <property name="viewId" value="45301"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrADMIN_702335"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrADMIN_702354"/>
+                <ref bean="attrADMIN_702355"/>
+                <ref bean="attrRREASON"/>
+                <ref bean="attrADMIN_6888758"/>
+                <ref bean="attrJBR_RPT_DR_APPROVER"/>
+                <ref bean="attrADMIN_702334"/>
+                <ref bean="attrADMIN_702513"/>
+                <ref bean="attrJBR_RPT_DR_SIGNER"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view543795" parent="view543794">
+        <property name="viewId" value="543795"/>
+    </bean>
+    
+    <bean id="view8564" parent="view">
+        <property name="viewId" value="8564"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_IMPL_ACQUAINT"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view28980" parent="view">
+        <property name="viewId" value="28980"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrNAME_linked_from_JBR_INFD_TYPEDOC"/>
+                <ref bean="attrJBR_REGD_REGNUM"/>
+                <ref bean="attrJBR_REGD_DATEREG"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_IMPL_RESOLUT"/>
+                <ref bean="attrJBR_IMPL_ACQUAINT"/>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+                <ref bean="attrJBR_INFD_DATESIGN"/>
+				<ref bean="attrADMIN_473929"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view28961" parent="view">
+        <property name="viewId" value="28961"/>
+        <property name="attributes">
+            <list>
+                <ref bean="attrJBR_INFD_EXECUTOR"/>
+                <ref bean="attrCREATED"/>
+                <ref bean="attrJBR_DOCL_RELATDOC"/>
+                <ref bean="attrADMIN_221237"/>
+                <ref bean="attrJBR_VISA_VISA"/>
+                <ref bean="attrJBR_SIGN_SIGNING"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view11873955" parent="view">
+        <property name="viewId" value="11873955"/>
+        <property name="attributes">
+            <list>                
+                <ref bean="attrJBR_RIMP_REPORT"/>
+                <ref bean="attrJBR_RIMP_COMMENT"/>
+				<!-- 45303 -->
+                <ref bean="attrJBR_INFD_DTSGN_LINK"/>
+                <ref bean="attrJBR_INFD_EXEC_LINK"/>
+                <ref bean="attrADMIN_255974"/>
+                <ref bean="attrADMIN_255979"/>
+                <ref bean="attrJBR_INFD_EXEC_EXT"/>
+                <ref bean="attrJBR_GIPA_RESOLUT"/>
+                <ref bean="attrDOCLINKS"/>
+                <ref bean="attrJBR_TCON_TERM"/>
+				<ref bean="attrJBR_TCON_ONCONT"/>				
+                <ref bean="attrJBR_EXEC_SENDER"/>
+                <ref bean="attrJBR_TCON_INSPECTOR"/>
+                <ref bean="attrJBR_RPT_DR_APPROVER"/>
+                <ref bean="attrJBR_INFD_SGNEX_LINK"/>                                
+				<!-- /45303 -->
+				<ref bean="attrAUTHOR"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view11873972" parent="view">
+        <property name="viewId" value="11873972"/>
+        <property name="attributes">
+            <list>				
+                <ref bean="attrADMIN_702335"/>
+                <ref bean="attrADMIN_702354"/>
+                <ref bean="attrADMIN_702355"/>
+                <ref bean="attrADMIN_702357"/>
+                <ref bean="attrRREASON"/>
+                <ref bean="attrADMIN_6888758"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view8566" parent="view">
+        <property name="viewId" value="8566"/>
+        <property name="attributes">
+            <list>			
+            <ref bean="attrJBR_DMSI_ER_AUTH"/>            
+            <ref bean="attrJBR_DMSI_ER_CRDATE"/>
+            <ref bean="attrJBR_DMSI_ER_EXEC"/>
+            <ref bean="attrJBR_DMSI_ER_COEXEC"/>            
+            <ref bean="attrJBR_DMSI_ER_PL_DUEDT"/>
+            <ref bean="attrJBR_DMSI_ER_CTRLMARK"/>
+            <ref bean="attrJBR_DMSI_ER_TEXT"/>
+            <ref bean="attrJBR_DMSI_ER_EXEC_CMT"/>
+            <ref bean="attrJBR_DMSI_ER_ACTL_DT"/>            
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="view11282" parent="view">
+        <property name="viewId" value="11282"/>
+        <property name="attributes">
+            <list>			
+            	<ref bean="attrJBR_RASSM_TODATE"/>            
+            	<ref bean="attrJBR_RASSM_PERSON"/>
+            	<ref bean="attrJBR_RESPONS_CONSIDER"/>           
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="attrJBR_INFD_RECEIVER_CA" parent="attribute">
+        <property name="code" value="JBR_INFD_RECEIVER_CA"/>
+        <property name="nameRu" value="Адресат ОГ"/>
+        <property name="nameEn" value="OG addresse"/>
+        <property name="type"  value="C"/>
+    </bean>  
+    <bean id="attrJBR_DMSI_ER_AUTH" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_AUTH"/>
+        <property name="nameRu" value="Автор резолюции"/>
+        <property name="nameEn" value="Resolution author"/>
+        <property name="type"  value="S"/>
+    </bean>    
+    <bean id="attrJBR_DMSI_ER_CRDATE" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_CRDATE"/>
+        <property name="nameRu" value="Дата подписания"/>
+        <property name="nameEn" value="Resolution creation date"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_EXEC" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_EXEC"/>
+        <property name="nameRu" value="Исполнитель"/>
+        <property name="nameEn" value="Executor"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_COEXEC" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_COEXEC"/>
+        <property name="nameRu" value="Соисполнители"/>
+        <property name="nameEn" value="Coexecutors"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_PL_DUEDT" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_PL_DUEDT"/>
+        <property name="nameRu" value="Плановый срок"/>
+        <property name="nameEn" value="Planned due date"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_CTRLMARK" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_CTRLMARK"/>
+        <property name="nameRu" value="Признак контроля"/>
+        <property name="nameEn" value="Control mark"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_TEXT" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_TEXT"/>
+        <property name="nameRu" value="Текст резолюции"/>
+        <property name="nameEn" value="Resolution text"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_EXEC_CMT" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_EXEC_CMT"/>
+        <property name="nameRu" value="Комментарий об исполнении"/>
+        <property name="nameEn" value="Execution comment"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DMSI_ER_ACTL_DT" parent="attribute">
+        <property name="code" value="JBR_DMSI_ER_ACTL_DT"/>
+        <property name="nameRu" value="Фактическая дата исполнения"/>
+        <property name="nameEn" value="Actual execution date"/>
+        <property name="type"  value="D"/>
+    </bean>
+
+    <bean id="attrADMIN_227593" parent="attribute">
+        <property name="code" value="ADMIN_227593"/>
+        <property name="nameRu" value="Дополнительные комментарии"/>
+        <property name="nameEn" value="Дополнительные комментарии"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <!-- attrJBR_INFD_TYPEDOC is used for advanced search (view 8652) -->
+    <bean id="attrJBR_INFD_TYPEDOC" parent="linkAttribute">
+        <property name="code" value="JBR_INFD_TYPEDOC"/>
+        <property name="nameRu" value="Вид документа"/>
+        <property name="nameEn" value="Type of doc"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="NAME"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrNAME_linked_from_JBR_INFD_TYPEDOC" parent="attribute">
+        <property name="code" value="JBR_INFD_TYPEDOC"/>
+         <property name="linkedCode" value="NAME" />
+        <property name="nameRu" value="Вид документа"/>
+        <property name="nameEn" value="Type of doc"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_INFD_EXECUTOR" parent="attribute">
+        <property name="code" value="JBR_INFD_EXECUTOR"/>
+        <property name="nameRu" value="Исполнитель"/>
+        <property name="nameEn" value="Исполнитель"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrCREATED" parent="attribute">
+        <property name="code" value="CREATED"/>
+        <property name="nameRu" value="Дата создания"/>
+        <property name="nameEn" value="Creation date"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_REGD_REGNUM" parent="attribute">
+        <property name="code" value="JBR_REGD_REGNUM"/>
+        <property name="nameRu" value="Регистрационный номер"/>
+        <property name="nameEn" value="Registration Number"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_REGD_DATEREG" parent="attribute">
+        <property name="code" value="JBR_REGD_DATEREG"/>
+        <property name="nameRu" value="Дата регистрации"/>
+        <property name="nameEn" value="Data reg"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_INFD_RECEIVER" parent="attribute">
+        <property name="code" value="JBR_INFD_RECEIVER"/>
+        <property name="nameRu" value="Адресат"/>
+        <property name="nameEn" value="Receive"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_IMPL_DEADLINE" parent="attribute">
+        <property name="code" value="JBR_IMPL_DEADLINE"/>
+        <property name="nameRu" value="Срок исполнения или предоставления ответа"/>
+        <property name="nameEn" value="Data for"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_IMPL_ONCONT" parent="attribute">
+        <property name="code" value="JBR_IMPL_ONCONT"/>
+        <property name="nameRu" value="На контроле"/>
+        <property name="nameEn" value="Control"/>
+        <property name="type"  value="L"/>
+    </bean>
+    <bean id="attrJBR_DOCL_RELATDOC" parent="attribute">
+        <property name="code" value="JBR_DOCL_RELATDOC"/>
+        <property name="nameRu" value="Связанные документы"/>
+        <property name="nameEn" value="Linked docs"/>
+        <property name="type"  value="E"/>
+    </bean>
+    <bean id="attrADMIN_221237" parent="attribute">
+        <property name="code" value="ADMIN_221237"/>
+        <property name="nameRu" value="На документ ссылаются"/>
+        <property name="nameEn" value="На документ ссылаются"/>
+        <property name="type"  value="B"/>
+    </bean>
+    <bean id="attrADMIN_277616" parent="attribute">
+        <property name="code" value="ADMIN_277616"/>
+        <property name="nameRu" value="Предыдущие обращения"/>
+        <property name="nameEn" value="Previous requests"/>
+        <property name="type"  value="C"/>
+    </bean>
+    <bean id="attrADMIN_277618" parent="attribute">
+        <property name="code" value="ADMIN_277618"/>
+        <property name="nameRu" value="Последующие обращения"/>
+        <property name="nameEn" value="Next requests"/>
+        <property name="type"  value="B"/>
+    </bean>
+    <bean id="attrJBR_IMPL_RESOLUT" parent="linkAttribute">
+        <property name="code" value="JBR_IMPL_RESOLUT"/>
+        <property name="nameRu" value="Резолюции"/>
+        <property name="nameEn" value="Resolution"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_TCON_TERM"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_IMPL_ACQUAINT" parent="linkAttribute">
+        <property name="code" value="JBR_IMPL_ACQUAINT"/>
+        <property name="nameRu" value="Рассмотрение"/>
+        <property name="nameEn" value="Рассмотрение"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_RASSM_PERSON"/></bean>
+                <bean parent="column"><property name="code" value="JBR_RASSM_NUMBER"/></bean>
+                <bean parent="column"><property name="code" value="JBR_RASSM_COMMENT"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_SIGN_SIGNING" parent="linkAttribute">
+        <property name="code" value="JBR_SIGN_SIGNING"/>
+        <property name="nameRu" value="Подписание"/>
+        <property name="nameEn" value="Подписание"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_SIGN_RESPONSIBLE"/></bean>
+                <bean parent="column"><property name="code" value="JBR_SIGN_NUMBER"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_VISA_VISA" parent="linkAttribute">
+        <property name="code" value="JBR_VISA_VISA"/>
+        <property name="nameRu" value="Визы"/>
+        <property name="nameEn" value="Визы"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_VISA_RESPONSIBLE"/></bean>
+                <bean parent="column"><property name="code" value="JBR_VISA_NUMBER"/></bean>
+                <bean parent="column"><property name="code" value="JBR_VISA_D_A_CONSENT"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_VISA_VISA_HIDDEN" parent="linkAttribute">
+        <property name="code" value="JBR_VISA_VISA_HIDDEN"/>
+        <property name="nameRu" value="Карточки визирования скрытые"/>
+        <property name="nameEn" value="Visa cards hidden"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_VISA_RESPONSIBLE"/></bean>
+                <bean parent="column"><property name="code" value="JBR_VISA_NUMBER"/></bean>
+                <bean parent="column"><property name="code" value="JBR_VISA_D_A_CONSENT"/></bean>
+            </list>
+        </property>
+    </bean>
+    <!-- attribute is missed in this branch
+    <bean id="attrJBR_PAPER_VISAS" parent="linkAttribute">
+        <property name="code" value="JBR_PAPER_VISAS"/>
+        <property name="nameRu" value="Согласовано на бумажном носителе"/>
+        <property name="nameEn" value="Visas at paper document"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_VISA_RESPONSIBLE"/></bean>
+                <bean parent="column"><property name="code" value="JBR_VISA_SOLUTION"/></bean>
+                <bean parent="column"><property name="code" value="ADMIN_234889"/></bean>
+            </list>
+        </property>
+    </bean>
+    -->
+    <bean id="attrJBR_INFORM_LIST" parent="linkAttribute">
+        <property name="code" value="JBR_INFORM_LIST"/>
+        <property name="nameRu" value="Список ознакомления"/>
+        <property name="nameEn" value="Список ознакомления"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_FOR_INFORMATION"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_PERS_NAME" parent="attribute">
+        <property name="code" value="JBR_PERS_NAME"/>
+        <property name="nameRu" value="Имя"/>
+        <property name="nameEn" value="Given name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_PERS_MNAME" parent="attribute">
+        <property name="code" value="JBR_PERS_MNAME"/>
+        <property name="nameRu" value="Отчество"/>
+        <property name="nameEn" value="Patronymic name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_PERS_SNAME" parent="attribute">
+        <property name="code" value="JBR_PERS_SNAME"/>
+        <property name="nameRu" value="Фамилия"/>
+        <property name="nameEn" value="Family name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_PERS_POSITION" parent="attribute">
+        <property name="code" value="JBR_PERS_POSITION"/>
+        <property name="nameRu" value="Должность"/>
+        <property name="nameEn" value="Appointment"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrNAME" parent="attribute">
+        <property name="code" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrNAME_linked_from_JBR_AUTHOR" parent="attribute">
+        <property name="code" value="JBR_AUTHOR"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_INFD_EXEC_LINK" parent="attribute">
+        <property name="code" value="JBR_INFD_EXEC_LINK"/>
+        <property name="nameRu" value="Исполнитель"/>
+        <property name="nameEn" value="Исполнитель"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_255974" parent="attribute">
+        <property name="code" value="ADMIN_255974"/>
+        <property name="nameRu" value="Соисполнители"/>
+        <property name="nameEn" value="Соисполнители"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_255979" parent="attribute">
+        <property name="code" value="ADMIN_255979"/>
+        <property name="nameRu" value="К сведению"/>
+        <property name="nameEn" value="К сведению"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_INFD_EXEC_EXT" parent="linkAttribute">
+        <property name="code" value="JBR_INFD_EXEC_EXT"/>
+        <property name="nameRu" value="Внешние исполнители"/>
+        <property name="nameEn" value="External executors"/>
+    </bean>
+    <bean id="attrJBR_GIPA_RESOLUT" parent="attribute">
+        <property name="code" value="JBR_GIPA_RESOLUT"/>
+        <property name="nameRu" value="Резолюция"/>
+        <property name="nameEn" value="Резолюция"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_TCON_TERM" parent="attribute">
+        <property name="code" value="JBR_TCON_TERM"/>
+        <property name="nameRu" value="Срок"/>
+        <property name="nameEn" value="Срок"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_SIGN_RESPONSIBLE" parent="attribute">
+        <property name="code" value="JBR_SIGN_RESPONSIBLE"/>
+        <property name="nameRu" value="Подписант"/>
+        <property name="nameEn" value="Signer"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_SIGN_SIGN_RND" parent="attribute">
+        <property name="code" value="JBR_SIGN_SIGN_RND"/>
+        <property name="nameRu" value="Номер итерации"/>
+        <property name="nameEn" value="Round"/>
+        <property name="type"  value="I"/>
+    </bean>
+    <bean id="attrJBR_SIGN_COMMENT" parent="attribute">
+        <property name="code" value="JBR_SIGN_COMMENT"/>
+        <property name="nameRu" value="Решение"/>
+        <property name="nameEn" value="Decision"/>
+        <property name="type"  value="W"/>
+    </bean>
+    <bean id="attrJBR_VISA_RESPONSIBLE" parent="attribute">
+        <property name="code" value="JBR_VISA_RESPONSIBLE"/>
+        <property name="nameRu" value="Согласующий"/>
+        <property name="nameEn" value="Согласующий"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_VISA_VISA_RND" parent="attribute">
+        <property name="code" value="JBR_VISA_VISA_RND"/>
+        <property name="nameRu" value="Номер итерации"/>
+        <property name="nameEn" value="Round"/>
+        <property name="type"  value="I"/>
+    </bean>
+    <bean id="attrJBR_VISA_SOLUTION" parent="attribute">
+        <property name="code" value="JBR_VISA_SOLUTION"/>
+        <property name="nameRu" value="Решение"/>
+        <property name="nameEn" value="Решение"/>
+        <property name="type"  value="W"/>
+    </bean>
+    <bean id="attrJBR_VISA_NUMBER" parent="attribute">
+        <property name="code" value="JBR_VISA_NUMBER"/>
+        <property name="nameRu" value="Порядок согласования"/>
+        <property name="nameEn" value="Порядок согласования"/>
+        <property name="type"  value="I"/>
+    </bean>
+    <bean id="attrADMIN_1082454" parent="attribute">
+        <property name="code" value="ADMIN_1082454"/>
+        <property name="nameRu" value="Рассмотрен в АРМ скрытый"/>
+        <property name="nameEn" value="ARMFlag"/>
+        <property name="type"  value="S"/>
+    </bean>    
+    <bean id="attrJBR_RIMP_REPORT" parent="linkAttribute">
+        <property name="code" value="JBR_RIMP_REPORT"/>
+        <property name="nameRu" value="Отчет об исполнении"/>
+        <property name="nameEn" value="Отчет об исполнении"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="ADMIN_702335"/></bean>
+                <bean parent="column"><property name="code" value="ADMIN_713534"/></bean>
+                <bean parent="column"><property name="code" value="CREATED"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_INFD_DTSGN_LINK" parent="attribute">
+        <property name="code" value="JBR_INFD_DTSGN_LINK"/>
+        <property name="nameRu" value="Дата подписания"/>
+        <property name="nameEn" value="Дата подписания"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrDOCLINKS" parent="attribute">
+        <property name="code" value="DOCLINKS"/>
+        <property name="nameRu" value="Вложения"/>
+        <property name="nameEn" value="Files"/>
+    </bean>
+    <bean id="attrADMIN_713517" parent="linkAttribute">
+        <property name="code" value="ADMIN_713517"/>
+        <property name="nameRu" value="Ознакомление"/>
+        <property name="nameEn" value="Ознакомление"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="ADMIN_726874"/></bean>
+                <bean parent="column"><property name="code" value="ADMIN_726879"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_RIMP_RELASSIG" parent="linkAttribute">
+        <property name="code" value="JBR_RIMP_RELASSIG"/>
+        <property name="nameRu" value="Связанные поручения"/>
+        <property name="nameEn" value="Связанные поручения"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="NAME"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrRREASON" parent="attribute">
+        <property name="code" value="RREASON"/>
+        <property name="nameRu" value="Причина отправки на доработку"/>
+        <property name="nameEn" value="Reason of approval denial"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrADMIN_702354" parent="attribute">
+        <property name="code" value="ADMIN_702354"/>
+        <property name="nameRu" value="Отчет"/>
+        <property name="nameEn" value="Execution Report"/>
+        <property name="type"  value="W"/>
+    </bean>
+    <bean id="attrJBR_RPT_ARMFLAG" parent="attribute">
+        <property name="code" value="JBR_RPT_ARMFLAG"/>
+        <property name="nameRu" value="Рассмотрен в АРМ скрытый"/>
+        <property name="nameEn" value="ARMFlag"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_RPT_ARMFLAG2" parent="attribute">
+        <property name="code" value="JBR_RPT_ARMFLAG2"/>
+        <property name="nameRu" value="Рассмотрен в АРМ скрытый"/>
+        <property name="nameEn" value="ARMFlag"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_IMPL_INRES" parent="attribute">
+        <property name="code" value="JBR_IMPL_INRES"/>
+        <property name="nameRu" value="Входящее поручение"/>
+        <property name="nameEn" value="Resolution"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrADMIN_283122" parent="attribute">
+        <property name="code" value="ADMIN_283122"/>
+        <property name="nameRu" value="Вид обращения"/>
+        <property name="nameEn" value="Вид обращения"/>
+        <property name="type"  value="L"/>
+    </bean>
+    <bean id="attrJBR_RSLT_DR_EXECS" parent="attribute">
+        <property name="code" value="JBR_RSLT_DR_EXECS"/>
+        <property name="nameRu" value="Исполнители и соисполнители для АРМ (скр)"/>
+        <property name="nameEn" value="Исполнители и соисполнители для АРМ (скр)"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_702335" parent="attribute">
+        <property name="code" value="ADMIN_702335"/>
+        <property name="nameRu" value="Исполнитель"/>
+        <property name="nameEn" value="Executor"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_702355" parent="linkAttribute">
+        <property name="code" value="ADMIN_702355"/>
+        <property name="nameRu" value="Вложения"/>
+        <property name="nameEn" value="Attachments"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="NAME"/></bean>
+                <bean parent="column"><property name="code" value="MATERIAL"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrJBR_TCON_INSPECTOR" parent="attribute">
+        <property name="code" value="JBR_TCON_INSPECTOR"/>
+        <property name="nameRu" value="Контролер"/>
+        <property name="nameEn" value="Контролер"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_IMPL_INSPECTOR" parent="attribute">
+        <property name="code" value="JBR_IMPL_INSPECTOR"/>
+        <property name="nameRu" value="Контролер по документу"/>
+        <property name="nameEn" value="Контролер по документу"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_INFD_DATESIGN" parent="attribute">
+        <property name="code" value="JBR_INFD_DATESIGN"/>
+        <property name="nameRu" value="Дата подписания"/>
+        <property name="nameEn" value="Дата подписания"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_RPT_DR_APPROVER" parent="attribute">
+    	<property name="code" value="JBR_RPT_DR_APPROVER"/>
+        <property name="nameRu" value="Утверждающий скрытый"/>
+        <property name="nameEn" value="Утверждающий скрытый"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_RPT_DR_SIGNER" parent="attribute">
+    	<property name="code" value="JBR_RPT_DR_SIGNER"/>
+        <property name="nameRu" value="Подписант скрытый"/>
+        <property name="nameEn" value="Подписант скрытый"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_702334" parent="attribute">
+    	<property name="code" value="ADMIN_702334"/>
+        <property name="nameRu" value="Автор поручения"/>
+        <property name="nameEn" value="Автор поручения"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_702513" parent="attribute">
+    	<property name="code" value="ADMIN_702513"/>
+        <property name="nameRu" value="Контролер"/>
+        <property name="nameEn" value="Контролер"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrADMIN_6888758" parent="attribute">
+    	<property name="code" value="ADMIN_6888758"/>
+        <property name="nameRu" value="Комментарий"/>
+        <property name="nameEn" value="Comment"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrADMIN_14763370" parent="attribute">
+        <property name="code" value="ADMIN_14763370"/>
+        <property name="nameRu" value="Текущий отчет"/>
+        <property name="nameEn" value="Report text"/>
+        <property name="type"  value="T"/>
+    </bean>
+    
+    
+    <bean id="attrJBR_INFD_SIGN_EXT" parent="linkAttribute">
+        <property name="code" value="JBR_INFD_SIGN_EXT"/>
+        <property name="nameRu" value="Должность, ФИО лица, подписавшего документ"/>
+        <property name="nameEn" value="Должность, ФИО лица, подписавшего документ"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_PERS_SNAME"/></bean>
+                <bean parent="column"><property name="code" value="JBR_PERS_NAME"/></bean>
+                <bean parent="column"><property name="code" value="JBR_PERS_MNAME"/></bean>
+            </list>
+        </property>
+    </bean>    
+    <bean id="attrJBR_EXEC_SENDER" parent="attribute">
+        <property name="code" value="JBR_EXEC_SENDER"/>
+        <property name="nameRu" value="Отправил на исполнение"/>
+        <property name="nameEn" value="Has sent on execution"/>
+        <property name="type"  value="U"/>
+    </bean>     
+    <bean id="attrJBR_INFD_SGNEX_LINK" parent="attribute">
+        <property name="code" value="JBR_INFD_SGNEX_LINK"/>
+        <property name="nameRu" value="Должность фамилия и инициалы лица подписавшего резолюцию"/>
+        <property name="nameEn" value="Должность фамилия и инициалы лица подписавшего резолюцию"/>
+        <property name="type"  value="U"/>
+    </bean>  
+    <bean id="attrADMIN_893724" parent="attribute">
+    	<property name="code" value="ADMIN_893724"/>
+        <property name="nameRu" value="Визы внешние"/>
+        <property name="nameEn" value="Визы внешние"/>
+        <property name="type"  value="C"/>
+    </bean>
+    <bean id="attrADMIN_893446" parent="attribute">
+    	<property name="code" value="ADMIN_893446"/>
+        <property name="nameRu" value="Решение"/>
+        <property name="nameEn" value="Решение"/>
+        <property name="type"  value="T"/>
+    </bean>
+   
+	<bean id="attrNAME_linked_from_JBR_INFD_SIGN_EXT" parent="attribute">	
+        <property name="code" value="JBR_INFD_SIGN_EXT"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+	<bean id="attrJBR_DORG_SHORTNAME_linked_from_JBR_INFD_SENDER" parent="attribute">	
+        <property name="code" value="JBR_INFD_SENDER"/>
+        <property name="linkedCode" value="JBR_DORG_SHORTNAME"/>
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Сокращенное наименование:"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_DORG_FULLNAME_linked_from_JBR_INFD_SENDER" parent="attribute">	
+        <property name="code" value="JBR_INFD_SENDER"/>
+        <property name="linkedCode" value="JBR_DORG_FULLNAME"/>
+        <property name="nameRu" value="Полное наименование"/>
+        <property name="nameEn" value="Полное наименование:"/>
+        <property name="type"  value="T"/>
+    </bean>
+	<bean id="attrJBR_INFD_SHORTDESC" parent="attribute">
+        <property name="code" value="JBR_INFD_SHORTDESC"/>
+        <property name="nameRu" value="Краткое содержание (наименование текста)"/>
+        <property name="nameEn" value="Short description"/>
+        <property name="type"  value="T"/>
+    </bean>
+	<bean id="attrJBR_IMPL_TYPECONT" parent="attribute">
+        <property name="code" value="JBR_IMPL_TYPECONT"/>
+        <property name="nameRu" value="Тип контроля"/>
+        <property name="nameEn" value="Type control"/>
+        <property name="type"  value="L"/>
+    </bean>
+	<bean id="attrJBR_INFD_SIGNATORY" parent="attribute">
+        <property name="code" value="JBR_INFD_SIGNATORY"/>
+        <property name="nameRu" value="ФИО подписанта"/>
+        <property name="nameEn" value="Signer"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_RECEIVER_EXT_USR" parent="attribute">
+        <property name="code" value="JBR_RECEIVER_EXT_USR"/>
+        <property name="nameRu" value="Адресат исходящего"/>
+        <property name="nameEn" value="Target external person"/>
+        <property name="type"  value="C"/>
+    </bean>
+    <bean id="attrJBR_RECEIVER_EXT" parent="linkAttribute">
+        <property name="code" value="JBR_RECEIVER_EXT"/>
+        <property name="nameRu" value="Получатель исходящего"/>
+        <property name="nameEn" value="Receive"/>
+        <property name="type"  value="C"/>
+    </bean>
+	<bean id="attrNAME_linked_from_JBR_RECEIVER_EXT_USR" parent="attribute">	
+        <property name="code" value="JBR_RECEIVER_EXT_USR"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+	<bean id="attrNAME_linked_from_JBR_RECEIVER_EXT" parent="attribute">	
+        <property name="code" value="JBR_RECEIVER_EXT"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_DORG_SHORTNAME_linked_from_JBR_RECEIVER_EXT" parent="attribute">	
+        <property name="code" value="JBR_RECEIVER_EXT"/>
+        <property name="linkedCode" value="JBR_DORG_SHORTNAME"/>
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Сокращенное наименование:"/>
+        <property name="type"  value="S"/>
+    </bean>
+     <bean id="attrJBR_DORG_FULLNAME_linked_from_JBR_RECEIVER_EXT" parent="attribute">	
+        <property name="code" value="JBR_RECEIVER_EXT"/>
+        <property name="linkedCode" value="JBR_DORG_FULLNAME"/>
+        <property name="nameRu" value="Полное наименование"/>
+        <property name="nameEn" value="Полное наименование:"/>
+        <property name="type"  value="T"/>
+    </bean>
+    
+	<bean id="attrNAME_linked_from_ADMIN_893444" parent="attribute">	
+        <property name="code" value="ADMIN_893444"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_DORG_SHORTNAME" parent="attribute">	
+        <property name="code" value="JBR_DORG_SHORTNAME"/>        
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Сокращенное наименование:"/>
+        <property name="type"  value="S"/>
+    </bean>
+     <bean id="attrJBR_DORG_FULLNAME" parent="attribute">       
+        <property name="code" value="JBR_DORG_FULLNAME"/>
+        <property name="nameRu" value="Полное наименование"/>
+        <property name="nameEn" value="Полное наименование:"/>
+        <property name="type"  value="T"/>
+    </bean>
+	<bean id="attrJBR_TCON_ONCONT" parent="attribute">
+        <property name="code" value="JBR_TCON_ONCONT"/>
+        <property name="nameRu" value="На контроле"/>
+        <property name="nameEn" value="На контроле"/>
+        <property name="type"  value="L"/>
+    </bean>
+	<bean id="attrJBR_PERS_PHONE" parent="attribute">
+        <property name="code" value="JBR_PERS_PHONE"/>
+        <property name="nameRu" value="Телефон"/>
+        <property name="nameEn" value="Phone"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_PERSON_PHONE" parent="attribute">
+        <property name="code" value="JBR_PERSON_PHONE"/>
+        <property name="nameRu" value="Телефон персоны"/>
+        <property name="nameEn" value="Телефон персоны"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrADMIN_274992" parent="attribute">
+        <property name="code" value="ADMIN_274992"/>
+        <property name="nameRu" value="Информация о заявителе. Фамилия"/>
+        <property name="nameEn" value="Информация о заявителе. Фамилия"/>
+        <property name="type"  value="S"/>
+    </bean>	
+	<bean id="attrADMIN_281034" parent="attribute">
+        <property name="code" value="ADMIN_281034"/>
+        <property name="nameRu" value="Информация о заявителе. Имя"/>
+        <property name="nameEn" value="Информация о заявителе. Имя"/>
+        <property name="type"  value="S"/>
+    </bean>
+	<bean id="attrADMIN_281035" parent="attribute">
+        <property name="code" value="ADMIN_281035"/>
+        <property name="nameRu" value="Информация о заявителе. Отчество"/>
+        <property name="nameEn" value="Информация о заявителе. Отчество"/>
+        <property name="type"  value="S"/>
+    </bean>	
+	<bean id="attrJBR_DEPT_ABBR_linked_from_JBR_PERS_DEPT_LINK" parent="attribute">	
+        <property name="code" value="JBR_PERS_DEPT_LINK"/>
+        <property name="linkedCode" value="JBR_DEPT_ABBR"/>
+        <property name="nameRu" value="Аббревиатура"/>
+        <property name="nameEn" value="Abbreviation"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DEPT_SHORTNAME_linked_from_JBR_PERS_DEPT_LINK" parent="attribute">	
+        <property name="code" value="JBR_PERS_DEPT_LINK"/>
+        <property name="linkedCode" value="JBR_DEPT_SHORTNAME"/>
+        <property name="nameRu" value="Сокращенное название"/>
+        <property name="nameEn" value="Short name"/>
+        <property name="type"  value="T"/>
+    </bean>
+	<bean id="attrJBR_ALL_RESOLUTIONS" parent="linkAttribute">
+        <property name="code" value="JBR_ALL_RESOLUTIONS"/>
+        <property name="nameRu" value="Поручения всех уровней"/>
+        <property name="nameEn" value="All levels resolutions"/>
+        <property name="columns">
+            <list>
+                <bean parent="column"><property name="code" value="JBR_TCON_TERM"/></bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="attrADMIN_277253" parent="attribute">
+        <property name="code" value="ADMIN_277253"/>
+        <property name="nameRu" value="Краткое содержание"/>
+        <property name="nameEn" value="Краткое содержание"/>
+        <property name="type"  value="T"/>
+    </bean>	
+    <bean id="attrADMIN_702357" parent="attribute">
+        <property name="code" value="ADMIN_702357"/>
+        <property name="nameRu" value="Подготовленные документы"/>
+        <property name="nameEn" value="Prepared documents"/>
+        <property name="type"  value="E"/>
+    </bean>
+    <bean id="attrJBR_TEXT" parent="attribute">
+        <property name="code" value="JBR_TEXT"/>
+        <property name="nameRu" value="Текст"/>
+        <property name="nameEn" value="Text"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrADMIN_6075258" parent="attribute">
+        <property name="code" value="ADMIN_6075258"/>
+        <property name="nameRu" value="Куратор"/>
+        <property name="nameEn" value="Curator"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrNAME_linked_from_ADMIN_6079618" parent="attribute">
+        <property name="code" value="ADMIN_6079618"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    
+    <bean id="attrJBR_HOWFAST" parent="attribute">
+    	<property name="code" value="JBR_HOWFAST"/>
+        <property name="nameRu" value="Категория срочности"/>
+        <property name="nameEn" value="Immediate category"/>
+        <property name="type"  value="L"/>
+    </bean>
+    
+    <bean id="attrNAME_linked_from_ADMIN_277224" parent="attribute">
+        <property name="code" value="ADMIN_277224"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    
+    <bean id="attrNAME_linked_from_ADMIN_277245" parent="attribute">
+        <property name="code" value="ADMIN_277245"/>
+        <property name="linkedCode" value="NAME"/>
+        <property name="nameRu" value="Название"/>
+        <property name="nameEn" value="Name"/>
+        <property name="type"  value="S"/>
+    </bean>
+    
+	<bean id="attrJBR_HIDDEN_CHIEF" parent="attribute">
+        <property name="code" value="JBR_HIDDEN_CHIEF"/>
+        <property name="nameRu" value="Руководитель - скрытый"/>
+        <property name="nameEn" value="Руководитель - скрытый"/>
+        <property name="type"  value="U"/>
+    </bean>
+    
+    <bean id="attrJBR_MANAGER_COMMENT" parent="attribute">
+        <property name="code" value="JBR_MANAGER_COMMENT"/>
+        <property name="nameRu" value="Комментарий руководителя"/>
+        <property name="nameEn" value="Комментарий руководителя"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_EXT_RESOL" parent="attribute">
+        <property name="code" value="JBR_EXT_RESOL"/>
+        <property name="nameRu" value="Внешние резолюции"/>
+        <property name="nameEn" value="External resolutions"/>
+        <property name="type"  value="C"/>
+    </bean>
+    <bean id="attrADMIN_473929" parent="attribute">
+        <property name="code" value="ADMIN_473929"/>
+        <property name="nameRu" value="Рассматривающие скрытые"/>
+        <property name="nameEn" value="Рассматривающие скрытые"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_RIMP_COMMENT" parent="attribute">
+        <property name="code" value="JBR_RIMP_COMMENT"/>
+        <property name="nameRu" value="Комментарий к исполнению"/>
+        <property name="nameEn" value="Комментарий к исполнению"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DORG_FULLNAME_linked_from_JBR_PERS_ORG" parent="attribute">
+        <property name="code" value="JBR_PERS_ORG"/>
+        <property name="linkedCode" value="JBR_DORG_FULLNAME"/>
+        <property name="nameRu" value="Полное наименование"/>
+        <property name="nameEn" value="Полное наименование"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DORG_SHORTNAME_linked_from_JBR_PERS_ORG" parent="attribute">	
+        <property name="code" value="JBR_PERS_ORG"/>
+        <property name="linkedCode" value="JBR_DORG_SHORTNAME"/>
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Short name"/>
+        <property name="type"  value="T"/>
+    </bean>
+ 	<bean id="attrJBR_INF_COMMENT_linked_from_JBR_INFORM_LIST" parent="attribute">
+        <property name="code" value="JBR_INFORM_LIST"/>  
+        <property name="linkedCode" value="JBR_INF_COMMENT"/>      
+        <property name="nameRu" value="Комментарий"/>
+        <property name="nameEn" value="Комментарий"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrAUTHOR" parent="attribute">
+        <property name="code" value="AUTHOR"/>
+        <property name="nameRu" value="Автор"/>
+        <property name="nameEn" value="Author"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrVISA_VPERSON" parent="attribute">
+        <property name="code" value="JBR_VISA_VPERSON"/>
+        <property name="nameRu" value="Визирующие скрытые"/>
+        <property name="nameEn" value="Визирующие скрытые"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_INFD_ACTL_SENDER" parent="attribute">
+        <property name="code" value="JBR_INFD_ACTL_SENDER"/>
+        <property name="nameRu" value="Инициатор исходящего"/>
+        <property name="nameEn" value="Actual sender"/>
+        <property name="type"  value="C"/>
+    </bean>
+    <bean id="attrJBR_OG_REQ_AUTHOR" parent="attribute">
+        <property name="code" value="JBR_OG_REQ_AUTHOR"/>
+        <property name="nameRu" value="Автор обращения"/>
+        <property name="nameEn" value="Request author"/>
+        <property name="type"  value="C"/>
+    </bean>
+    
+    <bean id="attrMATERIAL_NAME_linked_from_DOCLINKS" parent="attribute">	
+        <property name="code" value="DOCLINKS"/>
+        <property name="linkedCode" value="MATERIAL_NAME"/>
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Сокращенное наименование:"/>
+        <property name="type"  value="S"/>
+    </bean>
+    
+    <bean id="attrMATERIAL_NAME_linked_from_ADMIN_702358" parent="attribute">	
+        <property name="code" value="ADMIN_702358"/>
+        <property name="linkedCode" value="MATERIAL_NAME"/>
+        <property name="nameRu" value="Сокращенное наименование:"/>
+        <property name="nameEn" value="Сокращенное наименование:"/>
+        <property name="type"  value="S"/>
+    </bean>
+    <bean id="attrJBR_RET_REASON" parent="attribute">
+        <property name="code" value="JBR_RET_REASON"/>
+        <property name="nameRu" value="Причина возврата регистратором"/>
+        <property name="nameEn" value="The reason for the return registrar"/>
+        <property name="type"  value="T"/>
+    </bean>
+    <bean id="attrJBR_DT_RTRN_CHF_ACQ" parent="attribute">
+        <property name="code" value="JBR_DT_RTRN_CHF_ACQ"/>
+        <property name="nameRu" value="Дата возврата с ознакомления руководителем"/>
+        <property name="nameEn" value="Date of return from chief acquaintance"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_RASSM_TODATE" parent="attribute">
+        <property name="code" value="JBR_RASSM_TODATE"/>
+        <property name="nameRu" value="Рассмотреть до:"/>
+        <property name="nameEn" value="Рассмотреть до:"/>
+        <property name="type"  value="D"/>
+    </bean>
+    <bean id="attrJBR_RASSM_PERSON" parent="attribute">
+        <property name="code" value="JBR_RASSM_PERSON"/>
+        <property name="nameRu" value="Рассматривающий"/>
+        <property name="nameEn" value="Рассматривающий"/>
+        <property name="type"  value="U"/>
+    </bean>
+    <bean id="attrJBR_RESPONS_CONSIDER" parent="attribute">
+        <property name="code" value="JBR_RESPONS_CONSIDER"/>
+        <property name="nameRu" value="Ответственный рассматривающий"/>
+        <property name="nameEn" value="Responsibility consider"/>
+        <property name="type"  value="L"/>
+    </bean>
+</beans>

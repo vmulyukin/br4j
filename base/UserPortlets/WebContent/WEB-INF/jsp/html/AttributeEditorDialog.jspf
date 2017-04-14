@@ -1,0 +1,202 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+	
+<%
+	String urlBegin = request.getContextPath() + "/servlet/JasperReportServlet?nameConfig=";
+%>
+
+	<div id="${attributeEditorDialogId}" dojoType="dijit.Dialog" title="<%=dialog.getTitle()%>">
+		<div style="overflow: auto; max-height: 35em; min-width: 32em;" id="attrcontrols" >
+		
+		</div>
+		<div id="selectAll" style="float:left;"></div>
+		<div style="float:right; clear: right;">
+			<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="card.register.dialog.button.ok"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					submitForm_DialogAction('<%= actionCode %>',
+						'<%= dialogAction %>');
+				</script>		
+			</button>
+			<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="card.register.dialog.button.cancel"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					dijit.byId('${attributeEditorDialogId}').hide();
+				</script>
+			</button>			
+		</div>
+	</div>
+
+	<script type="text/javascript" language="javascript">
+		dojo.require('dijit.Dialog');
+		dojo.require("dijit.form.CheckBox");
+		
+		var valuesDublicate = {};
+		
+		
+		var jsonValue = <%=dialog.getJSONData() %>;
+		
+		dojo.addOnLoad(function() {
+			dbmiHideLoadingSplash();
+			dijit.byId('${attributeEditorDialogId}').show();
+			loadValues(jsonValue);
+		});
+		
+		function loadValues(json){
+			var jsonObj = json.values;			
+			var div = dojo.byId('attrcontrols');
+			if (div.textContent.trim()==""){
+				addValuesRefControl(div, "attrTable", jsonObj);
+			}			
+			return;
+		}
+		
+	   function addValuesRefControl(div, name, values) {
+	        for (var i=0; i < values.length; i++) {
+	            var widget = dijit.byId(name+'_'+values[i].id); 
+	            if (widget != null) {
+	                widget.destroyRecursive(false);
+	            }
+	        }
+	        var control = dojo.create('div', 
+	            {   innerHTML:  '<table><tr>'+	                                
+	                                '<td><table id="table_'+name+'"></table></td>'+
+	                            '</tr></table>'
+	            }
+	        );
+	        dojo.addClass(control, 'control');
+	        
+	        //var table = dojo.create('table');
+	       // table.id = 'table_'+name;
+	        //control.appendChild(table);
+	        div.appendChild(control);
+	        
+	        // формируем модель
+	        var model = {};
+	        for (var i=0; i < values.length; i++) {
+	            model[values[i].id] = false;
+	        }
+	        
+	        var table = dojo.byId('table_'+name);
+	        table.model = model;
+	        var flag = false;
+	        if(values.length==1){
+	        	flag=true;
+	        	model[values[0].id] = flag;
+	        }
+	        var checkBoxes = [];
+	        for (var i=0; i < values.length; i++) {
+	            var row = table.insertRow(i);
+	            var cell = null;
+	            
+	            cell = row.insertCell(0);
+	            
+	            var w_name = name+'_'+values[i].id;
+	            
+	            var urlReport = "<%=urlBegin%>reportChartOG&card_id=L_"+values[i].id;
+	            var reportTitle = '<fmt:message key="print.form.og.title"/>';
+	            if(values[i].idRes) {
+	            	if(values[i].template == "324") {
+	            		urlReport = "<%=urlBegin%>reportPrintAssignment&card_id=L_"+values[i].idRes;
+	            		reportTitle = '<fmt:message key="print.form.resolution.title"/>';
+	            		
+	            	}
+	            }
+	            
+	            var tagLink = '<a class="print_repeat_og" href="'+urlReport+'" target="_blank" title="'+reportTitle+'"></a>';
+	            var cb = dojo.create('div', 
+	                {   innerHTML: '<div style="padding-top:5px; float: left;"><div style="float: left;" id="'+w_name+'"><label style="float: left;"></div>'+values[i].text+'</label></div>'+tagLink
+	                
+	                }
+	            );
+	            cell.appendChild(cb);
+	            
+	            
+	            var widget = new dijit.form.CheckBox({
+	                name: w_name,
+	                value: true,
+	                checked: flag,
+	                valueId: values[i].id,
+	                onChange: function() {
+	                    model[this.valueId] = this.attr('value');
+						if(!this.checked) {
+							var w = dijit.byId('selectAll_checkBox_id');
+							if(w) {
+								w.setChecked(false);
+							}
+						}
+	                }   
+	            });
+	            checkBoxes.push(widget);
+	    
+	            widget.placeAt(dojo.byId(w_name));  
+	        }
+	        
+	        appendSelectAllCheckBox(checkBoxes);
+	    } 
+	   	
+	   	function appendSelectAllCheckBox(checkBoxes) {
+	   		
+	   		var container = dojo.byId('selectAll');
+	   		
+	   		if(container.textContent.trim() == "") {
+	   			var w_name = 'selectAll_checkBox';
+	            var cb = dojo.create('div', 
+	                {
+	            		innerHTML: '<div style="padding-top:5px; float: left;"><div style="float: left;" id="'+w_name+'"><label style="float: left;"></div><b>Выбрать все</b></label></div>'
+	                }
+	            );				
+				container.appendChild(cb);
+				
+	            var widget = new dijit.form.CheckBox({
+	            	id: w_name+'_id',
+	                name: w_name,
+	                value: true,
+	                checked: false,
+	                onClick: function() {
+	                    checkAll(checkBoxes, this.checked);
+	                }   
+	            });
+	    
+	            widget.placeAt(dojo.byId(w_name));
+	   		}
+	   	}
+	   	
+	   	function checkAll(checkBoxes, check) {
+	   		checkBoxes.forEach(function(widget){
+	   			widget.setChecked(check)
+	   		});
+	   	}
+
+		function submitForm_DialogAction(action, dialogAction) { 
+			
+            var values = [];
+            var table = dojo.byId('table_attrTable');
+            var model = table.model;
+            for(var i in model) {
+                if (true == model[i] || "on" == model[i]) {
+                    values.push(i);
+                }
+            }
+            value = values.join(',');
+
+            setFormValues_DialogAction(action, dialogAction, value);
+		}
+	</script>

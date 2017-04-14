@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<layouts>
+	<layout>
+		<name>empty_layout</name>
+		<uri>/layout/empty.jsp</uri>
+	</layout>
+	<layout>
+		<name>dbmi_layout</name>
+		<uri>/layout/index.jsp</uri>
+        <uri state="maximized">/layout/maximized.jsp</uri>
+		<regions>
+			<region name="bottom" />
+			<region name="center" />
+			<region name="left" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmi_1column</name>
+		<uri>/layout/oneColumn.jsp</uri>
+        <uri state="maximized">/layout/maximized.jsp</uri>
+		<regions>
+			<region name="bottom" />
+			<region name="center" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmi_1column_wo_banner</name>
+		<uri>/layout/oneColumnWOBanner.jsp</uri>
+        <uri state="maximized">/layout/maximized.jsp</uri>
+		<regions>
+			<region name="bottom" />
+			<region name="center" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmi_card</name>
+		<uri>/layout/card.jsp</uri>
+        <uri state="maximized">/layout/cardMaximized.jsp</uri>
+		<regions>
+			<region name="bottom" />
+			<region name="center" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmi_boss_3col</name>
+		<uri>/boss/3columns.jsp</uri>
+		<regions>
+			<region name="left"/>
+			<region name="main"/>
+			<region name="right"/>
+		</regions>
+	</layout>
+	<layout>
+		<name>dbmi_boss_2col</name>
+		<uri>/boss/2columns.jsp</uri>
+		<regions>
+			<region name="left"/>
+			<region name="main"/>
+		</regions>
+	</layout>
+	<layout>
+		<name>dbmi_boss_adv_search</name>
+		<uri>/boss/advancedSearchColumns.jsp</uri>
+		<regions>
+			<region name="left"/>
+			<region name="main"/>
+			<region name="bottom"/>
+		</regions>
+	</layout>
+	<layout>
+		<name>dbmi_boss_1col</name>
+		<uri>/boss/1column.jsp</uri>
+		<regions>
+			<region name="main"/>
+		</regions>
+	</layout>
+	<layout>
+		<name>dbmi_singleton</name>
+		<uri>/boss/singleton.jsp</uri>
+		<regions>
+			<region name="main"/>
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmiCMS_3columns</name>
+		<uri>/layoutCMS/3columns.jsp</uri>
+		<regions>
+			<region name="left" />
+			<region name="main"/>
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmiCMS_2columns</name>
+		<uri>/layoutCMS/2columns.jsp</uri>
+		<regions>
+			<region name="upperRight" />
+			<region name="top" />
+			<region name="bottom" />
+			<region name="center" />
+			<region name="left" />
+			<region name="lowerLeft" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmiCMS_1column</name>
+		<uri>/layoutCMS/1column.jsp</uri>
+		<regions>
+			<region name="upperRight" />
+			<region name="top" />
+			<region name="bottom" />
+			<region name="center" />
+		</regions>
+	</layout>
+
+	<layout>
+		<name>dbmi-arm-layout</name>
+		<uri>/layout/dbmi-arm-layout.jsp</uri>
+		<regions>
+			<region name="navigation" />
+			<region name="top" />
+			<region name="left" />
+			<region name="right" />
+			<region name="bottom" />
+		</regions>
+	</layout>
+
+</layouts>

@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ogQuestionsReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="dept" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\BR4J_SOURCE\\FSIN\\branches\\01.4.006.12.000\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH RECURSIVE search_up(cycle_id, cycle_number, cycle_base) AS (
+    select cast(c.card_id::bigint as numeric),1, c.card_id from card c
+    where c.status_id in (4,7) and c.template_id = 484
+    UNION ALL
+    SELECT v.number_value, su.cycle_number+1, su.cycle_base
+    FROM attribute_value v, search_up su
+    WHERE v.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    AND v.card_id = su.cycle_id
+    and exists (select 1 from attribute_value
+		where attribute_code = 'JBR_DEPT_PARENT_LINK'
+		and card_id = v.number_value)),
+departments as (select (max(ARRAY[cycle_number, cycle_id, cycle_base]))[3] as curDep,
+			(max(ARRAY[cycle_number, cycle_id, cycle_base]))[2] as depLvl2
+		from search_up
+		group by cycle_base),
+og_cards as (
+	select c.card_id
+	from card c
+	join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+        join attribute_value av_rassm_p on av_rassm_p.card_id = c_r.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+        join person p_rassm on av_rassm_p.number_value = p_rassm.person_id
+        join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+        join departments d on d.curDep =  av_dept.number_value
+	where c.status_id in (102,103,206,48909) and c.template_id = 864 and
+		date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}
+		and date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+	UNION
+	select c.card_id
+	from card c
+	join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+        join attribute_value av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+        join person p_rassm on av_res_exec.number_value = p_rassm.person_id
+        join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+        join departments d on d.curDep =  av_dept.number_value
+	where c.status_id in (101,102,103,206,48909) and c.template_id = 864 and
+		date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}
+		and date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+	UNION
+		select c.card_id
+	from card c
+	join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value_archive av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card_archive c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+        join attribute_value_archive av_rassm_p on av_rassm_p.card_id = c_r.card_id and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+        join person p_rassm on av_rassm_p.number_value = p_rassm.person_id
+        join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+        join departments d on d.curDep =  av_dept.number_value
+	where c.status_id in (104) and c.template_id = 864 and
+		date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}
+		and date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+	UNION
+	select c.card_id
+	from card c
+	join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value_archive av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card_archive c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+        join attribute_value_archive av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+        join person p_rassm on av_res_exec.number_value = p_rassm.person_id
+        join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+        join departments d on d.curDep =  av_dept.number_value
+	where c.status_id in (104) and c.template_id = 864 and
+		date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}
+		and date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+	UNION
+	select c.card_id
+	from card c
+	join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	where c.status_id in (101) and c.template_id = 864 and
+		date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}
+		and date_trunc('day',av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+
+),res_rassm as (
+	select c.card_id as og, av_result_review.number_value as res_rassm
+	from og_cards c
+	join attribute_value av_relat_link on (
+				select
+				(max(ARRAY[(EXTRACT(EPOCH  FROM av2.date_value)), av2.attr_value_id]))[2]
+				from attribute_value av1
+					join attribute_value av2 on av1.card_id = av2.card_id and av2.attribute_code = 'JBR_REGD_DATEREG'
+					join card c_relat on c_relat.card_id = av2.card_id and c_relat.status_id in (101, 104)
+				where av1.attribute_code = 'JBR_DOCL_RELATDOC' and av1.value_id = 1502 and av1.number_value = c.card_id and av1.template_id = 364
+				) = av_relat_link.attr_value_id
+	--присоединение карточки связанного докумнета
+	join card relat_doc on relat_doc.card_id = av_relat_link.card_id
+	--присоединяем ссылки на вопросы в связанных документах
+	join attribute_value av_result_review on av_result_review.card_id = av_relat_link.card_id and av_result_review.attribute_code = 'ADMIN_283926'
+)
+
+select quests_n.string_value as quest,
+coalesce(sub1.count, 0) doc_count,
+coalesce(sub2.count, 0) doc_oncontrol_count,
+coalesce(sub3.count, 0) quests_not_conformed_count,
+coalesce(sub4.count, 0) quests_explained_count,
+coalesce(sub5.count, 0) quests_conformed_count,
+coalesce(sub6.count, 0) quests_redirected_territorial_authority_count,
+coalesce(sub7.count, 0) quests_redirected_facilities_count,
+coalesce(sub8.count, 0) quests_recognized_reasonable_count,
+coalesce(sub9.count, 0) quests_recognized_notreasonable_count,
+coalesce(sub10.count, 0) quests_production_unanswered_count,
+coalesce(sub11.count, 0) quests_partial_conformed_count,
+coalesce(sub12.count, 0) quests_agreed_departure_count
+from card c_quest
+join attribute_value quests_n on quests_n.card_id = c_quest.card_id and quests_n.attribute_code in ('JBR_THEME_ID', 'JBR_THEMATIC_ID')
+left join (
+	select av_q.number_value q, count(c.card_id) count
+	from og_cards c
+	join attribute_value av_q on av_q.card_id = c.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	group by av_q.number_value
+	order by av_q.number_value) as sub1 on c_quest.card_id = sub1.q
+left join (
+	select av_q.number_value q, count(c.card_id) count
+	from og_cards c
+	join attribute_value av_q on av_q.card_id = c.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	join attribute_value on_control on on_control.card_id = c.card_id and on_control.attribute_code = 'JBR_IMPL_ONCONT' and on_control.value_id = 1432
+	group by av_q.number_value
+	order by av_q.number_value) as sub2 on c_quest.card_id = sub2.q
+left join (	--"Не поддеражано"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_DECISION_RES' and av_result_review_val.value_id = 1243
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub3 on c_quest.card_id = sub3.q
+left join (--"Поддеражано"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_DECISION_RES' and av_result_review_val.value_id = 1240
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub4 on c_quest.card_id = sub4.q
+left join (--"Разъяснено"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_DECISION_RES' and av_result_review_val.value_id = 1242
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub5 on c_quest.card_id = sub5.q
+left join (--"Направлено в территориальный орган"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_REDIRECTION' and av_result_review_val.value_id = 6557
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub6 on c_quest.card_id = sub6.q
+left join (--"Направлено по принадлежности (др. организации)"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_REDIRECTION' and av_result_review_val.value_id = 6558
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub7 on c_quest.card_id = sub7.q
+left join (--"Признано обоснованным"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_SOLUTION' and av_result_review_val.value_id = 3505
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub8 on c_quest.card_id = sub8.q
+left join (--"Признано не обоснованным"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_SOLUTION' and av_result_review_val.value_id = 3506
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub9 on c_quest.card_id = sub9.q
+left join (--"Приобщено в производство без ответа"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_DECISION_RES' and av_result_review_val.value_id = 1244
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub10 on c_quest.card_id = sub10.q
+left join (--"Частично подтвердилось"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_SOLUTION' and av_result_review_val.value_id = 3509
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub11 on c_quest.card_id = sub11.q
+left join (--"Решено с выездом"
+	select av_relat_questions.number_value q, count(rr.og) count
+	from res_rassm rr
+	join attribute_value av_result_review_val on av_result_review_val.card_id = rr.res_rassm and av_result_review_val.attribute_code = 'JBR_DECISION_OUT' and av_result_review_val.value_id = 1449
+	--присоединяем ссылки на темы вопросов
+	join attribute_value av_relat_questions on av_relat_questions.card_id = av_result_review_val.card_id and av_relat_questions.attribute_code = 'JBR_QUESTIONS_RES'
+	group by q
+	order by q) as sub12 on c_quest.card_id = sub12.q
+
+where c_quest.template_id in (850, 851)
+ and (coalesce(sub1.count, 0) + coalesce(sub2.count, 0) + coalesce(sub3.count, 0) + coalesce(sub4.count, 0) + coalesce(sub5.count, 0) + coalesce(sub6.count, 0)
+	+ coalesce(sub7.count, 0) + coalesce(sub8.count, 0) + coalesce(sub9.count, 0) + coalesce(sub10.count, 0)+ coalesce(sub11.count, 0) + coalesce(sub12.count, 0)) > 0
+order by quest asc]]>
+	</queryString>
+	<field name="quest" class="java.lang.String"/>
+	<field name="doc_count" class="java.lang.Long"/>
+	<field name="doc_oncontrol_count" class="java.lang.Long"/>
+	<field name="quests_not_conformed_count" class="java.lang.Long"/>
+	<field name="quests_explained_count" class="java.lang.Long"/>
+	<field name="quests_conformed_count" class="java.lang.Long"/>
+	<field name="quests_redirected_territorial_authority_count" class="java.lang.Long"/>
+	<field name="quests_redirected_facilities_count" class="java.lang.Long"/>
+	<field name="quests_recognized_reasonable_count" class="java.lang.Long"/>
+	<field name="quests_recognized_notreasonable_count" class="java.lang.Long"/>
+	<field name="quests_production_unanswered_count" class="java.lang.Long"/>
+	<field name="quests_partial_conformed_count" class="java.lang.Long"/>
+	<field name="quests_agreed_departure_count" class="java.lang.Long"/>
+	<title>
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Данные о вопросах, содержащихся в обращениях и результатах их рассмотрения]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с " + (new SimpleDateFormat("dd.MM.yyyy").format($P{startDate})) + " по " + (new SimpleDateFormat("dd.MM.yyyy").format($P{endDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="45" width="802" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="60" width="802" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(((new com.aplana.dbmi.jasperreports.GenerateDepartmentsHeaders()).generateString($P{REPORT_CONNECTION},$P{dept}))==null ||
+(((new com.aplana.dbmi.jasperreports.GenerateDepartmentsHeaders()).generateString($P{REPORT_CONNECTION},$P{dept})).equalsIgnoreCase("")))?"По всем подразделениям":
+((new com.aplana.dbmi.jasperreports.GenerateDepartmentsHeaders()).generateString($P{REPORT_CONNECTION},$P{dept}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="130">
+			<staticText>
+				<reportElement style="def" x="352" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Отклонено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="0" y="0" width="118" height="130"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Вопрос]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="118" y="0" width="117" height="130"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Общее количество рассмотренных вопросов]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="235" y="0" width="117" height="130"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Количество вопросов на контроле]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="397" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Дано разъяснение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="487" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Направлено по принадлежности]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="442" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Удовлетворено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="622" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Приобщено в производство без ответа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="667" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Территориальный орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="577" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Признано не обоснованным]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="532" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Признано обоснованным]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="757" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Решено с выездом]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="712" y="20" width="45" height="110"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Частично подтвердилось]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="352" y="0" width="450" height="20"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Результаты рассмотрения]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="118" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quest}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="0" width="117" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="235" y="0" width="117" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_oncontrol_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="352" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_not_conformed_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="397" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_explained_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="487" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_redirected_facilities_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="442" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_conformed_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_recognized_notreasonable_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="667" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_redirected_territorial_authority_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="532" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_recognized_reasonable_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="622" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_production_unanswered_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="757" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_agreed_departure_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="712" y="0" width="45" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quests_partial_conformed_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

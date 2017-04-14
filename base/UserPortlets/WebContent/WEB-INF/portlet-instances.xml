@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<deployments>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>BrowsingReportsPortletInstance</instance-id>
+			<portlet-ref>BrowsingReportsPortlet</portlet-ref>
+		</instance>
+	</deployment>
+<!--
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+			<instance-id>BrowsingReportsPortletInstance</instance-id>
+			<portlet-ref>BrowsingReportsPortlet</portlet-ref>
+		</instance>
+    </deployment>
+  -->
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <instance-id>CreateCardByExampleInstance</instance-id>
+            <portlet-ref>CreateCardByExamplePortlet</portlet-ref>
+        </instance>
+    </deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>QuickResolutionPortletInstance</instance-id>
+			<portlet-ref>QuickResolutionPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+            <instance-id>QuickIndepResolutionPortletInstance</instance-id>
+            <portlet-ref>QuickIndepResolutionPortlet</portlet-ref>
+        </instance>
+    </deployment>
+    <deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>MassResolutionPortletInstance</instance-id>
+			<portlet-ref>MassResolutionPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>RequestToChangeConsPortletInstance</instance-id>
+			<portlet-ref>RequestToChangeConsPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>AdditionalEndorsementPortletInstance</instance-id>
+			<portlet-ref>AdditionalEndorsementPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>AcquaintancePortletInstance</instance-id>
+			<portlet-ref>AcquaintancePortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ChooseDocTemplatePortletInstance</instance-id>
+			<portlet-ref>ChooseDocTemplatePortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>DocumentDataPortletInstance</instance-id>
+			<portlet-ref>DocumentDataPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ResolutionReportPortletInstance</instance-id>
+			<portlet-ref>ResolutionReportPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<!-- <deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CmsSearchInstance</instance-id>
+			<portlet-ref>SearchPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>searchViewType</name>
+					<value>full</value>
+				</preference>
+				<preference>
+					<name>extendedSearchPath</name>
+					<value>/portal/auth/portal/content/searchFilter?area=2529</value>
+				</preference>
+				<preference>
+					<name>submitSearchPath</name>
+					<value>/portal/auth/portal/content/search?area=2529</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>RightSearchInstance</instance-id>
+			<portlet-ref>SearchPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>searchViewType</name>
+					<value>vertical</value>
+				</preference>
+				<preference>
+					<name>submitSearchPath</name>
+					<value>/portal/auth/portal/content/search?area=2529</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>UpperRightSearchInstance</instance-id>
+			<portlet-ref>SearchPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>searchViewType</name>
+					<value>small</value>
+				</preference>
+				<preference>
+					<name>submitSearchPath</name>
+					<value>/portal/auth/portal/content/search?area=2529</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment> -->
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>SearchInstance</instance-id>
+			<portlet-ref>SearchPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>searchViewType</name>
+					<value>full</value>
+				</preference>
+
+				<preference>
+					<name>extendedSearchPath</name>
+					<value>/portal/auth/portal/dbmi/searchFilter/SearchFilterWindow</value>
+				</preference>
+
+			</preferences>			
+		</instance>
+	</deployment>
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>SearchFilterInstance</instance-id>
+			<portlet-ref>SearchFilterPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>WorkstationAdvancedSearchInstance</instance-id>
+			<portlet-ref>WorkstationAdvancedSearchPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>SearchFilterInstance</instance-id>
+			<portlet-ref>SearchFilterPortlet</portlet-ref>
+		</instance>
+	</deployment>	
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CardListInstance</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>pgSize</name>
+					<value>20</value>
+				</preference>
+				<!-- 
+				<preference>
+					<name>showHeader</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>header.jsp</name>
+					<value>/WEB-INF/jsp/test.jsp</value>
+				</preference>
+
+				<preference>
+					<name>header.text</name>
+					<value>Custom text</value>
+				</preference>
+
+				<preference>
+					<name>link.Url</name>
+					<value>http://localhost:8080/portal/auth/portal/dbmi/card/CardPortletWindow?action=e&windowstate=normal&mode=view&MI_EDIT_CARD={0}&MI_BACK_URL_FIELD=%2Fportal%2Fauth%2Fportal%2Fdbmi%2Fservices%2Fpatterns%2FCardListWindow%3Faction%3D2</value>
+				</preference>
+
+				<preference>
+					<name>link.Page</name>
+					<value> pgId : winId : paramName </value>
+				</preference>
+	
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+				 -->
+			</preferences>
+		</instance>
+	</deployment>
+	
+	<!-- Отображение списка на сегодня -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ArmInstanceToday</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<!-- 
+					<name>header.jsp</name>
+					<value>/WEB-INF/jsp/title.allProcessing.jsp</value>
+					-->
+					<name>header.text</name>
+					<value>На сегодня</value>
+				</preference>
+
+				<preference>
+					<name>pgSize</name>
+					<value>20</value>
+				</preference>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+				
+			</preferences>
+		</instance>
+	</deployment>
+
+	<!-- Отображение списка на завтра -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ArmInstanceTomorrow</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<!-- Специальный заголовок -->
+					<name>header.jsp</name>
+					<value>/WEB-INF/jsp/title.tomorrow.jsp</value>
+				</preference>
+				
+				<preference>
+					<name>pgSize</name>
+					<value>7</value>
+				</preference>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>false</value>
+				</preference>
+
+			</preferences>
+			
+		</instance>
+	</deployment>
+
+	<!-- Отображение списка документов ассистента министра -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>AssistentDocInstance</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<name>pgSize</name>
+					<value>20</value>
+				</preference>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>false</value>
+				</preference>
+
+			</preferences>
+
+		</instance>
+	</deployment>
+
+	<!--  Заголовок явно задан в виде текста -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ArmInstanceTooLate</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<name>header.text</name>
+					<value>Просроченные дела</value>
+				</preference>
+
+				<preference>
+					<name>pgSize</name>
+					<value>7</value>
+				</preference>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>false</value>
+				</preference>
+
+				<!--
+				<preference>
+					<name>link.Url</name>
+					<value>/portal/auth/portal/dbmi/card/CardPortletWindow?MI_EDIT_CARD={0}</value>
+				</preference>
+				 -->
+
+			</preferences>
+		</instance>
+	</deployment>
+
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ArmInstanceSoon</instance-id>
+			<portlet-ref>CardListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<name>showHeader</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>header.text</name>
+					<value>Скоро</value>
+				</preference>
+				
+				<preference>
+					<name>pgSize</name>
+					<value>7</value>
+				</preference>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>false</value>
+				</preference>
+				
+				<!-- 
+				<preference>
+					<name>link.Page</name>
+					#  pgId : winId : paramName
+					<value>dbmi.Card:CardPortletWindow:cardId</value>
+				</preference>
+				-->
+
+			</preferences>
+		</instance>
+	</deployment>
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>PersonalSearchInstance</instance-id>
+			<portlet-ref>PersonalSearchPortlet</portlet-ref>
+		</instance>
+	</deployment>
+
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>FavoriteCardListInstance</instance-id>
+			<portlet-ref>FavoriteCardListPortlet</portlet-ref>
+		</instance>
+	</deployment>
+
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CardImportInstance</instance-id>
+			<portlet-ref>CardImportPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CardInstance</instance-id>
+			<portlet-ref>CardPortlet</portlet-ref>
+		</instance>
+	</deployment>
+
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CurrentUserSettingsCardInstance</instance-id>
+			<portlet-ref>CardPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>cardDetector</name>
+					<value>com.aplana.dbmi.card.CurrentUserSettingsCardDetector</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>CurrentUserInternalCardInstance</instance-id>
+			<portlet-ref>CardPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>cardDetector</name>
+					<value>com.aplana.dbmi.card.CurrentUserInternalCardDetector</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <instance-id>WorkstationCardInstance</instance-id>
+            <portlet-ref>WorkstationCardPortlet</portlet-ref>
+        </instance>
+    </deployment>	
+
+	<!-- АРМ руководителя -->
+	<!-- <deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>LogoViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>item</name>
+					<value>5555</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment> -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>MainContentViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>linkDocs</name>
+					<value>true</value>
+				</preference>
+				<preference>
+					<name>item</name>
+					<value>8554</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>ContentViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>item</name>
+					<value>8554</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>DocumentViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>DocumentViewDetailInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>views</name>
+					<value>43664,44840,43663,43662,43660,43661,29020,8069</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>PrintViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>views</name>
+					<!-- <value>8550,8556,8567</value> -->
+					<value>10222,10223,10233,10234,10235,10236</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>RejectInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>views</name>
+					<value>8637</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>LinksViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>views</name>
+					<value>41961,43341,43342,43343,43344,43560</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>HeaderViewInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>views</name>
+					<value>8595,10211,38080,38081,38082</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<!-- <deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>SearchResultInstance</instance-id>
+			<portlet-ref>ContentViewPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>search</name>
+					<value>8555</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment> -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>NavigationInstance</instance-id>
+			<portlet-ref>NavigationPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>switchableNavigator</name>
+					<value>true</value>
+				</preference>
+				<preference>
+					<name>navigator</name>
+					<value>8551</value>
+				</preference>
+				<preference>
+					<name>navigator2</name>
+					<value>8000</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>FilterInstance</instance-id>
+			<portlet-ref>NavigationPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>navigator</name>
+					<value>8609</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+	<!-- <deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>PathInstance</instance-id>
+			<portlet-ref>NavigationPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>navigator</name>
+					<value>2534</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment> -->
+	
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>SimpleSearchPortletInstance</instance-id>
+			<portlet-ref>SimpleSearchPortlet</portlet-ref>
+			<preferences>
+				<preference>
+					<name>redirect</name>
+					<value>/portal/auth/portal/boss/folder</value>
+				</preference>
+			</preferences>
+		</instance>
+	</deployment>
+
+	<!-- Делегирования -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>DelegateListInstance</instance-id>
+			<portlet-ref>DelegateListPortlet</portlet-ref>
+			<preferences>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showTitle</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>title.my</name>
+					<value>DelegateListPortlet.title.my</value>
+				</preference>
+
+				<preference>
+					<name>title.history</name>
+					<value>DelegateListPortlet.title.history</value>
+				</preference>
+
+				<preference>
+					<name>title.2me</name>
+					<value>DelegateListPortlet.title.2me</value>
+				</preference>
+				
+			</preferences>
+		</instance>
+	</deployment>
+	
+	<!-- Активность -->
+	<deployment>
+		<if-exists>overwrite</if-exists>
+		<instance>
+			<instance-id>EventLogInstance</instance-id>
+			<portlet-ref>EventLogPortlet</portlet-ref>
+			<preferences>
+				
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showTitle</name>
+					<value>true</value>
+				</preference>
+				
+			</preferences>
+		</instance>
+	</deployment>
+	
+	<deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <instance-id>RolesAdminInstance</instance-id>
+            <portlet-ref>RolesAdminPortlet</portlet-ref>
+        </instance>
+    </deployment>
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <instance-id>GroupsAdminInstance</instance-id>
+            <portlet-ref>GroupsAdminPortlet</portlet-ref>
+        </instance>
+    </deployment>
+
+</deployments>

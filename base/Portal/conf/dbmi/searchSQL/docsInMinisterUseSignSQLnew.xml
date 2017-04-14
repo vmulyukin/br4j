@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+						with 
+						
+						boss as (select av_b.number_value from attribute_value as av_b
+								join card as c_b on av_b.card_id = c_b.card_id and c_b.template_id = 544 and c_b.status_id = 4
+								join attribute_value as av_assist on av_assist.card_id = av_b.card_id 
+									and av_assist.attribute_code = 'JBR_ARM_ASSISTANT' and av_assist.number_value = (%CURRENTUSERS%)
+						
+								where av_b.attribute_code = 'JBR_ARM_MANAGER'
+						)
+						
+						select distinct crds.card_id 
+						
+						from (
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('JBR_SIGN_RESPONSIBLE') and av_1.number_value = (select number_value from boss)		
+						
+								where c.template_id in (365) 
+								and c.status_id = 73992	
+						
+								--union all
+						
+								
+						
+								
+							) as crds
+			]]>
+		</sql>
+
+	</query>
+</searchQuery>

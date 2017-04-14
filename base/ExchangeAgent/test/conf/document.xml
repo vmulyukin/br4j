@@ -1,0 +1,69 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+[20.12.2011 17:37:22] ������ �����: <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="urn://x-artefacts-it-ru/dob/poltava/dmsx/1.0" xmlns:xdms="http://www.infpres.com/IEDMS">
+<soapenv:Header/>
+<soapenv:Body>
+<ns:putDMSMessageRequest>
+<xdms:communication xdms:version="2.0" xmlns:xdms="http://www.infpres.com/IEDMS">
+ <xdms:header xdms:type="��������" xdms:uid="bf22d508-d710-4cb6-81f1-df71e2b5c277" xdms:created="2010-10-02T18:36:44.197">
+  <xdms:source xdms:uid="a5a09e6f-c186-4812-ac98-71177fd94d89">
+   <xdms:organization>���</xdms:organization>
+  </xdms:source>
+ </xdms:header>
+ <xdms:document xdms:uid="773f1f65-d02b-461b-9b7a-adb0439d0223">
+  <xdms:kind>���������</xdms:kind>
+  <xdms:num>
+   <xdms:number>1</xdms:number>
+   <xdms:date>2011-12-08</xdms:date>
+  </xdms:num>
+  <xdms:insteadOfDistributed>false</xdms:insteadOfDistributed>
+  <xdms:signatories>
+   <xdms:signatory>
+    <xdms:organization>������� ����</xdms:organization>
+    <xdms:person>������������ �������� ������������</xdms:person>
+    <xdms:signed>2011-12-08</xdms:signed>
+   </xdms:signatory>
+  </xdms:signatories>
+  <xdms:addressees>
+   <xdms:addressee>
+    <xdms:region>���������� ������������</xdms:region>
+    <xdms:organization>�����������</xdms:organization>
+   </xdms:addressee>
+  </xdms:addressees>
+  <xdms:pages>1</xdms:pages>
+  <xdms:annotation>��������� �� �������� ��������������� ������ "������������ ���������� ������������������, ��������, ������������, �������������, ������������� � ���� �����"</xdms:annotation>
+  <xdms:correspondents>
+   <xdms:correspondent>
+    <xdms:region>������</xdms:region>
+    <xdms:organization>������� ����</xdms:organization>
+    <xdms:person>��������� ��������� ���������</xdms:person>
+   </xdms:correspondent>
+  </xdms:correspondents>
+  <xdms:comment>S7/0</xdms:comment><!-- ��� ������ -->
+ </xdms:document>
+ <xdms:files>
+  <xdms:file xdms:localName="http://colocation.it.ru:8070/poltava-web-application/pgac/anyname.htm?guid=32790062C3F64ADDA55B65789DF62692" xdms:localId="1" xdms:type="reference">
+   <xdms:group></xdms:group>
+   <xdms:description/>
+  </xdms:file>
+ </xdms:files>
+</xdms:communication>
+</ns:putDMSMessageRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

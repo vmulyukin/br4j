@@ -1,0 +1,84 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="assembler">
+        	<bean class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+        		<property name="attributeSource" ref="jmxAttributeSource"/>
+    		</bean>
+        </property>
+        <property name="namingStrategy">
+        	<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+        		<property name="attributeSource" ref="jmxAttributeSource"/>
+			</bean>
+        </property>
+        <property name="autodetect" value="true"/>
+    </bean>
+    <bean id="jmxAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
+    
+    <bean id="sessionManager" class="com.aplana.dbmi.service.impl.SessionManager"/>
+    
+	<bean id="lockManagement" class="com.aplana.dbmi.service.impl.locks.TimeoutLockManagementBean" />
+	
+	
+	<bean id="resultStorage" class="com.aplana.dbmi.service.impl.async.ResultStorageBean">
+		<!-- enable/disable storage, if disabled - storage just will 
+		     be created, without storing object (always empty) -->
+		<property name="enabled" value="false" />
+		
+		<!-- 10 min for expire time -->
+		<property name="millisUntilExpiration" value="600000" />
+		<!-- 100 items - max storage size -->
+		<property name="cleanupThreshold" value="100" />
+		<!-- use cleanup for expired items. If false - storage will just
+		     remove the oldest entry when reached max size (cleanupThreshold)-->
+		<property name="useCleanup" value="true" />
+	</bean>
+	
+	<bean id="asyncQueriesQueue" class="com.aplana.dbmi.service.impl.async.AsyncQueriesQueue" init-method="init">
+		<constructor-arg value="800" />
+		<constructor-arg ref="queryContainerComparator" />
+		<property name="resultStorage" ref="resultStorage" />
+		<property name="backupManager" ref="backupManager" />
+	</bean>
+
+	<bean id="asyncPerformerBean" class="com.aplana.dbmi.service.impl.async.AsyncPerformerBean">
+		<constructor-arg value="16" />
+		<constructor-arg value="200" />
+		<constructor-arg ref="asyncQueriesQueue" />
+		<constructor-arg ref="lockManagement" />
+		<constructor-arg ref="activeQueryBases" />
+		<property name="logEventBean" ref="logevent" />
+	</bean>
+
+	<bean id="backupManager" class="com.aplana.dbmi.service.impl.async.AsyncBackupBean">
+		<property name="dataSource" ref="dataSource" /> 
+	</bean>
+
+	<bean id="activeQueryBases" class="com.aplana.dbmi.service.impl.ActiveQueryBases" />
+	
+	<bean id="cache" class="com.aplana.util.Cache">
+		<constructor-arg>
+			<value>1500</value>
+		</constructor-arg>
+	</bean>
+
+</beans>

@@ -1,0 +1,1208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE deployments PUBLIC
+"-//JBoss Portal//DTD Portal Object 2.6//EN"
+"http://www.jboss.org/portal/dtd/portal-object_2_6.dtd">
+<deployments>
+   <deployment>
+      <parent-ref/>
+      <if-exists>overwrite</if-exists>
+      <portal>
+         <portal-name>boss</portal-name>
+         <supported-modes>
+            <mode>view</mode>
+            <mode>edit</mode>
+            <mode>help</mode>
+         </supported-modes>
+         <supported-window-states>
+            <window-state>normal</window-state>
+            <window-state>minimized</window-state>
+            <window-state>maximized</window-state>
+         </supported-window-states>
+         <properties>
+            <property>
+               <name>layout.id</name>
+               <value>dbmi_boss_3col</value>
+            </property>
+            <property>
+               <name>theme.id</name>
+               <value>dbmi_boss</value>
+            </property>
+            <property>
+               <name>theme.renderSetId</name>
+               <value>emptyRenderer</value>
+            </property>
+            <property>
+               <name>layout.strategyId</name>
+               <value>maximizedRegion</value>
+            </property>
+            <property>
+            	<name>portal.defaultObjectName</name>
+            	<value>login</value>
+            </property>
+            <property>
+            	<name>defaultPage</name>
+            	<value>$/boss/folder</value>
+            </property>
+		</properties>
+		<security-constraint>
+            <policy-permission>
+                <action-name>viewrecursive</action-name>
+                <unchecked />
+            </policy-permission>
+		</security-constraint>
+      	<page>
+       		<page-name>folder</page-name>
+       		<properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+            </properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+      			<region>left</region>
+      			<height>2</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>MainContentViewInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+            <display-name xml:lang="en">Folder view</display-name>
+			<display-name xml:lang="ru">Просмотр папки</display-name>
+      	</page>
+
+
+
+
+
+        <!-- *********************************************************
+            Создание карточки из АРМ-а руководителя
+         ********************************************************* -->
+
+            <page>
+                <page-name>workstationCard</page-name>
+
+                <properties>
+                    <property>
+                        <name>order</name>
+                        <value>145</value>
+                    </property>
+		            <property>
+		               <name>theme.id</name>
+		               <value>dbmi_theme_arm_create</value>
+		            </property>
+					<property>
+						<name>layout.id</name>
+						<value>dbmi_1column_wo_banner</value>
+					</property>
+					<property>
+						<name>theme.renderSetId</name>
+						<value>divRenderer</value>
+					</property>
+					<property>
+						<name>layout.strategyId</name>
+						<value>maximizedRegion</value>
+					</property>
+
+
+                    <property>
+                        <name>Hidden</name>
+                        <value>true</value>
+                    </property>
+                </properties>
+                <security-constraint>
+                    <policy-permission>
+                        <action-name>viewrecursive</action-name>
+                        <role-name>User</role-name>
+                    </policy-permission>
+                </security-constraint>
+                <window>
+                    <window-name>WorkstationCardWindow</window-name>
+                    <instance-ref>WorkstationCardInstance</instance-ref>
+                    <region>center</region>
+                    <height>1</height>
+                </window>
+            <display-name xml:lang="en">Card</display-name>
+            <display-name xml:lang="ru">Карточка</display-name>
+        </page>
+
+
+
+        <!-- *********************************************************
+            Расширенный поиск page 1 в АРМ-а руководителя
+         ********************************************************* -->
+      	<page>
+       		<page-name>advancedSearch</page-name>
+       		<properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>searchResultPathPage</name>
+                    <value>advancedSearchResultPathPage</value>
+                </property>
+                <property>
+                    <name>searchWindow</name>
+                    <value>ExtendedSearchWindow</value>
+                </property>
+                <property>
+                    <name>extendedSearchForm</name>
+                    <value>searchFormDescriptionWS</value>
+                </property>
+                <property>
+                    <name>area</name>
+                    <value>8650</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+            </properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>ExtendedSearchWindow</window-name>
+					<instance-ref>
+						WorkstationAdvancedSearchInstance
+					</instance-ref>
+      			<region>main</region>
+      			<height>1</height>
+      		</window>
+
+
+
+            <display-name xml:lang="en">Advanced search</display-name>
+				<display-name xml:lang="ru">
+					Расширенный поиск
+				</display-name>
+      	</page>
+
+        <!-- *********************************************************
+            Расширенный поиск page 2(c результатами) в АРМ-а руководителя
+         ********************************************************* -->
+      	<page>
+       		<page-name>advancedSearchRes</page-name>
+       		<properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>searchResultPathPage</name>
+                    <value>advancedSearchResultPathPage</value>
+                </property>
+                <property>
+                    <name>searchWindow</name>
+                    <value>ExtendedSearchWindow</value>
+                </property>
+                <property>
+                    <name>extendedSearchForm</name>
+                    <value>searchFormDescriptionWS</value>
+                </property>
+                <property>
+                    <name>area</name>
+                    <value>8650</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_adv_search</value>
+	            </property>
+            </properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>MainContentViewInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+      		<window>
+      			<window-name>ExtendedSearchWindow</window-name>
+					<instance-ref>
+						WorkstationAdvancedSearchInstance
+					</instance-ref>
+      			<region>bottom</region>
+      			<height>1</height>
+      		</window>
+
+            <display-name xml:lang="en">Advanced search - results</display-name>
+			<display-name xml:lang="ru">
+					Расширенный поиск - результаты
+			</display-name>
+      	</page>
+
+      	<page>
+       		<page-name>document</page-name>
+       		<properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+            </properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+      			<region>left</region>
+      			<height>2</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>DocumentViewDetailInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+            <display-name xml:lang="en">Document view</display-name>
+				<display-name xml:lang="ru">
+					Просмотр документа
+				</display-name>
+      	</page>
+		<page>
+       		<page-name>links</page-name>
+       		<properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+            </properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+      			<region>left</region>
+      			<height>2</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>LinksViewInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+            <display-name xml:lang="en">Document links view</display-name>
+				<display-name xml:lang="ru">
+					Просмотр связей документа
+				</display-name>
+      	</page>
+      	<page>
+      		<page-name>print</page-name>
+	        <properties>
+	            <property>
+	               <name>layout.id</name>
+	               <value>dbmi_singleton</value>
+	            </property>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>PrintViewInstance</instance-ref>
+            	<region>main</region>
+            	<height>0</height>
+            </window>
+				<display-name xml:lang="en">
+					Document print
+				</display-name>
+				<display-name xml:lang="ru">
+					Печать документа
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>report</page-name>
+	        <properties>
+	            <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+					<name>configReports</name>
+					<value>boss_reports.xml</value>
+				</property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+      			<region>left</region>
+      			<height>2</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>BrowsingReportsPortletInstance</instance-ref>
+            	<region>main</region>
+            	<height>2</height>
+            </window>
+            <!-- window>
+            	<window-name>dojoStaff</window-name>
+            	<instance-ref>DocumentViewInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window-->
+	      	<page>
+	       		<page-name>content</page-name>
+	      		<window>
+	      			<window-name>LeftMenu</window-name>
+	      			<instance-ref>NavigationInstance</instance-ref>
+	      			<region>left</region>
+	      			<height>1</height>
+	      		</window>
+	      		<window>
+	      			<window-name>SearchWindow</window-name>
+						<instance-ref>
+							SimpleSearchPortletInstance
+						</instance-ref>
+	      			<region>left</region>
+	      			<height>2</height>
+	      		</window>
+	            <window>
+	            	<window-name>Filter</window-name>
+	            	<instance-ref>FilterInstance</instance-ref>
+	            	<region>main</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>Content</window-name>
+						<instance-ref>
+							DocumentViewInstance
+						</instance-ref>
+	            	<region>main</region>
+	            	<height>1</height>
+	            </window>
+					<display-name xml:lang="en">
+						Report view
+					</display-name>
+					<display-name xml:lang="ru">
+						Просмотр отчета
+					</display-name>
+	      	</page>
+            <display-name xml:lang="en">Reports</display-name>
+            <display-name xml:lang="ru">Отчеты</display-name>
+      	</page>
+      	<page>
+       		<page-name>reject</page-name>
+	        <properties>
+	            <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+      		<window>
+      			<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+      			<region>left</region>
+      			<height>2</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+            	<instance-ref>RejectInstance</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+				<display-name xml:lang="en">
+					Document rejection
+				</display-name>
+				<display-name xml:lang="ru">
+					Отклонение документа
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>resolution</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						QuickResolutionPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>0</height>
+            </window>
+				<display-name xml:lang="en">
+					Resolution creation
+				</display-name>
+				<display-name xml:lang="ru">
+					Создание резолюции
+				</display-name>
+      	</page>
+      	<page>
+            <page-name>indepResolution</page-name>
+            <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+                   <name>layout.id</name>
+                   <value>dbmi_boss_2col</value>
+                </property>
+            </properties>
+            <security-constraint>
+                <policy-permission>
+                    <action-name>viewrecursive</action-name>
+                    <role-name>User</role-name>
+                </policy-permission>
+            </security-constraint>
+            <window>
+                <window-name>LeftMenu</window-name>
+                <instance-ref>NavigationInstance</instance-ref>
+                <region>left</region>
+                <height>1</height>
+            </window>
+            <window>
+                <window-name>Content</window-name>
+                <instance-ref>QuickIndepResolutionPortletInstance</instance-ref>
+                <region>main</region>
+                <height>0</height>
+            </window>
+                <display-name xml:lang="en">
+                    Creating of independent resolution
+                </display-name>
+                <display-name xml:lang="ru">
+                    Создание независимого поручения
+                </display-name>
+        </page>
+        <page>
+       		<page-name>massResolution</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						MassResolutionPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>0</height>
+            </window>
+				<display-name xml:lang="en">
+					Mass resolution creation
+				</display-name>
+				<display-name xml:lang="ru">
+					Создание массовой резолюции
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>requestToChangeCons</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						RequestToChangeConsPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>0</height>
+            </window>
+				<display-name xml:lang="en">
+					Request To Change Consideation creation
+				</display-name>
+				<display-name xml:lang="ru">
+					Создание запроса на смену рассматривающего
+				</display-name>
+      	</page>
+        <page>
+       		<page-name>additionalEndorsement</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+			<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						AdditionalEndorsementPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+				<display-name xml:lang="en">
+					Additional endorsement
+				</display-name>
+				<display-name xml:lang="ru">
+					Дополнительное согласование
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>acquaintance</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+			<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						AcquaintancePortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+				<display-name xml:lang="en">
+					Send acquaintance
+				</display-name>
+				<display-name xml:lang="ru">
+					Отправка на ознакомление
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>chooseDocTemplate</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+				<property>
+                    <name>requiredTemplates</name>
+                    <value>784,364,777,764,1255</value>
+            	</property>
+            	<property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_2col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+			<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						ChooseDocTemplatePortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+				<display-name xml:lang="en">
+					Choose document template
+				</display-name>
+				<display-name xml:lang="ru">
+					Выбор шаблона создаваемого документа
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>documentData</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+                <property>
+	               <name>layout.id</name>
+	               <value>dbmi_boss_1col</value>
+	            </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						DocumentDataPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+				<display-name xml:lang="en">
+					Document data
+				</display-name>
+				<display-name xml:lang="ru">
+					Сведения о документе
+				</display-name>
+      	</page>
+      	<page>
+       		<page-name>resolutionReport</page-name>
+	        <properties>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+			</properties>
+			<security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <role-name>User</role-name>
+	            </policy-permission>
+			</security-constraint>
+      		<window>
+      			<window-name>LeftMenu</window-name>
+      			<instance-ref>NavigationInstance</instance-ref>
+      			<region>left</region>
+      			<height>1</height>
+      		</window>
+            <window>
+            	<window-name>Content</window-name>
+					<instance-ref>
+						ResolutionReportPortletInstance
+					</instance-ref>
+            	<region>main</region>
+            	<height>1</height>
+            </window>
+			<display-name xml:lang="en">
+				Resolution Report creation
+			</display-name>
+			<display-name xml:lang="ru">
+				Создание отчета о выполнении поручения
+			</display-name>
+      	</page>
+        <page>
+            <page-name>login</page-name>
+            <properties>
+                <property>
+                    <name>order</name>
+                    <value>999</value>
+                </property>
+	            <property>
+	               <name>theme.id</name>
+	               <value>dbmi_theme</value>
+	            </property>
+                <property>
+                    <name>layout.id</name>
+                    <value>dbmi_1column</value>
+                </property>
+                <property>
+                    <name>Hidden</name>
+                    <value>true</value>
+                </property>
+            </properties>
+	        <security-constraint>
+	            <policy-permission>
+	                <action-name>viewrecursive</action-name>
+	                <unchecked />
+	            </policy-permission>
+	        </security-constraint>
+            <window>
+                <window-name>LoginPortletWindow</window-name>
+                <instance-ref>LoginInstance</instance-ref>
+                <region>center</region>
+                <height>1</height>
+            </window>
+            <display-name xml:lang="en">Login</display-name>
+				<display-name xml:lang="ru">
+					Вход в систему
+				</display-name>
+        </page>
+      	<page>
+       		<page-name>admin</page-name>
+      		<properties>
+	            <property>
+	               <name>layout.id</name>
+	               <value>dbmi_1column</value>
+	            </property>
+	            <property>
+	               <name>theme.id</name>
+	               <value>dbmi_theme</value>
+	            </property>
+	            <property>
+	               <name>theme.renderSetId</name>
+	               <value>divRenderer</value>
+	            </property>
+	            <property>
+	               <name>layout.strategyId</name>
+	               <value>maximizedRegion</value>
+	            </property>
+	            <property>
+	            	<name>portal.defaultObjectName</name>
+	            	<value>content</value>
+	            </property>
+      		</properties>
+			<security-constraint>
+				<policy-permission>
+					<action-name>viewrecursive</action-name>
+					<role-name>Admin</role-name>
+				</policy-permission>
+			</security-constraint>
+      		<page>
+ 	           	<page-name>content</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>10</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>boss/content.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Content documents
+					</display-name>
+					<display-name xml:lang="ru">
+						Содержание разделов
+					</display-name>
+	      	</page>
+      		<page>
+ 	           	<page-name>areas</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>20</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>boss/areas.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Site areas
+					</display-name>
+					<display-name xml:lang="ru">
+						Разделы сайта
+					</display-name>
+	      	</page>
+      		<page>
+ 	           	<page-name>views</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>30</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>boss/views.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Presentations
+					</display-name>
+					<display-name xml:lang="ru">
+						Представления
+					</display-name>
+	      	</page>
+      		<page>
+ 	           	<page-name>menus</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>40</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>boss/menus.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Menus &amp; navigation
+					</display-name>
+					<display-name xml:lang="ru">
+						Меню и навигация
+					</display-name>
+	      	</page>
+      		<page>
+ 	           	<page-name>lists</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>50</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>boss/lists.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Document lists
+					</display-name>
+					<display-name xml:lang="ru">
+						Списки документов
+					</display-name>
+	      	</page>
+      		<page>
+ 	           	<page-name>pagers</page-name>
+	      		<properties>
+	      			<property>
+	      				<name>order</name>
+	      				<value>60</value>
+	      			</property>
+	                <property>
+	                    <name>defaultSearch</name>
+	                    <value>cmsPagers.xml</value>
+	                </property>
+	      		</properties>
+	            <window>
+	            	<window-name>SearchWindow</window-name>
+	            	<instance-ref>SearchInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>0</height>
+	            </window>
+	            <window>
+	            	<window-name>CardListWindow</window-name>
+	            	<instance-ref>CardListInstance</instance-ref>
+	            	<region>center</region>
+	            	<height>2</height>
+	            </window>
+	            <window>
+	            	<window-name>BottomLinksWindow</window-name>
+	            	<instance-ref>BottomLinksInstance</instance-ref>
+	            	<region>bottom</region>
+	            	<height>2</height>
+	            </window>
+					<display-name xml:lang="en">
+						Page navigators
+					</display-name>
+					<display-name xml:lang="ru">
+						Навигация по страницам
+					</display-name>
+	      	</page>
+				<display-name xml:lang="en">
+					Content administration
+				</display-name>
+				<display-name xml:lang="ru">
+					Управление содержанием
+				</display-name>
+			</page>
+			<page>
+				<page-name>options</page-name>
+				<window>
+					<window-name>LeftMenu</window-name>
+					<instance-ref>NavigationInstance</instance-ref>
+					<region>left</region>
+					<height>1</height>
+				</window>
+				<window>
+					<window-name>SearchWindow</window-name>
+					<instance-ref>
+						SimpleSearchPortletInstance
+					</instance-ref>
+					<region>left</region>
+					<height>2</height>
+				</window>
+				<window>
+					<window-name>Filter</window-name>
+					<instance-ref>FilterInstance</instance-ref>
+					<region>main</region>
+					<height>0</height>
+				</window>
+				<window>
+					<window-name>Content</window-name>
+					<instance-ref>DocumentViewInstance</instance-ref>
+					<region>main</region>
+					<height>1</height>
+				</window>
+				<display-name xml:lang="en">Options</display-name>
+				<display-name xml:lang="ru">Настройки</display-name>
+      	</page>
+			<display-name xml:lang="en">
+				BOSS-REFERENT - CHIEF'S DESKTOP
+			</display-name>
+			<display-name xml:lang="ru">
+				БОСС-РЕФЕРЕНТ - АРМ РУКОВОДИТЕЛЯ
+			</display-name>
+      </portal>
+   </deployment>
+</deployments>

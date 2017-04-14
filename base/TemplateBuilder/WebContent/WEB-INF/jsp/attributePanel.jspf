@@ -1,0 +1,355 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+
+<!-- attributePanel start -->
+<%@page import="com.aplana.dbmi.model.DateAttribute"%>
+
+<c:if test="${not empty blockBean.attribute.id.id}">
+	<dbmi:partitionCaption messageKey="templatesEditAttribute" />
+	<div class="divPadding">
+	<table class="content">
+		<tr>
+			<td><fmt:message key="templatesAttributeNameRu" /></td>
+			<td><form:input path="attribute.nameRu" /></td>
+		</tr>
+		<tr>
+			<td><fmt:message key="templatesAttributeNameEn" /></td>
+			<td><form:input path="attribute.nameEn" /></td>
+		</tr>
+		<tr>
+			<td><fmt:message key="templates.types.caption" /></td>
+			<td>
+				<fmt:message key="templates.types.string" var="templatesString" />
+				<fmt:message key="templates.types.text" var="templatesText" /> 
+				<fmt:message key="templates.types.number" var="templatesNumber" /> 
+				<fmt:message key="templates.types.date" var="templatesDate" /> 
+				<fmt:message key="templates.types.list" var="templatesList" /> 
+				<fmt:message key="templates.types.tree" var="templatesTree" /> 
+				<fmt:message key="templates.types.cardLink" var="templatesCardLink" /> 
+				<fmt:message key="templates.types.person" var="templatesPerson" /> 
+				<form:select
+						path="attribute.type" 
+						onchange="OnSubmit('ATTRIBUTE_TYPE')"
+						disabled="${!blockBean.newAttribute}">
+					<form:option value="S" label="${templatesString}" />
+					<form:option value="T" label="${templatesText}" />
+					<form:option value="I" label="${templatesNumber}" />
+					<form:option value="D" label="${templatesDate}" />
+					<form:option value="L" label="${templatesList}" />
+					<form:option value="H" label="${templatesTree}" />
+					<form:option value="C" label="${templatesCardLink}" />
+					<form:option value="U" label="${templatesPerson}" />
+				</form:select>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td> 
+				<form:checkbox path="attribute.mandatory" /> 
+				<fmt:message key="templatesRequiredForFill" />
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<form:checkbox path="attribute.searchShow" /> 
+				<fmt:message key="templateInSearchResult" />
+			</td>
+		</tr>
+		<tr>
+			<td><fmt:message key="templateColumnWidth" /></td>
+			<td><form:input path="attribute.columnWidth" /></td>
+		</tr>
+
+		<c:if test="${blockBean.isNewListAttribute}">
+			<tr>
+				<td><fmt:message key="templatesListFromAttribute" /></td>
+				<td><form:select path="fromAttributeCode">
+					<form:options items="${blockBean.availableListAttributes}"
+						itemLabel="labelRu" itemValue="value" />
+					</form:select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="right"><dbmi:buttonPanel>
+					<fmt:message key="templatesNewList" var="templatesNewList" />
+					<fmt:message key="templatesChoose" var="templatesChoose" />
+					<dbmi:button onClick="OnSubmit('NEW_LIST')"
+						text="${templatesNewList}" />
+					<dbmi:button onClick="OnSubmit('LOAD_LIST')"
+						text="${templatesChoose}" />
+				</dbmi:buttonPanel></td>
+			</tr>
+		</c:if>
+
+		<!--  CardLinkAttribute  -->
+		<c:if test="${blockBean.attribute.type == 'C'}">
+			<tr>
+				<td><hr/></td>
+				<td><hr/></td>
+			</tr>
+
+			<tr>
+				<td>	<fmt:message key="templates.cardlink.multiValue" />
+				</td>
+				<td>	<form:checkbox path="attribute.multiValued" />
+				</td>
+			</tr>
+		</c:if>
+
+		<!--  DateAttribute  -->
+		<c:if test="${blockBean.attribute.type == 'D'}">
+			<%@include file="attributeDate.jspf" %>
+		</c:if>
+
+		<!--  PersonAttribute  -->
+		<c:if test="${blockBean.attribute.type == 'U'}">
+			<tr>
+				<td><hr/></td>
+				<td><hr/></td>
+			</tr>
+
+			<tr>
+				<td>	<fmt:message key="templates.cardlink.multiValue" />
+				</td>
+				<td>	<form:checkbox path="attribute.multiValued" />
+				</td>
+			</tr>
+		</c:if>
+
+	</table>
+	</div>
+</c:if>
+
+<!--  TreeAttribute  -->
+<c:if test="${not empty blockBean.tree}">
+	<div class="divPadding">
+
+	<table cellspacing="0" cellpadding="0" border="0">
+		<c:set var="urlPrefix"><%=renderRequest.getContextPath()%></c:set>
+		<c:set var="paramPrefix">tree1_</c:set>
+		<c:set var="node">tree1_node</c:set>
+		<c:set var="tree1" value="${blockBean.tree}" scope="request" />
+
+		<tree:tree tree="tree1" node="${node}" includeRootNode="true"
+			paramPrefix="tree1_">
+			<c:set var="nodeId">
+				<tree:nodeId node="${node}" />
+			</c:set>
+			<tr>
+				<td>
+				<table cellspacing="0" cellpadding="0" border="0">
+					<tr>
+						<td><tree:nodeIndent node="${node}" indentationType="type">
+							<tree:nodeIndentVerticalLine indentationType="type">
+								<img src="${urlPrefix}/images/verticalLine.gif">
+							</tree:nodeIndentVerticalLine>
+							<tree:nodeIndentBlankSpace indentationType="type">
+								<img src="${urlPrefix}/images/blankSpace.gif">
+							</tree:nodeIndentBlankSpace>
+						</tree:nodeIndent></td>
+
+						<tree:nodeMatch node="${node}" expanded="false" hasChildren="true"
+							isLastChild="false">
+							<td><a href="
+                            <portlet:renderURL>
+                                <portlet:param name="${paramPrefix}expand" value="${nodeId}"/>
+                            </portlet:renderURL>
+                        ">
+								<img src="${urlPrefix}/images/collapsedMidNode.gif" border="0">
+							</a></td>
+						</tree:nodeMatch>
+
+						<tree:nodeMatch node="${node}" expanded="true" hasChildren="true"
+							isLastChild="false">
+							<td><a href="
+                            <portlet:renderURL>
+                                <portlet:param name="${paramPrefix}collapse" value="${nodeId}"/>
+                            </portlet:renderURL>
+                        ">
+								<img src="${urlPrefix}/images/expandedMidNode.gif" border="0">
+							</a></td>
+						</tree:nodeMatch>
+
+						<tree:nodeMatch node="${node}" expanded="false" hasChildren="true"
+							isLastChild="true">
+							<td><a href="
+                            <portlet:renderURL>
+                                <portlet:param name="${paramPrefix}expand" value="${nodeId}"/>
+                            </portlet:renderURL>
+                        ">
+								<img src="${urlPrefix}/images/collapsedLastNode.gif" border="0">
+							</a></td>
+						</tree:nodeMatch>
+
+						<tree:nodeMatch node="${node}" expanded="true" hasChildren="true"
+							isLastChild="true">
+							<td><a href="
+                            <portlet:renderURL>
+                                <portlet:param name="${paramPrefix}collapse" value="${nodeId}"/>
+                            </portlet:renderURL>
+                        ">
+								<img src="${urlPrefix}/images/expandedLastNode.gif" border="0">
+							</a></td>
+						</tree:nodeMatch>
+
+						<tree:nodeMatch node="${node}" expanded="false"
+							hasChildren="false" isLastChild="false">
+							<td><img src="${urlPrefix}/images/noChildrenMidNode.gif"></td>
+						</tree:nodeMatch>
+
+						<tree:nodeMatch node="${node}" expanded="false"
+							hasChildren="false" isLastChild="true">
+							<td><img src="${urlPrefix}/images/noChildrenLastNode.gif"></td>
+						</tree:nodeMatch>
+
+						<td valign="top"><tree:nodeMatch node="${node}">
+							<c:choose>
+								<c:when test="${tree1_node.node.object.active}">
+									<span><tree:nodeName node="${node}" /></span>
+								</c:when>
+								<c:otherwise>
+									<span class="inactive"><tree:nodeName node="${node}" /></span>
+								</c:otherwise>
+							</c:choose>
+						</tree:nodeMatch></td>
+					</tr>
+				</table>
+				</td>
+				
+				<tree:nodeMatch node="${node}" isRoot="false">
+					<td><ap:nodemove node="${node}"
+						urlPrefix="<%= renderRequest.getContextPath() %>"
+						isList="${blockBean.attribute.type == 'L'}"
+						paramPrefix="${paramPrefix}" /></td>
+					<td><dbmi:linkimage
+						enable="${empty blockBean.referenceValue.realId and tree1_node.node.object.active}"
+						urlPrefix="<%= renderRequest.getContextPath() %>"
+						enableUrl="/images/pencil.gif"
+						disableUrl="/images/pencil_disable.gif">
+						<portlet:actionURL>
+							<portlet:param name="${paramPrefix}edit" value="${nodeId}" />
+						</portlet:actionURL>
+					</dbmi:linkimage></td>
+					<td><dbmi:linkimage
+						enable="${empty blockBean.referenceValue.realId and tree1_node.node.object.active}"
+						urlPrefix="<%= renderRequest.getContextPath() %>"
+						enableUrl="/images/delete.gif"
+						disableUrl="/images/delete_disable.gif">
+						<portlet:actionURL>
+							<portlet:param name="${paramPrefix}delete" value="${nodeId}" />
+						</portlet:actionURL>
+					</dbmi:linkimage></td>
+				</tree:nodeMatch>
+			</tr>
+
+		</tree:tree>
+	</table>
+	<dbmi:buttonPanel>
+		<fmt:message key="templatesAddNode" var="templatesAddNode" />
+		<dbmi:button text="${templatesAddNode}"
+			onClick="OnSubmit('ADD_REFERENCE_VALUE')"
+			enable="${empty blockBean.referenceValue.realId}" />
+	</dbmi:buttonPanel></div>
+</c:if>
+
+<!--  Reference  -->
+<c:if test="${not empty blockBean.referenceValue.realId}">
+	<div class="divPadding">
+	<table class="content">
+		<tr>
+			<td><fmt:message key="templatesNodeTitleRu" /></td>
+			<td><form:input path="referenceValue.valueRu" /></td>
+		</tr>
+		<tr>
+			<td><fmt:message key="templatesNodeTitleEn" /></td>
+			<td><form:input path="referenceValue.valueEn" /></td>
+		</tr>
+		<tr>
+			<td><fmt:message key="templatesParent" /></td>
+			<td><form:select path="referenceValue.parentRealId"
+				disabled="${blockBean.attribute.type == 'L'}">
+				<form:options items="${blockBean.availableNodes}"
+					itemLabel="labelRu" itemValue="value" />
+			</form:select></td>
+		</tr>
+	</table>
+	</div>
+</c:if>
+
+<!--  CardLinkAttribute  -->
+<c:if test="${blockBean.attribute.type == 'C'}">
+
+		<hr />
+		<div class="divPadding">
+			<div>
+				<span style="font-weight: bold;"><fmt:message key="templates.cardlink.search.label"  /></span>
+				<form:input path="webSearchBean.searchText" cssStyle="width: 60%"/>
+			</div>
+
+			<div>
+				<span style="vertical-align: middle;">
+					<form:checkbox id="${namespace}Number" path="webSearchBean.number" onclick="${namespace}OnNumberClick()" />
+					<LABEL class="label" for="<portlet:namespace/>Number"><fmt:message key="searchByNumber" /></LABEL>
+				</span>
+
+				<span style="vertical-align: middle;">
+					<form:checkbox  id="${namespace}Property" path="webSearchBean.property" onclick="${namespace}OnPropertyClick()"/>
+					<LABEL class="label" for="<portlet:namespace/>Property"><fmt:message key="searchByAttributes" /></LABEL>
+				</span>
+
+				<span style="vertical-align: middle;">
+					<form:checkbox  id="${namespace}FullText" path="webSearchBean.fullText" onclick="${namespace}OnPropertyClick()" />
+					<LABEL class="label" for="<portlet:namespace/>FullText"><fmt:message key="searchFullText" /></LABEL>
+				</span>
+			</div>
+		</div>
+	<hr />
+
+	<div class="divPadding">
+		<table width="100%">
+			<col width="50%">
+			<col width="50%">
+			<c:choose >
+				<c:when test="${searchBean.isAttributeSearch}">
+					<jsp:include  page="attributeSearch.jsp" />
+				</c:when>
+				<c:otherwise >
+					<jsp:include  page="extendedSearch.jsp" />
+				</c:otherwise>
+			</c:choose>
+		</table>
+	</div>
+			
+	<script type="text/javascript">
+
+		function	<portlet:namespace/>OnNumberClick() {
+			if(document.getElementById('<portlet:namespace/>Number').checked==true) {
+				document.getElementById('<portlet:namespace/>Property').checked=false;
+				document.getElementById('<portlet:namespace/>FullText').checked=false; 
+			}
+		}
+
+		function	<portlet:namespace/>OnPropertyClick(){
+			if(		document.getElementById('<portlet:namespace/>Property').checked==true
+				|| 	document.getElementById('<portlet:namespace/>FullText').checked==true) {
+				document.getElementById('<portlet:namespace/>Number').checked=false;}
+		}
+	</script>
+</c:if>

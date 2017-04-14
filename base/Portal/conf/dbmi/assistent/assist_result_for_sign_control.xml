@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="assist_result_for_sign_controlSQLnew.xml" >
+	<name lang="ru">Отчеты на утверждение(контрольные)</name>
+	<name lang="en">Отчеты на утверждение(контрольные)</name>
+
+	<!--  "Отчет об исполнении" = 1044 -->
+	<template>1044</template>
+
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column>
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+    
+    <column id="JBR_INCOMEDATE" width="40"  sort="asc" link="true"/>
+    <!-- Регистрационный номер -->
+	<column id="JBR_RASSM_PARENT_DOC:JBR_INFORM_DOC:ADMIN_702311:ADMIN_702604:JBR_ADO_DOCBASE"  labelAttrId="JBR_REGD_REGNUM" isParentName="false" width="25"  
+		sortAttrId="jbr.exam.parent->regnumberdigital;jbr.info.parent->regnumberdigital;jbr.report.int.parent->regnumberdigital;jbr.report.int.document->regnumberdigital;jbr.ado.docbase->regnumberdigital"/>	
+	<column id="NAME" width="120" columnTitleRu="Название" link="true"/>
+	<column id="JBR_TCON_TERM" width="40" columnTitleRu="Срок"/>
+	<column id="ADMIN_702335" width="80" columnTitleRu="Исполнитель"/>
+	<column id="ADMIN_702354" width="50" columnTitleRu="Отчет"/>
+</search>

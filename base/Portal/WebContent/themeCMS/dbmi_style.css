@@ -1,0 +1,1256 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
+
+/*
+ SearchExtended.css
+*/
+select, textarea , input[type="text"]
+{
+	font:11px Arial, Helvetica, sans-serif; 
+}
+
+.divPadding
+{
+        padding-left:30px;
+        padding-right:30px;      
+}
+
+.divCaption
+{
+        text-align: left; 
+        font-size: 14px; 
+        font-weight: bold; 
+        padding: 0px 0px 5px 50px;
+}
+
+span.saveas
+{
+        padding:  2px  10px  14px  155px ;
+        background-image:url(./images/SaveAsPersonalSearch.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;         
+}
+
+.divAtrList
+{
+        float: left;    
+        padding: 3px  5px 0px 0px;      
+}
+
+.divAtrTree
+{
+        padding: 0px 0px 0px 0px;       
+}
+
+div.divAtrTree table
+{
+        border-collapse:collapse;
+        border:0px;
+}
+
+div.divAtrTree table td
+{
+        padding:0px;
+        margin:0px;
+}
+
+div.divAtrTree table tr
+{
+        height:20px;
+}
+
+table.SearchExtend 
+{
+        width:95%;      
+}
+
+table.SearchExtend table
+{
+ 
+}
+
+table.SearchExtend td
+{
+        vertical-align:top;
+}
+
+td.label
+{
+        padding:5px 0px 0px 0px;
+}
+
+table.content tr
+{
+height:25px;    
+}
+table.content td.set
+{
+        text-align:right;
+
+}
+
+table.content a
+{
+        color:Red;      
+}
+
+table.content td.bold
+{
+        font-size:14px;
+        font-weight:bold;
+}
+tr.inactive td, span.inactive
+{
+        color: #808080;
+}
+tr.alternate
+{
+        background-color: lightGrey;
+        border: 2px solid gray;
+}
+tr.alternate td
+{
+        font-weight:bold;
+}
+
+table.tree
+{
+        width:100%;
+        table-layout:fixed;                     
+}
+table.tree tr
+{
+height:15px;    
+}
+
+table.tree td
+{
+        padding:0px;
+        margin:0px;
+}
+
+table.tree td.imgContainerCollapse
+{
+        width:9px;      
+        background-image: url(./images/CollapsedNode.gif);
+        background-repeat:no-repeat;
+        background-position:0px 6px;
+        
+        
+}
+
+table.tree td.imgContainerExpand
+{
+        width:9px;
+        background-image: url(./images/ExpandedNode.gif);
+        background-repeat:no-repeat;
+        background-position:0px 6px;    
+        
+}
+/*---------------------------------------------------------------------------
+EditNewCard.css
+*/
+   
+div.icHeader
+{
+        font-size: 16px;
+        font-weight: bold;
+        text-align: left;
+        padding:10px;
+}   
+
+div.ictoolbar
+{       
+        text-align: left;
+        padding:10px;
+        
+} 
+ 
+
+table.indexCardMain
+{
+        width:1000px;   
+        table-layout:fixed;
+}   
+
+table.indexCardMain td
+{
+        vertical-align:top;      
+}
+
+table.indexCardMain a
+{
+        color:Red;
+}
+
+table.partitionConteiner
+{
+        width:93%;      
+}
+
+table.partition
+{
+
+        width:100%;     
+        font-size: 10px;
+        font-weight: bold;
+        text-align: left;
+        height: 28px;
+        border: 0px;
+        border-collapse: collapse;
+        text-transform: uppercase;
+        
+}
+
+
+table.partition td
+{
+        padding:0px;
+        margin:0px;
+        vertical-align:middle;
+                
+}
+
+table.partition td.partition_left
+{
+        width:14px;
+        background-image: url(./images/left_cramp.gif);
+}
+
+table.partition td.partition_middle
+{       
+        background-image: url(./images/middle_cramp.gif);
+        font-weight:bold;
+}
+
+table.partition td.partition_right
+{       
+        width:14px;
+        background-image: url(./images/right_cramp.gif);
+}
+
+table.content
+{
+        width:100%;     
+}
+
+td a img
+{
+        border:0px;
+}
+
+.content td
+{
+        text-align:left;        
+}
+
+span.arrow
+{
+        padding: 0px  35px  10px 0px;
+        background-image:url(./images/sel-arrow-s.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.arrow_up
+{
+        padding: 0px  35px  10px 0px;
+        background-image:url(./images/sel-arrow-up.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+div.access
+{
+        float:left;
+        padding: 0px 45px   21px  0px;  
+        background-repeat:no-repeat;
+        background-image:url(./images/Access_close.GIF) ;       
+
+}
+
+span.view
+{
+        padding: 7px  89px   5px 0px;
+        background-image:url(./images/Print_Button.GIF) ;       
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+
+table.icons
+{
+        width: 100%            
+}
+
+table.icons a
+{
+        text-decoration:none;
+}
+
+a.noLine 
+{
+        text-decoration:none;
+}
+
+span.back
+{
+        padding:5px 0px 18px 33px;
+        background-image:url(./images/back.GIF);        
+        background-repeat:no-repeat;
+        cursor:pointer; 
+}
+
+div.button
+{
+        float:left;     
+        width:105px;
+        height:27px;            
+        background-repeat:no-repeat;
+        cursor:pointer; 
+        padding:0px 10px 0px 0px;
+}
+
+
+
+div.ok
+{
+        background-image:url(./images/EditNewCard/OK.gif);      
+}
+
+div.close
+{
+        background-image:url(./images/EditNewCard/close.gif);   
+}
+
+td.EditNewCardHeader
+{
+        text-align:left;
+        font-weight:bold;
+}
+
+
+/*----------------------------------------------------------------------------
+  showList.css
+*/
+
+table {
+        border-collapse:collapse;
+}
+
+table.res  {
+        margin:15pt 0pt 5px;
+        width:100%;
+}
+
+
+
+table.res th {
+        border-bottom:2px solid #A1B0BC;
+        color:#666666;
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:12px;
+        font-size-adjust:none;
+        font-stretch:normal;
+        font-style:normal;
+        font-variant:normal;
+        font-weight:normal;
+        line-height:normal;
+        padding:6px 3px 6px 5px;
+        text-align:left;
+}
+
+table.res td { 
+        border-bottom:1px solid #E3E7EB;
+        color:#666666;
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:11px;
+        font-size-adjust:none;
+        font-stretch:normal;
+        font-style:normal;
+        font-variant:normal;
+        font-weight:normal;
+        line-height:normal;
+        padding:3px 3px 3px 5px;
+        text-align:left;
+        vertical-align:middle;
+}
+
+table.res a
+{
+        color: red;
+}
+
+table.dataItem td
+{
+		text-align:left;
+}
+
+span.pagebanner {
+        background-color: #d7e0e9;      
+        width: 99%;
+        margin-top: 10px;
+        display: block;
+        float:right;
+}
+
+span.pagelinks {
+        background-color: #d7e0e9;
+        margin-bottom: -20px;
+        float: left;
+        
+}
+
+div.pagelinks a
+{
+        text-decoration: none;
+        color: red;
+}
+
+span.pagger
+{
+        text-decoration:none;
+        padding:  0px 0px 2px 15px; 
+}
+
+span.left_i {
+	display: none;
+}
+
+span.left_a {
+	background: url(./images/double_left_slim.gif) no-repeat center center;
+}
+
+span.left_ii {
+	display: none;
+}
+
+div.pagelinks a {
+	text-decoration: none;
+}
+
+span.left_aa {
+	background: url(./images/double_left.gif) no-repeat center center;
+}
+
+span.right_aa {
+	background: url(./images/double_right.gif) no-repeat center center;
+}
+
+span.right_ii {
+	display: none;
+}
+
+span.right_a {
+	background: url(./images/double_right_slim.gif) no-repeat center center;
+}
+
+span.right_i {
+	display: none;
+}
+
+span.tool
+{
+        text-decoration:none;
+        background-repeat:no-repeat;
+        padding: 0px 0px 32px  32px; 
+        display:block;
+        float:left;
+}
+
+span.star
+{
+        padding: 0px 0px 0px 20px ;
+        background-image:url(./images/star.GIF);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.new
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_new.gif)  ;       
+        background-repeat:no-repeat;
+        cursor:pointer;         
+}
+
+span.copy
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_copy.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;         
+}
+
+span.xls
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_xls.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;         
+}
+
+span.print1
+{
+         background-image:url(./images/a_print.gif);
+}
+
+span.favorites
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/f_dbmi.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.favorite
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/favorite.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.edit
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_pencil.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.edit_disable
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_disable.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.delete
+{
+        padding: 0px 0px 0px 20px ;
+        background-image:url(./images/delete.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.delete_disable
+{
+        padding: 0px 0px 0px 20px ;
+        background-image:url(./images/delete_disable.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.cardLink
+{
+        padding: 2px 8px;
+	    background-image:url(./images/CardLink.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+        height: 100%;
+}
+
+span.fileLink
+{
+        padding: 2px 8px;
+	    background-image:url(./images/FileLink.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+        height: 100%;
+}
+
+span.imageLink
+{
+        padding: 2px 8px;
+	    background-image:url(./images/ImageLink.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+        height: 100%;
+}
+
+/*пейджер*/
+
+div.columns
+{
+      position:relative;
+      width:100%; 
+      height: 15px;
+}
+
+div.columns .pagebanner
+{
+      width:50%;  
+      position:absolute;
+      right:0px;
+      text-align:right;
+      padding:0px 50px 0px 0px; 
+}
+
+div.columns .pagelinks
+{
+      width:50%;
+      position:absolute;
+      left:0px;
+      padding: 0px 0px 0px 50px;
+}
+
+.columns .header, .columns .toolbar {
+        float:left;
+}
+.columns .header {
+        color:#000000;
+        font-size:14px;
+        font-weight:bold;
+        height:33px;
+        padding:3px 0px 4px 10px;
+        width:49%;
+}
+.header .innerheader {
+        font-size:14px;
+        font-weight:bold;
+        padding:8px 0px 0px 10px;
+        width:100%;
+}
+.columns .toolbar {
+        height:17px;
+        padding:3px 3px 20px 0px;
+        text-align:right;
+        float:right;
+}
+
+
+table.res caption
+{
+        font-weight: bold;
+        font-size: medium;
+        text-align:left;
+        padding: 10px 0px 0px 10px;
+}
+
+
+
+div.reportheader
+{       
+        text-align:right;
+        padding: 0px 0px 10px  0px;             
+}
+ 
+span.report
+{
+        text-decoration:none;
+        background-repeat:no-repeat;
+        padding: 0px 45px 10px 45px; 
+        display:block;
+}
+
+span.printPage_print
+{
+        background-image:url(./images/Print_Button.GIF);
+}
+
+span.printPage_close
+{
+        background-image:url(./images/Close_Button.GIF);
+}
+
+span.print
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_print.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.letter
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_mail.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.help
+{
+        padding:0px 0px 18px 28px;
+        background-image:url(./images/a_help.gif);
+        background-repeat:no-repeat;
+        cursor:pointer;
+}
+
+span.close
+{
+        background-image:url(./images/Close_Button.GIF);
+}
+
+div.reportheaderHR
+{
+	width:100%;
+/*      border-bottom-color:#A1B0BC;*/
+	border-bottom-color:Red;
+	border-bottom-style:solid;
+	border-bottom-width:2px;
+	clear:both;
+}
+
+table.minisearch {
+	width:100%;     
+}
+
+table.minisearch td {
+	padding:0px;
+	margin:0px;
+	height: 18px;     
+}
+
+table.minisearch input {
+	width:100%;
+	height: 18px;
+	border: none;
+	background: url(./images/search_center.gif) repeat-x center center;
+}
+
+table.minisearch td.left {
+	width:8px;
+	background :url(./images/search_left.gif) no-repeat right center;    
+}
+
+table.minisearch td.center {
+	background:url(./images/search_right.gif) no-repeat right center;
+	padding-right: 8px;       
+}
+
+table.minisearch td.right {
+	display: none;      
+}
+
+table.minisearch td.btnfind {
+	vertical-align:top;
+	width:85px;     
+}
+
+span.find
+{
+        text-decoration:none;
+        background-repeat:no-repeat;
+        padding: 0px 0px  8px  89px; 
+        cursor:pointer;
+        background-image:url(./images/btn_find.gif);
+}
+
+table.findSelector
+{
+        float:left;
+}
+
+table.findSelector td
+{
+        padding:0px;
+        margin:0px;     
+        color:Black;    
+}
+
+table.findSelector td.empty
+{
+        width:12px;
+}
+
+table.findSelector td.checkBox
+{
+        width: 20px;
+        text-align: right;
+}
+
+table.findSelector td.label
+{
+        vertical-align: middle;
+        padding-right: 10px;
+}
+
+div.extSearchLink
+{
+        width: 100%;
+        text-align: right;
+}
+
+/*-----------------------------------------------------------------------------
+  MessageBox.css
+*/
+
+table.msg
+{
+        width:95%;
+        border:0px;
+        font-size:14px;
+        margin:10px;
+        table-layout:fixed;
+        border-collapse:collapse;       
+}
+
+table.msg td
+{
+        padding:0px;
+        margin:0px;             
+}
+
+table.msg tr.tr1 
+{
+        height:12px;
+}
+
+table.msg tr.tr1 td.td_11
+{
+        width:12px;     
+        background-image:url(./images/msg/msg_tl.png);
+        background-repeat: no-repeat;
+}
+
+table.msg tr.tr1 td.td_12
+{       
+        background-image:url(./images/msg/msg_tc.png);
+}
+
+table.msg tr.tr1 td.td_13
+{       
+        width:12px;
+        background-image:url(./images/msg/msg_rt.png);
+        background-repeat: no-repeat;
+}
+
+table.msg tr.tr2 td.td_21
+{
+        background-image:url(./images/msg/msg_ml.png);  
+        background-position:top;
+        background-repeat:repeat-x;
+        background-color:#a7afb7;
+}
+
+table.msg tr.tr2 td.td_22
+{       
+        background-image:url(./images/msg/msg_ml.png);
+        background-position:top;
+        background-repeat: repeat-x;
+        background-color:#a7afb7;
+        font-size:1.7em;
+}
+
+table.msg tr.tr2 td.td_23
+{
+        background-image:url(./images/msg/msg_ml.png);
+        background-position:top;
+        background-repeat:repeat-x;
+        background-color:#a7afb7;
+}
+
+table.msg tr.tr3
+{
+        height:12px;
+}
+
+table.msg tr.tr3 td.td_31
+{
+        background-image:url(./images/msg/msg_bl.png);
+        background-repeat: no-repeat;
+}
+
+table.msg tr.tr3 td.td_32
+{       
+        background-image:url(./images/msg/msg_rc.png);
+        background-color:#a7afb7;
+}
+
+table.msg tr.tr3 td.td_33
+{
+        background-image:url(./images/msg/msg_br.png);
+        background-repeat: no-repeat;
+}
+
+/*-----------------------------------------------------------------------------
+  ErrorMessageBox.css
+*/
+
+table.err_msg {
+	width:95%;
+	border:0px;
+	font-size:14px;
+	margin:10px;
+	table-layout:fixed;
+	border-collapse:collapse;
+}
+
+table.err_msg td {
+	padding:0px;
+	margin:0px;
+}
+
+table.err_msg tr.tr1 {
+	height:11px;
+}
+
+table.err_msg tr.tr1 td.td_11 {
+	width:12px;     
+	background-image:url(./images/msg/msg_tl_red.png);
+	background-repeat: no-repeat;
+}
+
+table.err_msg tr.tr1 td.td_12 {       
+	background-image:url(./images/msg/msg_tc_red.png);
+}
+
+table.err_msg tr.tr1 td.td_13 {       
+	width:12px;
+	background-image:url(./images/msg/msg_rt_red.png);
+	background-repeat: no-repeat;
+}
+
+table.err_msg tr.tr2 td.td_21 {
+	background-image:url(./images/msg/msg_ml_red.png);  
+	background-position:top;
+	background-repeat:repeat-x;
+	background-color:#b26e6f;
+}
+
+table.err_msg tr.tr2 td.td_22 {
+	background-image:url(./images/msg/msg_ml_red.png);
+	background-position:top;
+	background-repeat: repeat-x;
+	background-color:#b26e6f;
+	font-size:1.7em;
+}
+
+table.err_msg tr.tr2 td.td_23 {
+	background-image:url(./images/msg/msg_ml_red.png);
+	background-position:top;
+	background-repeat:repeat-x;
+	background-color:#b26e6f;
+}
+
+table.err_msg tr.tr3 {
+	height:12px;
+}
+
+table.err_msg tr.tr3 td.td_31 {
+	background-image:url(./images/msg/msg_bl_red.png);
+	background-repeat: no-repeat;
+}
+
+table.err_msg tr.tr3 td.td_32 {       
+	background-color:#b26e6f;
+	background-image:url(./images/msg/msg_rc_red.png);
+}
+
+table.err_msg tr.tr3 td.td_33 {
+	background-image:url(./images/msg/msg_br_red.png);
+	background-repeat: no-repeat;
+}
+
+table.err_msg .cardinfo {
+	/*display: list-item;
+	 */
+	list-style-type: decimal;
+	white-space: normal;
+	font-size: 12pt; 
+	font-weight: bold;
+	margin: 3mm; 
+	margin-left:10mm;
+}
+
+/*-----------------------------------------------------------------------------
+  EventMessageBox.css
+*/
+
+table.evt_msg {
+	width:95%;
+	border:0px;
+	font-size:14px;
+	margin:10px;
+	table-layout:fixed;
+	border-collapse:collapse;
+}
+
+table.evt_msg td {
+	padding:0px;
+	margin:0px;
+}
+
+table.evt_msg tr.tr1 {
+	height:11px;
+}
+
+table.evt_msg tr.tr1 td.td_11 {
+	width:12px;     
+	background-image:url(./images/msg/msg_tl_green.png);
+	background-repeat: no-repeat;
+}
+
+table.evt_msg tr.tr1 td.td_12 {       
+	background-image:url(./images/msg/msg_tc_green.png);
+}
+
+table.evt_msg tr.tr1 td.td_13 {       
+	width:12px;
+	background-image:url(./images/msg/msg_rt_green.png);
+	background-repeat: no-repeat;
+}
+
+table.evt_msg tr.tr2 td.td_21 {
+	background-image:url(./images/msg/msg_ml_green.png);  
+	background-position:top;
+	background-repeat:repeat-x;
+	background-color:#a8bf5e;
+}
+
+table.evt_msg tr.tr2 td.td_22 {
+	background-image:url(./images/msg/msg_ml_green.png);
+	background-position:top;
+	background-repeat: repeat-x;
+	background-color:#a8bf5e;
+	font-size:1.7em;
+}
+
+table.evt_msg tr.tr2 td.td_23 {
+	background-image:url(./images/msg/msg_ml_green.png);
+	background-position:top;
+	background-repeat:repeat-x;
+	background-color:#a8bf5e;
+}
+
+table.evt_msg tr.tr3 {
+	height:12px;
+}
+
+table.evt_msg tr.tr3 td.td_31 {
+	background-image:url(./images/msg/msg_bl_green.png);
+	background-repeat: no-repeat;
+}
+
+table.evt_msg tr.tr3 td.td_32 {       
+	background-color:#a8bf5e;
+	background-image:url(./images/msg/msg_rc_green.png);
+}
+
+table.evt_msg tr.tr3 td.td_33 {
+	background-image:url(./images/msg/msg_br_green.png);
+	background-repeat: no-repeat;
+}
+
+table.evt_msg .cardinfo {
+	/*display: list-item;
+	 */
+	list-style-type: decimal;
+	white-space: normal;
+	font-size: 12pt; 
+	font-weight: bold;
+	margin: 3mm; 
+	margin-left:10mm;
+}
+
+/*
+CardNew.css
+*/
+
+.buttonPanel {
+	float:left;
+	line-height:normal;
+	width:100%;
+}
+
+.buttonPanel ul {
+	margin:0;
+	padding:0px 10px 0;
+	list-style:none;
+	float:right;
+}
+  
+.buttonPanel li {
+	float:left;
+	margin:0;
+	padding:0px 0px 0px  0px;
+	cursor: hand;
+}
+  
+.buttonPanel a {
+	display: block;
+	font-size: 110%;        
+	font-style: normal;
+	color: #FFFFFF !important;
+	text-decoration: none;
+	padding:0px 10px;
+}
+
+.buttonPanel li.empty {       
+	padding:0px 5px 0px 5px;        
+	background-image:none;
+}
+
+.buttonPanel li.empty:hover {       
+	padding:0px 5px 0px 5px;        
+	background-image:none;
+}
+
+.buttonPanel li.empty div {
+	width:5px;
+}
+
+.buttonPanel li {
+	background:url(./images/BTN.gif) no-repeat 0px 0px; 
+}
+
+.buttonPanel a {
+	height: 17px;
+	background:url(./images/BTN.gif)   no-repeat right -34px;    
+}
+
+.buttonPanel li.select {
+	background:url(./images/BTN.gif) no-repeat 0px -17px;   
+}
+ 
+.buttonPanel a.select {
+	background:url(./images/BTN.gif) no-repeat  100% -51px;
+}       
+
+div.link
+{
+        float:left;
+        padding: 13px 45px   21px  0px;  
+        background-repeat:no-repeat;
+        background-image:url(./images/earth.gif);       
+}
+
+div.file
+{
+        float:left;
+        padding: 0px 45px   21px  0px;  
+        background-repeat:no-repeat;
+        background-image:url(./images/file.png);       
+}
+
+
+th a:hover {
+        text-decoration: underline;
+}
+
+th.sorted a,th.sortable a {
+        background-position:left center;
+        background-repeat:no-repeat;
+        display: block;
+        width: 100%;       
+}
+
+
+th.sortable a {
+        background-image: url(./images/list/arrow_off.png);
+        padding:0px 0px 0px 10px;
+}
+
+th.order1 a {
+        background-image: url(./images/list/arrow_down.png);
+        padding:0px 0px 0px 10px;
+}
+
+th.order2 a {
+        background-image: url(./images/list/arrow_up.png);
+        padding:0px 0px 0px 10px;
+}
+
+table.fixedTable
+{
+
+            width:100%;
+
+            table-layout:fixed;    
+
+}
+
+.footer {
+        clear:both;
+        /*position:fixed;*/
+        width:100%;
+        height:26px;
+        min-height:26px;
+        bottom: 0;
+        background-color: #eeeeee;
+        /*color:${colors.footerText};
+        background: ${colors.footerBackgroundImage};*/
+        border-top: 1px solid;          
+}
+
+.quickLinks {
+        /*font-size: ${requestScope.cssRules.fontSize.small};
+        background:${colors.footerBackgroundImage};
+        background-color: ${colors.footerBackground};
+        color:${colors.footerText};*/
+        margin:0px;             
+        white-space: nowrap;
+        border-spacing: 5px 0px;
+        padding-left: 2px; /* browsers default to either left margin or padding of 40px for li indention */
+}
+
+.quickLinks li {
+        margin-left: 4px;
+        margin-top: 4px;
+        margin-bottom: 2px;
+        float: left;
+        list-style: none;
+        padding: 2px 4px 2px 4px;
+}
+
+.quickLinkItem {
+    color: #000000;
+}
+
+.quickLinkItem a, .quickLinkItem a:visited, .quickLinkItem a:hover, .quickLinkItem a:active {
+    color: #000000;
+    text-decoration: none;
+}
+
+span.universalPortletParameter {
+    margin:0px 0px 0px 20px;
+}
+
+span.universalPortletParameter input[type="text"]{
+    width: 10em;
+}
+
+div.universalPortletParameterContainer {
+    clear: both;
+    text-align: left;
+}
+
+#ac_rightIcons
+{       
+        width:45%;
+        display:inline;
+        margin-left: 30%;
+        float:left;
+        text-align: right;
+}
+
+#leftIcons a
+{
+      float:left;
+      margin-right:10px;      
+}
+
+/* Just for debugging !!! */
+H1.test
+{
+    color: green;
+    background-image:url(./images/CardLink.gif);
+}

@@ -1,0 +1,1282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentsInformation" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="user" class="java.lang.String"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[Select
+1 as num
+,'Входящие' as doc_group
+,null as reg
+,null as fwd
+
+Union
+
+Select
+2 as num
+,'Входящие документы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+where c.template_id=224 and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+3 as num
+,'Обращения граждан' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+where c.template_id=864 and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+4 as num
+,'Исходящие' as doc_group
+,null as reg
+,null as fwd
+
+Union
+
+Select
+5 as num
+,'Исходящие документы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+where c.template_id=364 and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+6 as num
+,'Внутренние' as doc_group
+,null as reg
+,null as fwd
+
+Union
+
+Select
+7 as num
+,'Приказы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Приказ%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+8 as num
+,'Распоряжения' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Распоряжение%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+9 as num
+,'Постановления' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Постановление%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+10 as num
+,'Указы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Указ%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+11 as num
+,'Законы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Закон%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+12 as num
+,'Протоколы' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Протокол%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+13 as num
+,'Служебные записки' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value like 'Служебная записка%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+14 as num
+,'Другие' as doc_group
+,count(v_decision.value_rus) as reg
+,count(av_reg_date.date_value) as fwd
+from card c
+left outer join attribute_value av_reg_date on(av_reg_date.card_id=c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG')
+LEFT OUTER JOIN
+attribute_value av_decision on (av_decision.card_id = c.card_id and av_decision.attribute_code = 'ADMIN_283929')
+LEFT OUTER JOIN
+values_list v_decision on (v_decision.value_id = av_decision.value_id)
+LEFT OUTER JOIN
+attribute_value av_doctype on (av_doctype.card_id = c.card_id and av_doctype.attribute_code = 'JBR_INFD_TYPEDOC')
+LEFT OUTER JOIN
+--values_list v_doctype on (v_doctype.value_id = av_doctype.value_id)
+attribute_value v_doctype ON (v_doctype.card_id = av_doctype.number_value AND v_doctype.attribute_code = 'NAME')
+where c.template_id=784 and v_doctype.string_value not like 'Служебная записка%' and v_doctype.string_value not like 'Протокол%' and v_doctype.string_value not like 'Закон%' and v_doctype.string_value not like 'Указ%' and v_doctype.string_value not like 'Постановление%' and v_doctype.string_value not like 'Распоряжение%' and v_doctype.string_value not like 'Приказ%' and (v_decision.value_rus='Направлено в структурное подразделение Министерства' or av_reg_date.date_value is not null) and av_reg_date.date_value <= $P{endDate} and av_reg_date.date_value >= $P{startDate}
+
+Union
+
+Select
+15 as num
+,'Итого:' as doc_group
+,null as reg
+,null as fwd
+
+Union
+
+Select
+0 as num
+,av_dep.string_value as doc_group
+,null as reg
+,null as fwd
+from person p
+LEFT OUTER JOIN
+attribute_value av_dep on (av_dep.card_id = p.card_id and av_dep.attribute_code = 'JBR_PERS_DEPARTMENT')
+where person_login=$P!{user}
+order by num]]>
+	</queryString>
+	<field name="num" class="java.lang.Integer"/>
+	<field name="doc_group" class="java.lang.String"/>
+	<field name="reg" class="java.lang.Integer"/>
+	<field name="fwd" class="java.lang.Integer"/>
+	<variable name="itog_reg" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{reg}!=null?$V{itog_reg}+$F{reg}:$V{itog_reg})]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="itog_fwd" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{fwd}!=null?$V{itog_fwd}+$F{fwd}:$V{itog_fwd})]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="60" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчет по контролю сроков исполнения контрольных документов"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["С "+ (new SimpleDateFormat("dd.MM.yyyy")).format($P{startDate}) + " по "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{endDate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="40" width="331" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["на " + (new SimpleDateFormat("dd.MM.yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="224" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="195" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Группа документов"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Всего"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Переслано"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Зарегистрировано"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="300" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==1]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="10" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="0" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==1]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="280" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==15]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{itog_reg}+$V{itog_fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="280" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==15]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{itog_fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="280" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==15]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="10" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="280" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==15]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{itog_reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="20" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==2]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="20" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==2]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==2]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="20" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==2]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="40" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==3]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="40" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==3]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==3]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="40" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==3]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="60" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==4]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="10" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="80" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==5]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="80" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==5]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="80" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==5]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="80" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==5]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="160" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==9]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="160" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==9]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="160" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==9]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="120" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==7]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="140" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==8]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="180" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==10]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="120" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==7]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="140" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==8]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="120" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==7]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="180" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==10]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="120" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==7]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="180" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==10]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="180" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==10]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="140" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==8]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="140" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==8]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="100" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==6]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="10" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="160" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==9]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="200" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==11]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="220" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==12]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="240" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==13]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="200" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==11]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="220" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==12]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="240" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==13]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="240" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==13]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="200" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==11]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="220" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==12]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="200" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==11]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="240" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==13]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="220" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==12]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="260" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==14]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="260" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==14]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="260" width="195" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==14]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="260" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{num}==14]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg} + $F{fwd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="0" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==1]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="0" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==1]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="60" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==4]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="60" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==4]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="60" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==4]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="100" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==6]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="100" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==6]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="100" width="120" height="20">
+					<printWhenExpression><![CDATA[$F{num}==6]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" pdfFontName="Times New Roman" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

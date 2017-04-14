@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incoming_og_ext_resolutions" pageWidth="555" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="ext_res" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	av_res_author.string_value as author,
+    av_res_text.string_value as text,
+	av_sign_date.date_value + interval '$P!{tz_hour} hour' as sign_date,
+    av_plan_term.date_value + interval '$P!{tz_hour} hour' as term_date,
+	case
+        when (av_executor.string_value is not null and trim(av_executor.string_value) != '' and av_coexecutors.string_value is not null and trim(av_coexecutors.string_value) != '')
+            then av_executor.string_value || ', ' || av_coexecutors.string_value
+        when (av_executor.string_value is not null and trim(av_executor.string_value) != '' and (av_coexecutors.string_value is null or trim(av_coexecutors.string_value) = ''))
+            then av_executor.string_value
+        else av_coexecutors.string_value
+    end as execs
+from
+	card c
+-- Автор резолюции
+left outer join
+	attribute_value av_res_author on (av_res_author.card_id = c.card_id and av_res_author.attribute_code = 'JBR_DMSI_ER_AUTH')
+-- Текст резолюции
+left outer join
+	attribute_value av_res_text on (av_res_text.card_id = c.card_id and av_res_text.attribute_code = 'JBR_DMSI_ER_TEXT')
+-- Дата подписания
+left outer join
+	attribute_value av_sign_date on (av_sign_date.card_id = c.card_id and av_sign_date.attribute_code = 'JBR_DMSI_ER_CRDATE')
+-- Плановый срок
+left outer join
+	attribute_value av_plan_term on (av_plan_term.card_id = c.card_id and av_plan_term.attribute_code = 'JBR_DMSI_ER_PL_DUEDT')
+-- Исполнитель
+left outer join
+	attribute_value av_executor on (av_executor.card_id = c.card_id and av_executor.attribute_code = 'JBR_DMSI_ER_EXEC')
+-- Соисполнители
+left outer join
+	attribute_value av_coexecutors on (av_coexecutors.card_id = c.card_id and av_coexecutors.attribute_code = 'JBR_DMSI_ER_COEXEC')
+
+where (c.card_id in ($P!{ext_res}))]]>
+	</queryString>
+	<field name="author" class="java.lang.String"/>
+	<field name="text" class="java.lang.String"/>
+	<field name="sign_date" class="java.util.Date"/>
+	<field name="term_date" class="java.util.Date"/>
+	<field name="execs" class="java.lang.String"/>
+	<columnHeader>
+		<band height="25">
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Transparent" x="0" y="0" width="95" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Автор резолюции]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="95" y="0" width="170" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Резолюция]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="265" y="0" width="85" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[От]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="350" y="0" width="85" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Срок (Плановая дата)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="435" y="0" width="120" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнители]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="555" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="95" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[($F{author} != null ? $F{author} : "нет")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="95" y="0" width="170" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[($F{text} != null ? $F{text} : "нет")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="265" y="0" width="85" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[($F{sign_date} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{sign_date}) : "нет")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="350" y="0" width="85" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[($F{term_date} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{term_date}) : "нет")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="435" y="0" width="120" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[($F{execs} != null ? $F{execs} : "нет")]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<noData>
+		<band height="40">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="25" width="95" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[($F{author} != null ? $F{author} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="95" y="25" width="170" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[($F{text} != null ? $F{text} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="265" y="25" width="85" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[($F{sign_date} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{sign_date}) : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="350" y="25" width="85" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[($F{term_date} != null ? (new SimpleDateFormat("dd.MM.yyyy")).format($F{term_date}) : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="435" y="25" width="120" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[($F{execs} != null ? $F{execs} : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Transparent" x="0" y="0" width="95" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Автор резолюции]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="95" y="0" width="170" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Резолюция]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="265" y="0" width="85" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[От]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="350" y="0" width="85" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Срок (Плановая дата)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" positionType="Float" mode="Opaque" x="435" y="0" width="120" height="25" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнители]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

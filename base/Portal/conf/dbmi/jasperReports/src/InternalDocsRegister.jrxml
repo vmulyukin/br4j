@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InternalDocsRegister" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="signers" class="java.lang.String"/>
+	<parameter name="addressee" class="java.lang.String"/>
+	<parameter name="journal" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Work_projects\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select journs.c_id as journ, journs.journ_name as journ_name, signs.s_text as s_text, addrs.a_text as a_text from
+
+(Select
+c.card_id as c_id,
+av_journ_name.string_value as journ_name
+From card c
+LEFT OUTER JOIN attribute_value av_journ_name on (av_journ_name.card_id = c.card_id and av_journ_name.attribute_code = 'NAME')
+LEFT OUTER JOIN attribute_value av_journ_type on (av_journ_type.card_id = c.card_id and av_journ_type.attribute_code = 'JBR_REGLOG_TYPE_J')
+where c.template_id=346
+and ($P{journal} is null or c.card_id in ($P!{journal}))
+and av_journ_type.value_id = 1756 -- Журналы для внутрненних документов
+Order by av_journ_name.string_value) as journs,
+
+(select
+case
+	when $P{signers} is not null then ( select array_to_string(array(select av_sname.string_value || ' ' || substring(coalesce(av_name.string_value, '') from 1 for 1) || '.' || substring(coalesce(av_mname.string_value, '') from 1 for 1) || '. - ' || av_pos.string_value
+					    from card c
+					    left join attribute_value av_sname on (av_sname.card_id = c.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+					    left join attribute_value av_name on (av_name.card_id = c.card_id and av_name.attribute_code = 'JBR_PERS_NAME')
+					    left join attribute_value av_mname on (av_mname.card_id = c.card_id and av_mname.attribute_code = 'JBR_PERS_MNAME')
+					    left join attribute_value av_pos on (av_pos.card_id = c.card_id and av_pos.attribute_code = 'JBR_PERS_POSITION')
+					    where c.template_id = 10
+					    and c.card_id in ($P!{signers} )), ', ') as s_array)
+	else 'Все'
+end as s_text
+) as signs,
+
+(select
+case
+	when $P{addressee} is not null then ( select array_to_string(array(select av_sname.string_value || ' ' || substring(coalesce(av_name.string_value, '') from 1 for 1) || '.' || substring(coalesce(av_mname.string_value, '') from 1 for 1) || '. - ' || av_pos.string_value
+					    from card c
+					    left join attribute_value av_sname on (av_sname.card_id = c.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+					    left join attribute_value av_name on (av_name.card_id = c.card_id and av_name.attribute_code = 'JBR_PERS_NAME')
+					    left join attribute_value av_mname on (av_mname.card_id = c.card_id and av_mname.attribute_code = 'JBR_PERS_MNAME')
+					    left join attribute_value av_pos on (av_pos.card_id = c.card_id and av_pos.attribute_code = 'JBR_PERS_POSITION')
+					    where c.template_id = 10
+					    and c.card_id in ($P!{addressee})), ', ') as s_array)
+	else 'Все'
+end as a_text
+) as addrs]]>
+	</queryString>
+	<field name="journ" class="java.lang.Long"/>
+	<field name="journ_name" class="java.lang.String"/>
+	<field name="s_text" class="java.lang.String"/>
+	<field name="a_text" class="java.lang.String"/>
+	<title>
+		<band height="115" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="40" width="802" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с " + (new SimpleDateFormat("dd.MM.yyyy").format($P{from_date})) + " по " + (new SimpleDateFormat("dd.MM.yyyy").format($P{to_date}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Реестр внутренних документов, зарегистрированных]]></text>
+			</staticText>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="65" width="802" height="15" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="115" y="0" width="687" height="15"/>
+					<textElement textAlignment="Left">
+						<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{a_text}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="0" width="115" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Адресат: "]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="0" y="90" width="802" height="15" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textField>
+					<reportElement x="0" y="0" width="115" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Подписант: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="115" y="0" width="687" height="15"/>
+					<textElement textAlignment="Left">
+						<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{s_text}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="70" splitType="Prevent">
+			<staticText>
+				<reportElement style="def" x="0" y="25" width="30" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[№п/п]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="30" y="25" width="115" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Регистрационный номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="145" y="25" width="95" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[От]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="240" y="25" width="172" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Подписант]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="412" y="25" width="218" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Краткое содержание]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="def" x="630" y="25" width="172" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<text><![CDATA[Адресаты]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="115" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Журнал регистрации: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="0" width="687" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{journ_name} != null ? $F{journ_name} : "")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="55" width="802" height="0"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="802" height="0" isPrintWhenDetailOverflows="true"/>
+					<subreportParameter name="from_date">
+						<subreportParameterExpression><![CDATA[$P{from_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="to_date">
+						<subreportParameterExpression><![CDATA[$P{to_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="journ">
+						<subreportParameterExpression><![CDATA[$F{journ}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="signers">
+						<subreportParameterExpression><![CDATA[$P{signers}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="addressee">
+						<subreportParameterExpression><![CDATA[$P{addressee}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"InternalDocsRegister_sub.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- $Id: queries.xsd 1529 2009-06-23 12:48:09Z Dsultanbekov $ -->
+<xs:schema targetNamespace="http://www.aplana.com/XSD/DBMI/Queries" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.aplana.com/XSD/DBMI/Queries">
+    <xs:annotation>
+    	<xs:documentation>
+    		XSD schema for file queries.xml used by DataService EJB to configure 
+    		queries and other objects used to perform users requests in DBMI system.
+    	</xs:documentation>
+    </xs:annotation>
+    
+    <xs:attribute name="type" type="xs:string">
+    	<xs:annotation>
+    		<xs:documentation>class name (without package)</xs:documentation>
+    	</xs:annotation>    
+    </xs:attribute>
+
+    <xs:attribute name="package" type="xs:string">
+    	<xs:annotation>
+    		<xs:documentation>processor class package. 
+    		If missed then one of default values defined in
+    		root element will be used.</xs:documentation>
+    	</xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="class" type="xs:string">
+    	<xs:annotation>
+    		<xs:documentation>processor class name (without package)</xs:documentation>
+    	</xs:annotation>
+    </xs:attribute>
+    
+    <xs:element name="parameter">
+    	<xs:annotation>
+    		<xs:documentation>Defines initialization parameter for processor object</xs:documentation>
+    	</xs:annotation>
+    	<xs:complexType mixed="true">
+    		<xs:attribute name="name" type="xs:string" use="required">
+		    	<xs:annotation>
+		    		<xs:documentation>name of parameter</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    		<xs:attribute name="value" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>value of parameter</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    	</xs:complexType>
+    </xs:element>    
+    
+    <xs:complexType name="ProcessorType" mixed="true">
+    	<xs:annotation>
+    		<xs:documentation>Definition of processor used by QueryFactory
+    			(query, pre/post-processor or access checker)
+    		</xs:documentation>
+    	</xs:annotation>
+    	<xs:sequence>
+	    	<xs:annotation>
+	    		<xs:documentation>collection of initialization parameters</xs:documentation>
+	    	</xs:annotation>
+    		<xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded">
+		    	<xs:annotation>
+		    		<xs:documentation>class name (without package)</xs:documentation>
+		    	</xs:annotation>
+    		</xs:element>
+    	</xs:sequence>
+    	<xs:attribute ref="class">
+	    	<xs:annotation>
+	    		<xs:documentation>
+	    			Class name of processor. If not specified then content 
+	    			of this node will be used instead.
+	    		</xs:documentation>
+	    	</xs:annotation>
+    	</xs:attribute>
+    	<xs:attribute ref="package"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="ActionType">
+    	<xs:sequence>
+    		<xs:element ref="access" minOccurs="0" maxOccurs="1">
+    		</xs:element>
+    		<xs:element ref="query" minOccurs="1" maxOccurs="1"></xs:element>
+    		<xs:element ref="pre-process" minOccurs="0"
+    			maxOccurs="unbounded">
+    		</xs:element>
+    		<xs:element ref="post-process" minOccurs="0"
+    			maxOccurs="unbounded">
+    		</xs:element>
+    		<xs:element ref="specific" minOccurs="0" maxOccurs="unbounded"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="query" type="ProcessorType">
+    	<xs:annotation>
+    		<xs:documentation>Definition of query to use</xs:documentation>
+    	</xs:annotation>
+    </xs:element>
+
+    <xs:element name="access" type="ProcessorType">
+    	<xs:annotation>
+    		<xs:documentation>Definition of access-checker to be used by query</xs:documentation>
+    	</xs:annotation>    
+    </xs:element>
+
+    <xs:element name="pre-process" type="ProcessorType">
+    	<xs:annotation>
+    		<xs:documentation>Definition of pre-processor to be used by query</xs:documentation>
+    	</xs:annotation>
+    </xs:element>
+
+    <xs:element name="post-process" type="ProcessorType">
+    	<xs:annotation>
+    		<xs:documentation>Definition of post-processor to be used by query</xs:documentation>
+    	</xs:annotation>
+    </xs:element>
+
+    <xs:element name="specific" type="ActionType">
+    	<xs:annotation>
+    		<xs:documentation>Defines alternative processor descriptor to be used
+    		instead of this one if some condition is satisfied. Condition is defined through
+    		additional elements (for PropertySelector it is 'property' and 'value' attributes).
+    		</xs:documentation>
+    	</xs:annotation>
+    </xs:element>
+
+    <xs:element name="action">
+    	<xs:annotation>
+    		<xs:documentation>Defines configuration parameters used to process one action</xs:documentation>
+    	</xs:annotation>
+    	<xs:complexType>
+    		<xs:complexContent>
+    			<xs:extension base="ActionType">
+    				<xs:attribute ref="type"></xs:attribute>
+    				<xs:attribute ref="package"></xs:attribute>
+                </xs:extension>
+    		</xs:complexContent>
+    	</xs:complexType>
+    </xs:element>
+    
+    <xs:element name="object">
+    	<xs:annotation>
+    		<xs:documentation>Defines queries used to work with objects of
+    		given type</xs:documentation>
+    	</xs:annotation>
+    	<xs:complexType>
+    		<xs:sequence>
+    			<xs:element ref="list-all" minOccurs="0" maxOccurs="1"></xs:element>
+    			<xs:element ref="list-children" minOccurs="0" maxOccurs="unbounded"></xs:element>
+    			<xs:element ref="get-one" minOccurs="0" maxOccurs="1"></xs:element>
+    			<xs:element ref="store" minOccurs="0" maxOccurs="1"></xs:element>
+    			<xs:element ref="delete" minOccurs="0" maxOccurs="1"></xs:element>
+    		</xs:sequence>
+    		<xs:attribute ref="type"></xs:attribute>
+    		<xs:attribute ref="package"></xs:attribute>
+    	</xs:complexType>
+    </xs:element>
+
+    <xs:element name="list-all" type="ActionType">
+    	<xs:annotation>
+    		<xs:documentation>
+    			Defines query used to fetch all available instances of given type 
+    			from database
+    		</xs:documentation>
+    	</xs:annotation>    
+    </xs:element>
+
+    <xs:element name="list-children">
+    	<xs:annotation>
+    		<xs:documentation>
+    			Defines query used to fetch all available children objects of given
+    			type from database
+    		</xs:documentation>
+    	</xs:annotation>
+    	<xs:complexType>
+	    	<xs:complexContent>
+	    		<xs:extension base="ActionType">
+	    			<xs:attribute ref="type">
+				    	<xs:annotation>
+				    		<xs:documentation>
+				    			type of children to fetch
+				    		</xs:documentation>
+				    	</xs:annotation>
+	    			</xs:attribute>
+	    			<xs:attribute ref="package"></xs:attribute>
+	    		</xs:extension>
+	    	</xs:complexContent>
+    	</xs:complexType>
+    </xs:element>
+
+    <xs:element name="get-one" type="ActionType">
+    	<xs:annotation>
+    		<xs:documentation>Defines query used to fetch single object of given type from database</xs:documentation>
+    	</xs:annotation>    	
+    </xs:element>
+
+    <xs:element name="store" type="ActionType">
+    	<xs:annotation>
+    		<xs:documentation>Defines query used to save single object of given type in database</xs:documentation>
+    	</xs:annotation>    	
+    </xs:element>
+    
+    <xs:element name="delete" type="ActionType">
+    	<xs:annotation>
+    		<xs:documentation>Defines query used to delete single object from database</xs:documentation>
+    	</xs:annotation>
+    </xs:element>
+
+    <xs:element name="queries">
+    	<xs:annotation>
+    		<xs:documentation>Root node of configuration file</xs:documentation>
+    	</xs:annotation>
+    	<xs:complexType>
+    		<xs:sequence>
+    			<xs:element ref="object" minOccurs="0" maxOccurs="unbounded">
+    			</xs:element>
+    			<xs:element ref="action" minOccurs="0" maxOccurs="unbounded">
+    			</xs:element>
+    		</xs:sequence>
+    		<xs:attribute name="model-package" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>Default java package for model classes</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    		<xs:attribute name="action-package" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>Default java package for action classes</xs:documentation>
+		    	</xs:annotation>    		
+    		</xs:attribute>
+    		<xs:attribute name="query-package" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>Default java package for query classes</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    		<xs:attribute name="access-package" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>Default java package for access checker classes</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    		<xs:attribute name="process-package" type="xs:string">
+		    	<xs:annotation>
+		    		<xs:documentation>Default java package for pre/post-processor classes</xs:documentation>
+		    	</xs:annotation>
+    		</xs:attribute>
+    	</xs:complexType>
+    </xs:element>
+</xs:schema>

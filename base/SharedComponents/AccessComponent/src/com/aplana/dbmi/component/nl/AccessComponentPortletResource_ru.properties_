@@ -1,0 +1,53 @@
+#
+#   Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to you under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+
+# ru Resource Bundle
+#
+# filename: AccessComponentPortletResource_ru.properties
+# Portlet Info resource bundle example
+javax.portlet.title=AccessComponent
+javax.portlet.short-title=AccessComponent
+javax.portlet.keywords=AccessComponent
+
+
+access.form.block.title=Уровень секретности
+
+
+access.type.all=Все сотрудники
+access.type.department=Подразделение
+access.type.individual=Индивидуально
+access.type.manager1=Менеджер 1
+access.type.manager2=Менеджер 2
+
+access.form.edit.btn=Редактировать
+
+access.form.save.bnt=Сохранить
+access.form.cancel.btn=Закрыть
+
+access.form.find.btn=Найти
+access.form.add.btn=Добавить
+access.form.remove.btn=Удалить
+
+access.form.column.department=Департамент
+access.form.column.user=Имя пользователя
+
+
+access.form.user.list.label=Список пользователей
+access.form.department.list.label=Список подразделений
+
+access.form.individual.access.label=Индивидуальный доступ предоставляется:
+access.form.department.access.label=Доступ предоставляется:

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="petitionsForMonthSub" pageWidth="812" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.math.BigDecimal"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\etarakanov\\BR4J_Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="out_number" class="java.lang.String"/>
+	<parameter name="doc_date" class="java.sql.Timestamp"/>
+	<parameter name="reg_num" class="java.lang.String"/>
+	<parameter name="reg_date" class="java.sql.Timestamp"/>
+	<parameter name="rep_count" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[Select distinct
+c.card_id
+,av_inf_zayav_i.string_value as inf_zayav_i
+,av_inf_zayav_o.string_value as inf_zayav_o
+,av_inf_zayav_f.string_value as inf_zayav_f
+,av_contry_name.string_value as contry
+,av_region_name.string_value as region
+,av_area_name.string_value as area
+,av_city_name.string_value as city
+,av_city_area_name.string_value as city_area
+,av_street.string_value as street
+,av_house.string_value as house
+,av_building.string_value as building
+,av_flat.number_value as flat
+,av_short_desc.string_value as short_desc
+,relat.postt as postt
+,relat.pismo as pismo
+,relat.reg_date_relat_doc as reg_date_relat_doc
+
+from card c
+
+-- Автор обращения
+left join attribute_value av_author_req on (av_author_req.card_id = c.card_id and av_author_req.attribute_code = 'JBR_OG_REQ_AUTHOR')
+-- Информация о заявителе. Имя
+left outer join attribute_value av_inf_zayav_i on av_inf_zayav_i.card_id = av_author_req.number_value and av_inf_zayav_i.attribute_code='ADMIN_281034'
+-- Информация о заявителе. Отчество
+left outer join attribute_value av_inf_zayav_o on av_inf_zayav_o.card_id = av_author_req.number_value and av_inf_zayav_o.attribute_code='ADMIN_281035'
+-- Информация о заявителе. Фамилия
+left outer join attribute_value av_inf_zayav_f on av_inf_zayav_f.card_id = av_author_req.number_value and av_inf_zayav_f.attribute_code='ADMIN_274992'
+-- Страна
+left outer join attribute_value av_contry on av_contry.card_id = av_author_req.number_value and av_contry.attribute_code='ADMIN_277412'
+left outer join attribute_value av_contry_name on av_contry_name.card_id = av_contry.number_value and av_contry_name.attribute_code='NAME'
+-- Регион
+left outer join attribute_value av_region on av_region.card_id = av_author_req.number_value and av_region.attribute_code='ADMIN_277224'
+left outer join attribute_value av_region_name on av_region_name.card_id = av_region.number_value and av_region_name.attribute_code='NAME'
+-- Район
+left outer join attribute_value av_area on av_area.card_id = av_author_req.number_value and av_area.attribute_code='ADMIN_277243'
+left outer join attribute_value av_area_name on av_area_name.card_id = av_area.number_value and av_area_name.attribute_code='NAME'
+-- Город (населенный пункт)
+left outer join attribute_value av_city on av_city.card_id = av_author_req.number_value and av_city.attribute_code='ADMIN_277245'
+left outer join attribute_value av_city_name on av_city_name.card_id = av_city.number_value and av_city_name.attribute_code='NAME'
+-- Район города
+left outer join attribute_value av_city_area on av_city_area.card_id = av_author_req.number_value and av_city_area.attribute_code='ADMIN_277244'
+left outer join attribute_value av_city_area_name on av_city_area_name.card_id = av_city_area.number_value and av_city_area_name.attribute_code='NAME'
+-- Улица
+left outer join attribute_value av_street on av_street.card_id = av_author_req.number_value and av_street.attribute_code='JBR_APP_STREET'
+-- Номер дома
+left outer join attribute_value av_house on av_house.card_id = av_author_req.number_value and av_house.attribute_code='JBR_APP_HOUSE'
+-- Корпус/строение
+left outer join attribute_value av_building on av_building.card_id = av_author_req.number_value and av_building.attribute_code='JBR_APP_BUILDING'
+-- Номер квартиры
+left outer join attribute_value av_flat on av_flat.card_id = av_author_req.number_value and av_flat.attribute_code='JBR_APP_APARTMENT'
+
+-- Краткое содержание (наименование текста)
+left outer join attribute_value av_short_desc on av_short_desc.card_id = c.card_id and av_short_desc.attribute_code='JBR_INFD_SHORTDESC'
+
+left outer join
+(
+select distinct
+cc.card_id as card_id
+,ist_relat_doc.value_rus as postt
+,av_reg_num_relat_doc.string_value as pismo
+,av_reg_date_relat_doc.date_value + interval '$P!{tz_hour} hour' as reg_date_relat_doc
+
+from card cc
+
+-- Связанные документы
+join attribute_value av_relat_doc on av_relat_doc.number_value = cc.card_id and av_relat_doc.attribute_code='JBR_DOCL_RELATDOC'
+-- Карточка связанного
+join card c_relat_doc on c_relat_doc.card_id = av_relat_doc.card_id
+-- Регистрационный номер
+left outer join attribute_value av_reg_num_relat_doc on av_reg_num_relat_doc.card_id = av_relat_doc.card_id and av_reg_num_relat_doc.attribute_code='JBR_REGD_REGNUM'
+-- Источник поступления
+left outer join attribute_value av_ist_relat_doc on av_ist_relat_doc.card_id = av_relat_doc.card_id and av_ist_relat_doc.attribute_code='ADMIN_283122'
+left outer join values_list ist_relat_doc on ist_relat_doc.value_id = av_ist_relat_doc.value_id
+-- Дата регистрации
+left outer join attribute_value av_reg_date_relat_doc on av_reg_date_relat_doc.card_id = av_relat_doc.card_id and av_reg_date_relat_doc.attribute_code='JBR_REGD_DATEREG'
+
+where cc.card_id = $P!{card_id}
+and c_relat_doc.template_id = 364
+) as relat on relat.card_id = c.card_id
+
+where c.card_id = $P!{card_id}]]>
+	</queryString>
+	<field name="card_id" class="java.math.BigDecimal"/>
+	<field name="inf_zayav_i" class="java.lang.String"/>
+	<field name="inf_zayav_o" class="java.lang.String"/>
+	<field name="inf_zayav_f" class="java.lang.String"/>
+	<field name="contry" class="java.lang.String"/>
+	<field name="region" class="java.lang.String"/>
+	<field name="area" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="city_area" class="java.lang.String"/>
+	<field name="street" class="java.lang.String"/>
+	<field name="house" class="java.lang.String"/>
+	<field name="building" class="java.lang.String"/>
+	<field name="flat" class="java.math.BigDecimal"/>
+	<field name="short_desc" class="java.lang.String"/>
+	<field name="postt" class="java.lang.String"/>
+	<field name="pismo" class="java.lang.String"/>
+	<field name="reg_date_relat_doc" class="java.sql.Timestamp"/>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="38" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{rep_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{out_number}!=null ? $P{out_number} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="103" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{doc_date}!=null ? $P{doc_date} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="168" y="0" width="79" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reg_num}!=null ? $P{reg_num} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="247" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reg_date}!=null ? $P{reg_date} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="312" y="0" width="120" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{inf_zayav_f}!=null ? $F{inf_zayav_f} : "")
++" "+
+($F{inf_zayav_i}!=null ? $F{inf_zayav_i} : "")
++" "+
+($F{inf_zayav_o}!=null ? $F{inf_zayav_o} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="432" y="0" width="120" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{contry}!=null ? $F{contry}+", " : "")+
+($F{region}!=null ? $F{region}+", " : "")+
+($F{area}!=null ? $F{area}+", " : "")+
+($F{city}!=null ? $F{city}+", " : "")+
+($F{city_area}!=null ? $F{city_area}+", " : "")+
+($F{street}!=null ? $F{street}+", " : "")+
+($F{house}!=null ? $F{house}+", " : "")+
+($F{building}!=null ? $F{building}+", " : "")+
+(($F{flat}!=null && $F{flat}.intValue()!=0) ? $F{flat} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="617" y="0" width="79" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{short_desc}!=null ? $F{short_desc} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="696" y="0" width="58" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{postt}!=null?$F{postt}+" ":"")+($F{pismo}!=null?$F{pismo} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="754" y="0" width="58" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_date_relat_doc}!=null
+    ? (new SimpleDateFormat("dd.MM.yyyy").format($F{reg_date_relat_doc})
+        + "\n"
+        + new SimpleDateFormat("HH:mm").format($F{reg_date_relat_doc})
+      )
+    : "")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="552" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="65" height="20"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"petitionsForMonthIsochnik.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

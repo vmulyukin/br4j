@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InternalDocsRegister_sub" pageWidth="802" pageHeight="20" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="journ" class="java.lang.Long"/>
+	<parameter name="signers" class="java.lang.String"/>
+	<parameter name="addressee" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select distinct
+av_reg_num.string_value as reg_num,
+av_reg_num_d.number_value as reg_num_d,
+av_date_reg.date_value as date_reg,
+av_short_desk.string_value as short_desk,
+av_sign_sname.string_value || ' ' || substring(coalesce(av_sign_name.string_value, '') from 1 for 1) || '.' || substring(coalesce(av_sign_mname.string_value, '') from 1 for 1) || '. - ' || av_sign_pos.string_value as signatory,
+array_to_string(array(select av_sname.string_value || ' ' || substring(coalesce(av_name.string_value, '') from 1 for 1) || '.' || substring(coalesce(av_mname.string_value, '') from 1 for 1) || '. - ' || av_pos.string_value
+					    from card cc
+                        LEFT JOIN attribute_value av_receiver on (av_receiver.card_id = cc.card_id and av_receiver.attribute_code = 'JBR_INFD_RECEIVER')
+                            LEFT JOIN person p_receiver on (p_receiver.person_id = av_receiver.number_value)
+                                left join attribute_value av_sname on (av_sname.card_id = p_receiver.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+                                left join attribute_value av_name on (av_name.card_id = p_receiver.card_id and av_name.attribute_code = 'JBR_PERS_NAME')
+                                left join attribute_value av_mname on (av_mname.card_id = p_receiver.card_id and av_mname.attribute_code = 'JBR_PERS_MNAME')
+                                left join attribute_value av_pos on (av_pos.card_id = p_receiver.card_id and av_pos.attribute_code = 'JBR_PERS_POSITION')
+					    where cc.card_id = c.card_id
+					    ), ',' || chr(13)) as addr
+
+From card c
+LEFT OUTER JOIN attribute_value av_reg_journ on (av_reg_journ.card_id = c.card_id and av_reg_journ.attribute_code = 'JBR_REGD_REGJOURN')
+LEFT OUTER JOIN attribute_value av_reg_num on (av_reg_num.card_id = c.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM')
+LEFT OUTER JOIN attribute_value av_reg_num_d on (av_reg_num_d.card_id = c.card_id and av_reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D')
+LEFT OUTER JOIN attribute_value av_date_reg on (av_date_reg.card_id = c.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN attribute_value av_short_desk on (av_short_desk.card_id = c.card_id and av_short_desk.attribute_code = 'JBR_INFD_SHORTDESC')
+LEFT OUTER JOIN attribute_value av_signat on (av_signat.card_id = c.card_id and av_signat.attribute_code = 'JBR_INFD_SIGNATORY')
+    LEFT OUTER JOIN person sign_per on (sign_per.person_id = av_signat.number_value)
+        LEFT OUTER JOIN attribute_value av_sign_sname on (av_sign_sname.card_id = sign_per.card_id and av_sign_sname.attribute_code = 'JBR_PERS_SNAME')
+        LEFT OUTER JOIN attribute_value av_sign_name on (av_sign_name.card_id = sign_per.card_id and av_sign_name.attribute_code = 'JBR_PERS_NAME')
+        LEFT OUTER JOIN attribute_value av_sign_mname on (av_sign_mname.card_id = sign_per.card_id and av_sign_mname.attribute_code = 'JBR_PERS_MNAME')
+        LEFT OUTER JOIN attribute_value av_sign_pos on (av_sign_pos.card_id = sign_per.card_id and av_sign_pos.attribute_code = 'JBR_PERS_POSITION')
+where c.template_id=784
+and c.status_id not in (106,107,108,200,303990,6092498)
+and (date_trunc('day',av_date_reg.date_value) >= $P{from_date})
+and (date_trunc('day',av_date_reg.date_value) <= $P{to_date})
+and av_reg_journ.number_value in ($P{journ})
+and ($P{signers} is null or sign_per.card_id in ($P!{signers}))
+and ($P{addressee} is null or exists (select 1
+                                      from card c1
+                                      join attribute_value av1 on av1.card_id = c1.card_id
+                                      join person p1 on p1.person_id = av1.number_value
+                                      where c1.card_id = c.card_id
+                                        and av1.attribute_code = 'JBR_INFD_RECEIVER'
+                                        and p1.card_id in ($P!{addressee})))
+Order by date_reg, reg_num_d, reg_num]]>
+	</queryString>
+	<field name="date_reg" class="java.sql.Timestamp"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_num_d" class="java.lang.Long"/>
+	<field name="short_desk" class="java.lang.String"/>
+	<field name="signatory" class="java.lang.String"/>
+	<field name="addr" class="java.lang.String"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="240" y="0" width="172" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{signatory} != null ? $F{signatory} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="145" y="0" width="95" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{date_reg}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{date_reg}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="630" y="0" width="172" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{addr} != null ? $F{addr} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="412" y="0" width="218" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{short_desk} != null ? $F{short_desk} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="115" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_num} != null ? $F{reg_num} : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- (4) Отчеты на утверждение в кабинете помощника (assist_result_for_signSQL.xml) --
+SELECT cardID
+FROM 
+ (
+  SELECT DISTINCT cardID, coalesce(urgencyId, 2000000000), dateMark
+  FROM
+	(
+-- Вывод уведомлений по всем поручениям от соисполнителя для исполнителя
+	SELECT c.card_id as cardID, av.date_value as dateMark, av_u.value_id as urgencyId
+	FROM Card c
+
+	LEFT OUTER JOIN attribute_value av
+					ON	(av.card_id = c.card_id and (av.attribute_code = 'ADMIN_713534'))
+
+	--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+	JOIN attribute_value avParent ON c.card_id = avParent.card_id
+				and avParent.attribute_code in ('ADMIN_702311')
+				
+	LEFT JOIN attribute_value av_u
+					on	(av_u.card_id = c.card_id)
+					and (av_u.attribute_code = 'JBR_HOWFAST')
+	INNER JOIN attribute_value avUser ON (
+		avUser.card_id = avParent.number_value
+		-- (324) "Поручение": "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+		and (avUser.attribute_code ='JBR_INFD_EXEC_LINK') 
+		and avUser.number_value in (select number_value 
+						from attribute_value 
+						where attribute_code = 'JBR_ARM_MANAGER' 
+						and card_id in (select av_a.card_id 
+								from attribute_value av_a join card arm_c on arm_c.card_id = av_a.card_id
+								where av_a.attribute_code = 'JBR_ARM_ASSISTANT' 
+									and av_a.number_value in (%CURRENTUSERS%) and arm_c.status_id not in (34145, 6) ))
+		) 
+	INNER JOIN attribute_value avParentCoexec ON (
+		avParentCoexec.card_id = avParent.number_value
+		-- (324) Соисполнители поручения ('ADMIN_255974')
+		and avParentCoexec.attribute_code = 'ADMIN_255974'
+		)
+	INNER JOIN attribute_value avCoexec ON	(
+		avCoexec.card_id = c.card_id
+		-- (1044) исполнитель отчета ('ADMIN_702335')
+		and (avCoexec.attribute_code = 'ADMIN_702335')
+		and avCoexec.number_value = avParentCoexec.number_value
+		)
+	
+	WHERE 
+	(
+			-- Шаблон=отчет об исполнении (1044), состояние="исполнен"(206)
+			(c.template_id=1044) and (c.status_id=206)
+	)
+
+UNION
+
+-- Вывод уведомлений по всем поручениям от исполнителя для автора
+	SELECT c.card_id as cardID, av.date_value as dateMark, av_u.value_id as urgencyId
+	FROM Card c
+
+	LEFT OUTER JOIN attribute_value av
+					ON	(av.card_id = c.card_id and (av.attribute_code = 'ADMIN_713534'))
+					
+	--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+	JOIN attribute_value avParent ON c.card_id = avParent.card_id
+				and avParent.attribute_code in ('ADMIN_702311')
+				
+	LEFT JOIN attribute_value av_u
+					on	(av_u.card_id = c.card_id)
+					and (av_u.attribute_code = 'JBR_HOWFAST')
+	INNER JOIN attribute_value avUser ON (
+		avUser.card_id = avParent.number_value
+		-- (324) "Поручение": "Автор"/U ('JBR_INFD_SGNEX_LINK')
+		and avUser.attribute_code = 'JBR_INFD_SGNEX_LINK'
+        and avUser.number_value in (select number_value
+					from attribute_value 
+					where attribute_code = 'JBR_ARM_MANAGER' 
+						and card_id in (select av_a.card_id 
+								from attribute_value av_a join card arm_c on arm_c.card_id = av_a.card_id
+								where av_a.attribute_code = 'JBR_ARM_ASSISTANT' 
+									and av_a.number_value in (%CURRENTUSERS%) and arm_c.status_id not in (34145, 6))) )
+	INNER JOIN attribute_value avParentExec ON (
+		avParentExec.card_id = avParent.number_value
+		-- (324) "Поручение": "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+		and (avParentExec.attribute_code ='JBR_INFD_EXEC_LINK') 
+		) 
+	INNER JOIN attribute_value avExec ON	(
+		avExec.card_id = c.card_id
+		-- (1044) исполнитель отчета ('ADMIN_702335')
+		and (avExec.attribute_code = 'ADMIN_702335')
+		and avExec.number_value = avParentExec.number_value
+		)		
+	
+	WHERE (
+			(c.template_id=1044) and (c.status_id=206)
+	)
+
+ UNION
+
+-- Вывод уведомлений по контрольным поручениям от исполнителя для контролера
+ SELECT c.card_id as cardID, av.date_value as dateMark, av_u.value_id as urgencyId
+	FROM Card c
+
+	LEFT OUTER JOIN attribute_value av
+					ON	(av.card_id = c.card_id and (av.attribute_code = 'ADMIN_713534'))
+					
+	--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+	JOIN attribute_value avParent ON c.card_id = avParent.card_id
+				and avParent.attribute_code in ('ADMIN_702311')
+				
+	LEFT JOIN attribute_value av_u
+					on	(av_u.card_id = c.card_id)
+					and (av_u.attribute_code = 'JBR_HOWFAST')
+	INNER JOIN attribute_value avContr ON (
+		avContr.card_id = avParent.number_value
+		-- (324) "Поручение": "Контролер"/U ('JBR_TCON_INSPECTOR')
+		and avContr.attribute_code in ('JBR_TCON_INSPECTOR','JBR_IMPL_INSPECTOR')
+		and avContr.number_value in (select number_value 
+						from attribute_value 
+						where attribute_code = 'JBR_ARM_MANAGER' 
+						and card_id in (select av_a.card_id 
+								from attribute_value av_a join card arm_c on arm_c.card_id = av_a.card_id
+								where av_a.attribute_code = 'JBR_ARM_ASSISTANT' 
+									and av_a.number_value in (%CURRENTUSERS%) and arm_c.status_id not in (34145, 6) ))
+		)
+	INNER JOIN attribute_value avParentExec ON (
+		avParentExec.card_id = avParent.number_value
+		-- (324) "Поручение": "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+		and (avParentExec.attribute_code ='JBR_INFD_EXEC_LINK') 
+		) 
+	INNER JOIN attribute_value avExec ON	(
+		avExec.card_id = c.card_id
+		-- (1044) исполнитель отчета ('ADMIN_702335')
+		and (avExec.attribute_code = 'ADMIN_702335')
+		and avExec.number_value = avParentExec.number_value
+		)
+	INNER JOIN attribute_value control ON (
+		control.card_id = avParent.number_value
+		-- (324) "Поручение": "На контроле"/L ('JBR_TCON_ONCONT')
+		-- (1255) "Независимое поручение": "На контроле"/L ('JBR_IMPL_ONCONT')
+		and (control.attribute_code in ('JBR_TCON_ONCONT', 'JBR_IMPL_ONCONT')) 
+		and control.value_id in (1449, 1432)
+	)
+	
+	WHERE (
+			(c.template_id=1044) and (c.status_id=206)
+	)
+--		ORDER by 2 DESC -- av.date_value
+	) AS b				
+	ORDER BY 2 ASC, 3, 1
+ ) AS a
+--	ORDER by 1 DESC
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

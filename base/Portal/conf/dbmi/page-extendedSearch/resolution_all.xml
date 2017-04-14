@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true" specialSQL="resolution_allSQL.xml">
+	<name lang="ru">Поручения по определенному шаблону документа основания</name>
+	<name lang="en">All</name>
+	
+		<!-- template.jbr.resolution=324:	Поручения -->
+	<template>jbr.resolution</template>
+	<status>draft</status>
+	<status>jbr.exam.execute.boss</status>
+	<status>execution</status>
+	<status>done</status>
+	<!-- Признак контроля -->
+	<column id="JBR_TCON_ONCONT">
+		<icon value="1449" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1450" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column>
+	<!-- Срок -->
+	<column id="JBR_TCON_TERM" sort="asc"/>
+	<!-- Категория срочности -->
+	<column id="JBR_HOWFAST" sort="asc" listValueOrder="byOrderInLevel"/>
+	<!-- Название -->
+	<column id="NAME" width="200" />
+	<!-- Подписант -->
+	<column id="JBR_INFD_SGNEX_LINK" columnTitleRu="Подписант" columnTitleEn="Signatory" width="100"/>
+	<!-- Исполнитель -->
+	<column id="JBR_INFD_EXEC_LINK"/>
+	<!-- Соисполнитель -->
+	<column id="ADMIN_255974" width="50" />
+	<!-- Внешние исполнители -->
+	<column id="JBR_INFD_EXEC_EXT" width="50"  labelAttrId="NAME" isParentName="true"/>
+	<!-- К сведению -->
+	<column id="ADMIN_255979" width="50" isParentName="true"/>
+	<!-- Статус -->
+	<column id="_STATE"/>
+</search>

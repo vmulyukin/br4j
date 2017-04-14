@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="QuarterlyReportFSIN-1_questions" pageWidth="602" pageHeight="195" orientation="Landscape" columnWidth="602" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="app_cat" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1155,1158,1157,1154"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\BR4J_SOURCE\\FSIN\\branches\\01.4.006.12.000\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="org" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with table_1_quest as (
+	select c.card_id from card c
+	join attribute_value av on c.card_id = av.card_id and av.attribute_code = 'JBR_THEME_ID'
+	where c.template_id = 850 and av.string_value in
+		                                ('Вопросы пенсионного обеспечения сотрудников',
+                                 'Вопросы ресурсного обеспечения сотрудников',
+                                 'Вопросы труда и заработной платы сотрудников',
+                                 'Жилищные вопросы',
+                                 'Вопросы здравоохранения и медицинского обслуживания сотрудников',
+                                 'Работа с кадрами УИС',
+                                 'О нарушении законности сотрудниками УИС',
+                                 'О неправильных действиях сотрудников ИУ',
+                                 'Вопросы социальной защиты сотрудников УИС')
+  union
+  select c.card_id from card c
+    join attribute_value av on c.card_id = av.card_id and av.attribute_code = 'JBR_THEMATIC_ID'
+  where c.template_id = 851 and av.string_value in
+                                ('Вопросы материальной помощи',
+                                 'Выплата единовременных пособий',
+                                 'Назначение пенсий',
+                                 'Разъяснение по пенсионному вопросу',
+                                 'Невыплата компенсации за вещевое имущество',
+                                 'Обеспечение вещевым и материальным довольствием',
+                                 'Выплата надбавки за выслугу',
+                                 'Выплата районного коэффициента',
+                                 'О несвоевременной выплате денежного довольствия, заработной платы',
+                                 'Оплата труда',
+                                 'Упорядочение зарплаты',
+                                 'Жилищные условия пенсионеров',
+                                 'Жилищные условия сотрудников',
+                                 'Получение ГЖС',
+                                 'Вопросы медицинского обслуживания сотрудников УИС и их семей',
+                                 'Вопросы протезирования',
+                                 'Вопросы санитарно-эпидемического обеспечения',
+                                 'Выделение путевок в санатории и дома отдыха',
+                                 'Направление на лечение',
+                                 'О категории годности к военной службе ВВК',
+                                 'О компенсации на санаторно-курортное лечение',
+                                 'Восстановление на службе в УИС',
+                                 'Изменение формулировки приказа об увольнении',
+                                 'Награждения, поощрения',
+                                 'Направление в образовательные учреждения ФСИН России',
+                                 'Неправильное увольнение из УИС',
+                                 'О снятии ограничений в пенсионном обеспечении',
+                                 'Перевод в другие органы УИС',
+                                 'Прием на работу в УИС',
+                                 'Присвоение званий',
+                                 'Снятие дисциплинарного взыскания',
+                                 'Справки о работе в УИС',
+                                 'Стаж службы в органах УИС',
+                                 'О выплате пособий участникам ЧАЭС',
+                                 'О выплате страховых сумм',
+                                 'Злоупотребление сл. полож. руководителями УИС',
+                                 'О коррупционных действиях работников УИС',
+                                 'Незаконное лишение или предоставление прав осужденным',
+                                 'Несвоевременное освобождение из ИГУ',
+                                 'Рукоприкладство',
+                                 'Недостойное поведение в быту',
+                                 'Халатное и неправильное отношение к служебным обязанностям',
+                                 'О социально-правовой защите сотрудников УИС и членов их семей')
+), docs as (select distinct c.card_id
+	from card c
+		join attribute_value reg_date on c.card_id = reg_date.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+        join attribute_value av_reg on c.card_id = av_reg.card_id and av_reg.attribute_code = 'JBR_REGD_REGISTRAR'
+        join person p_reg on av_reg.number_value = p_reg.person_id
+        join attribute_value av_d on p_reg.card_id = av_d.card_id and av_d.attribute_code = 'JBR_PERS_ORG'
+            and ($P{org} is null or av_d.number_value in ($P!{org}))
+		join attribute_value av_q on c.card_id = av_q.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+		join table_1_quest q on av_q.number_value = q.card_id
+	where c.template_id = 864 and c.status_id in (101,102,103,206,48909,104)
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+), selection as (
+	select c.card_id, av_theme_id.string_value as theme1, av_thematic_id.string_value as thematic
+	from docs c
+		join attribute_value av_q on c.card_id = av_q.card_id and av_q.attribute_code = 'JBR_QUEST_THEMATIC_C'
+		left join attribute_value av_theme_id on av_theme_id.card_id = av_q.number_value and av_theme_id.attribute_code = 'JBR_THEME_ID'
+		left join attribute_value av_theme_link on av_q.number_value = av_theme_link.card_id and av_theme_link.attribute_code = 'JBR_QUEST_THEME'
+		left join attribute_value av_thematic_id on av_thematic_id.card_id = av_q.number_value and av_thematic_id.attribute_code = 'JBR_THEMATIC_ID'
+		)
+select 9 as rown, 'Несвоевременная выплата денежного довольствия, заработной платы' as title, count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'О несвоевременной выплате денежного довольствия, заработной платы'
+UNION
+select 10 as rown, 'Упорядочение денежного довольствия, заработной платы', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'Упорядочение зарплаты'
+UNION
+select 11 as rown, 'Социально-правовая защита', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.theme1 = 'Вопросы социальной защиты сотрудников УИС' or selection.thematic in ('О выплате страховых сумм',
+			'О выплате пособий участникам ЧАЭС','О социально-правовой защите сотрудников УИС и членов их семей')
+UNION
+select 12 as rown, 'Жилищные вопросы', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.theme1 = 'Жилищные вопросы' or selection.thematic in ('Жилищные условия сотрудников','Жилищные условия пенсионеров','Получение ГЖС')
+UNION
+select 13 as rown, 'Здравоохранение и медицинское обслуживание', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic in ('Вопросы медицинского обслуживания сотрудников УИС и их семей',
+				'Направление на лечение','Выделение путевок в санатории и дома отдыха',
+				'О категории годности к военной службе ВВК','Вопросы санитарно-эпидемического обеспечения',
+				'Вопросы протезирования','О компенсации на санаторно-курортное лечение') or selection.theme1 = 'Вопросы здравоохранения и медицинского обслуживания сотрудников'
+UNION
+select 14 as rown, 'Невыплата компенсации за вещевое имущество', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'Невыплата компенсации за вещевое имущество'
+UNION
+select 15 as rown, 'Прием на службу (работу) в УИС', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'Прием на работу в УИС'
+UNION
+select 16 as rown, 'Неправомерное увольнение', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'Неправильное увольнение из УИС'
+UNION
+select 17 as rown, 'Пенсионное обеспечение', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'Назначение пенсий'
+UNION
+select 18 as rown, 'Нарушение законности работниками УИС', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.theme1 = 'О нарушении законности сотрудниками УИС' or selection.thematic in ('Несвоевременное освобождение из ИГУ','Незаконное лишение или предоставление прав осужденным',
+			'Незаконное водворение в ШИЗО','Злоупотребление сл. полож. руководителями УИС','О незаконном применении спецсредств','Рукоприкладство')
+UNION
+select 19 as rown, 'Коррупционные действия работников УИС', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.thematic = 'О коррупционных действиях работников УИС'
+UNION
+select 20 as rown, 'Неправомерные действия работников УИС, связанные с исполнением должностных обязанностей', count(selection.card_id) as count from (select 1) as t cross join selection
+where selection.theme1 = 'О неправильных действиях сотрудников ИУ' or selection.thematic in ('Халатное и неправильное отношение к служебным обязанностям',
+			'Недостойное поведение в быту','Нарушение прав осужденных в ИК')
+UNION
+select 21 as rown, 'Другие вопросы', count(selection.card_id) as count from (select 1) as t cross join selection
+where (selection.theme1 not in ('Вопросы социальной защиты сотрудников УИС','Жилищные вопросы','О нарушении законности сотрудниками УИС',
+    'О неправильных действиях сотрудников ИУ','Вопросы здравоохранения и медицинского обслуживания сотрудников') or selection.theme1 is null) and
+	(selection.thematic not in ('О несвоевременной выплате денежного довольствия, заработной платы','Упорядочение зарплаты','О выплате страховых сумм',
+			'О выплате пособий участникам ЧАЭС','О социально-правовой защите сотрудников УИС и членов их семей','Жилищные условия сотрудников','Жилищные условия пенсионеров','Получение ГЖС',
+			'Вопросы здравоохранения и медицинского обслуживания сотрудников','Вопросы медицинского обслуживания сотрудников УИС и их семей',
+			'Направление на лечение','Выделение путевок в санатории и дома отдыха',	'О категории годности к военной службе ВВК','Вопросы санитарно-эпидемического обеспечения',
+			'Вопросы протезирования','О компенсации на санаторно-курортное лечение','Невыплата компенсации за вещевое имущество','Прием на работу в УИС','Неправильное увольнение из УИС',
+			'Назначение пенсий','Несвоевременное освобождение из ИГУ','Незаконное лишение или предоставление прав осужденным',
+			'Незаконное водворение в ШИЗО','Злоупотребление сл. полож. руководителями УИС','О незаконном применении спецсредств','Рукоприкладство',
+			'О коррупционных действиях работников УИС','Халатное и неправильное отношение к служебным обязанностям',
+			'Недостойное поведение в быту','Нарушение прав осужденных в ИК') or selection.thematic  is null)
+order by rown]]>
+	</queryString>
+	<field name="rown" class="java.lang.Integer"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="count" class="java.lang.Long"/>
+	<detail>
+		<band height="15" splitType="Prevent">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="502" y="0" width="100" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="442" y="0" width="60" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rown}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="442" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

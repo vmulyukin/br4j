@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+    <name lang="ru">АРМ - Расширенный поиск</name>
+    <name lang="en">Workstation- Extended search</name>
+
+<!-- 
+    <column id="_TEMPLATE" width="40" />
+ -->
+ <!-- START: атрибуты, используемые при сортировке таблицы результатов расширенного поиска -->
+    <!-- registration number -  рег номер  -->
+    <column id="JBR_REGD_REGNUM" width="50" link="true" sort="asc" sortAttrId="regnumberdigital" />
+    <!-- категория срочности -->
+    <column id="JBR_HOWFAST" width="50" />
+    <!-- short description -  Краткое содержание  -->
+    <column id="JBR_INFD_SHORTDESC" width="200"  columnTitleRu="Краткое содержание"/>
+    <!-- Response deadline -  Срок исполнения или предоставления ответа -->
+    <column id="JBR_IMPL_DEADLINE" width="30" columnTitleRu="Срок исполнения" />
+<!-- END: атрибуты, используемые при сортировке таблицы результатов расширенного поиска -->
+  
+    <!--  категория срочности - urgency level  -->
+    <column id="ADMIN_290575">
+        <default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+        <empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+    </column>
+
+    <!-- signer ФИО подписанта  -->
+    <column id="JBR_INFD_SIGNATORY"  width="50" columnTitleRu="Подписант"/>
+    <!-- sender Отправитель  -->
+    <column id="JBR_INFD_SENDER" width="50"  labelAttrId="NAME"/>
+    <!-- singer position and initials -  Должность, ФИО лица подписавшего документ  -->            
+    <column id="JBR_INFD_SIGN_EXT"  width="100" labelAttrId="NAME"/>
+    <!-- On Cotrol -  На контроле -->
+    <column id="JBR_IMPL_ONCONT">
+        <icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+        <icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+    </column>
+ 
+</search>

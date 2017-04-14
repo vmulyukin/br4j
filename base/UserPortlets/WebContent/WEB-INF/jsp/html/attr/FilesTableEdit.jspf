@@ -1,0 +1,271 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page import="com.aplana.dbmi.action.Material"%>
+<%@page import="com.aplana.dbmi.action.DownloadFile"%>
+<%@page import="com.aplana.dbmi.service.DataException"%>
+<%@page import="com.aplana.dbmi.common.utils.file.MimeContentTypeReestrBean"%>
+<%@page import="com.aplana.dbmi.common.utils.file.DefinesTypeFile"%>
+<%@page import="com.aplana.dbmi.card.FilesAndCommentsAttributeEditor"%>
+
+<fmt:message key="file.edit.init" var="initMsg"/>
+<fmt:message key="file.edit.finished" var="finishedMsg"/>
+<fmt:message key="file.edit.inprogress" var="inprogressMsg"/>
+<fmt:message key="file.edit.final.confirm" var="finalConfirmMsg"/>
+
+<script Type ="text/javascript" language="javascript"><!--
+	function submitFormInitFileEdit(attributeId, linkId) {
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = '<%= FilesAndCommentsAttributeEditor.INIT_FILE_EDIT_ACTION %>';
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ATTR_ID_FIELD %>.value = attributeId;
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardLinkExAttributeEditor.FIELD_LINKED_ID %>.value = linkId;
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+		dbmiShowLoadingSplash("${initMsg}");
+	}
+	
+	function submitFormForceInitFileEdit() {
+		if (confirm("${finalConfirmMsg}")) {
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = '<%= FilesAndCommentsAttributeEditor.FORCE_INIT_FILE_EDIT_ACTION %>';
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+			dbmiShowLoadingSplash("${initMsg}");
+	 	}
+	}
+	function submitFormFinishFileEdit() {
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = '<%= FilesAndCommentsAttributeEditor.FINISH_FILE_EDIT_ACTION %>';
+		document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+		dbmiShowLoadingSplash("${finishedMsg}");
+	}
+
+	function dbmiHideLoadingSplash() {
+		dojo.byId('dbmiLoadingSplash').style.display = 'none'; 
+		dojo.byId('sizer').style.display = 'block';
+	}
+
+	function dbmiShowLoadingSplash(message) {
+		dojo.require("dojo.NodeList-traverse");
+		dojo.byId('dbmiLoadingSplash').style.display = 'block'; 
+		dojo.byId('sizer').style.display = 'none';
+		dojo.query('#dbmiLoadingSplash').children().children()[0].style.fontSize = '24px';
+		dojo.query('#dbmiLoadingSplash').children().children()[0].innerHTML = message;
+	}
+
+</script>
+<c:if test="<%= renderRequest.getParameter(FilesAndCommentsAttributeEditor.NEED_FILE_EDIT_CONFIRMATION) != null%>">
+	<c:set var="editConfirmationDialogId"><portlet:namespace/>_editConfirmationDialog</c:set>
+	<div id="${editConfirmationDialogId}" dojoType="dijit.Dialog" 
+		title="<fmt:message key="dialog.file.edit.title"/>" 
+		style="width: 390px; height: 105px;font-size: 70%; text-align: left;">
+		<div style="text-align: left;"><fmt:message key="dialog.file.edit.confirmation"/></div>
+		<div style="float:right; clear: both;">
+			<button dojoType="dijit.form.Button" type="button" id="<portlet:namespace/>_executeYesButton">
+				<fmt:message key="dialog.file.edit.button.yes"/>
+				<script type="dojo/method" event="onClick" args="evt">	
+					dijit.byId('${editConfirmationDialogId}').hide();
+					submitFormForceInitFileEdit();
+				</script>		
+			</button>
+			<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="dialog.file.edit.button.no"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					dijit.byId('${editConfirmationDialogId}').hide();
+				</script>
+			</button>
+		</div>
+	</div>
+<script type="text/javascript" language="javascript">
+        dojo.require('dijit.Dialog');
+        dojo.addOnLoad(function() {
+            dijit.byId('${editConfirmationDialogId}').show();
+        });
+    </script>
+</c:if>
+<c:if test="<%= renderRequest.getParameter(FilesAndCommentsAttributeEditor.OPEN_FILE_EDIT) != null%>">
+	<script type="text/javascript">
+	if (!newWin) {
+		var newWin = window.open('<%=renderRequest.getParameter(FilesAndCommentsAttributeEditor.OPEN_HREF_PARAM)%>','_blank');
+		var isEditInProgress = true;
+		function checkWindow() {
+			if (newWin && newWin.closed) {
+				window.clearInterval(checkIntervalID);
+				window.clearInterval(pingIntervalID);
+				isEditInProgress = false;
+				submitFormFinishFileEdit();
+			} else if (newWin) {
+				dbmiShowLoadingSplash("${inprogressMsg}");
+			} else {
+				isEditInProgress = false;
+			}
+		}
+		var checkIntervalID = window.setInterval(checkWindow, 500);
+		dojo.addOnLoad(function() {
+			dbmiShowLoadingSplash("${inprogressMsg}");
+			});
+	}
+
+	<%
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+	%>
+			var timeoutInSeconds = <%=session.getMaxInactiveInterval() < 60 ? session.getMaxInactiveInterval() : 60 %>;
+			var pingIntervalID = window.setInterval(function() {
+		    	if (isEditInProgress) {
+					var request = { url: '/portal/auth/portal/dbmi/stub', sync: false };
+					dojo.xhrGet(request);
+					var request = { url: '/DBMI-UserPortlets/images/empty.gif', sync: false };
+					dojo.xhrGet(request);
+				}
+				setTimeout(arguments.callee, timeoutInSeconds * 1000);
+			}, timeoutInSeconds * 1000 );
+	<%}%>
+	</script>
+</c:if>
+<c:if test="<%= (cards != null && cards.size() > 0) || ((Boolean) info.getAttributeEditorData(attr.getId(), CardLinkExAttributeEditor.KEY_SHOW_EMPTY)).booleanValue() %>">
+<div style="padding: 0px 0px 0px 10px; clear:both;">
+<display:table name="<%= data_id %>" id="<%= data_id %>" uid="<%= data_id %>" class="res" style="margin-top: 5px;">
+	<display:setProperty name="basic.show.header" value="<%= info.getAttributeEditorData(attr.getId(), CardLinkExAttributeEditor.KEY_SHOW_TITLE).toString() %>"/>
+	<col width="50%"/>
+	<col width="45%"/>
+	<col width="5%" style="text-align: right"/>
+<%
+	Card linked = (Card) pageContext.getAttribute(data_id);
+	String downloadUrl = null;
+	PortletURL openUrl = null;
+	boolean isFileEditable = false;
+	if (linked != null) {
+		MaterialAttribute materialAttr = (MaterialAttribute) linked.getAttributeById(Attribute.ID_MATERIAL);
+		downloadUrl = (materialAttr != null && materialAttr.getType().equals(MaterialAttribute.MATERIAL_URL)) ? 
+				materialAttr.getName() 
+				: response.encodeURL(request.getContextPath() + "/MaterialDownloadServlet?" + CardPortlet.CARD_ID_FIELD + "=" + linked.getId().getId().toString());
+		openUrl = renderResponse.createActionURL();
+		openUrl.setParameter(CardPortlet.ACTION_FIELD, CardPortlet.OPEN_NESTED_CARD_ACTION);
+		openUrl.setParameter(CardPortlet.CARD_ID_FIELD, linked.getId().getId().toString());
+		openUrl.setParameter(CardPortlet.ATTR_ID_FIELD, (String)attr.getId().getId());
+	}
+
+	if (columns != null) {
+		Iterator colItr = columns.iterator();
+  		while (colItr.hasNext()) {
+  			SearchResult.Column col = (SearchResult.Column) colItr.next();
+			if(col.getWidth()==-1)
+				continue;
+  			
+		Attribute attrVal = linked == null ? null : linked.getAttributeById(col.getAttributeId());%>
+	<display:column style="<%= "width: " + col.getWidth() + "em;"%>"
+		title="<%= col.getName() %>" sortable="true" maxLength="<%= col.getWidth() %>"
+		comparator="<%= DisplayTagComparatorFactory.getComparatorClass(attrVal).getCanonicalName() %>"> <%
+		
+		String value = "(no value)";
+		if (attrVal != null) {
+			value = attrVal.getStringValue();
+		}
+		if(col.getAttributeId().equals(fileLinkAttributeId)){
+			%><a href="<%= downloadUrl %>" target="_blank"><%
+		}else if (col.isLinked()) {
+			if (fileLinkAttributeId == null && MaterialAttribute.class.equals(col.getAttributeId().getType())) {
+				%><a href="<%= downloadUrl %>" target="_blank"><%
+			} else {%>
+				<!-- BR4J00029530, YNikitin, 2013/07/02 Pomenyal pryamuyu ssylku na vyzov js-funktsii, kotoraya pered perehodom na novuyu stranitsu zapolnit CardPortlet.ACTION_FIELD i tem samym my izbezhim razblokirovki tekuschei kartochki pri perehode v svyazannye.-->
+				<a href="javascript:void(0)" onclick='submitOpenLinkedCard("<%=(String)attr.getId().getId() %>", <%=linked.getId().getId().toString() %> )'>
+				<!-- a href="<%= openUrl.toString() %>"-->
+			<%
+			}			
+		}
+		if (col.getAttributeId().equals(CertificateInfo.SIGNATURE_ATTR_ID)){
+			DateFormat dateFormat = new SimpleDateFormat("dd.mm.yyyy");
+			Card linkCard = (Card)sessionBean.getServiceBean().getById(linked.getId());
+			if(sessionBean.isVerify_ds()){
+				List<CertificateInfo> cerInfos = CertificateInfo.readCertificateInfo(linkCard, sessionBean.getServiceBean(), sessionBean.getResourceBundle(), dateFormat);
+				if (cerInfos != null && cerInfos.size() > 0){
+					boolean valid = true;
+					String displayStatus = null;
+					for (CertificateInfo certificateInfo : cerInfos) {
+						displayStatus = certificateInfo.getSignState(); 
+						if (!certificateInfo.isSignValid()){
+							valid = false;
+							break;
+						}
+					}
+					%>
+						<%= displayStatus %>
+					<%						
+				}else{
+					%>
+					<fmt:message key="sign.none" />
+					<%						
+				}
+			} else {
+				HtmlAttribute signAttr = (HtmlAttribute)linkCard.getAttributeById(col.getAttributeId());
+				if (signAttr != null && !signAttr.isEmpty()){
+					%><fmt:message key="sign.yes" /><%
+				} else {
+					%><fmt:message key="sign.none" /><%
+				}
+			}
+		} else {
+		%><%= value %><%
+		}
+		if (col.isLinked()) {
+			%></a><% 
+		}%>
+	</display:column>
+<%
+	   	}
+	}
+%>
+
+<!-- В рамках BR4J00038313 временно скрываем кнопку редактирования вложения -->
+
+<%--	<c:if test="<%= sessionBean.getAttributeEditorData(attr.getId(), FilesAndCommentsAttributeEditor.KEY_FILE_EDIT) != null%>">
+	<%
+		if (linked != null) {
+			try {
+				Material material = null;
+				DownloadFile action = new DownloadFile();
+				action.setCardId(linked.getId());
+				material = (Material) sessionBean.getServiceBean().doAction(action);
+				String mimeType = MimeContentTypeReestrBean.getMimeType(material);
+				isFileEditable = DefinesTypeFile.isEditable(mimeType);
+			}catch (DataException e){
+				System.out.println("Couldn't read file " + linked.getId());
+			}
+		}
+	%>
+		<c:choose>
+			<c:when test="<%= isFileEditable %>">
+				<display:column style="text-align:right;">
+					<a title=<fmt:message key="file.edit.button.hint"/> style="text-decoration: none; text-align: right;" href="#" onclick="javascript:submitFormInitFileEdit('<%= attr.getId().getId() %>', '<%= linked.getId().getId().toString() %>')">
+						<span class="fileEditActive">&nbsp</span>
+					</a>
+				</display:column>
+			</c:when>
+			<c:otherwise>
+				<display:column style="text-align:right;">
+					<span class="fileEditInactive">&nbsp</span>
+				</display:column>
+			</c:otherwise>
+		</c:choose>
+	</c:if> --%>
+	<c:if test="<%= sessionBean.getAttributeEditorData(attr.getId(), CardLinkExAttributeEditor.KEY_REMOVE) != null %>">
+	<display:column style="text-align:right;">
+		<a style="text-decoration: none; text-align: right;" href="#" onclick="javascript:submitFormCardLinksExRemove('<%= attr.getId().getId() %>', '<%= linked.getId().getId().toString() %>')">
+			<span class="delete">&nbsp</span>
+		</a>
+	</display:column>
+	</c:if>
+</display:table>
+</div>
+</c:if>

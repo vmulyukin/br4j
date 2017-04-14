@@ -1,0 +1,222 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+span.calendar {
+	padding: 2px 0px 0px 20px ;
+    background-image:url(./images/button_date.gif);
+    background-repeat:no-repeat;
+    cursor:pointer;		
+}
+
+span.cancel {
+	padding: 0px 0px 0px 20px ;
+    background-image:url(./images/button_date.gif);
+    background-repeat:no-repeat;
+    cursor:pointer;		
+}
+
+.wizard {
+	-x-system-font:none;
+	background-color:#E0E1E1;
+	font-family:'Trebuchet MS',Arial,sans-serif;
+	font-size:1em;
+	font-size-adjust:none;
+	font-stretch:normal;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:normal;
+	min-width:950px;
+	background-color:#FFFFFF;
+	border:1px solid #FFFFFF;
+	min-width:650px;
+	text-align:center;
+}
+
+.wizard div, .wizard h1, .wizard h2, .wizard p, .wizard h3, .wizard tr, .wizard ul, .wizard li, .wizard form, .wizard img {
+	border:0 none;
+	margin:0;
+	padding:0;
+}
+
+.wizard h2 {
+	color:#6D6D6D;
+	font-size:18px;
+	font-style:normal;
+	font-weight:normal;
+	padding:30px 37px 28px;
+	text-align:left;
+}
+
+.wizard h2 strong {
+	color:#2E2E2E;
+	font-weight:bold;
+}
+
+.wizard .list {
+	margin-left:98px;
+	text-align:left;
+}
+
+.wizard .list h2 {
+	padding:20px 0;
+}
+
+.wizard .peoples {
+	border-bottom:1px solid #E0E1E1;
+	clear:left;
+	margin-left:96px;
+	margin-right:20px;
+	text-align:left;
+}
+
+.wizard .label {
+	color:#626262;
+	font-size:13px;
+	padding-top:3px;
+}
+
+.wizard td.label{
+	font-weight:bold;
+}
+
+.wizard p{
+	padding-top:3px;
+	font-size:13px;
+	color:#000;
+	font-weight:bold;
+	float:left;
+}
+
+.wizard .input_area {
+	-x-system-font:none;
+	font-family:'Trebuchet MS',Arial,sans-serif;
+	font-size:13px;
+	font-size-adjust:none;
+	font-stretch:normal;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	height:356px;
+	line-height:normal;
+	width:414px;
+}
+
+
+.wizard .table td, .wizard .out {
+	padding-left:35px;
+}
+
+.wizard .library, .wizard .editor {
+	text-align:left;
+	overflow: auto;
+	height: 350px;
+}
+
+.wizard .editor {
+	height: 350px;
+	padding-top: 3px;
+}
+
+.wizard .library .item a{
+	color:#6C6C6C;
+	display:block;
+	padding:0px 5px 10px 5px;
+	text-decoration:none;
+	float:left;
+	font-weight:bold;
+}
+
+.wizard .bottom_line {
+	border-bottom:1px solid #E0E1E1;
+	width: 840px;
+}
+
+.tools a.next,
+.tools a.cancel,
+.tools a.back,
+.tools a.accept,
+.tools a.accept_plus
+{
+	width:121px;
+	height:37px;
+	background:#97d923 url(./images/button_next.jpg) left top no-repeat;
+	text-decoration:none;
+	float:left;
+	display:block;
+}
+
+.tools a.cancel
+{
+	margin-right:14px;
+	width:106px;
+	background:url(./images/button_cancel.jpg) left top no-repeat;
+}
+
+.tools a.back
+{
+	width:121px;
+	background:#d6f6ba url(./images/button_back.gif) left top no-repeat;
+}
+
+.tools a.accept
+{
+	margin-left:10px;
+	width:115px;
+	background:#97d923 url(./images/button_accept.gif) left top no-repeat;
+}
+
+.tools a.accept_plus
+{
+	width:121px;
+	background:#97d923 url(./images/button_acceptplus.gif) left top no-repeat;
+}
+
+.tools a:hover.next,
+.tools a:hover.cancel,
+.tools a:hover.back,
+.tools a:hover.accept,
+.tools a:hover.accept_plus
+{
+	background-position:left bottom;
+}
+
+.wizard .library .item:hover a
+{
+	color:#000;
+	background-color:#efefef;
+	
+}
+
+.wizard .table a.clear{
+	margin-top:10px;
+	width:106px;
+	height:28px;
+	display:block;
+	background:url(./images/button_clear.gif) left top no-repeat;
+	text-decoration:none;
+	float:left;
+}
+
+.wizard .table a:hover.clear{
+	background-position:left bottom;
+}
+
+.clear
+{
+	clear:left;
+	height: 20px;
+}

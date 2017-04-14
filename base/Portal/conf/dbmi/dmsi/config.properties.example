@@ -1,0 +1,30 @@
+#
+#   Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to you under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+
+standart=Стандарт системы управления документами
+version=1.0
+sys_id=sysid
+system=system
+system_details=sysdetails
+default_organization_id=322892
+mappingFiles=common_mapping.xml, mapping.xml, medo_mapping.xml, delo_mapping.xml, fsin_mapping.xml
+typesFiles=common_types.xml, types.xml, medo_types.xml, delo_types.xml, fsin_types.xml
+inFolder=data/dmsi/in
+inFolderProcessed=data/dmsi/processed
+inFolderDiscarded=data/dmsi/discarded
+# notificationSendSelector=0 - \u0420\u0455\u0421\u201a\u0420\u0454\u0420\u00bb\u0421\u040b\u0421\u2021\u0420\u0451\u0421\u201a\u0421\u040a \u0420\u0458\u0420\u00b5\u0421\u2026\u0420\u00b0\u0420\u0405\u0420\u0451\u0420\u00b7\u0420\u0458 \u0420\u0455\u0421\u201a\u0420\u0457\u0421\u0402\u0420\u00b0\u0420\u0406\u0420\u0454\u0420\u0451 \u0421\u0453\u0420\u0406\u0420\u00b5\u0420\u0491\u0420\u0455\u0420\u0458\u0420\u00bb\u0420\u00b5\u0420\u0405\u0420\u0451\u0420\u2116 \u0420\u0455 \u0420\u0491\u0420\u0455\u0421\u0403\u0421\u201a\u0420\u00b0\u0420\u0406\u0420\u0454\u0420\u00b5 \u0420\u0457\u0420\u0455\u0420\u00bb\u0421\u0453\u0421\u2021\u0420\u00b0\u0421\u201a\u0420\u00b5\u0420\u00bb\u0421\u040b. 1 - \u0420\u0406\u0420\u0454\u0420\u00bb\u0421\u040b\u0421\u2021\u0420\u0451\u0421\u201a\u0421\u040a
+notificationSendSelector=0

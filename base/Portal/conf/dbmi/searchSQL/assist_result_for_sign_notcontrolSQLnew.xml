@@ -1,0 +1,111 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+						with 
+						
+						boss as (select av_b.number_value from attribute_value as av_b
+								join card as c_b on av_b.card_id = c_b.card_id and c_b.template_id = 544 and c_b.status_id = 4
+								join attribute_value as av_assist on av_assist.card_id = av_b.card_id 
+									and av_assist.attribute_code = 'JBR_ARM_ASSISTANT' and av_assist.number_value = (%CURRENTUSERS%)
+						
+								where av_b.attribute_code = 'JBR_ARM_MANAGER'
+						)
+						
+						select distinct crds.card_id 
+						
+						from ( 
+								select c.card_id from card as c
+								-- по поручению
+								join attribute_value as av_0 on av_0.card_id = c.card_id and attribute_code = 'ADMIN_702311'
+								-- соисполнитель
+								join attribute_value as av_1 on av_1.card_id = av_0.number_value and av_1.attribute_code = 'ADMIN_255974'
+								-- исполнитель
+								join attribute_value as av_2 on av_2.card_id = av_1.card_id and av_2.attribute_code = 'JBR_INFD_EXEC_LINK'
+									and av_2.number_value = (select number_value from boss)
+								-- поручение контрольное
+								join attribute_value as av_3 on av_3.card_id = av_1.card_id and av_3.attribute_code in ('JBR_TCON_ONCONT', 'JBR_IMPL_ONCONT')
+									and av_3.value_id in (1450, 1433)
+						
+								where c.template_id = 1044 
+								and c.status_id = 206	
+						
+								union all
+						
+								select c.card_id from card as c
+								-- по поручению
+								join attribute_value as av_0 on av_0.card_id = c.card_id and attribute_code = 'ADMIN_702311'
+								-- исполнитель
+								join attribute_value as av_1 on av_1.card_id = av_0.number_value and av_1.attribute_code = 'JBR_INFD_EXEC_LINK'
+								-- подписант
+								join attribute_value as av_2 on av_2.card_id = av_1.card_id and av_2.attribute_code = 'JBR_INFD_SGNEX_LINK'
+									and av_2.number_value = (select number_value from boss)
+								-- поручение контрольное
+								join attribute_value as av_3 on av_3.card_id = av_1.card_id and av_3.attribute_code in ('JBR_TCON_ONCONT', 'JBR_IMPL_ONCONT')
+									and av_3.value_id in (1450, 1433)
+						
+								where c.template_id = 1044 
+								and c.status_id = 206
+						
+								union all
+						
+								select c.card_id from card as c
+								-- по поручению
+								join attribute_value as av_0 on av_0.card_id = c.card_id and attribute_code = 'ADMIN_702311'
+								-- исполнитель
+								join attribute_value as av_1 on av_1.card_id = av_0.number_value and av_1.attribute_code = 'JBR_INFD_EXEC_LINK'
+								-- контролер
+								join attribute_value as av_2 on av_2.card_id = av_1.card_id and av_2.attribute_code = 'JBR_TCON_INSPECTOR'
+									and av_2.number_value = (select number_value from boss)
+								-- поручение контрольное
+								join attribute_value as av_3 on av_3.card_id = av_1.card_id and av_3.attribute_code in ('JBR_TCON_ONCONT', 'JBR_IMPL_ONCONT')
+									and av_3.value_id in (1450, 1433)
+						
+								where c.template_id = 1044 
+								and c.status_id = 206
+								
+							) as crds
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

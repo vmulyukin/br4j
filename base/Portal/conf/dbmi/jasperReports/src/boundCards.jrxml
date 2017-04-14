@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!--
+��������� ��������� ��� ���������������� ������ ����
+ __________________________________________________________________________
+|��� ����� | ��������������� ����� | ���� ����������� |	������� ���������� |
+|__________|_______________________|__________________|____________________|
+			
+-->
+<!DOCTYPE jasperReport
+  PUBLIC "-//JasperReports//DTD Report Design//EN"
+  "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+
+<jasperReport name="bound_cards">
+
+<style  name="dejavu" 
+        isDefault="true" 
+        fontName="DejaVu Sans"
+        fontSize="10" 
+        pdfFontName="DejaVuSans.ttf" 
+        pdfEncoding="Cp1251"
+        isPdfEmbedded="true" />
+
+  <style  name="dejavu_bold" 
+          isDefault="true" 
+          fontName="DejaVu Sans"
+          fontSize="10"
+          isBold="true" 
+          pdfFontName="DejaVuSans-Bold.ttf" 
+          pdfEncoding="Cp1251"
+          isPdfEmbedded="true" />         
+          
+  <style  name="table"
+          style="dejavu"
+          border="Thin"
+          borderColor="black" />
+  
+  <style  name="header_table"
+          style="dejavu_bold"
+          border="Thin"
+          borderColor="black" />
+  
+  <style  name="title"
+          style="dejavu_bold"
+          fontSize="12" />
+  
+      
+  <parameter name="cardId" class="java.lang.Long"/>
+
+  <queryString>
+    <![CDATA[
+select 	card_id,
+	reg_num,
+	date_reg,
+	shortdesc,
+	type_link_rus,
+	our_reg_num
+from (
+select 	c.card_id card_id,
+        av_rn.string_value reg_num,
+        av_dr.date_value date_reg,
+        av_sd.string_value shortdesc,
+        null type_link_rus,
+        av_our_rn.string_value our_reg_num
+from card c
+  left outer join 
+    attribute_value av_rn on (av_rn.attribute_code = 'JBR_REGD_REGNUM' and av_rn.card_id = c.card_id)
+  left outer join 
+    attribute_value av_dr on (av_dr.attribute_code = 'JBR_REGD_DATEREG' and av_dr.card_id = c.card_id)
+  left outer join 
+    attribute_value av_sd on (av_sd.attribute_code = 'JBR_INFD_SHORTDESC' and av_sd.card_id = c.card_id)
+    -- ��� ������ ���. ������ ��������� ��������� � ���������
+    left outer join 
+    attribute_value av_our_rn on (av_our_rn.attribute_code = 'JBR_REGD_REGNUM' and av_our_rn.card_id = $P{cardId})
+where 	c.card_id = $P{cardId}
+
+union
+select	c.card_id,
+        av_rn.string_value,
+        av_dr.date_value,
+        av_sd.string_value,
+        vl.value_rus,
+        av_our_rn.string_value
+from attribute_value av, card c
+  left outer join 
+    attribute_value av_rn on (av_rn.attribute_code = 'JBR_REGD_REGNUM' and av_rn.card_id = c.card_id)
+  left outer join 
+    attribute_value av_dr on (av_dr.attribute_code = 'JBR_REGD_DATEREG' and av_dr.card_id = c.card_id)
+  left outer join 
+    attribute_value av_sd on (av_sd.attribute_code = 'JBR_INFD_SHORTDESC' and av_sd.card_id = c.card_id)
+  left outer join
+    attribute_value av_rd on (av_rd.card_id = c.card_id and av_rd.attribute_code = 'JBR_DOCL_RELATDOC' and av_rd.number_value = $P{cardId})
+  left outer join
+    values_list vl on (vl.value_id = av_rd.value_id)
+    -- ��� ������ ���. ������ ��������� ��������� � ���������
+    left outer join 
+    attribute_value av_our_rn on (av_our_rn.attribute_code = 'JBR_REGD_REGNUM' and av_our_rn.card_id = $P{cardId})
+where (av.card_id = c.card_id and av.attribute_code = 'JBR_DOCL_RELATDOC' and av.number_value = $P{cardId}) 
+
+union
+select  c.card_id,
+        av_rn.string_value,
+        av_dr.date_value,
+        av_sd.string_value,
+        vl.value_rus,
+        av_our_rn.string_value
+from attribute_value av, card c
+  left outer join 
+    attribute_value av_rn on (av_rn.attribute_code = 'JBR_REGD_REGNUM' and av_rn.card_id = c.card_id)
+  left outer join 
+    attribute_value av_dr on (av_dr.attribute_code = 'JBR_REGD_DATEREG' and av_dr.card_id = c.card_id)
+  left outer join 
+    attribute_value av_sd on (av_sd.attribute_code = 'JBR_INFD_SHORTDESC' and av_sd.card_id = c.card_id)
+  left outer join
+    attribute_value av_rd on (av_rd.card_id = $P{cardId} and av_rd.attribute_code = 'JBR_DOCL_RELATDOC' and av_rd.number_value = c.card_id)
+  left outer join
+    values_list vl on (vl.value_id = av_rd.value_id)
+    -- ��� ������ ���. ������ ��������� ��������� � ���������
+    left outer join 
+    attribute_value av_our_rn on (av_our_rn.attribute_code = 'JBR_REGD_REGNUM' and av_our_rn.card_id = $P{cardId})
+where	(av.card_id = $P{cardId} and av.attribute_code = 'JBR_DOCL_RELATDOC' and av.number_value = c.card_id)
+) unions
+order by date_reg desc
+    ]]>
+  </queryString>
+
+  <field name="card_id" class="java.lang.Long" />
+  <field name="reg_num" class="java.lang.String" />
+  <field name="date_reg" class="java.util.Date" />
+  <field name="shortdesc" class="java.lang.String" />
+  <field name="type_link_rus" class="java.lang.String" />
+  <field name="our_reg_num" class="java.lang.String" />
+  
+  <title>
+    <band height="40">
+      <textField>
+        <reportElement x="0" y="0" width="530" height="40" style="title"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <textFieldExpression class="java.lang.String">
+          <![CDATA["��������� ��������� ��� ���������������� ������ "+$F{our_reg_num}]]>
+        </textFieldExpression>
+      </textField>
+    </band>
+  </title>
+  
+  <columnHeader>
+    <band height="20">
+      <staticText>
+        <reportElement x="0" y="0" width="70" height="20" style="header_table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle">
+          <font isBold="true"/>
+        </textElement>
+        <text><![CDATA[���. �����]]></text>
+      </staticText>
+      <staticText>
+        <reportElement x="70" y="0" width="100" height="20" style="header_table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <text><![CDATA[���� �����������]]></text>
+      </staticText>
+      <staticText>
+        <reportElement x="170" y="0" width="270" height="20" style="header_table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <text><![CDATA[������� ����������]]></text>
+      </staticText>
+    <staticText>
+        <reportElement x="440" y="0" width="100" height="20" style="header_table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <text><![CDATA[��� �����]]></text>
+      </staticText>
+    </band>
+  </columnHeader>
+  
+  <detail>
+    <band height="15">
+      <textField>
+        <reportElement x="0" y="0" width="70" height="15" style="table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <textFieldExpression class="java.lang.String">
+          <![CDATA[$F{reg_num}!=null ? $F{reg_num} : ""]]>
+        </textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="70" y="0" width="100" height="15" style="table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <textFieldExpression class="java.lang.String">
+          <![CDATA[$F{date_reg}!=null ? (new java.text.SimpleDateFormat("dd.MM.yyyy")).format($F{date_reg}) : ""]]>
+        </textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="170" y="0" width="270" height="15" style="table"/>
+        <textElement textAlignment="Left" verticalAlignment="Middle"/>
+        <textFieldExpression class="java.lang.String">
+          <![CDATA[$F{shortdesc}!=null ? " "+$F{shortdesc} : ""]]>
+        </textFieldExpression>
+      </textField>   
+      <textField>
+        <reportElement x="440" y="0" width="100" height="15" style="table"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"/>
+        <textFieldExpression class="java.lang.String">
+          <![CDATA[($P{cardId}.equals($F{card_id})) ? "-" : (($F{type_link_rus}==null) ? "" : $F{type_link_rus})]]>
+        </textFieldExpression>
+      </textField> 	  
+    </band>
+  </detail>
+</jasperReport>

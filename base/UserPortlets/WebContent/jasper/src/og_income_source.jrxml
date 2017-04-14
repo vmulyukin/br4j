@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="og_income_source" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[Select
+av_source.number_value as source_id,
+av_signer.string_value as sign,
+av_number.string_value as reg_num,
+av_date.date_value as reg_date
+from card c
+left outer join -- источник поступления
+	attribute_value av_source on (av_source.card_id = c.card_id and av_source.attribute_code = 'ADMIN_281734')
+left outer join -- ФИО Подписанта
+    attribute_value av_signer on (av_signer.card_id = av_source.number_value and av_signer.attribute_code = 'JBR_FIO_SIGNER')
+left outer join -- Номер регистрации
+	attribute_value av_number on (av_number.card_id = av_source.number_value and av_number.attribute_code = 'ADMIN_281683')
+left outer join -- тема
+	attribute_value av_date on (av_date.card_id = av_source.number_value and av_date.attribute_code = 'ADMIN_281692')
+where c.card_id=$P{card_id}]]>
+	</queryString>
+	<field name="sign" class="java.lang.String"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_date" class="java.util.Date"/>
+	<field name="source_id" class="java.lang.Long"/>
+	<title>
+		<band height="22">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="191" y="0" width="122" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[ФИО подписанта]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="313" y="0" width="121" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Номер регистрации]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="434" y="0" width="121" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Дата регистрации]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="191" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Корреспондент]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="22"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" stretchType="RelativeToTallestObject" x="313" y="0" width="121" height="22"/>
+					<textElement>
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{reg_num} != null ? $F{reg_num} : "")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" stretchType="RelativeToTallestObject" x="434" y="0" width="121" height="22"/>
+					<textElement>
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{reg_date} != null ? new SimpleDateFormat("dd.MM.yyyy").format($F{reg_date}) : "")]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement style="table" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="0" width="191" height="22"/>
+					<subreportParameter name="attr">
+						<subreportParameterExpression><![CDATA["ADMIN_281649"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{source_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"og_sender_sub_arch.jasper"]]></subreportExpression>
+				</subreport>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" stretchType="RelativeToTallestObject" x="191" y="0" width="122" height="22"/>
+					<textElement>
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{sign} != null ? $F{sign} : "")]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

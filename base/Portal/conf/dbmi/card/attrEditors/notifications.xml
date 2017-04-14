@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+
+	<template>1068</template>
+	<template>1070</template>
+	<template>1067</template>
+	<template>1501</template>
+	
+	<column id="jbr.gost.notif.to.distrib" link="true" labelAttrId="jbr.distributionItem.recipient->name" secondaryColumn="medo.sender->name" width="100" columnTitleRu="Организация-отправитель" columnTitleEn="Organization-sender"/>
+	<column id="jbr.gost.ack.regNumber" secondaryColumn="medo.incoming.regnumber" width="40"/>
+	<column id="jbr.gost.ack.regDate" secondaryColumn="medo.regdate" width="40"/>
+	<column id="jbr.gost.ack.errorDescr" secondaryColumn="medo.refuse.reason" width="40" columnTitleRu="Причина отказа в регистрации" columnTitleEn="The reason for refusal of registration"/>
+	<column id="medo.notification.executor" width="40" columnTitleRu="Исполнитель" columnTitleEn="Executor"/>
+	<column id="created" width="40"/>
+</search>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DocumentMailing" pageWidth="802" pageHeight="55" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" fontName="Times New Roman" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="def2" fontName="Times New Roman" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="card_id" class="java.lang.Long"/>
+    <parameter name="mail_list" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+case
+	when c_addr.template_id = 464 then (select coalesce((av_sname.string_value || ' ' || av_name.string_value || ' ' || av_mname.string_value), av_fio.string_value)
+					    from card cc
+					    left join attribute_value av_sname on (av_sname.card_id = cc.card_id and av_sname.attribute_code = 'JBR_PERS_SNAME')
+					    left join attribute_value av_name on (av_name.card_id = cc.card_id and av_name.attribute_code = 'JBR_PERS_NAME')
+					    left join attribute_value av_mname on (av_mname.card_id = cc.card_id and av_mname.attribute_code = 'JBR_PERS_MNAME')
+					    left join attribute_value av_fio on (av_fio.card_id = cc.card_id and av_fio.attribute_code = 'JBR_PERS_SNAME_NM')
+					    where cc.card_id = c_addr.card_id limit 1)
+	when c_addr.template_id = 222 then (select case
+                                                    when (av_full_name.string_value is not null and trim(av_full_name.string_value) != '')
+                                                            then av_full_name.string_value
+                                                    else av_short_name.string_value
+                                               end
+					    from card cc
+					    left join attribute_value av_full_name on (av_full_name.card_id = cc.card_id and av_full_name.attribute_code = 'JBR_DORG_FULLNAME')
+					    left join attribute_value av_short_name on (av_short_name.card_id = cc.card_id and av_short_name.attribute_code = 'JBR_DORG_SHORTNAME')
+					    where cc.card_id = c_addr.card_id limit 1)
+end as receiver,
+av_last_time.date_value + interval '$P!{tz_hour} hour' as last_try_time,
+vl_send_method.value_rus as send_method,
+
+case
+	when vl_send_method.value_id = 2127 then vl_state_proc.value_rus
+	when (
+		vl_send_method.value_id in (1581,1582)
+		and av_send_info.number_value is not null
+        and c_send_info.template_id = 1501
+	     )
+					    then
+						case
+						    when av_send_info_reg.string_value is not null
+								then 'Документ зарегистрирован'
+						    else
+                                case
+                                    when av_send_info_type.value_id = 2900
+                                          or
+                                         av_send_info_type.value_id is null
+                                            then ''
+                                    else 'Отказано в регистрации'
+                                end
+						end
+	else ''
+end as state_proc,
+
+case
+	when vl_send_method.value_id = 2127
+         and vl_state_proc.value_id = 3242
+         and av_send_info.number_value is not null
+         and c_send_info.template_id = 1067
+             then av_medo_reg_num.string_value || ' от ' || to_char(av_medo_reg_date.date_value + interval '$P!{tz_hour} hour', 'DD.MM.YYYY')
+
+	when vl_send_method.value_id = 2127
+         and vl_state_proc.value_id = 3246
+         and av_send_info.number_value is not null
+         and c_send_info.template_id = 1070
+              then av_medo_reg_refuse.string_value
+	when (
+		vl_send_method.value_id in (1581,1582)
+		and av_send_info.number_value is not null
+        and c_send_info.template_id = 1501
+	     )
+					    then
+						case
+						    when av_send_info_reg.string_value is not null
+								then av_send_info_reg.string_value || ' от ' || to_char(av_send_info_date.date_value + interval '$P!{tz_hour} hour', 'DD.MM.YYYY')
+						    else
+                                case
+                                    when av_send_info_type.value_id = 2900
+                                          or
+                                         av_send_info_type.value_id is null
+                                            then ''
+                                    else av_send_info_error.string_value
+                                end
+						end
+	else ''
+	end as reg_num_date
+
+from card c
+-- Получатель
+left join attribute_value av_addr on (av_addr.card_id = c.card_id and av_addr.attribute_code = 'ADMIN_222015')
+	left join card c_addr on (c_addr.card_id = av_addr.number_value)
+-- Время последней попытки
+left join attribute_value av_last_time on (av_last_time.card_id = c.card_id and av_last_time.attribute_code = 'JBR_DIST_TIME_ATMPT')
+-- Способ отправки
+left join attribute_value av_send_method on (av_send_method.card_id = c.card_id and av_send_method.attribute_code = 'ADMIN_222147')
+	left join values_list vl_send_method on vl_send_method.value_id = av_send_method.value_id
+-- Способ обработки у адресата
+left join attribute_value av_state_proc on (av_state_proc.card_id = c.card_id and av_state_proc.attribute_code = 'NOTI_STATE_AT_ADDRSR')
+	left join values_list vl_state_proc on vl_state_proc.value_id = av_state_proc.value_id
+-- Информация о доставке
+left join attribute_value av_send_info on av_send_info.card_id = c.card_id and av_send_info.attribute_code = 'JBR_DIST_SEND_INFO'
+    left join card c_send_info on c_send_info.card_id = av_send_info.number_value
+    -- Регистрационный номер (Уведомление ГОСТ)
+    left join attribute_value av_send_info_reg on av_send_info_reg.card_id = av_send_info.number_value and av_send_info_reg.attribute_code = 'JBR_ACK_REGNUMBER'
+    -- Дата регистрации (Уведомление ГОСТ)
+    left join attribute_value av_send_info_date on av_send_info_date.card_id = av_send_info.number_value and av_send_info_date.attribute_code = 'JBR_ACK_REG_DATE'
+    -- Вид уведомления (Уведомление ГОСТ)
+    left join attribute_value av_send_info_type on av_send_info_type.card_id = av_send_info.number_value and av_send_info_type.attribute_code = 'JBR_ACK_TYPE'
+    -- Описание ошибки (Уведомление ГОСТ)
+    left join attribute_value av_send_info_error on av_send_info_error.card_id = av_send_info.number_value and av_send_info_error.attribute_code = 'JBR_ACK_ERROR_DESCR'
+    -- Регистрационный номер (Уведомление: Документ зарегистрирован (исх. док))
+    left join attribute_value av_medo_reg_num on av_medo_reg_num.card_id = av_send_info.number_value and av_medo_reg_num.attribute_code = 'MED_REGD_REGNUM'
+    -- Дата регистрации (Уведомление: Документ зарегистрирован (исх. док))
+    left join attribute_value av_medo_reg_date on av_medo_reg_date.card_id = av_send_info.number_value and av_medo_reg_date.attribute_code = 'MED_REGD_DATEREG'
+    -- Причина отказа в регистрации (Уведомление: в регистрации документа отказано (исх. док))
+    left join attribute_value av_medo_reg_refuse on av_medo_reg_refuse.card_id = av_send_info.number_value and av_medo_reg_refuse.attribute_code = 'MED_REAS_REFUS'
+
+where c.template_id = 704
+and c.status_id != 303990
+and c.card_id in ($P!{mail_list}) --param
+-- Защита от ошибки, когда у одной карточки ЭСР может быть более 1 уведомления (в этом случае берем самый последний (актуальный))
+and (c_send_info.card_id is null
+    or
+av_send_info.number_value in (select number_value as id
+                                            from attribute_value
+                                            where card_id = c.card_id
+                                            and attribute_code = 'JBR_DIST_SEND_INFO'
+                                            order by attr_value_id desc
+                                            limit 1
+                                           )
+     )]]>
+	</queryString>
+	<field name="receiver" class="java.lang.String"/>
+	<field name="last_try_time" class="java.sql.Timestamp"/>
+	<field name="send_method" class="java.lang.String"/>
+	<field name="state_proc" class="java.lang.String"/>
+	<field name="reg_num_date" class="java.lang.String"/>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField pattern="">
+				<reportElement style="def" x="0" y="0" width="41" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["№"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def" x="41" y="0" width="217" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Получатель"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def" x="258" y="0" width="118" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дата отправки"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def" x="376" y="0" width="90" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Способ отправки"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def" x="466" y="0" width="156" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Статус обработки у адресата"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def" x="622" y="0" width="180" height="35"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Рег. номер и дата у адресата/ причина отклонения"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def2" stretchType="RelativeToTallestObject" x="0" y="0" width="41" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def2" stretchType="RelativeToTallestObject" x="41" y="0" width="217" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{receiver} != null ? $F{receiver} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def2" stretchType="RelativeToTallestObject" x="258" y="0" width="118" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{last_try_time} != null ? ((new SimpleDateFormat("dd.MM.yyyy HH:mm")).format($F{last_try_time})): "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def2" stretchType="RelativeToTallestObject" x="376" y="0" width="90" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{send_method} != null ? ($F{send_method}):"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def2" stretchType="RelativeToTallestObject" x="466" y="0" width="156" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{state_proc}!=null ? $F{state_proc} :"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" stretchType="RelativeToTallestObject" x="622" y="0" width="180" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_num_date}!=null ? $F{reg_num_date} :"")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,103 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+#search
+{
+	margin-top:34px;
+	padding:0;
+	background:#FFF url(images/simpleSearch/search_bg.jpg) left top repeat-y;
+	width:222px;
+	margin-left:38px;
+	font-size:12px;
+	color:#000;
+}
+
+#search .top
+{
+	background:url(images/simpleSearch/search_top.jpg) left top no-repeat;
+}
+
+#search .bottom
+{
+	padding:20px;
+	padding-bottom:10px;
+	background:url(images/simpleSearch/search_bottom.jpg) left bottom no-repeat;
+}
+
+#search .bottom p
+{
+	padding-bottom:10px;
+	margin-top:0;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
+}
+
+#search .bottom input,
+#search .bottom select
+{
+	font:12px Arial,sans-serif;
+	color:#000;
+	margin:0;
+	margin-bottom:16px;
+	float:left;
+}
+
+#search a.find
+{
+	margin-left:2px;
+	width:21px;
+	height:21px;
+	display:block;
+	background:url(images/simpleSearch/button_search.gif) 2px 2px no-repeat;
+	text-decoration:none;
+	float:left;
+}
+
+#search a:hover.find
+{
+	background:#dedfdf url(images/simpleSearch/button_search.gif) 2px 2px no-repeat;
+}
+
+#search a.date
+{
+	margin-left:2px;
+	width:21px;
+	height:21px;
+	display:block;
+	background:url(images/simpleSearch/button_date.gif) 2px 2px no-repeat;
+	text-decoration:none;
+	float:left;
+}
+
+#search a:hover.date
+{
+	background:#dedfdf url(images/simpleSearch/button_date.gif) 2px 2px no-repeat;
+}
+
+#search .after
+{
+	width:90px;
+	display:block;
+	float:left;
+}
+
+#search .before
+{
+	width:90px;
+	display:block;
+	float:right;
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- $Id: mail-service.xml 62349 2007-04-15 16:48:15Z dimitris@jboss.org $ -->
+<server>
+
+  <!-- ==================================================================== -->
+  <!-- Mail Connection Factory                                              -->
+  <!-- ==================================================================== -->
+
+  <mbean code="org.jboss.mail.MailService"
+         name="jboss:service=DBMIMail">
+    <attribute name="JNDIName">java:/mail/DBMIMailSession</attribute>
+    <attribute name="Configuration">
+      <!-- A test configuration -->
+      <configuration>
+        <!-- Change to your mail server prototocol -->
+        <property name="mail.store.protocol" value="pop3"/>
+        <property name="mail.transport.protocol" value="smtp"/>
+
+        <!-- Change to the user who will receive mail  -->
+        <property name="mail.user" value="nobody"/>
+
+        <!-- Change to the mail server  -->
+        <property name="mail.pop3.host" value="mail.aplana.com"/>
+
+        <!-- Change to the SMTP gateway server -->
+        <property name="mail.smtp.host" value="mail.aplana.com"/>
+        
+        <!-- The mail server port -->
+        <property name="mail.smtp.port" value="25"/>
+        
+        <!-- Change to the address mail will be from  -->
+        <property name="mail.from" value="nobody@nosuchhost.nosuchdomain.com"/>
+
+        <!-- Enable debugging output from the javamail classes -->
+        <property name="mail.debug" value="false"/>
+      </configuration>
+    </attribute>
+    <depends>jboss:service=Naming</depends>
+  </mbean>
+
+</server>

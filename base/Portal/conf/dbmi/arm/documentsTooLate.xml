@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<!--  ������������� ��������� -->
+<search byAttr="true" specialSQL="cardsAllSQL.xml">
+
+	<name lang="ru">� ������</name>
+	<name lang="en">Working</name>
+
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="���� ��������� ���������" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="��� ��������� ���������" tooltipEn="No category of urgency"/>
+	</column> 
+
+	<!-- ��������� ��������� -->
+	<column id="JBR_HOWFAST" width="30" sort="asc" listValueOrder="byOrderInLevel"/>
+
+	<!-- Imcoming date -->
+	<column id="JBR_INCOMEDATE" width="14" sort="asc" />
+
+
+	<column id="NAME" width="100" />
+
+	<!-- ��������
+	<column id="JBR_INFD_SUBJECTS" width="100" /> -->
+
+	<!-- ������� ��������
+	<column id="JBR_INFD_SHORTDESC" width="100" />
+	  -->
+	
+	<!-- ����� 
+	<column id="AUTHOR" width="100" />-->
+
+	<!-- ����  -->
+	<column id="JBR_TCON_TERM" width="50" />
+ 
+
+	<!-- ����-���������
+	<column id="DESCR" width="70" />-->
+
+	<!-- �����������
+	<column id="JBR_INFD_EXECUTOR" width="100" />
+	  -->
+	  
+	<column id="_STATE" width="50" />
+</search>

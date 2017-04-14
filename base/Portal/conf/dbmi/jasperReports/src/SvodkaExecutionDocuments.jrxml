@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SvodkaExecutionDocuments" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDateExec" class="java.sql.Timestamp"/>
+	<parameter name="endDateExec" class="java.sql.Timestamp"/>
+	<parameter name="executors" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Work_projects\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="docGroup" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
+	<parameter name="responsibleExecutor" class="java.lang.Boolean"/>
+	<parameter name="ext_int" class="java.lang.String"/>
+	<parameter name="endDateReg" class="java.sql.Timestamp"/>
+	<parameter name="startDateReg" class="java.sql.Timestamp"/>
+	<parameter name="current_date" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(new Date().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="control" class="java.lang.String"/>
+	<parameter name="control_type" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- таблица ссылок на непосредственый вышестоящий департамент
+-- id - департамент, pid - непосредлственно вышестоящий департамент
+with dep_parent (id, pid) as (
+	select cr.card_id as id, av_parent.number_value as pid
+	from card cr
+	left join attribute_value av_parent on av_parent.card_id = cr.card_id and av_parent.attribute_code = 'JBR_DEPT_PARENT_LINK'
+	where cr.template_id = 484
+),
+-- таблица ссылок на все вышестоящие департаменты + на саму себя
+dep_all_parent (id, pid) as (
+	with recursive dep_all_parent_rec (b_id, id, pid) as (
+		select id, id, pid
+		from dep_parent
+		union
+		select dap.b_id, dp.id, dp.pid
+		from dep_all_parent_rec dap, dep_parent dp
+		where dap.pid = dp.id
+	)
+	select b_id, id
+	from dep_all_parent_rec
+)
+select distinct
+	resol.department as department,
+	resol.department_id as department_id
+
+From (
+	SELECT distinct
+
+	c.card_id as res_id,
+	avMain.number_value as main_doc,
+	department.string_value as department,
+	department.card_id as department_id
+
+	From card c
+    -- ДО
+    INNER JOIN attribute_value avMain ON avMain.card_id = c.card_id and avMain.attribute_code = 'JBR_MAINDOC'
+	-- Срок исполения
+	LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+	-- Исполнитель
+	JOIN attribute_value executor on c.card_id = executor.card_id and executor.attribute_code = 'JBR_INFD_EXEC_LINK'
+		LEFT JOIN person executors_val on executor.number_value = executors_val.person_id
+			LEFT JOIN attribute_value executor_dep on executor_dep.card_id = executors_val.card_id and executor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+				LEFT JOIN attribute_value department on department.card_id = executor_dep.number_value and department.attribute_code = 'JBR_DEPT_FULLNAME'
+	-- родительские департаменты для департамента исполнителя + департамент испольнителя
+	inner join dep_all_parent dap on dap.id = department.card_id
+	WHERE
+		$P{ext_int}='kitInt' and
+		c.template_id=324 and
+		c.status_id in (103, 206) and
+		date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+		date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+		($P{department} is null or dap.pid in ($P!{department})) and
+		(executors_val.card_id in ($P!{executors}) or $P{executors} is null)
+
+	UNION
+
+	SELECT distinct
+
+	c.card_id as res_id,
+	avMain.number_value as main_doc,
+	codepartment.string_value as department,
+	codepartment.card_id as department_id
+
+	From card c
+    -- ДО
+    INNER JOIN attribute_value avMain ON avMain.card_id = c.card_id and avMain.attribute_code = 'JBR_MAINDOC'
+	-- Срок исполения
+	LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+	-- Соисполнитель
+	JOIN attribute_value coexecutor on c.card_id = coexecutor.card_id and coexecutor.attribute_code in ('ADMIN_255974')
+		LEFT JOIN person coexecutors_val on coexecutor.number_value = coexecutors_val.person_id
+			LEFT JOIN attribute_value coexecutor_dep on coexecutor_dep.card_id = coexecutors_val.card_id and coexecutor_dep.attribute_code = 'JBR_PERS_DEPT_LINK'
+				LEFT JOIN attribute_value codepartment on codepartment.card_id = coexecutor_dep.number_value and codepartment.attribute_code = 'JBR_DEPT_FULLNAME'
+	-- родительские департаменты для департамента соисполнителя + департамент соиспольнителя
+	inner join dep_all_parent dap on dap.id = codepartment.card_id
+	WHERE
+		$P{ext_int}='kitInt' and
+		($P{responsibleExecutor} is null or $P{responsibleExecutor} <> true) and
+		c.template_id=324 and
+		c.status_id in (103, 206) and
+		date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+		date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+		($P{department} is null or dap.pid in ($P!{department})) and
+		(coexecutors_val.card_id in ($P!{executors}) or $P{executors} is null)
+
+	UNION
+
+	SELECT distinct
+
+	c.card_id as res_id,
+	avMain.number_value as main_doc,
+	'ext' as department,
+	0 as department_id
+
+	From card c
+    -- ДО
+    INNER JOIN attribute_value avMain ON avMain.card_id = c.card_id and avMain.attribute_code = 'JBR_MAINDOC'
+	-- Срок исполения
+	LEFT JOIN attribute_value av_exec_date on (av_exec_date.card_id = c.card_id and av_exec_date.attribute_code = 'JBR_TCON_TERM')
+	--исполнители внешние
+	LEFT JOIN attribute_value av_ext_exec on c.card_id = av_ext_exec.card_id and av_ext_exec.attribute_code = 'JBR_INFD_EXEC_EXT'
+
+	WHERE
+	$P{ext_int}='kitExt' and
+	c.template_id=324 and
+	c.status_id in (103, 206) and
+	date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateExec} and
+	date_trunc('day', av_exec_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateExec} and
+	(av_ext_exec.number_value in ($P!{executors}) or $P{executors} is null)
+
+) as resol
+
+join card doc on doc.card_id = resol.main_doc
+join attribute_value doc_reg_date on (doc_reg_date.card_id = doc.card_id and doc_reg_date.attribute_code = 'JBR_REGD_DATEREG')
+left join attribute_value doc_on_cont on (doc_on_cont.card_id = doc.card_id and doc_on_cont.attribute_code = 'JBR_IMPL_ONCONT')
+left join attribute_value doc_type_cont on (doc_type_cont.card_id = doc.card_id and doc_type_cont.attribute_code = 'JBR_IMPL_TYPECONT')
+
+Where
+(doc.template_id in ($P!{docGroup}) or $P{docGroup} is null) and
+date_trunc('day', doc_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDateReg} and
+date_trunc('day', doc_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDateReg} and
+resol.department is not null and
+(
+	(
+		$P{control} = 'kitControl'
+		and
+		doc_on_cont.value_id = 1432
+		and
+		(doc_type_cont.value_id in ($P!{control_type}) or $P{control_type} is null)
+	)
+	or
+	(
+		$P{control} = 'off'
+		and
+		(doc_on_cont.value_id = 1433 or doc_on_cont.value_id is null)
+	)
+)]]>
+	</queryString>
+	<field name="department" class="java.lang.String"/>
+	<field name="department_id" class="java.lang.Integer"/>
+	<group name="dep" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{department}]]></groupExpression>
+		<groupHeader>
+			<band height="102">
+				<printWhenExpression><![CDATA[($F{department} != null)]]></printWhenExpression>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="62" width="562" height="20"/>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control">
+						<subreportParameterExpression><![CDATA[$P{control}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SvodkaExecutionDocuments_subParametri.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="92" width="562" height="0"/>
+					<subreportParameter name="ext_int">
+						<subreportParameterExpression><![CDATA[$P{ext_int}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control">
+						<subreportParameterExpression><![CDATA[$P{control}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control_type">
+						<subreportParameterExpression><![CDATA[$P{control_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="department">
+						<subreportParameterExpression><![CDATA[$P{department}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="department_id">
+						<subreportParameterExpression><![CDATA[$F{department_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="responsibleExecutor">
+						<subreportParameterExpression><![CDATA[$P{responsibleExecutor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateReg">
+						<subreportParameterExpression><![CDATA[$P{startDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateReg">
+						<subreportParameterExpression><![CDATA[$P{endDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateExec">
+						<subreportParameterExpression><![CDATA[$P{startDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="executors">
+						<subreportParameterExpression><![CDATA[$P{executors}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="current_date">
+						<subreportParameterExpression><![CDATA[$P{current_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateExec">
+						<subreportParameterExpression><![CDATA[$P{endDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SvodkaExecutionDocuments_sub3.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="32" width="562" height="20">
+						<printWhenExpression><![CDATA[new String($P{ext_int}).equals("kitInt")]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="control">
+						<subreportParameterExpression><![CDATA[$P{control}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control_type">
+						<subreportParameterExpression><![CDATA[$P{control_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="department_id">
+						<subreportParameterExpression><![CDATA[$F{department_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="responsibleExecutor">
+						<subreportParameterExpression><![CDATA[$P{responsibleExecutor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateReg">
+						<subreportParameterExpression><![CDATA[$P{startDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateReg">
+						<subreportParameterExpression><![CDATA[$P{endDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateExec">
+						<subreportParameterExpression><![CDATA[$P{startDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="executors">
+						<subreportParameterExpression><![CDATA[$P{executors}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="current_date">
+						<subreportParameterExpression><![CDATA[$P{current_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateExec">
+						<subreportParameterExpression><![CDATA[$P{endDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SvodkaExecutionDocuments_sub.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement positionType="Float" x="0" y="32" width="562" height="20">
+						<printWhenExpression><![CDATA[new String($P{ext_int}).equals("kitExt")]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="control">
+						<subreportParameterExpression><![CDATA[$P{control}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control_type">
+						<subreportParameterExpression><![CDATA[$P{control_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateReg">
+						<subreportParameterExpression><![CDATA[$P{startDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateReg">
+						<subreportParameterExpression><![CDATA[$P{endDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateExec">
+						<subreportParameterExpression><![CDATA[$P{startDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="executors">
+						<subreportParameterExpression><![CDATA[$P{executors}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="current_date">
+						<subreportParameterExpression><![CDATA[$P{current_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateExec">
+						<subreportParameterExpression><![CDATA[$P{endDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SvodkaExecutionDocuments_sub2.jasper"]]></subreportExpression>
+				</subreport>
+				<frame>
+					<reportElement positionType="Float" x="0" y="0" width="565" height="18"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="334" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+						<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+							<topPen lineWidth="0.0" lineStyle="Solid"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+							<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[($F{department}.equals("ext") ? "" : $F{department})]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="351" y="0" width="214" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+						<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+							<topPen lineWidth="0.0" lineStyle="Solid"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+							<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy kk:mm")).format(new Date())]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="562" height="0"/>
+					<subreportParameter name="ext_int">
+						<subreportParameterExpression><![CDATA[$P{ext_int}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control">
+						<subreportParameterExpression><![CDATA[$P{control}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="control_type">
+						<subreportParameterExpression><![CDATA[$P{control_type}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="department">
+						<subreportParameterExpression><![CDATA[$P{department}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="department_id">
+						<subreportParameterExpression><![CDATA[$F{department_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="responsibleExecutor">
+						<subreportParameterExpression><![CDATA[$P{responsibleExecutor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[$P{docGroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateReg">
+						<subreportParameterExpression><![CDATA[$P{startDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateReg">
+						<subreportParameterExpression><![CDATA[$P{endDateReg}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="startDateExec">
+						<subreportParameterExpression><![CDATA[$P{startDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="executors">
+						<subreportParameterExpression><![CDATA[$P{executors}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="current_date">
+						<subreportParameterExpression><![CDATA[$P{current_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="endDateExec">
+						<subreportParameterExpression><![CDATA[$P{endDateExec}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"SvodkaExecutionDocuments_sub4.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="565" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Сводка об исполнении документов"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="565" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["срок исполнения с "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{startDateExec})+" по "+(new SimpleDateFormat("dd.MM.yyyy")).format($P{endDateExec})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+</jasperReport>

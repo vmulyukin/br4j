@@ -1,0 +1,109 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@ page import="java.util.ResourceBundle"%>
+<%@page import="com.aplana.dbmi.Portal"%>
+<%@page import="java.util.List"%>
+<%@page import="com.aplana.dbmi.action.GetDelegateListByLogin"%>
+<%@page import="com.aplana.dbmi.service.SystemUser"%>
+<%@page import="com.aplana.dbmi.service.DataServiceBean"%>
+<%@page import="com.aplana.dbmi.ConfigHolder" %>
+
+<% ResourceBundle bannerRb = ResourceBundle.getBundle("nls.dbmi", request.getLocale()); %>
+<script language="javascript">
+	function changeUser(userName) {
+		document.location.href="/portal/auth/portal/dbmi/PersonalArea/arm?userName=" + userName;
+	}
+</script> 
+<div id="sitenav">
+	<div id="caption"><%=bannerRb.getString("site.caption")%></div>
+	<% if (request.getUserPrincipal() != null) {
+	    DataServiceBean service = new DataServiceBean();
+    	service.setUser(new SystemUser());
+    	service.setAddress("localhost");
+    	GetDelegateListByLogin action = new GetDelegateListByLogin();
+    	action.setLogin(request.getUserPrincipal().getName());
+    	List<String> list = (List<String>) service.doAction(action);
+    	String uname = request.getParameter(DataServiceBean.USER_NAME);
+    	String userName = request.getUserPrincipal().getName();
+		if (uname != null) {
+		    if (list.contains(uname)) {
+            	request.getSession().setAttribute(DataServiceBean.USER_NAME, uname);
+	        } else if (userName.equals(uname)) {
+	            request.getSession().removeAttribute(DataServiceBean.USER_NAME);
+	        }
+		}
+		if (request.getParameter("logged") != null) {
+            request.getSession().removeAttribute(DataServiceBean.USER_NAME);
+        }
+    	String delegateUser = (String) request.getSession().getAttribute(DataServiceBean.USER_NAME);
+    	if (delegateUser == null) {
+    	    delegateUser = userName;
+    	}
+	%>
+		<table class="logout">
+			<tr><td>
+				<a href="/portal/signout"><%=bannerRb.getString("link.logout")%></a>
+			</td></tr>
+			<tr class="empty"><td>
+			</td></tr>
+		</table>
+		<div id="user">
+			<select onchange="changeUser(this.value);" style="float:right">
+				<option value="<%=userName%>"><%=Portal.getFactory().getUserService().getByLogin(userName).getFullName() %></option>
+				<% for(String name : list) {
+				    if (delegateUser.equals(name)) { %>
+				        <option value="<%=name%>" selected="selected"><%=Portal.getFactory().getUserService().getByLogin(name).getFullName() %></option>
+				    <% } else { %>
+				        <option value="<%=name%>"><%=Portal.getFactory().getUserService().getByLogin(name).getFullName() %></option>
+				    <%}
+				  }%>
+			</select>
+			<div style="float:right"><%=Portal.getFactory().getUserService().getByLogin(userName).getFullName()%>&nbsp;
+				<%if (!delegateUser.equals(userName)) { %>
+    	    		<%=bannerRb.getString("for.the.user")%>&nbsp;
+    			<%}
+			%></div>
+		</div>
+
+        <a href="/portal/auth/portal/dbmi/test/infomaterials" style="float:right">
+            <div id="applications">
+                <%=ConfigHolder.getPageLabel("hotline.title", "hotline.phone")%>
+            </div>
+        </a>
+		<script language="javascript">
+			Opentip.styles.supportStyle = {
+				target: true,
+				tipJoint:"bottom",
+				delay: 0.5,
+				hideDelay: 0.2,
+				tipJoint: "bottom",
+				hideOn: ["mouseout"],
+				hideTriggers: ["tip", "trigger"],
+				className: "support",
+				background: [ [ 0, "#448DCD" ], [ 1, "#3262AC" ] ],
+				borderColor: "darkblue",
+				shadowOffset: [ 5, 5 ],
+				shadowColor: "rgba(0,0,0,0.8)",
+				borderColor: "#52B0E7",
+				borderWidth: 1
+			};
+			supportTip = new Opentip(jQuery('#applications'), '<%=ConfigHolder.getPageLabel("hotline.tooltip")%>', { style: 'supportStyle' });
+		</script> 
+	<% } %>
+</div>

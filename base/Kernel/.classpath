@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="ejbModule"/>
+	<classpathentry kind="src" output="build/conf" path="conf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Model"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_37">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/SharedLib/spring.jar" sourcepath="D:/Java/Spring/spring-framework-2.0.8/dist/spring-src.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.2"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Platform"/>
+	<classpathentry kind="lib" path="/SharedLib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/xalan.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/cloning-1.8.5.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

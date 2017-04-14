@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="printExecutionResolution" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="772" leftMargin="42" rightMargin="28" topMargin="28" bottomMargin="28">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\Link\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	av_ddoc.date_value + interval '$P!{tz_hour} hour' as ddoc,
+	av_nout.string_value as ndoc,
+	av_deadline_date.date_value + interval '$P!{tz_hour} hour' as deaddoc,
+	case when c_prnt.template_id = 1255
+		then
+			case when level.level is null
+				then 1
+				else level.level + 1
+			end
+		else level.level
+	end as maxlevel
+
+from
+	card c_prnt
+left outer join -- Дата регистрации документа
+	attribute_value av_ddoc on (av_ddoc.card_id = c_prnt.card_id and av_ddoc.attribute_code = 'JBR_REGD_DATEREG')
+left outer join -- Номер регистрации документа
+attribute_value av_nout on (av_nout.card_id = c_prnt.card_id and av_nout.attribute_code = 'JBR_REGD_REGNUM')
+left outer join -- Дата контроля документа
+attribute_value av_deadline_date on (av_deadline_date.card_id = c_prnt.card_id and av_deadline_date.attribute_code = 'JBR_IMPL_DEADLINE')
+
+cross join
+(WITH RECURSIVE t(level, card_id, res_id) as (
+select
+0,
+attribute_value.number_value,
+	attribute_value.card_id
+from
+	attribute_value
+where
+attribute_value.attribute_code in ('JBR_DOCB_BYDOC','JBR_DOCB_BYDOC')
+and attribute_value.number_value = $P{card_id}
+
+UNION ALL
+
+select
+t.level+1,
+av.card_id,
+	av.number_value::numeric(9,0) as res_id
+from
+	attribute_value av
+	join t on av.attribute_code in ('JBR_DOCB_BYDOC','JBR_RIMP_PARASSIG') and t.card_id=av.number_value)
+
+select
+max(level) as level from t) as level
+
+where
+	c_prnt.card_id =  $P{card_id}]]>
+	</queryString>
+	<field name="ddoc" class="java.util.Date"/>
+	<field name="ndoc" class="java.lang.String"/>
+	<field name="deaddoc" class="java.util.Date"/>
+	<field name="maxlevel" class="java.lang.Integer"/>
+	<title>
+		<band height="33">
+			<textField>
+				<reportElement style="text" x="0" y="0" width="772" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ход исполнения по документу"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement style="text" x="0" y="15" width="772" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ndoc} != null ? ($F{ndoc}) : "") +" "+
+($F{ddoc} != null ? "от "+(new SimpleDateFormat("dd.MM.yyyy")).format($F{ddoc}) : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="772" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<subreport isUsingCache="true" runToBottom="false">
+					<reportElement positionType="Float" x="0" y="0" width="450" height="10" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="maxlevel">
+						<subreportParameterExpression><![CDATA[$F{maxlevel}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="level">
+						<subreportParameterExpression><![CDATA[new Integer(1)]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="deadline_doc">
+						<subreportParameterExpression><![CDATA[$F{deaddoc}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"executionResolution_subreport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kvart_report_OG_mainSub" pageWidth="802" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" hAlign="Center" fontName="Times New Roman" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="dept" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\BR4J_SOURCE\\FSIN\\branches\\01.4.006.12.000\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="quest" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="res_rassm" class="java.lang.String">
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with recursive
+search_up(cycle_id, cycle_number, cycle_base) AS (
+    select cast(c.card_id::bigint as numeric),1, c.card_id from card c
+    where c.status_id in (4,7) and c.template_id = 484
+    UNION ALL
+    SELECT v.number_value, su.cycle_number+1, su.cycle_base
+    FROM attribute_value v, search_up su
+    WHERE v.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    AND v.card_id = su.cycle_id
+    and exists (select 1 from attribute_value
+		where attribute_code = 'JBR_DEPT_PARENT_LINK'
+		and card_id = v.number_value)),
+departments as (select (max(ARRAY[cycle_number, cycle_id, cycle_base]))[3] as curDep,
+			(max(ARRAY[cycle_number, cycle_id, cycle_base]))[2] as depLvl2
+		from search_up
+		group by cycle_base),
+og_cards as (
+select c_og.card_id
+	from card c_og
+	join attribute_value reg_date on reg_date.card_id = c_og.card_id
+		and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+
+	where c_og.template_id = 864 and c_og.status_id in (101,102,103,206,48909)
+	        and (date_trunc('day',reg_date.date_value + interval '5 hour') >= $P{startDate})
+                and (date_trunc('day',reg_date.date_value + interval '5 hour') <= $P{endDate})
+)
+, og_card_depts as(
+	select c_og.card_id, d.depLvl2
+	from og_cards c_og
+	join attribute_value av_rassm_d on c_og.card_id = av_rassm_d.card_id and av_rassm_d.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card c_r_d on c_r_d.card_id = av_rassm_d.number_value and c_r_d.status_id != 34145
+	join attribute_value av_rassm_p_d on av_rassm_p_d.card_id = c_r_d.card_id and av_rassm_p_d.attribute_code = 'JBR_RASSM_PERSON'
+	join person p_rassm on  av_rassm_p_d.number_value = p_rassm.person_id
+	join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+	join departments d on d.curDep =  av_dept.number_value
+	union
+	select c_og.card_id, d.depLvl2
+	from og_cards c_og
+	join attribute_value av_all_res on av_all_res.number_value = c_og.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+	join attribute_value av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+	join person p_rassm on  av_res_exec.number_value = p_rassm.person_id
+	join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+	join departments d on d.curDep =  av_dept.number_value
+),
+og_cards_archive as (
+select c_og.card_id
+	from card c_og
+	join attribute_value reg_date on reg_date.card_id = c_og.card_id
+		and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+
+	where c_og.template_id = 864 and c_og.status_id in (104)
+	        and (date_trunc('day',reg_date.date_value + interval '5 hour') >= $P{startDate})
+                and (date_trunc('day',reg_date.date_value + interval '5 hour') <= $P{endDate})
+), og_card_depts_archive as(
+	select c_og.card_id, d.depLvl2
+	from og_cards_archive c_og
+	join attribute_value_archive av_rassm_d on c_og.card_id = av_rassm_d.card_id and av_rassm_d.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card_archive c_r_d on c_r_d.card_id = av_rassm_d.number_value and c_r_d.status_id != 34145
+	join attribute_value_archive av_rassm_p_d on av_rassm_p_d.card_id = c_r_d.card_id and av_rassm_p_d.attribute_code = 'JBR_RASSM_PERSON'
+	join person p_rassm on  av_rassm_p_d.number_value = p_rassm.person_id
+	join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+	join departments d on d.curDep =  av_dept.number_value
+	union
+	select c_og.card_id, d.depLvl2
+	from og_cards_archive c_og
+	join attribute_value_archive av_all_res on av_all_res.number_value = c_og.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card_archive c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id not in(1,34145,303990)
+	join attribute_value_archive av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+	join person p_rassm on  av_res_exec.number_value = p_rassm.person_id
+	join attribute_value av_dept on av_dept.card_id = p_rassm.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+	join departments d on d.curDep =  av_dept.number_value
+),
+res_couple as (
+	select c_og.card_id as og, card_raasm.card_id as rassm, c_res1.card_id as level_res
+	from og_cards c_og
+	left join attribute_value av_rassm on c_og.card_id = av_rassm.card_id
+		and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card card_raasm on card_raasm.card_id = av_rassm.number_value and card_raasm.status_id != 34145
+	join attribute_value av_rmain on av_rmain.card_id = card_raasm.card_id
+		and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER' and av_rmain.value_id = 1449
+	join attribute_value av_rassm_p on av_rassm_p.card_id = card_raasm.card_id
+		and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+
+	join attribute_value av_res1 on av_res1.number_value = c_og.card_id
+		and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join card c_res1 on av_res1.card_id = c_res1.card_id and c_res1.status_id in (103,206)
+
+	join attribute_value av_res_signer on av_res1.card_id = av_res_signer.card_id
+		and av_res_signer.attribute_code = 'JBR_INFD_SGNEX_LINK' and av_res_signer.number_value = av_rassm_p.number_value
+
+	UNION
+
+	select t.og, t.rassm, c_link_res.card_id
+	from res_couple t
+	join attribute_value av_link_res on t.level_res = av_link_res.number_value and av_link_res.attribute_code = 'JBR_RIMP_PARASSIG'
+	join card c_link_res on av_link_res.card_id = c_link_res.card_id and c_link_res.status_id in (103,206)
+), res_couple_archive as (
+	select c_og.card_id as og, card_raasm.card_id as rassm, c_res1.card_id as level_res
+	from og_cards_archive c_og
+	left join attribute_value_archive av_rassm on c_og.card_id = av_rassm.card_id
+		and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join card_archive card_raasm on card_raasm.card_id = av_rassm.number_value and card_raasm.status_id != 34145
+	join attribute_value_archive av_rmain on av_rmain.card_id = card_raasm.card_id
+		and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER' and av_rmain.value_id = 1449
+	join attribute_value_archive av_rassm_p on av_rassm_p.card_id = card_raasm.card_id
+		and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+
+	join attribute_value_archive av_res1 on av_res1.number_value = c_og.card_id
+		and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join card_archive c_res1 on av_res1.card_id = c_res1.card_id and c_res1.status_id in (103,206)
+
+	join attribute_value_archive av_res_signer on av_res1.card_id = av_res_signer.card_id
+		and av_res_signer.attribute_code = 'JBR_INFD_SGNEX_LINK' and av_res_signer.number_value = av_rassm_p.number_value
+
+	UNION
+
+	select t.og, t.rassm, c_link_res.card_id
+	from res_couple_archive t
+	join attribute_value_archive av_link_res on t.level_res = av_link_res.number_value and av_link_res.attribute_code = 'JBR_RIMP_PARASSIG'
+	join card_archive c_link_res on av_link_res.card_id = c_link_res.card_id and c_link_res.status_id in (103,206)
+),
+doc_couple as (
+	select cpl.og, cpl.rassm, (max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat
+	from res_couple cpl
+	join attribute_value av_relat on av_relat.number_value = cpl.og and av_relat.attribute_code = 'JBR_DOCL_RELATDOC' and av_relat.value_id = 1502
+	join card c_relat on av_relat.card_id = c_relat.card_id and c_relat.status_id in (101,104) and c_relat.template_id = 364
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	join attribute_value av_res_exec on cpl.level_res = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+		and av_res_exec.number_value = av_exec.number_value
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+
+
+	left join attribute_value av_test on cpl.level_res = av_test.number_value and av_test.attribute_code = 'JBR_RIMP_PARASSIG'
+	left join card c_test on av_test.card_id = c_test.card_id and c_test.status_id in (103,206)
+	where c_test.card_id is null
+	group by
+	cpl.og, cpl.rassm
+), doc_couple_archive as (
+	select cpl.og, cpl.rassm, (max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat
+	from res_couple_archive cpl
+	join attribute_value av_relat on av_relat.number_value = cpl.og and av_relat.attribute_code = 'JBR_DOCL_RELATDOC' and av_relat.value_id = 1502
+	join card c_relat on av_relat.card_id = c_relat.card_id and c_relat.status_id in (101,104) and c_relat.template_id = 364
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	join attribute_value_archive av_res_exec on cpl.level_res = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974')
+		and av_res_exec.number_value = av_exec.number_value
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	left join attribute_value_archive av_test on cpl.level_res = av_test.number_value and av_test.attribute_code = 'JBR_RIMP_PARASSIG'
+	left join card_archive c_test on av_test.card_id = c_test.card_id and c_test.status_id in (103,206)
+	where c_test.card_id is null
+	group by
+	cpl.og, cpl.rassm
+)
+select reg_date.date_value + interval '5 hour' as reg_date,
+		coalesce(reg_num.string_value,'') as reg_num,
+		reg_num_d.number_value as reg_num_d,
+		coalesce(descr.string_value,'') as descr,
+		coalesce(string_agg(distinct quest_nm.string_value, E'\n'),'') as quest,
+		string_agg(distinct coalesce(av_stype.another_value, vl_stype.value_rus),';') as stype,
+		on_control_val.value_rus as cont,
+		coalesce(dept_name.string_value,' Без подразделения') as dept_name,
+		vl_appcat.value_rus as appcat,
+		coalesce(string_agg(distinct vl_res_rassm_reslut.value_rus, ';'),'') as res_rassm
+ from og_cards c
+	join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value reg_num on reg_num.card_id = c.card_id and reg_num.attribute_code = 'JBR_REGD_REGNUM'
+	join attribute_value reg_num_d on reg_num_d.card_id = c.card_id and reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D'
+	left join attribute_value descr on descr.card_id = c.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+	left join attribute_value quest on quest.card_id = c.card_id and quest.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	left join attribute_value quest_nm on quest_nm.card_id = quest.number_value and quest_nm.attribute_code = 'NAME'
+	left join attribute_value on_control on on_control.card_id = c.card_id and on_control.attribute_code = 'JBR_IMPL_ONCONT'
+	left join values_list on_control_val on on_control_val.value_id = on_control.value_id
+
+	left join doc_couple dc on c.card_id= dc.og
+	left join attribute_value av_res_rassm on av_res_rassm.card_id = dc.relat and av_res_rassm.attribute_code = 'ADMIN_283926'
+	left join attribute_value av_res_rassm_reslut on av_res_rassm_reslut.card_id = av_res_rassm.number_value and av_res_rassm_reslut.attribute_code in ('JBR_DECISION_RES','JBR_REDIRECTION')
+	left join values_list vl_res_rassm_reslut ON av_res_rassm_reslut.value_id = vl_res_rassm_reslut.value_id
+	left join og_card_depts depts on depts.card_id = c.card_id
+	left join attribute_value dept_name on depts.depLvl2 = dept_name.card_id and dept_name.attribute_code = 'NAME'
+	left join attribute_value av_appcat on c.card_id = av_appcat.card_id and av_appcat.attribute_code = 'JBR_COMPLAINT_REASON'
+	left join values_list vl_appcat on vl_appcat.value_id = av_appcat.value_id
+	left join attribute_value av_stype on c.card_id = av_stype.card_id and av_stype.attribute_code = 'ADMIN_281718'
+	left join values_list vl_stype on vl_stype.value_id = av_stype.value_id
+where ($P{dept} is null or (depts.depLvl2 in ($P!{dept})))
+group by reg_date, reg_num, reg_num_d, descr, cont, dept_name, appcat
+having ($P{res_rassm} = '-1' or exists(select 1 from regexp_split_to_table(string_agg(distinct vl_res_rassm_reslut.value_id::text, ','),',') a
+				join regexp_split_to_table ($P{res_rassm}, ',') b on a.text = b.text))
+	and
+	($P{quest} is null or exists(select 1 from regexp_split_to_table(string_agg(distinct quest_nm.card_id::text, ','),',') a
+				join regexp_split_to_table ($P{quest}, ',') b on a.text = b.text))
+
+UNION
+
+select reg_date.date_value + interval '5 hour' as reg_date,
+		coalesce(reg_num.string_value,'') as reg_num,
+		reg_num_d.number_value as reg_num_d,
+		coalesce(descr.string_value,'') as descr,
+		coalesce(string_agg(distinct quest_nm.string_value, E'\n'),'') as quest,
+		string_agg(distinct coalesce(av_stype.another_value, vl_stype.value_rus),';') as stype,
+		on_control_val.value_rus as cont,
+		coalesce(dept_name.string_value,' Без подразделения') as dept_name,
+		vl_appcat.value_rus as appcat,
+		coalesce(string_agg(distinct vl_res_rassm_reslut.value_rus, ';'),'') as res_rassm
+ from og_cards_archive c
+	join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+	join attribute_value reg_num on reg_num.card_id = c.card_id and reg_num.attribute_code = 'JBR_REGD_REGNUM'
+	join attribute_value reg_num_d on reg_num_d.card_id = c.card_id and reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D'
+	left join attribute_value descr on descr.card_id = c.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+	left join attribute_value quest on quest.card_id = c.card_id and quest.attribute_code = 'JBR_QUEST_THEMATIC_C'
+	left join attribute_value quest_nm on quest_nm.card_id = quest.number_value and quest_nm.attribute_code = 'NAME'
+	left join attribute_value on_control on on_control.card_id = c.card_id and on_control.attribute_code = 'JBR_IMPL_ONCONT'
+	left join values_list on_control_val on on_control_val.value_id = on_control.value_id
+
+	left join doc_couple_archive dc on c.card_id= dc.og
+	left join attribute_value av_res_rassm on av_res_rassm.card_id = dc.relat and av_res_rassm.attribute_code = 'ADMIN_283926'
+	left join attribute_value av_res_rassm_reslut on av_res_rassm_reslut.card_id = av_res_rassm.number_value and av_res_rassm_reslut.attribute_code in ('JBR_DECISION_RES','JBR_REDIRECTION')
+	left join values_list vl_res_rassm_reslut ON av_res_rassm_reslut.value_id = vl_res_rassm_reslut.value_id
+	left join og_card_depts_archive depts on depts.card_id = c.card_id
+	left join attribute_value dept_name on depts.depLvl2 = dept_name.card_id and dept_name.attribute_code = 'NAME'
+	left join attribute_value av_appcat on c.card_id = av_appcat.card_id and av_appcat.attribute_code = 'JBR_COMPLAINT_REASON'
+	left join values_list vl_appcat on vl_appcat.value_id = av_appcat.value_id
+	left join attribute_value av_stype on c.card_id = av_stype.card_id and av_stype.attribute_code = 'ADMIN_281718'
+	left join values_list vl_stype on vl_stype.value_id = av_stype.value_id
+where ($P{dept} is null or (depts.depLvl2 in ($P!{dept})))
+group by reg_date, reg_num, reg_num_d, descr, cont, dept_name, appcat
+having ($P{res_rassm} = '-1' or exists(select 1 from regexp_split_to_table(string_agg(distinct vl_res_rassm_reslut.value_id::text, ','),',') a
+				join regexp_split_to_table ($P{res_rassm}, ',') b on a.text = b.text))
+	and
+	($P{quest} is null or exists(select 1 from regexp_split_to_table(string_agg(distinct quest_nm.card_id::text, ','),',') a
+				join regexp_split_to_table ($P{quest}, ',') b on a.text = b.text))
+order by dept_name, reg_num_d]]>
+	</queryString>
+	<field name="reg_date" class="java.sql.Timestamp"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="descr" class="java.lang.String"/>
+	<field name="quest" class="java.lang.String"/>
+	<field name="res_rassm" class="java.lang.String"/>
+	<field name="stype" class="java.lang.String"/>
+	<field name="cont" class="java.lang.String"/>
+	<field name="appcat" class="java.lang.String"/>
+	<field name="dept_name" class="java.lang.String"/>
+	<group name="dept" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="85">
+		<groupExpression><![CDATA[$F{dept_name}]]></groupExpression>
+		<groupHeader>
+			<band height="55">
+				<staticText>
+					<reportElement style="def" positionType="Float" x="520" y="15" width="57" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Признак контроля]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="669" y="15" width="133" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Результат рассмотрения]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="0" y="15" width="70" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Дата регистрации]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="70" y="15" width="100" height="40"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Регистрационный  номер]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="577" y="15" width="92" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Категория заявителя]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="305" y="15" width="135" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Содержание]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="440" y="15" width="80" height="40"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Откуда поступило]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="def" positionType="Float" x="170" y="15" width="135" height="40"/>
+					<box topPadding="2">
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Вопрос]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="802" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dept_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15"/>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="669" y="0" width="133" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{res_rassm}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="170" y="0" width="135" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quest}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="135" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descr}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="100" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_num}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{reg_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="440" y="0" width="80" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stype}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="520" y="0" width="57" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cont}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="92" height="20"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{appcat}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

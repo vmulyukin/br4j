@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- 
+				ИНФОРМАЦИЯ
+О неисполненных контрольных входящих документах по Компании
+		По состоянию на 00.00.0000
+	  ( Дата контроля до: 00.00.0000)
+_____________________________________________________________________________
+|Документ |Корреспондент |Содержание |Наименование |Плановая  |Комментарий  |
+|         |/ Автор       |           |поручений    |дата дата |к исполнению |
+|_________|______________|___________|_____________|__________|_____________|
+ -->
+<universal-portlet>
+     <query>
+         <sql>
+         	<![CDATA[
+select av_name.string_value as document,
+       av_corfm.string_value as lname,
+       av_corNm.string_value as fname,
+       av_corPn.string_value as patr,
+       av_desc.string_value as content,
+       av_item.string_value as item,
+       av_term.date_value as term,
+       av_com.string_value as com,
+       av_ndept.string_value as dept
+from Attribute_Value av_cont, Attribute_Value av_dln, Card cr
+ left outer join
+      Attribute_Value av_name on (av_name.attribute_code = 'NAME' and av_name.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_sndr on (av_sndr.attribute_code = 'JBR_INFD_SENDER' and av_sndr.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_corfm on (av_corfm.attribute_code = 'JBR_PERS_SNAME' and av_corfm.card_id = av_sndr.number_value)
+ left outer join
+      Attribute_Value av_corNm on (av_corNm.attribute_code = 'JBR_PERS_NAME' and av_corNm.card_id = av_sndr.number_value)
+ left outer join
+      Attribute_Value av_corPn on (av_corPn.attribute_code = 'JBR_PERS_MNAME' and av_corPn.card_id = av_sndr.number_value)   
+ left outer join
+      Attribute_Value av_desc on (av_desc.attribute_code = 'JBR_INFD_SHORTDESC' and av_desc.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_inst on (av_inst.attribute_code = 'JBR_IMPL_RESOLUT' and av_inst.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_item on (av_item.attribute_code = 'JBR_INFD_ITEM' and av_item.card_id = av_inst.number_value)
+ left outer join
+      Attribute_Value av_term on (av_term.attribute_code = 'JBR_TCON_TERM' and av_term.card_id = av_inst.number_value)
+ left outer join
+      Attribute_Value av_com on (av_com.attribute_code = 'JBR_RIMP_COMMENT' and av_com.card_id = av_inst.number_value)
+-- Подразделение получателя      
+ left outer join
+      Attribute_Value av_dvsn on (av_dvsn.attribute_code = 'JBR_INFD_RECEIVER' and av_dvsn.card_id = cr.card_id)
+ left outer join
+      Person prsn on (prsn.person_id = av_dvsn.number_value)
+ left outer join
+      Card cr_rcvr on (cr_rcvr.card_id = prsn.card_id)
+ left outer join
+      Attribute_Value av_dept on (av_dept.attribute_code = 'JBR_PERS_DEPT_LINK' and av_dept.card_id = cr_rcvr.card_id)
+ left outer join
+      Card cr_dept on (cr_dept.card_id = av_dept.number_value)
+ left outer join
+      Attribute_Value av_ndept on (av_ndept.attribute_code = 'JBR_DEPT_SHORTNAME' and av_ndept.card_id = cr_dept.card_id)     
+where cr.template_id = 224 and
+      cr.status_id != 1 and
+      (av_cont.attribute_code = 'JBR_IMPL_ONCONT' and cr.card_id = av_cont.card_id and av_cont.value_id = 1432) and
+      (coalesce(TO_DATE(:date, 'YYYY-MM-DD'), localtimestamp)+interval '1 day') between
+          (case when cr.status_id = 104
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id and status_id = 101)
+                when cr.status_id = 103
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id) end)
+          and
+          (case when cr.status_id = 104
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id and status_id = 103)
+                when cr.status_id = 103
+                then (localtimestamp+interval '1 day') end)
+      and
+      (av_dln.attribute_code = 'JBR_IMPL_DEADLINE' and cr.card_id = av_dln.card_id and 
+          av_dln.date_value <= coalesce(TO_DATE(:date_control, 'YYYY-MM-DD'), to_date('31-12-9999', 'DD-MM-YYYY')))    			
+			]]>
+         </sql>
+         <parameters>
+             <param name="date" dispaly-name="Date" type="calendar" />
+             <param name="date_control" dispaly-name="Control up to date" type="calendar"/>
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+         	<![CDATA[
+select av_name.string_value as document,
+       av_corfm.string_value as lname,
+       av_corNm.string_value as fname,
+       av_corPn.string_value as patr,
+       av_desc.string_value as content,
+       av_item.string_value as item,
+       av_term.date_value as term,
+       av_com.string_value as com,
+       av_ndept.string_value as dept
+from Attribute_Value av_cont, Attribute_Value av_dln, Card cr
+ left outer join
+      Attribute_Value av_name on (av_name.attribute_code = 'NAME' and av_name.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_sndr on (av_sndr.attribute_code = 'JBR_INFD_SENDER' and av_sndr.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_corfm on (av_corfm.attribute_code = 'JBR_PERS_SNAME' and av_corfm.card_id = av_sndr.number_value)
+ left outer join
+      Attribute_Value av_corNm on (av_corNm.attribute_code = 'JBR_PERS_NAME' and av_corNm.card_id = av_sndr.number_value)
+ left outer join
+      Attribute_Value av_corPn on (av_corPn.attribute_code = 'JBR_PERS_MNAME' and av_corPn.card_id = av_sndr.number_value)   
+ left outer join
+      Attribute_Value av_desc on (av_desc.attribute_code = 'JBR_INFD_SHORTDESC' and av_desc.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_inst on (av_inst.attribute_code = 'JBR_IMPL_RESOLUT' and av_inst.card_id = cr.card_id)
+ left outer join
+      Attribute_Value av_item on (av_item.attribute_code = 'JBR_INFD_ITEM' and av_item.card_id = av_inst.number_value)
+ left outer join
+      Attribute_Value av_term on (av_term.attribute_code = 'JBR_TCON_TERM' and av_term.card_id = av_inst.number_value)
+ left outer join
+      Attribute_Value av_com on (av_com.attribute_code = 'JBR_RIMP_COMMENT' and av_com.card_id = av_inst.number_value)
+-- Подразделение получателя      
+ left outer join
+      Attribute_Value av_dvsn on (av_dvsn.attribute_code = 'JBR_INFD_RECEIVER' and av_dvsn.card_id = cr.card_id)
+ left outer join
+      Person prsn on (prsn.person_id = av_dvsn.number_value)
+ left outer join
+      Card cr_rcvr on (cr_rcvr.card_id = prsn.card_id)
+ left outer join
+      Attribute_Value av_dept on (av_dept.attribute_code = 'JBR_PERS_DEPT_LINK' and av_dept.card_id = cr_rcvr.card_id)
+ left outer join
+      Card cr_dept on (cr_dept.card_id = av_dept.number_value)
+ left outer join
+      Attribute_Value av_ndept on (av_ndept.attribute_code = 'JBR_DEPT_SHORTNAME' and av_ndept.card_id = cr_dept.card_id)     
+where cr.template_id = 224 and
+      cr.status_id != 1 and
+      (av_cont.attribute_code = 'JBR_IMPL_ONCONT' and cr.card_id = av_cont.card_id and av_cont.value_id = 1432) and
+      (coalesce(TO_DATE(:date, 'YYYY-MM-DD'), localtimestamp)+interval '1 day') between
+          (case when cr.status_id = 104
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id and status_id = 101)
+                when cr.status_id = 103
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id) end)
+          and
+          (case when cr.status_id = 104
+                then (select max(version_date) + CAST((:tz_hour||' hour') as interval) from Card_Version where card_id = cr.card_id and status_id = 103)
+                when cr.status_id = 103
+                then (localtimestamp+interval '1 day') end)
+      and
+      (av_dln.attribute_code = 'JBR_IMPL_DEADLINE' and cr.card_id = av_dln.card_id and 
+          av_dln.date_value <= coalesce(TO_DATE(:date_control, 'YYYY-MM-DD'), to_date('31-12-9999', 'DD-MM-YYYY')))    						             
+			]]>       
+         </sql>
+         <parameters>
+             <param name="date" dispaly-name="По состоянию на" type="calendar" />
+             <param name="date_control" dispaly-name="Дата контроля до" type="calendar"/>
+         </parameters>
+     </query>
+     <table title="List" pagesize="20">       	    
+	     <column-description name="DOCUMENT" display-name="Document" is-sortable="true"/>
+	     <column-description name="DEPT" display-name="Subdivision" is-sortable="true"/>
+	     <column-description name="LNAME" display-name="Family name" is-sortable="true"/>
+	     <column-description name="FNAME" display-name="Name" is-sortable="true"/>
+	     <column-description name="PATR" display-name="Patronymic" is-sortable="true"/>
+	     <column-description name="CONTENT" display-name="Content" is-sortable="true"/>
+	     <column-description name="ITEM" display-name="Assignment name" is-sortable="true"/>
+	     <column-description name="TERM" display-name="term" is-sortable="true"/>
+	     <column-description name="COM" display-name="Comment" is-sortable="true"/>	     
+     </table>
+     <table lang="ru" title="Реестр" pagesize="20">
+	     <column-description name="DOCUMENT" display-name="Документ" is-sortable="true"/>
+	     <column-description name="DEPT" display-name="Подразделение" is-sortable="true"/>
+	     <column-description name="LNAME" display-name="Фамилия" is-sortable="true"/>
+	     <column-description name="FNAME" display-name="Имя" is-sortable="true"/>
+	     <column-description name="PATR" display-name="Отчество" is-sortable="true"/>
+	     <column-description name="CONTENT" display-name="Содержание" is-sortable="true"/>
+	     <column-description name="ITEM" display-name="Наименование поручений" is-sortable="true"/>
+	     <column-description name="TERM" display-name="Плановая дата исполнения" is-sortable="true"/>
+	     <column-description name="COM" display-name="Комментарий к исполнению" is-sortable="true"/>
+     </table>
+</universal-portlet>

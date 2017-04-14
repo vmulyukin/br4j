@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<hierarchy>
+		<cardSet stored="true" alias="resolutions" labelAttr="jbr.resolutionExecutor" labelAttrType="user" collapsed="false">
+			<children>
+				<link targetSet="resolutions" linkAttr="jbr.linkedResolutions"	isReversed="false"/>
+			</children>
+		</cardSet>
+	</hierarchy>
+	<columns>
+		<column id="jbr.resolutionTerm" width="120" link="true"/>
+		<column id="jbr.resolutionText" width="300"/>
+		<column id="_STATE" width="120"/>
+	</columns>
+	<actions>
+		<action title="editCardListTitle" handler="com.aplana.dbmi.card.actionhandler.EditCardLinksActionHandler" selectionType="none" id="editCardList">
+		</action>
+		<action title="addPoruchTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandler" selectionType="none" id="addPoruch">
+			<parameters>
+				<parameter name="page" value="dbmi.card.jbr.resolution"/>
+				<parameter name="template" value="jbr.resolution"/>
+			</parameters>
+		</action>
+	</actions>	
+	<styling>
+	</styling>
+	<messages>
+		<lang code="en">
+			<message key="editCardListTitle" value="Add existing"/>
+			<message key="addPoruchTitle" value="Add new"/>
+		</lang>	
+		<lang code="ru">
+			<message key="editCardListTitle" value="Добавить существующий"/>
+			<message key="addPoruchTitle" value="Новый"/>
+		</lang>
+	</messages>
+</settings>

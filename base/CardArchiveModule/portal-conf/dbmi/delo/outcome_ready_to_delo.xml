@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="outcomeReadyToDeloSQL.xml">
+	<name lang="ru">Исходящие, готовые к списанию в дело</name>
+	<name lang="en">Outcoming ready to delo</name>
+
+	<template>364</template>
+	<status>registration</status>
+
+	<!--column id="_STATE">
+		<icon value="104" image="executed" tooltipRu="Исполнен" tooltipEn="Executed"/>
+		<default_icon image="noExecuted" tooltipRu="Не исполнен" tooltipEn="No executed"/>
+	</column-->
+	<column id="ADMIN_290575">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column> 
+	<column id="JBR_DOCL_RELATDOC">
+		<default_icon image="boundDoc" tooltipRu="Есть связанные документы" tooltipEn="There are related documents"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет связанных документов" tooltipEn="No related documents"/>
+	</column>
+	<!--  Обратные ссылки (backlink)
+			364	Исходящий	ADMIN_249675	(B) Документ-основание
+			364	Исходящий	ADMIN_221237	(B) На документ ссылаются
+	  -->
+	<!--column id="ADMIN_249675">
+		<default_icon image="boundDoc" tooltipRu="Есть документ-основание" tooltipEn="Main document present"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет документа-основания" tooltipEn="Main document not present"/>
+	</column-->
+	<column id="ADMIN_221237">
+		<default_icon image="boundDoc" tooltipRu="Есть ссылки на документ" tooltipEn="There is links to the document"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет ссылок на документ" tooltipEn="There is no links to the document"/>
+	</column>
+
+	<column id="JBR_REGD_DATEREG"  width="50"  sort="asc" />
+	<column id="JBR_REGD_REGNUM" width="50" link="true" sortAttrId="regnumberdigital"/>
+	<column id="JBR_RECEIVER_EXT"  width="50" labelAttrId="NAME" isParentName="true"/>
+	<column id="JBR_INFD_RECEIVER_CA"  width="50" labelAttrId="ADMIN_274992" isParentName="true"/>
+	<column id="JBR_INFD_SHORTDESC"  width="200" link="true" columnTitleRu="Краткое содержание"/>
+	<column id="JBR_INFD_SIGNATORY"  width="50"  columnTitleRu="Подписант"/>
+	<column id="index" labelAttrId="name" width="50" isParentName="true"/>
+</search>

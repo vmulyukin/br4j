@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+	<name lang="ru">Внутренние, находящиеся на регистрации</name>
+	<name lang="en">Внутренние, находящиеся на регистрации</name>
+
+	<template>jbr.interndoc</template>
+	
+	<status>before-registration</status>
+
+	<attribute id="CHANGED" type="date">
+		<value type="start" var="current" zeroTime="true">-7</value>
+		<value type="end" var="current">+1</value>
+	</attribute>
+
+	<!--  
+		cardstate.before-registration=200		Регистрация
+		cardstate.ready-to-write-off=48909		Готов к списанию в дело
+	-->
+	<!--  Обратные ссылки (backlink)
+			784	Внутренний документ	ADMIN_221237	(B) На документ ссылаются
+	  -->
+	<!--  column id="_STATE">
+		<icon value="48909" image="executed" tooltipRu="Исполнен" tooltipEn="Executed"/>
+		<icon value="104" image="executed" tooltipRu="Исполнен" tooltipEn="Executed"/>
+		<default_icon image="noExecuted" tooltipRu="Не исполнен" tooltipEn="No executed"/>
+	</column>	
+	<column id="JBR_IMPL_RESOLUT">
+		<default_icon image="boundRes" tooltipRu="Есть резолюции" tooltipEn="There is a resolution"/>
+		<empty_icon image="notBoundRes" tooltipRu="Нет резолюций" tooltipEn="No resolutions"/>
+	</column>	
+	<column id="ADMIN_221237">
+		<default_icon image="boundDoc" tooltipRu="Есть ссылки на документ" tooltipEn="There is links to the document"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет ссылок на документ" tooltipEn="There is no links to the document"/>
+	</column-->
+	<column	id="JBR_IMPL_ONCONT">
+		<icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column>
+	<column id="ADMIN_290575">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column> 
+	<column id="JBR_DOCL_RELATDOC">
+		<default_icon image="boundDoc" tooltipRu="Есть связанные документы" tooltipEn="There are related documents"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет связанных документов" tooltipEn="No related documents"/>
+	</column>
+	<column id="_DIGITAL_SIGNATURE" >
+        <default_icon image="edsSigned" tooltipRu="Подписан ЭП" tooltipEn="There is DS"/>
+        <empty_icon image="noImage" tooltipRu="Не подписан ЭП" tooltipEn="There is no DS"/>
+        <action id="reportDS"/>
+    </column>
+    
+    <column id="CREATED"  width="40" />
+	<column id="JBR_INFD_RECEIVER"  width="120" sort="asc" link="true"/>	
+	<column id="jbr.commission.responsible"  width="100"/>
+	<column id="jbr.outcoming.signatory"  width="100" columnTitleRu="Подписант"/>
+	<column id="JBR_INFD_SHORTDESC"  width="120"  columnTitleRu="Краткое содержание"/>
+</search>

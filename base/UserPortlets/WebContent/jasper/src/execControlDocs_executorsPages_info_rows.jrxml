@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execControlDocs_executorsPages_info_rows" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times" isDefault="true" fontName="Times New Roman" fontSize="12" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="times_bold" isDefault="true" fontName="Times New Roman" fontSize="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="big_title" style="times_bold" fontSize="14"/>
+	<style name="table" style="times">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_bold" style="times_bold">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="executor_id" class="java.lang.Long"/>
+	<parameter name="term_from" class="java.util.Date"/>
+	<parameter name="term_to" class="java.util.Date"/>
+	<parameter name="templates" class="java.lang.String"/>
+	<parameter name="templates_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="jregs" class="java.lang.String"/>
+	<parameter name="jregs_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="executorDoc" class="java.lang.String"/>
+	<parameter name="executorDoc_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="drep" class="java.util.Date"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[-- Список неисполненных документов для данного исполнителя
+-- sql запрос для подотчета execControlDocs_executorsPages_info_rows
+select
+	av_regn.string_value as regn,
+	(av_dreg.date_value + interval '$P!{tz_hour} hour') as dreg,
+	(av_term.date_value +  interval '$P!{tz_hour} hour') as term,
+    cast((cast(av_term.date_value as date)- cast($P{drep} as date)) as numeric) as reserve
+from card cr
+inner join attribute_value av_oncont on av_oncont.card_id = cr.card_id
+	and av_oncont.attribute_code = 'JBR_IMPL_ONCONT'
+inner join attribute_value av_executor on av_executor.card_id = cr.card_id
+	and av_executor.attribute_code = 'JBR_IMPL_FOIV'
+-- Срок исполнения или предоставления ответа
+inner join attribute_value av_term on av_term.card_id = cr.card_id
+	and av_term.attribute_code = 'JBR_IMPL_DEADLINE'
+-- Журнал регистрации
+inner join attribute_value av_jreg on av_jreg.card_id = cr.card_id
+	and av_jreg.attribute_code = 'JBR_REGD_REGJOURN'
+-- Рег. номера
+left join attribute_value av_regn on av_regn.card_id = cr.card_id
+	and av_regn.attribute_code = 'JBR_REGD_REGNUM'
+-- Дата регистрации
+left join attribute_value av_dreg on av_dreg.card_id = cr.card_id
+	and av_dreg.attribute_code = 'JBR_REGD_DATEREG'
+-- Дата снятия с контроля
+left join attribute_value av_dend on av_dend.card_id = cr.card_id
+	and av_dend.attribute_code = 'ADMIN_220912'
+where
+    not cr.status_id in (302, 1, 303990, 106, 6092498)
+    and av_oncont.value_id = 1432
+	and av_executor.number_value = $P{executor_id}
+	and av_dend.date_value is null
+    -- Срок исполнения в указанном диапозоне
+	and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) >= $P{term_from}
+    and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) < (cast($P{term_to} as date) + interval '1 day')
+    -- Группа документов
+	and ($P{templates_ISNULL} or cr.template_id in ($P!{templates}))
+	-- Журнал регистрации
+	and ($P{jregs_ISNULL} or av_jreg.number_value in ($P!{jregs}))]]>
+	</queryString>
+	<field name="regn" class="java.lang.String"/>
+	<field name="dreg" class="java.util.Date"/>
+	<field name="term" class="java.util.Date"/>
+	<field name="reserve" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="table" x="0" y="0" width="341" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{regn} != null ? $F{regn} : "") +
+" от " +
+($F{dreg} != null
+    ? (new java.text.SimpleDateFormat("dd.MM.yyyy")).format($F{dreg}) : "")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table" x="341" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{term})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table" x="441" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{reserve}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table" x="541" y="0" width="261" height="20"/>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

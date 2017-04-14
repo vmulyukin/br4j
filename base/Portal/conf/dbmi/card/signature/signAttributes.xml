@@ -1,0 +1,168 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<attributes>	
+	<!-- "Проверка ЭЦП" -->
+	<template id="644">
+		<attribute type="S" id="NAME"/>
+		<attribute type="T" id="DESCR"/>		
+	</template>
+	
+	<!-- Файл -->
+	<template id="284">
+		<attribute type="M" id="MATERIAL"/>		
+	</template>
+	
+	<!-- Шаблон "Визирование" -->
+	<template id="348">
+		<link id="JBR_VISA_PARENT_DOC" type="B">
+			<link id="DOCLINKS" type="C">
+				<attribute type="M" id="MATERIAL"/>
+			</link>	
+		</link>		
+		<attribute type="U" id="JBR_VISA_ACT_CONSENT"/>
+		<attribute type="T" id="ADMIN_14746670"/>
+		<attribute type="D" id="JBR_VISA_D_A_CONSENT"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>
+	</template>
+	
+	<!-- Шаблон "Входящий" -->
+	<template id="224">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="JBR_INFD_SHORTDESC"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "Исходящий" -->
+	<template id="364">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="JBR_INFD_SHORTDESC"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "ОРД" -->
+	<template id="764">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="JBR_INFD_SHORTDESC"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "Внутренний документ" -->
+	<template id="784">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="JBR_INFD_SHORTDESC"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "Обращения граждан" -->
+	<template id="864">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="ADMIN_277253"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "НПА" -->
+	<template id="1226">
+		<attribute type="S" id="JBR_REGD_REGNUM"/>
+		<attribute type="D" id="JBR_REGD_DATEREG"/>
+		<attribute type="T" id="JBR_INFD_SHORTDESC"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>	
+	</template>
+	
+	<!-- Шаблон "Поручение" -->
+	<template id="324">
+	
+		<!-- Поля из блока "Сведения о поручении" -->
+		<attribute type="T" id="JBR_GIPA_RESOLUT"/>
+		<attribute type="U" id="JBR_INFD_EXEC_LINK"/>
+		<attribute type="U" id="ADMIN_255974"/>
+        <attribute type="U" id="ADMIN_255979"/>
+        <!-- <attribute type="U" id="ADMIN_476806"/>          -->
+		<attribute type="C" id="JBR_INFD_EXEC_EXT"/>
+		<attribute type="C" id="JBR_INFD_COEXEC_EXT"/>
+        <attribute type="U" id="JBR_INFD_SGNEX_LINK"/>
+		<attribute type="D" id="JBR_INFD_DTSGN_LINK"/>
+        <!--  <attribute type="U" id="ADMIN_713634"/>         -->
+        <!--  <attribute type="U" id="JBR_INFD_EXEC_AST"/>    -->
+        <!--  <attribute type="U" id="JBR_INFD_COEXEC_AST"/>  -->
+        <!--  <attribute type="U" id="JBR_INFD_SGNHID_LNK"/>  -->
+		<attribute type="U" id="JBR_RSLT_DR_TOEDIT"/>
+		<attribute type="U" id="JBR_RSLT_DR_TOEXEC"/>
+		<attribute type="U" id="JBR_RSLT_DR_EXECS"/>
+        <!--  <attribute type="U" id="JBR_RSLT_DR_SIGN_AST"/>  -->
+        <!--  <attribute type="U" id="JBR_RSLT_DR_FYI_AST"/>   -->
+		<attribute type="D" id="JBR_INFD_DT_DONE"/>
+		
+		<!-- Поля из блока "Срок и контроль" -->
+		<attribute type="D" id="JBR_TCON_TERM"/>
+		<attribute type="L" id="JBR_TCON_ONCONT"/>
+		<attribute type="U" id="JBR_TCON_INSPECTOR"/>
+	</template>
+	
+	<!-- Шаблон "Отчет об исполнении" -->
+	<template id="1044">
+		<attribute type="W" id="ADMIN_702354"/>
+		<link id="ADMIN_702355" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>
+	</template>
+	
+	<!-- Шаблон "Ознакомление" -->
+	<template id="524">
+		<attribute type="D" id="ADMIN_579940"/>
+	</template>
+	
+	<!-- Шаблон "Подпись" -->
+	<template id="365">
+		<attribute type="I" id="JBR_SIGN_SIGN_RND"/>
+	</template>
+	
+	<!-- Шаблон "Рассмотрение" -->
+	<template id="504">
+		<attribute type="T" id="JBR_RASSM_COMMENT"/>
+	</template>
+	
+	<!-- Шаблон "Запрос на изменение рассматривающего" -->
+	<template id="967">	
+		<attribute type="L" id="JBR_REQUEST_TYPE"/>
+		<attribute type="C" id="JBR_REQUEST_CONS"/>
+		<attribute type="F" id="JBR_REQUEST_NEW"/>
+		<link id="DOCLINKS" type="C">
+			<attribute type="M" id="MATERIAL"/>
+		</link>
+	</template>
+</attributes>

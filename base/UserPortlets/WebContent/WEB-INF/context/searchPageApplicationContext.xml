@@ -1,0 +1,3412 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<import resource="commonSearchPageApplicationContext.xml"/>
+	<import resource="searchPageStateTemplates.xml"/>
+	
+	<bean id="registrationNumberdigitalPart" class="com.aplana.dbmi.model.SearchIntegerCheckedAttribute" scope="prototype">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.IntegerAttribute" />
+				<constructor-arg value="JBR_REGD_REGNUM_D" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>
+ 	
+	<bean id="registrationNumber" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_REGD_REGNUM" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+		
+	</bean>
+	
+	<bean id="shortDescription" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="JBR_INFD_SHORTDESC" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<bean id="ogShhortDescription" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="ADMIN_277253" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>		
+	
+	<!--  Дата регистрации -->
+	<bean id="registrationDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_REGD_DATEREG" />
+			</bean>
+		</property>		
+	</bean>
+	
+	<bean id="registrationDatePeriod" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+		<constructor-arg ref="registrationDate" />
+
+	</bean>
+	
+	<bean id="creationDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+        <property name="id">
+            <bean parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+                <constructor-arg value="CREATED" />
+            </bean>
+        </property>
+        
+    </bean>
+    
+    <bean id="changeDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+        <property name="id">
+            <bean parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+                <constructor-arg value="CHANGED" />
+            </bean>
+        </property>
+        
+    </bean>
+    
+    <bean id="changeDateNoTime" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+        <property name="id">
+            <bean parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+                <constructor-arg value="CHANGED" />
+            </bean>
+        </property>
+        <property name="timePattern" value="dd-MM-yyyy"/>
+    </bean>
+    
+    <bean id="creationDatePeriod" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+        <constructor-arg ref="creationDate" />
+    </bean>
+    
+    <bean id="creationYearPeriod" class="com.aplana.dbmi.model.YearPeriodAttribute"  scope="prototype">
+        <constructor-arg ref="creationDate" />
+        <property name="currentYear" value="false"/>
+        <property name="yearStart" value="2010"/>       
+    </bean>
+    <bean id="creationYearDatePeriod" class="com.aplana.dbmi.model.SearchYearDatePeriodChoiceAttribute"  scope="prototype">
+        <constructor-arg ref="creationDate" />
+        <property name="currentYear" value="true"/>
+        <property name="yearStart" value="2010"/>
+        <property name="additionalYear" value="2"/>
+        <property name="checkedYear" value="true"/>
+    </bean>
+    
+	
+	
+	
+	
+		<!--  Псевдо аттрибут : Тип документа(шаблон) -->
+	<bean id="documentType" class="com.aplana.dbmi.model.TemplateSearchAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateSearchAttribute" />
+				<constructor-arg value="_TEMPLATE_SEARCH" />
+			</bean>
+		</property>
+		
+		<property name="active" value="1" />
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="documentType" />
+		<!-- key in property file -->
+		<property name="nameRu" value="documentType" />
+		
+		<property name="cardTemplates">
+			<list>
+				<ref bean="templateIncome" />
+				<ref bean="templateOutcome" />
+				<ref bean="templateInternal" />
+				<ref bean="templateCitizenRequest" />
+				<ref bean="templateNPA" />
+			</list>
+		</property>	
+		
+	</bean>
+	
+	<!--  Псевдо аттрибут : Статус для карточки -->
+	<bean id="state" class="com.aplana.dbmi.model.StateSearchAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StateSearchAttribute" />
+				<constructor-arg value="_STATE_SEARCH" />
+			</bean>
+		</property>
+		
+		<property name="columnWidth" value="0" />
+		
+		<property name="active" value="1" />
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="status" />
+		<!-- key in property file -->
+		<property name="nameRu" value="status" />
+		
+	</bean>
+	
+	<bean id="type" class="com.aplana.dbmi.model.TemplateSearchAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TemplateSearchAttribute" />
+				<constructor-arg value="_STATE_SEARCH" />
+			</bean>
+		</property>
+		
+		<property name="columnWidth" value="0" />
+		
+		<property name="active" value="1" />
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="status" />
+		<!-- key in property file -->
+		<property name="nameRu" value="status" />
+		
+	</bean>	
+	
+	
+	<bean id="stateSearchPCabinetId" parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" />
+				<constructor-arg value="_STATE_SEARCH_P_CABINET" />
+	</bean>
+	
+	
+	
+	<!--Статус документа для Личного кабинета-->
+	<bean id="statePCabinet" class="com.aplana.dbmi.model.MultipleStateSearchItemAttribute"  scope="prototype">
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="status" />
+		<!-- key in property file -->
+		<property name="nameRu" value="status" />
+	
+		<property name="id" ref="stateSearchPCabinetId"/>
+		
+		<property name="initState" value="CHECKED"/>
+			
+		<property name="showSelectAll" value="true"/>
+
+		<property name="values">
+			<list>
+				<ref bean="draftPrepareStatusListStateSearchItemWS" />
+				<ref bean="coordinationStatusListStateSearchItemWS" />
+				<ref bean="registrationStatusListStateSearchItemWS" />
+				<ref bean="registeredCardStatusListStateSearchItemWS" />
+				<ref bean="considerationCardStatusListStateSearchItemWS" />
+				<ref bean="singingStatusListStateSearchItemWS" />
+				<ref bean="executionCardStatusListStateSearchItemWS" />
+				<ref bean="executedReadyCardStatusListStateSearchItemWS" />
+				<ref bean="inDeloCardStatusListStateSearchItemWS" />
+			</list>	
+		</property>
+		
+	</bean>	
+	
+			
+	
+	
+	<!-- Рассматривающие (входящие)--> 
+	<bean id="internalHiddenExaminators" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0" />
+				<constructor-arg value="JBR_RASSM_PERSON" index="1" />
+				<constructor-arg value="JBR_IMPL_ACQUAINT" index="2" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="internalHiddenExaminators" />
+		<!-- key in property file -->
+		<property name="nameRu" value="internalHiddenExaminators" />
+	</bean>	
+	
+	<!-- Предыдущие регистрации (входящие, ог)--> 
+	<bean id="lastRegistrations" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_REG_LAST_REG" />
+			</bean>
+		</property>
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="lastRegistrations" />
+		<!-- key in property file -->
+		<property name="nameRu" value="lastRegistrations" />
+	</bean>	
+
+	<!-- Ознакамливающиеся (для всех)--> 
+	<bean id="imAcquaintance" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0" />
+				<!-- Кому ознакомиться (U) -->
+				<constructor-arg value="JBR_FOR_INFORMATION" index="1" />
+				<!-- Список ознакомления (C) -->
+				<constructor-arg value="JBR_INFORM_LIST" index="2" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="imAcquaintance" />
+		<!-- key in property file -->
+		<property name="nameRu" value="imAcquaintance" />
+	</bean>	
+	
+	
+	<!-- Дата документа -->
+	<bean id="registrationDateOut" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_REGD_DATEOUT" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<bean id="registrationDatePeriodOut" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+		<constructor-arg ref="registrationDateOut" />
+
+	</bean>	
+	
+	
+	
+	<bean id="urgencyLevel" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_290575" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<bean id="typeDelivery" class="com.aplana.dbmi.model.MultiListAttribute"  scope="prototype">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_118450" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<bean id="incomingTypeDelivery" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_118450" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<bean id="doctype" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_TYPEDOC" />
+			</bean>
+		</property>
+			
+	</bean>
+	
+	<!-- Номер исходящего  -->
+	<bean id="incomingOutnumber" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_REGD_NUMOUT" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>		
+	</bean>
+	
+	<!-- Дата снятия документа с контроля -->
+	<bean id="dateWithdrawalDocumentControl" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="ADMIN_220912" />
+			</bean>
+		</property>		
+	</bean>	
+	
+	<!-- Дата снятия документа с контроля -->
+	<bean id="dateWithdrawalDocumentControlPeriod" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+		<constructor-arg ref="dateWithdrawalDocumentControl" />	
+	</bean>
+	
+	<!-- Причина переноса срока -->
+	<bean id="reasonForPostponingThe" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="ADMIN_283820" />
+			</bean>
+		</property>		
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>
+	
+	<!-- Cопроводительное письмо -->
+	<bean id="coprovoditelnoeLetter" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="JBR_COV_LETTER" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>	
+	</bean>
+	
+	<!-- Номер резолюции-->
+	<bean id="extResolutNumber" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_NUMBER" index="1"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	<!-- Номер пункта-->
+	<bean id="extPointNumber" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_POINT" index="1"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>
+	
+	<!-- Тип поручения-->
+	<bean id="extOrdType" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_ORD_TYPE"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	<!-- Конфиденциальность резолюции-->
+	<bean id="extResolutPrivacy" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_CONFID"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+		
+	
+	<!-- Резолюция текст-->
+	<bean id="extResolutText" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_TEXT"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>				
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	<!-- Исполнитель-->
+	<bean id="extResolutExecutor" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_EXEC"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>				
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	<!-- Соисполнители-->
+	<bean id="extResolutCoExecutors" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_COEXEC"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>				
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	<!-- Автор резолюции -->
+	<bean id="extResolutAuthor" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_AUTH"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>				
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	
+	<!-- Дата подписания -->
+	<bean id="extResolutSignDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_CRDATE" index="1"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Плановый срок -->
+	<bean id="extResolutPlanDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_PL_DUEDT" index="1"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	<!-- Признак контроля -->
+	<bean id="extResolutControlFlag" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_CTRLMARK"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2"/>				
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>	
+	
+	
+	<!-- Фактическая дата исполнения -->
+	<bean id="extResolutExecutedDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" index="0"/>
+				<constructor-arg value="JBR_DMSI_ER_ACTL_DT" index="1"/>
+				<constructor-arg value="JBR_EXT_RESOL" index="2" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Срок исполнения или предоставления ответа(входящий) -->
+	<bean id="deadLineDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_IMPL_DEADLINE" />
+			</bean>
+		</property>
+		
+	</bean>
+		
+	<bean id="deadLineDatePeriod" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+		<constructor-arg ref="deadLineDate" />
+
+	</bean>	
+	
+	<!-- Индекес номенклатуры -->
+	<bean id="index" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_REGD_INDEX" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Ичточник поступления -->
+	<bean id="sourceOfCome" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_281734" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Исполнитель из всех поручений документа(входящие) -->
+	<bean id="internalFoiv" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_IMPL_FOIV" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	
+	<!-- Журнал регистрации -->
+	<bean id="registrationJournal" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_REGD_REGJOURN" />
+			</bean>
+		</property>
+	</bean>	
+	
+	
+	<bean id="incomingSender" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SENDER" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="sender" />
+		<!-- key in property file -->
+		<property name="nameRu" value="sender" />
+	</bean>
+
+	<bean id="incomeOrgSpec" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" index="0" />
+				<constructor-arg value="JBR_DORG_SPESIALIZ" index="1" />
+				<constructor-arg value="JBR_INFD_SENDER" index="2" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="organizatoinSpecTitle" />
+		<!-- key in property file -->
+		<property name="nameRu" value="organizatoinSpecTitle" />
+	</bean>	
+
+	<bean id="outReciever" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT" />
+			</bean>
+		</property>
+		
+	</bean>			
+
+	<bean id="outcomeOrgSpec" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" index="0" />
+				<constructor-arg value="JBR_DORG_SPESIALIZ" index="1" />
+				<constructor-arg value="JBR_RECEIVER_EXT" index="2" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="organizatoinSpecTitle" />
+		<!-- key in property file -->
+		<property name="nameRu" value="organizatoinSpecTitle" />
+	</bean>	
+
+	<!-- Исполнители поручений (входящий)--> 
+	<bean id="incomingOrderExecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0"/>
+				<constructor-arg value="JBR_INFD_EXEC_LINK" index="1"/>
+				<constructor-arg value="backLink:JBR_ALL_RESOLUTIONS" index="2" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+  		<property name="nameEn" value="search.assignmentExecutors" />
+  		<!-- key in property file -->
+  		<property name="nameRu" value="search.assignmentExecutors" />
+	</bean>
+	
+	
+	<!--  Исполнители поручений -->
+	<bean id="allExecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ALL_EXEC" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!--  Соисполнители поручений -->
+	<bean id="allСoexecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ALL_COEXEC" />
+			</bean>
+		</property>
+		
+	</bean>		
+	
+	
+	<!-- ФИО подписанта (исходящий)--> 
+	<bean id="outcomingSignatory" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_SIGNATORY" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="signatory" />
+		<!-- key in property file -->
+		<property name="nameRu" value="signatory" />
+		
+		
+	</bean>
+	
+	<!--  Исполнитель(исходящий) -->
+	<bean id="outPersonExecutor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_OUT_RESPONSIBLE" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	<!--  Исполнитель(исходящий) -->
+	<bean id="outcomeOutExecutor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>		
+	</bean>
+	
+
+	
+	
+	
+		
+	<!--  Адресат исходящего(исходящий) -->
+	<bean id="outcomeExtUser" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT_USR" />
+			</bean>
+		</property>		
+	</bean>		
+	
+	<!--  Адресат ОГ -->
+	<bean id="outcomeExtUserOG" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_RECEIVER_CA" />
+			</bean>
+		</property>		
+	</bean>	
+	
+	<!-- Согласующий -->
+	<bean id="outVisaResponsible" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_VISA_RESPONSIBLE"/>
+				<constructor-arg value="JBR_VISA_VISA" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="visaResponsible" />
+		<!-- key in property file -->
+		<property name="nameRu" value="visaResponsible" />
+		
+	</bean>	
+	
+	
+	<!-- Тип контроля --> 
+	<bean id="typeControl" class="com.aplana.dbmi.model.MultiListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_TYPECONT" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Вид исполнения --> 
+	<bean id="kindOfPerfom" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_KIND" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	<!-- На контроле --> 
+	<bean id="internalOnControl" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_ONCONT" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Госслужба --> 
+	<bean id="govService" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_GOV_SERVICE" />
+			</bean>
+		</property>
+		
+	</bean>	
+		
+	<!-- Исполнитель (внутренний)-->
+	<bean id="internalPersonExecutor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Автор-->
+	<bean id="personAuthor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persAuthor" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persAuthor" />
+		
+	</bean>
+	
+	<!-- ФИО подписанта (внутренний)--> 
+	<bean id="internalSignatory" class="com.aplana.dbmi.model.PersonAttribute" scope="prototype" >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_SIGNATORY" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="signatory" />
+		<!-- key in property file -->
+		<property name="nameRu" value="signatory" />
+		
+	</bean>
+
+    <!-- Адресат (внутренний)-->
+    <bean id="recievedOrg" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+                <constructor-arg value="JBR_RECEIVER_ACTL" />
+            </bean>
+        </property>
+    </bean>
+	
+	<!-- Адресат (внутренний)--> 
+	<bean id="internalReceiver" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_RECEIVER" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+
+	<!-- Согласующие (внутренний)--> 
+	<bean id="internalHiddenVisaResponsible" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_VISA_RESPONSIBLE"/>
+				<constructor-arg value="JBR_VISA_VISA" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="visaResponsible" />
+		<!-- key in property file -->
+		<property name="nameRu" value="visaResponsible" />
+		
+		
+	</bean>
+	
+	
+	
+	<!-- Контроллер по документу (внутренний)--> 
+	<bean id="internalInspector" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_IMPL_INSPECTOR" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!--  Исполнители поручений -->
+	<bean id="internalOrderExecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	
+	<!-- Согласующий(внутренний) -->
+	<bean id="internalVisaResponsible" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SIGN_EXT" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="signatory" />
+		<!-- key in property file -->
+		<property name="nameRu" value="signatory" />
+		
+	</bean>	
+			
+	<!-- Рассматривающие(внутренний) -->
+	<bean id="internalExaminers" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_IMPL_ACQUAINTERS" />
+			</bean>
+		</property>
+		
+	</bean>			
+				
+			
+			
+	<!-- Особые отметки(ОРД) --> 
+	<bean id="ordSpecialNotes" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="DTIM_515217" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!--  Соисполнители(ОРД) -->
+	<bean id="ordCoExecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+           <bean parent="routeSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+               <constructor-arg value="ADMIN_255974" index="1"/>
+               <constructor-arg value="jbr.CoExecutor;jbr.allResolutions->jbr.CoExecutor" index="2"/>
+			</bean>
+		</property>
+	</bean>	
+	
+
+	<!-- Тип автора (Тип обращения) в блоке атрибутов JBR_REGDATA -->
+	<bean id="ogAuthorType" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef">
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_283576" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Источник поступления в блоке атрибутов JBR_REGDATA -->
+	<bean id="incomeSource" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef">
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_283122" />
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!-- Автор обращения(ОГ) -->
+	<bean id="ogAppealAuthor" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_APP_AUTHOR" />
+			</bean>
+		</property>
+	</bean>	
+	<!--Старый формат автора-->
+	<bean id="ogAuthorFirstName" class="com.aplana.dbmi.model.StringAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="ADMIN_281034" />
+			</bean>
+		</property>	
+	</bean>	
+	<bean id="ogAuthorLastName" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_OG_REQ_AUTHOR" />
+			</bean>
+		</property>	
+	</bean>	
+	<bean id="ogAuthorPatronimic" class="com.aplana.dbmi.model.StringAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="ADMIN_281035" />
+			</bean>
+		</property>	
+	</bean>	
+
+
+	<!-- Тематика и вопросы(ОГ) -->
+	<bean id="ogThemeOfQuery" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_277251" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="questionsOfAppeal" />
+		<!-- key in property file -->
+		<property name="nameRu" value="questionsOfAppeal" />
+		
+		
+	</bean>
+	
+	<!-- Вопросы (ОГ) -->
+	<bean id="ogThematic" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_QUEST_THEMATIC_C" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="Questions" />
+		<!-- key in property file -->
+		<property name="nameRu" value="Questions" />
+		
+		
+	</bean>
+
+	<!-- Адресат(ОГ) -->
+	<bean id="ogAddressee" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="TriggeredRouteSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0"/>
+				<constructor-arg value="JBR_RASSM_PERSON" index="1"/>
+				<constructor-arg value="jbr.examby#boss.assistant,execution,jbr.exam.assigned,jbr.exam.skipped,
+								jbr.exam.skipped.boss,delo,jbr.exam.execute.boss,consideration,jbr.exam.archive.boss->jbr.exam.person" index="2" />
+				<constructor-arg value="jbr.allResolutions#execution,done->jbr.reports->jbr.report.int.executor" index="3" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="search.addressee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.addressee" />
+		
+	</bean>
+	
+	<!--  На контроле(ОГ) -->
+	<bean id="ogAuthType" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_ONCONT" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+
+	<!--  Исполнитель(Ответы на ОГ) -->
+	<bean id="ogOutExecutor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!--  ФИО подписанта(Ответы на ОГ) -->
+	<bean id="ogOutSignatory" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_SIGNATORY" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Район Автора обращения -->
+	<bean id="reqAuthorDistrict" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" index="0" />
+				<constructor-arg value="ADMIN_277243" index="1" />
+				<constructor-arg value="JBR_OG_REQ_AUTHOR" index="2" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Район города (ОГ) -->
+	<bean id="ogCityDistrict" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_277244" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="developer" class="com.aplana.dbmi.model.CardLinkAttribute" scope="prototype">
+	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+				<constructor-arg value="ADMIN_6079618" />
+			</bean>
+		</property>
+		
+		
+	</bean>
+	
+	<!-- Куратор--> 
+	<bean id="curator" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="ADMIN_6075258" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Исполнитель поручений (личный кабинет)--> 
+	<bean id="persArmassignmentExecutor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="ADMIN_473763" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+  		<property name="nameEn" value="search.persArmassignmentExecutors" />
+  		<!-- key in property file -->
+  		<property name="nameRu" value="search.persArmassignmentExecutors" />
+	</bean>
+	
+	<!-- От кого/сотрудник внутренний (личный кабинет)--> 
+	<bean id="persArmSignatory" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_SIGNATORY" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmSignatory" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmSignatory" />
+	</bean>
+	
+	<!-- Кому/организация (личный кабинет)--> 
+	<bean id="persArmOutReciever" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmOutReciever" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmOutReciever" />
+		
+	</bean>	
+	
+	<!-- Кому/сотрудник внутренний (личный кабинет)-->
+	<bean id="persArmAddressee" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="routeSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_RASSM_PERSON" index="1"/>
+				<constructor-arg value="jbr.examby->jbr.exam.person;jbr.incoming.addressee" index="2" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmAddressee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmAddressee" />
+	</bean>
+
+	<!--  Кому/сотрудник внешний(личный кабинет) -->
+	<bean id="persArmoutcomeExtUser" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT_USR" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmoutcomeExtUser" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmoutcomeExtUser" />
+	</bean>		
+	
+	<!--  От кого/организация(личный кабинет) -->
+	<bean id="persArmSender" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SENDER" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmExtSender" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmExtSender" />
+	</bean>
+	
+	<!--  От кого/сотрудник внешний(личный кабинет) -->
+	<bean id="persArmExtSendUser" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SIGN_EXT" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmExtSendUser" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmExtSendUser" />
+	</bean>	
+	
+	<!--  Кому/автор обращения(личный кабинет) -->
+	<bean id="persArmogAuthorLastName" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_RECEIVER_CA" />
+			</bean>
+		</property>	
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persArmogAuthorLastName" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persArmogAuthorLastName" />
+	</bean>	
+		
+	<!-- Другая информация о приложении -->
+	<bean id="otherInfo" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="JBR_ORIG_COMMENT" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>
+	
+	<!-- Регион Автора обращения-->
+	<bean id="reqAuthorRegion" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" index="0" />
+				<constructor-arg value="ADMIN_277224" index="1" />
+				<constructor-arg value="JBR_OG_REQ_AUTHOR" index="2" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Должность, ФИО лица, подписавшего документ -->
+	<bean id="signerFIO" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SIGN_EXT" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Отправитель -->
+	<bean id="sender" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SENDER" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Последующие обращения -->
+	<bean id="nextAppeals" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute" />
+				<constructor-arg value="ADMIN_277618" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Предыдущие обращения -->
+	<bean id="prevAppeals" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_277616" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Дополнительные сведения об авторе -->
+	<bean id="authorAdditInfo" class="com.aplana.dbmi.model.SearchTextCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="ADMIN_277248" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="false"/>
+	</bean>
+	
+	<!-- Тип источника -->
+	<bean id="sourceType" class="com.aplana.dbmi.model.TreeAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TreeAttribute" />
+				<constructor-arg value="ADMIN_281718" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Категория заявителя -->
+	<bean id="applicantCategory" class="com.aplana.dbmi.model.MultiListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_COMPLAINT_REASON" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Формат обращения -->
+	<bean id="addresseFormat" class="com.aplana.dbmi.model.MultiListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_ADDRESS_FORMAT" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Подписано ЭП -->
+	<bean id="signedWithDS" class="com.aplana.dbmi.model.IsExistSearchAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="routeSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute" index="0"/>
+               	<constructor-arg value="SIGN_WITH_DN_ATTR" index="1"/>
+               	<constructor-arg value="jbr.sign.set->jbr.uzdo.signature" index="2"/>
+			</bean>
+		</property>
+
+		<!-- key in property file -->
+		<property name="nameEn" value="signedWithDSTitle" />
+		<!-- key in property file -->
+		<property name="nameRu" value="signedWithDSTitle" />
+	</bean>
+
+	<!-- Согласовано ЭП -->
+	<bean id="visaWithDS" class="com.aplana.dbmi.model.IsExistSearchAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="routeSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute" index="0"/>
+               	<constructor-arg value="VISA_WITH_DN_ATTR" index="1"/>
+               	<constructor-arg value="jbr.visa.set->jbr.uzdo.signature" index="2"/>
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="visaWithDSTitle" />
+		<!-- key in property file -->
+		<property name="nameRu" value="visaWithDSTitle" />
+	</bean>	
+
+	<!--  commom search block, contains common search atributes for all pages  -->
+	<bean id="commonSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		
+		<property name="id" value="commonBlockId"/>
+
+		<property name="name" value="search.commonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="creationYearDatePeriod" />
+				<ref bean="registrationNumber" />
+				<ref bean="registrationNumberdigitalPart"/>
+				<ref bean="registrar"/>
+				<ref bean="registrationDatePeriod" />
+				<ref bean="urgencyLevel" />
+				<ref bean="doctype" />
+				<!-- ref bean="incomeSource" /-->
+				<ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!--  income search block, contains income specific search atributes -->
+	<bean id="incomeSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="incomeBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="incomingOutnumber" />
+				<ref bean="dateWithdrawalDocumentControlPeriod"/>
+				<ref bean="registrationDatePeriodOut"/>
+				<ref bean="reasonForPostponingThe"/>
+				<ref bean="coprovoditelnoeLetter"/>
+				<ref bean="shortDescription" />
+				<ref bean="incomingSender" />
+				<ref bean="incomeOrgSpec"/>
+				<ref bean="internalVisaResponsible"/>
+                <ref bean="recievedOrg"/>
+				<ref bean="internalReceiver"/>
+				<ref bean="ogAuthType"/>
+				<ref bean="typeControl"/> <!-- Тип контроля -->	
+				<ref bean="internalInspector"/>
+				<ref bean="deadLineDatePeriod"/>
+				<ref bean="executionByPersonFromDepartment"/> <!-- Поступили на исполнение в подразделение-->
+				<ref bean="dsp"/> <!-- ДСП -->
+				<ref bean="resolutionExecutorsAndCoExecutors" />
+				<ref bean="incomingTypeDelivery" />
+				<ref bean="internalHiddenExaminators" />
+				<ref bean="index" />
+				<ref bean="registrationJournal"/>
+				<ref bean="executiveOutgoing"/>
+				<ref bean="imAcquaintance" />
+				<ref bean="govService" />
+				<ref bean="lastRegistrations" />
+				<!--ref bean="allExecutors" /-->
+				<!--ref bean="allСoexecutors" /-->
+				<!--ref bean="typeControl" /-->
+				<!--ref bean="kindOfPerfom" /-->
+			</list>
+		</property>		
+	</bean>
+
+	<!--  outcome search block, contains outcome specific search atributes -->
+
+	<bean id="outcomeSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="outcomeBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescription" />
+				<ref bean="outcomeOutExecutor" />
+				<ref bean="outcomingSignatory" />
+				<ref bean="signedWithDS"/>
+				<ref bean="outVisaResponsible" />
+				<ref bean="visaWithDS"/>
+				<ref bean="outReciever" />
+				<ref bean="outcomeOrgSpec"/>
+				<ref bean="index" />
+				<ref bean="registrationJournal" />
+				<ref bean="outcomeExtUser" />
+				<ref bean="outcomeExtUserOG"/>
+				<ref bean="waySending"/>
+				<ref bean="executedByPersonFromDepartment"/> <!-- Подготовлены в подразделении -->
+				<ref bean="dsp"/> <!-- ДСП -->
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!--  internal search block, contains outcome specific search atributes -->
+	<bean id="internalSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="internalBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescription" />
+				<ref bean="internalPersonExecutor" />
+				<ref bean="internalSignatory" />
+				<ref bean="signedWithDS"/>
+				<ref bean="internalHiddenVisaResponsible" />
+				<ref bean="visaWithDS"/>
+				<ref bean="internalReceiver" />
+				<ref bean="internalOnControl" />
+				<ref bean="typeControl"/> <!-- Тип контроля -->	
+				<ref bean="internalInspector" />
+				<ref bean="deadLineDatePeriod" />
+				<ref bean="executionByPersonFromDepartment"/> <!-- Поступили на исполнение в подразделение-->
+				<ref bean="executedByPersonFromDepartment"/> <!-- Подготовлены в подразделении -->
+				<ref bean="dsp"/> <!-- ДСП -->
+				<ref bean="resolutionExecutorsAndCoExecutors" />
+				<ref bean="index" />
+				<ref bean="registrationJournal" />
+				<ref bean="internalHiddenExaminators" />
+				<ref bean="imAcquaintance" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!--  ORD search block, contains outcome specific search atributes -->
+	<bean id="ordSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="ordBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescription"/>
+				<ref bean="developer"/>
+				<ref bean="curator"/>
+				<ref bean="internalSignatory"/>
+				<ref bean="signedWithDS"/>
+				<ref bean="outVisaResponsible"/>
+				<ref bean="visaWithDS"/>
+				<ref bean="internalOnControl"/>
+				<ref bean="typeControl"/> <!-- Тип контроля -->	
+				<ref bean="internalInspector"/>
+				<ref bean="deadLineDatePeriod"/>
+				<ref bean="executionByPersonFromDepartment"/> <!-- Поступили на исполнение в подразделение-->
+				<ref bean="executedByPersonFromDepartment"/> <!-- Подготовлены в подразделении -->
+				<ref bean="dsp"/> <!-- ДСП -->
+				<ref bean="resolutionExecutorsAndCoExecutors"/>
+				<ref bean="index"/>
+				<ref bean="registrationJournal"/>
+				<ref bean="imAcquaintance" />
+			</list>
+		</property>
+	</bean>
+	
+	<!--НПА -->
+	<bean id="legalActsSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="legalActsBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescription"/>
+				<ref bean="developer"/>
+				<ref bean="curator"/>
+				<ref bean="internalSignatory"/>
+				<ref bean="outVisaResponsible"/>
+				<ref bean="registrationJournal" />
+				<ref bean="index"/>
+				<ref bean="resolutionExecutorsAndCoExecutors"/>
+				<ref bean="imAcquaintance" />		
+			</list>
+		</property>
+	</bean>
+	
+	<!--  commom search block, contains common search atributes for OG page  -->
+	<bean id="commonOgSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		
+		<property name="id" value="commonBlockId"/>
+
+		<property name="name" value="search.commonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="creationYearDatePeriod" />
+				<ref bean="registrationNumber" />
+				<ref bean="registrationNumberdigitalPart"/>
+				<ref bean="registrar"/>
+				<ref bean="registrationDatePeriod" />
+				<ref bean="urgencyLevel" />
+				<ref bean="state" />
+				<ref bean="incomeSource" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!--  OG(Обращения граждан) search block, contains outcome specific search atributes -->
+	<bean id="ogSearchBlockDescription" parent="commonOgSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="ogBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="registrationDatePeriodOut" />
+				<ref bean="sourceOfCome" />
+				<ref bean="sourceType" />
+				<ref bean="incomingOutnumber" />
+				<ref bean="dateWithdrawalDocumentControlPeriod"/>
+				<ref bean="reasonForPostponingThe"/>
+				<ref bean="coprovoditelnoeLetter"/>
+				<ref bean="ogAuthorType" />
+				<!--ref bean="ogAppealAuthor"/-->
+				<!--ref bean="ogAuthorFirstName" /-->
+				<ref bean="ogAuthorLastName" />
+				<ref bean="authorAdditInfo" />
+				<ref bean="applicantCategory" />
+				<ref bean="addresseFormat" />
+				<!--ref bean="ogAuthorPatronimic" /-->
+				<ref bean="ogThemeOfQuery" />
+				<ref bean="ogThematic" />
+				<ref bean="ogShhortDescription" />
+				<ref bean="prevAppeals" />
+				<ref bean="nextAppeals" />
+				<ref bean="shortDescription" />
+				<ref bean="ogAddressee" />
+				<ref bean="resolutionExecutorsAndCoExecutors"/>
+				<ref bean="sender" />
+				<ref bean="signerFIO" />
+				<ref bean="internalOnControl"/>
+				<ref bean="typeControl" />
+				<ref bean="internalInspector"/>
+				<ref bean="deadLineDatePeriod"/>
+				<ref bean="executionByPersonFromDepartment"/> <!-- Поступили на исполнение в подразделение-->
+				<ref bean="executedByPersonFromDepartment"/> <!-- Подготовлены в подразделении -->
+				<ref bean="dsp"/> <!-- ДСП -->
+				<ref bean="reqAuthorRegion" />
+				<ref bean="reqAuthorDistrict"/>
+				<ref bean="ogCityDistrict"/>
+				<ref bean="queryExemptions"/>
+				<ref bean="registrationJournal"/>
+				<ref bean="index" />
+				<ref bean="typeDelivery" />
+				<ref bean="otherInfo" />
+				<ref bean="executiveOutgoing"/>
+				<ref bean="imAcquaintance" />
+				<ref bean="govService" />
+				<ref bean="lastRegistrations" />
+			</list>
+		</property>
+	</bean>
+	
+	<!--  OG(Обращения граждан/Внешние резолюции) search block, contains external resolution specific search atributes -->
+	<bean id="ogExtResolutSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="ogExtResolutionBlockId"/>
+		
+		<property name="name" value="search.extResolutAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="extResolutNumber" />
+				<ref bean="extPointNumber" />
+				<ref bean="extOrdType" />
+				<ref bean="extResolutPrivacy" />
+				<ref bean="extResolutText" />
+				<ref bean="extResolutExecutor" />
+				<ref bean="extResolutCoExecutors" />
+				<ref bean="extResolutAuthor" />
+				<ref bean="extResolutSignDate" />
+				<ref bean="extResolutPlanDate" />
+				<ref bean="extResolutControlFlag" />
+				<ref bean="extResolutExecutedDate" />				
+			</list>
+		</property>
+	</bean>	
+	
+	<!--  (Ответы на Обращения граждан) search block, contains outcome specific search atributes -->
+	<bean id="ogOutSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="ogBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="index" />
+				<ref bean="shortDescription" />
+				<ref bean="ogOutExecutor" />
+				<ref bean="outcomingSignatory" />
+				<ref bean="outVisaResponsible" />
+				<ref bean="ogAppealAuthor" />
+			</list>
+		</property>
+	</bean>		
+	
+	<!--  personal area search block, contains personal area specific search atributes -->
+	<bean id="personalAreaSearchBlockDescription" parent="commonSearchBlockDescription"  scope="prototype">
+		
+		<property name="id" value="outcomeBlockId"/>
+		
+		<property name="name" value="search.additionalAttributes"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescription" />
+				<ref bean="persArmSignatory" />
+				<ref bean="persArmSender" />
+				<ref bean="persArmExtSendUser"/>
+				<ref bean="persArmAddressee" />
+				<ref bean="persArmOutReciever" />
+				<ref bean="persArmoutcomeExtUser" />
+				<ref bean="persArmogAuthorLastName" />
+				<ref bean="signedWithDS"/>
+				<ref bean="outVisaResponsible" />
+				<ref bean="visaWithDS"/>
+				<ref bean="resolutionExecutorsAndCoExecutors" />
+				<ref bean="registrationJournal" />
+				<ref bean="index" />
+				<ref bean="internalOnControl"/>
+				<ref bean="typeControl"/> <!-- Тип контроля -->	
+				<ref bean="deadLineDatePeriod"/>
+				<ref bean="executionByPersonFromDepartment"/> <!-- Поступили на исполнение в подразделение-->
+				<ref bean="executedByPersonFromDepartment"/> <!-- Подготовлены в подразделении -->
+				<ref bean="dsp"/> <!-- ДСП -->
+			</list>
+		</property>
+	</bean>
+	<!-- Поступили на исполнение в подразделение -->
+	<bean id="executionByPersonFromDepartment" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="TriggeredRouteSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" index="0"/>
+				<constructor-arg value="EXECUTING_IN_DEPT" index="1"/>
+				<constructor-arg value="jbr.resolutions->jbr.AssignmentExecutor->jbr.personInternal.department;
+										jbr.resolutions->jbr.CoExecutor->jbr.personInternal.department" index="2"/>
+				<constructor-arg value="jbr.examby->jbr.exam.person->jbr.personInternal.department" index="3" />
+			</bean>
+		</property>
+		<property name="nameEn" value="executionByPersonFromDepartmentTitle"/>
+		<property name="nameRu" value="executionByPersonFromDepartmentTitle"/>
+	</bean>
+	<!-- Подготовлены в подразделении -->
+	<bean id="executedByPersonFromDepartment" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean parent="routeSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" index="0"/>
+				<constructor-arg value="PREPARED_IN_DEPT" index="1"/>
+				<constructor-arg value="jbr.document.executor->jbr.personInternal.department" index="2"/>
+			</bean>
+		</property>
+		<property name="nameEn" value="executedByPersonFromDepartmentTitle"/>
+		<property name="nameRu" value="executedByPersonFromDepartmentTitle"/>
+	</bean>
+	<!-- ДСП -->
+	<bean id="dsp" class="com.aplana.dbmi.model.ListAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_281785" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="commonSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" abstract="true" >
+			
+		<property name="searchBlockDescriptions">
+			<list>
+				<ref bean="commonSearchBlockDescription" />
+			</list>
+		</property>
+		
+	</bean>
+	
+	<bean id="commonOgSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" abstract="true" >
+			
+		<property name="searchBlockDescriptions">
+			<list>
+				<ref bean="commonOgSearchBlockDescription" />
+			</list>
+		</property>
+		
+	</bean>
+		
+	
+	<bean id="incomeSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="incomeSearchBlockDescription" />
+				<ref bean="ogExtResolutSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="incomeSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-income/income_all.xml"/>
+				
+	</bean>
+	
+	<!-- Форма поиска для "Заявки на ГУ" раздел -->
+	<bean id="requestSsSearchFormDescription" parent="incomeSearchFormDescription"  scope="prototype">
+		<property name="title" value="requestForSsSearchForm.title"/>
+	</bean>	
+	
+
+	
+	<bean id="outcomeSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+				<ref bean="outcomeSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="outcomeSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-outcome/outcome_all.xml"/>
+				
+	</bean>		
+	
+	
+	<bean id="internalSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="internalSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="internalSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-internal/internal-all.xml"/>
+				
+	</bean>
+	
+	<bean id="ordSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="ordSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="ordSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-ord/ord-all.xml"/>
+				
+	</bean>	
+
+	<bean id="legalActsSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="legalActsSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="search.npa"/>
+		<property name="defaultSearchConfigFile" value="page-npa/npa-all.xml"/>
+				
+	</bean>
+	
+	
+	<bean id="ogSearchFormDescription" parent="commonOgSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="ogSearchBlockDescription" />
+				<ref bean="ogExtResolutSearchBlockDescription" />
+				
+			</list>
+		</property>
+		
+		<property name="title" value="ogSearchFormDescription.title"/>
+		<property name="defaultSearchConfigFile" value="page-og/og-all.xml"/>
+				
+	</bean>	
+	
+	
+	<bean id="infoRequestSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="ogSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="infoRequestSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-info-request/info-request-all.xml"/>
+				
+	</bean>
+	
+	<bean id="ogOutSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="ogOutSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="ogOutSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="page-og-out/og-out-all.xml"/>
+				
+	</bean>		
+		
+	<bean id="infoRequestOutSearchFormDescription" parent="commonSearchFormDescription"  scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="ogOutSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="infoRequestOutSearchForm.title"/>		
+		<property name="defaultSearchConfigFile" value="page-info-request-out/info-request-out-all.xml"/>
+				
+	</bean>
+	
+
+	<!--  person Area commom search block, contains common search atributes for person area common block  -->
+	<bean id="personalAreaCommonSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  init-method="initializeNames" scope="prototype">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		
+		<property name="id" value="commonBlockId"/>
+
+		<property name="name" value="search.commonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="creationYearDatePeriod" />
+				<ref bean="registrationNumber" />
+				<ref bean="registrationNumberdigitalPart"/>
+				<ref bean="registrar"/>
+				<ref bean="personAuthor"/>
+				<ref bean="registrationDatePeriod" />
+				<ref bean="urgencyLevel" />
+				<ref bean="doctype" />
+				<ref bean="statePCabinet" />
+				<ref bean="pCabinetTemplateWS" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	
+	<bean id="personalAreaSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list>
+		
+				<ref bean="personalAreaCommonSearchBlockDescription" />
+				
+				<ref bean="personalAreaSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="personalAreaSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="arm/personArmDocumentsAll.xml"/>
+				
+	</bean>	
+	
+	<bean id="assistentAreaSearchFormDescription" parent="personalAreaSearchFormDescription"  scope="prototype">
+		
+		<property name="title" value="assistentAreaSearchForm.title"/>
+	</bean>
+	
+	<bean id="queryExemptions" class="com.aplana.dbmi.model.TreeAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TreeAttribute" />
+				<constructor-arg value="ADMIN_277615" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="executiveOutgoing" class="com.aplana.dbmi.model.StringAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="ADMIN_274994" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="waySending" class="com.aplana.dbmi.model.ListAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" index="0" />
+				<constructor-arg value="ADMIN_222147" index="1" />
+				<constructor-arg value="ADMIN_222990" index="2" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!--  commom search block, contains common search atributes for all pages  -->
+    <bean id="independentResolutionCommonSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+       <property name="nameInitializer" ref="attributeNameInitializer"/>
+       <property name="id" value="commonBlockId"/>
+       <property name="name" value="search.commonAttributes"/>
+       <property name="searchAttributes">
+           <list>
+               <ref bean="creationYearDatePeriod" />
+               <ref bean="registrationNumber" />
+               <ref bean="registrationNumberdigitalPart"/>
+               <ref bean="registrationDatePeriod" />
+               <ref bean="doctype" />
+               <ref bean="state" />
+           </list>
+       </property>
+   </bean>
+   
+   <!-- Резолюция -->
+   <bean id="resolution" class="com.aplana.dbmi.model.TextAttribute" scope="prototype">
+       <property name="id">
+           <bean parent="objectIdDef" >
+               <constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+               <constructor-arg value="JBR_GIPA_RESOLUT" />
+           </bean>
+       </property>
+   </bean>
+   
+   <!-- Срок -->
+   <bean id="terminalDate" class="com.aplana.dbmi.model.DateAttribute" scope="prototype">
+       <property name="id">
+           <bean parent="objectIdDef" >
+               <constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+               <constructor-arg value="JBR_TCON_TERM" />
+           </bean>
+       </property>
+   </bean>
+
+   <!-- Обёртка для "Срок", позволяющая задавать диапазон дат -->
+    <bean id="terminalDatePeriod" class="com.aplana.dbmi.model.DatePeriodAttribute" scope="prototype">
+        <constructor-arg ref="terminalDate" />
+    </bean>
+   
+   <!-- На контроле -->
+   <bean id="controlFlag" class="com.aplana.dbmi.model.ListAttribute" scope="prototype">
+       <property name="id">
+           <bean  parent="objectIdDef" >
+               <constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+               <constructor-arg value="JBR_TCON_ONCONT" />
+           </bean>
+       </property>
+   </bean>
+   
+   <!-- Исполнитель -->
+   <bean id="resolutionExecutorIndepRes" class="com.aplana.dbmi.model.PersonAttribute" scope="prototype">
+		<property name="id">
+			<bean   parent="TriggeredRouteSearchObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0"/>
+				<constructor-arg value="JBR_INFD_EXEC_LINK" index="1"/>
+				<constructor-arg value="jbr.AssignmentExecutor;jbr.allResolutions#execution,done->jbr.AssignmentExecutor" index="2" />
+				<constructor-arg value="jbr.CoExecutor;jbr.allResolutions#execution,done->jbr.CoExecutor" index="3" />
+			</bean>
+
+		</property>
+		
+		<!-- key in property file -->
+  		<property name="nameEn" value="search.assignmentExecutor" />
+  		<!-- key in property file -->
+  		<property name="nameRu" value="search.assignmentExecutor" />
+   </bean>
+
+   <!-- Должность, фамилия и инициалы лица, подписавшего резолюцию -->
+   <bean id="resolutionSigner" class="com.aplana.dbmi.model.PersonAttribute" scope="prototype">
+       <property name="id">
+           <bean  parent="objectIdDef" >
+               <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+               <constructor-arg value="JBR_INFD_SGNEX_LINK" />
+           </bean>
+       </property>
+   </bean>
+   
+   <!-- Исполнитель -->
+   <bean id="controller" class="com.aplana.dbmi.model.PersonAttribute" scope="prototype">
+       <property name="id">
+           <bean parent="objectIdDef" >
+               <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+               <constructor-arg value="JBR_TCON_INSPECTOR" />
+           </bean>
+       </property>
+   </bean>
+
+   <bean id="commonSearchBlockDescriptionEmpty" class="com.aplana.dbmi.search.SearchBlockDescription"
+                                                           init-method="initializeNames" scope="prototype">
+       <property name="nameInitializer" ref="attributeNameInitializer" />
+       <property name="id" value="commonEmptyBlockId" />
+       <property name="name" value="search.commonAttributes" />
+       <property name="searchAttributes">
+           <list>
+           </list>
+       </property>
+   </bean>
+
+   <!-- order search block -->
+   <bean id="independentResolutionSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype">
+       <property name="id" value="independentResolutionBlockId" />
+       <property name="name" value="search.additionalAttributes" />
+       <property name="searchAttributes">
+           <list>
+               <ref bean="resolution" />
+               <ref bean="resolutionExecutorIndepRes" />
+               <ref bean="ordCoExecutors" />
+               <ref bean="resolutionSigner" />
+               <ref bean="internalOnControl" />
+               <ref bean="deadLineDatePeriod" />
+               <ref bean="internalInspector" />
+           </list>
+       </property>
+   </bean>
+
+   <bean id="commonSearchFormDescriptionEmpty" class="com.aplana.dbmi.search.SearchFormDescription" abstract="true"/>
+
+   <bean id="independentResolutionSearchFormDescription" parent="commonSearchFormDescriptionEmpty" scope="prototype">
+       <property name="searchBlockDescriptions">
+           <list merge="true">
+               <ref bean="independentResolutionCommonSearchBlockDescription" />
+               <ref bean="independentResolutionSearchBlockDescription" />
+           </list>
+       </property>
+       <property name="title" value="independentResolutionsSearchForm.title"/>
+       <property name="defaultSearchConfigFile" value="page-internal/internal-independent-resolutions-projects.xml"/>
+   </bean>
+   
+   
+   <!-- К списанию -->
+   
+   	<bean id="commonWriteOffSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+		<property name="id" value="commonBlockId"/>
+		<property name="name" value="search.commonAttributes"/>		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="creationYearDatePeriod" />
+				<ref bean="registrationNumber" />
+				<ref bean="registrationNumberdigitalPart"/>
+				<ref bean="registrationDatePeriod" />
+				<ref bean="urgencyLevel" />
+				<ref bean="doctype" />
+				<ref bean="incomeSource" />				
+			</list>
+		</property>
+	
+	</bean>
+   
+   	<bean id="commonWriteOffSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" abstract="true" >
+			
+		<property name="searchBlockDescriptions">
+			<list>
+				<ref bean="commonWriteOffSearchBlockDescription" />
+			</list>
+		</property>
+		
+	</bean>
+	
+	
+	
+	<bean id="incomeWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true">		
+				<ref bean="incomeSearchBlockDescription" />
+				<ref bean="ogExtResolutSearchBlockDescription" />
+			</list>
+		</property>		
+		<property name="title" value="incomeSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="delo/income_ready_to_delo.xml"/>				
+	</bean>	
+	
+	<bean id="outcomeWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="outcomeSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="outcomeSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="delo/outcome_search_ready_to_delo.xml"/>				
+	</bean>	
+	
+	<bean id="internalWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="internalSearchBlockDescription" />
+			</list>
+		</property>		
+		<property name="title" value="internalSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="delo/internal_ready_to_delo.xml"/>				
+	</bean>
+	
+	<bean id="legalActsWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="legalActsSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="legalActsSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="delo/legal_acts_ready_to_delo.xml"/>				
+	</bean>
+	
+	<bean id="ogWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="ogSearchBlockDescription" />
+				<ref bean="ogExtResolutSearchBlockDescription" />				
+			</list>
+		</property>		
+		<property name="title" value="ogSearchFormDescription.title"/>
+		<property name="defaultSearchConfigFile" value="delo/og_ready_to_delo.xml"/>				
+	</bean>	
+	
+	<bean id="npaWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="legalActsSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="legalActsSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="delo/npa_ready_to_delo.xml"/>				
+	</bean>
+	
+	<bean id="ordWriteOffSearchFormDescription" parent="commonWriteOffSearchFormDescription"  scope="prototype">	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="legalActsSearchBlockDescription" />
+			</list>
+		</property>
+		<property name="title" value="legalActsSearchFormORD.title"/>
+		<property name="defaultSearchConfigFile" value="delo/ord_ready_to_delo.xml"/>				
+	</bean>
+   <!-- К списанию конец -->
+   
+    <!-- Регистратор--> 
+    <bean id="registrar" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+                <constructor-arg value="JBR_REGD_REGISTRAR" />
+            </bean>
+        </property>
+    </bean>
+
+	<bean id="stateDraft" parent="objectIdDef" >
+		<constructor-arg value="com.aplana.dbmi.model.CardState" />
+		<constructor-arg value="1" />
+	</bean>
+	
+	<bean id="stateCancel" parent="objectIdDef" >
+		<constructor-arg value="com.aplana.dbmi.model.CardState" />
+		<constructor-arg value="34145" />
+	</bean>	
+	<bean id="organizationSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="organizationSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="organizationSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/organizations_all.xml"/>
+				
+	</bean>
+	
+   <bean id="organizationSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype">
+       <property name="id" value="organizationSearchBlockId" />
+       <property name="name" value="organizationSearchForm.title" />
+       <property name="searchAttributes">
+           <list>
+               <ref bean="orgShortName" />
+               <ref bean="orgFullName" />
+               <ref bean="orgSuperOrg" />
+               <ref bean="orgMEDOClient" />
+               <ref bean="orgSendingMethod" />
+               <ref bean="orgSpecialization" />
+			   <ref bean="state" />
+           </list>
+       </property>
+   </bean>
+	
+    <bean id="orgShortName" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+                <constructor-arg value="JBR_DORG_SHORTNAME" />
+            </bean>
+        </property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+    </bean>
+
+    <!-- Полное наименование --> 
+    <bean id="orgFullName" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+                <constructor-arg value="JBR_DORG_FULLNAME" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Вышестоящая организация --> 
+	<bean id="orgSuperOrg" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_DORG_SUPER_ORG" />
+			</bean>
+		</property>
+	</bean>			
+
+    <!-- Клиент МЭДО --> 
+	<bean id="orgMEDOClient" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_MEDO_CLIENT" />
+			</bean>
+		</property>
+	</bean>			
+
+    <!-- Способ доставки --> 
+	<bean id="orgSendingMethod" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_SENDING_METHOD" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="sending.method" />
+		<!-- key in property file -->
+		<property name="nameRu" value="sending.method" />
+	</bean>			
+
+    <!-- Специализация --> 
+	<bean id="orgSpecialization" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_DORG_SPESIALIZ" />
+			</bean>
+		</property>
+	</bean>			
+
+	<bean id="departmentSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="departmentSearchBlockDescription" />
+				<ref bean="commonDepartmentSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="departmentSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/departments_all.xml"/>
+				
+	</bean>
+
+	<bean id="departmentSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype">
+	    <property name="id" value="departmentSearchBlockId" />
+	    <property name="name" value="departmentSearchForm.title" />
+	    <property name="searchAttributes">
+	        <list>
+	            <ref bean="depShortName" />
+	            <ref bean="depFullName" />
+	            <ref bean="depChief" />
+	            <ref bean="depParentLink" />
+	            <ref bean="depOrganization" />
+	            <ref bean="depRespDOW" />
+	        </list>
+	    </property>
+	</bean>
+
+    <!-- Сокращенное наименование --> 
+    <bean id="depShortName" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+                <constructor-arg value="JBR_DEPT_SHORTNAME" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Полное наименование --> 
+    <bean id="depFullName" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="objectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+                <constructor-arg value="JBR_DEPT_FULLNAME" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Руководитель --> 
+	<bean id="depChief" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_DEPT_CHIEF" />
+			</bean>
+		</property>
+	</bean>			
+
+    <!-- Вышестоящий департамент --> 
+	<bean id="depParentLink" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_DEPT_PARENT_LINK" />
+			</bean>
+		</property>
+	</bean>			
+
+    <!-- Организация --> 
+	<bean id="depOrganization" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_250463" />
+			</bean>
+		</property>
+	</bean>			
+
+    <!-- Ответственный за ДОУ --> 
+	<bean id="depRespDOW" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_DEPT_RESP_DOW" />
+			</bean>
+		</property>
+	</bean>		
+	
+	<bean id="commonDepartmentSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="commonDictionariesSearchBlockId" />
+		<property name="name" value="search.commonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="depZoneDOW" />
+			    <ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+    <!-- Зона ДОУ --> 
+	<bean id="depZoneDOW" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_ZONE_DOW" />
+			</bean>
+		</property>
+	</bean>		
+
+
+	<bean id="positionSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="commonDictionariesSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="positionSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/positions_all.xml"/>
+				
+	</bean>
+
+	<bean id="commonDictionariesSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="commonDictionariesSearchBlockId" />
+		<property name="name" value="search.dictCommonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="nameCommon" />
+				<ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<bean id="commonDictionariesSearchBlockDescription2" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="commonDictionariesSearchBlockId" />
+		<property name="name" value="search.dictCommonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="nameDescr" />
+				<ref bean="state" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="numeratorDictionariesSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype">	
+	    <property name="id" value="numeratorDictionariesSearchBlockId" />
+		<property name="name" value="search.additionalAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="nameNumerator" />
+				<ref bean="numQuantChar" />
+				<ref bean="creationDate" />
+				<ref bean="changeDateNoTime" />
+				<ref bean="state" />
+			</list>
+		</property>
+	</bean>
+	
+	<!--Название карточки-->
+	<bean id="nameCommon" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="NAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<bean id="nameDescr" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="DESCR" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Название нумератора-->
+	<bean id="nameNumerator" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_NUMR_NAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>	
+
+	<bean id="nomenclatureSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="nomenclatureSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="nomenclatureSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/nomenclature_search.xml"/>
+				
+	</bean>
+
+	<bean id="nomenclatureSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+		
+	    <property name="id" value="nomenclatureSearchBlockId" />
+		<property name="name" value="nomenclatureSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="nomenFullName" />
+				<ref bean="nomenIndex" />
+				<ref bean="nomenDepart" />
+			    <ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Полное наименование дела-->
+	<bean id="nomenFullName" class="com.aplana.dbmi.model.TextAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.TextAttribute" />
+				<constructor-arg value="ADMIN_266050" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Индекс дела-->
+	<bean id="nomenIndex" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="ADMIN_262754" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Департамент-->
+	<bean id="nomenDepart" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_305019" />
+			</bean>
+		</property>	
+	</bean>
+
+	<bean id="numeratorSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="numeratorDictionariesSearchBlockDescription" />
+				<!--ref bean="numeratorSearchBlockDescription" /-->
+			</list>
+		</property>
+		<property name="title" value="numeratorSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/numerator_all.xml"/>
+	</bean>
+
+	<!-- bean id="numeratorSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="numeratorSearchBlockId" />
+		<property name="name" value="numeratorSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="numCurVal" />
+				<ref bean="numQuantChar" />
+			</list>
+		</property>
+	
+	</bean-->
+
+	<!--Текущее значение-->
+	<bean id="numCurVal" class="com.aplana.dbmi.model.IntegerAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.IntegerAttribute" />
+				<constructor-arg value="JBR_NUMR_CURVAL" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Количетсво символов-->
+	<bean id="numQuantChar" class="com.aplana.dbmi.model.IntegerAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.IntegerAttribute" />
+				<constructor-arg value="JBR_NUMR_QUANTCHAR" />
+			</bean>
+		</property>	
+	</bean>
+
+	<bean id="formatSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="commonDictionariesSearchBlockDescription" />
+				<ref bean="formatSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="formatSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/format_all.xml"/>
+				
+	</bean>
+
+	<bean id="formatSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="formatSearchBlockId" />
+		<property name="name" value="formatSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="formatComPel" />
+				<ref bean="formatNumerator" />
+				<ref bean="formatComPel2" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Вычисляемый элемент 1-->
+	<bean id="formatComPel" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_NFEL_COMPEL" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Нумератор-->
+	<bean id="formatNumerator" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_NFPR_NUMER" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Вычисляемый элемент2-->
+	<bean id="formatComPel2" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_259615" />
+			</bean>
+		</property>	
+	</bean>
+
+	<bean id="journalSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="commonDictionariesSearchBlockDescription" />
+				<ref bean="journalSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="journalSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/journals_all.xml"/>
+				
+	</bean>
+
+	<bean id="journalSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="journalSearchBlockId" />
+		<property name="name" value="journalSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="journalDepartment" />
+				<ref bean="journalRegLogType" />
+				<ref bean="journalRegNumForm" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Подразделение-->
+	<bean id="journalDepartment" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_1091614" />
+			</bean>
+		</property>	
+	</bean>
+	
+	<!--Тип журнала регистрации-->
+	<bean id="journalRegLogType" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_REGLOG_TYPE_J" />
+			</bean>
+		</property>	
+	</bean>
+
+	<!--Формат номера-->
+	<bean id="journalRegNumForm" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_JREG_NUMFORM" />
+			</bean>
+		</property>	
+	</bean>
+
+	<bean id="zoneDowSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="zoneDowSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="zoneDowSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/zonesDOW_all.xml"/>
+				
+	</bean>
+
+	<bean id="zoneDowSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="zoneDowSearchBlockId" />
+		<property name="name" value="zoneDowSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="zoneDowName" />
+				<ref bean="zoneDowDepList" />
+			    <ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Название Зоны ДОУ-->
+	<bean id="zoneDowName" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_ZONE_DOW_NAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Список департаментов-->
+	<bean id="zoneDowDepList" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_DOWZONE_DEPLIST" />
+			</bean>
+		</property>	
+	</bean>
+	
+	<bean id="externalPersonSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="externalPersonSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="extPersonSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/externalPersons_all.xml"/>
+				
+	</bean>
+
+	<bean id="externalPersonSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="externalPersonSearchBlockId" />
+		<property name="name" value="extPersonSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="extPersSecond" />
+				<ref bean="extPersName" />
+				<ref bean="extPersMiddle" />
+				<ref bean="extPersOrg" />
+				<ref bean="extPersPosition" />
+			    <ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Фамилия-->
+	<bean id="extPersSecond" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_SNAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Имя-->
+	<bean id="extPersName" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_NAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Отчество-->
+	<bean id="extPersMiddle" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_MNAME" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Телефон-->
+	<bean id="extPersPhone" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_PHONE" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--E-mail-->
+	<bean id="extPersEmail" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_EMAIL" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Организация-->
+	<bean id="extPersOrg" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_PERS_ORG" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Должность-->
+	<bean id="extPersPosition" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_POSITION" />
+			</bean>
+		</property>	
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Должность-->
+	<bean id="extPersPos" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="ADMIN_5977822" />
+			</bean>
+		</property>	
+	</bean>
+	
+	<!--Подразделение-->
+	<bean id="extPersDepartment" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_PERS_DEPT_LINK" />
+			</bean>
+		</property>	
+	</bean>
+	
+	<!--Помощник-->
+	<bean id="extPersAssistant" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ASSISTANT_FOR" />
+			</bean>
+		</property>	
+	</bean>
+	
+	<bean id="armSetupSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="armSetupSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="armSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/ARMsetup_all.xml"/>
+				
+	</bean>
+
+	<bean id="armSetupSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="armSetupSearchBlockId" />
+		<property name="name" value="armSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="armSetupOwner" />
+				<ref bean="armSetupAssist" />
+				<ref bean="armSetupInspect" />
+				<ref bean="armSetupResList" />
+				<ref bean="armSetupCompany" />
+			    <ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+
+	<!--Владелец-->
+	<bean id="armSetupOwner" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ARM_MANAGER" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Помощник-->
+	<bean id="armSetupAssist" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ARM_ASSISTANT" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Контроллер-->
+	<bean id="armSetupInspect" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ARM_INSPECTOR" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Типовые резолюции-->
+	<bean id="armSetupResList" class="com.aplana.dbmi.model.CardLinkAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_ARM_RESOL_LIST" />
+			</bean>
+		</property>	
+	</bean>
+	<!--Ближайшее окружение-->
+	<bean id="armSetupCompany" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_ARM_COMPANY" />
+			</bean>
+		</property>	
+	</bean>
+
+	<bean id="documentTypeSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="commonDictionariesSearchBlockDescription2" />
+			</list>
+		</property>
+		
+		<property name="title" value="docTypesSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="dict/documentTypes_all.xml"/>
+				
+	</bean>
+	
+	<bean id="importResultsFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >			
+				<ref bean="commonImportSearchBlockDescription" />
+				<ref bean="ImportSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="searchMainAttributes"/>
+		<property name="defaultSearchConfigFile" value="dict/import_results.xml"/>
+				
+	</bean>
+	
+	<!-- Название -->
+	<bean id="commonName" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="NAME" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.commonName" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.commonName" />
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+		
+	</bean>
+
+	<!-- Автор-->
+	<bean id="commonAuthor" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="AUTHOR" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.persAuthor" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.persAuthor" />
+		
+	</bean>
+
+	<!--  commom search block, contains common search atributes for all pages  -->
+	<bean id="commonImportSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		
+		<property name="id" value="commonBlockId"/>
+
+		<property name="name" value="search.commonAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="commonName" />
+				<ref bean="commonAuthor" />
+				<ref bean="creationYearDatePeriod" />
+				<ref bean="state" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Дата загрузки -->
+	<bean id="importLoadDate" class="com.aplana.dbmi.model.DateAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_LOAD_DATE" />
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.import.loadDate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="search.import.loadDate" />
+	</bean>
+
+    <bean id="importLoadDatePeriod" class="com.aplana.dbmi.model.DatePeriodAttribute"  scope="prototype">
+        <constructor-arg ref="importLoadDate" />
+    </bean>
+    
+    <!--  commom search block, contains common search atributes for all pages  -->
+	<bean id="ImportSearchBlockDescription" class="com.aplana.dbmi.search.SearchBlockDescription"  scope="prototype" init-method="initializeNames">
+		
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		
+		<property name="id" value="importBlockId"/>
+
+		<property name="name" value="search.importAttributes"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="importLoadDatePeriod" />
+				<ref bean="importLoadDict" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Загружаемый справочник -->
+	<bean id="importLoadDict" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef">
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+				<constructor-arg value="JBR_LOAD_DICT"/>
+			</bean>
+		</property>
+		<!-- key in property file -->
+		<property name="nameEn" value="search.import.loadDict"/>
+		<!-- key in property file -->
+		<property name="nameRu" value="search.import.loadDict"/>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	
+	<bean id="usersSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+				<ref bean="userDataSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="usersSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="admin/all_users.xml"/>
+				
+	</bean>
+	
+	<bean id="userDataSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="userDataSearchBlockId" />
+		<property name="name" value="userDataSearchForm.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="adminExtPersSecond" />
+				<ref bean="adminExtPersName" />
+				<ref bean="adminExtPersMiddle" />
+				<ref bean="adminExtPersPhone" />
+				<ref bean="adminExtPersEmail" />
+				<ref bean="extPersOrg" />
+				<ref bean="extPersPos" />
+				<ref bean="extPersDepartment" />
+				<ref bean="extPersAssistant" />
+				<ref bean="creationDate" />
+				<ref bean="changeDateNoTime" />
+				<ref bean="commonAuthor" />
+				<ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!--Фамилия-->
+	<bean id="adminExtPersSecond" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_SNAME" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Имя-->
+	<bean id="adminExtPersName" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_NAME" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+	</bean>
+	<!--Отчество-->
+	<bean id="adminExtPersMiddle" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_MNAME" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>	
+	</bean>
+	<!--Телефон-->
+	<bean id="adminExtPersPhone" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_PHONE" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>	
+	</bean>
+	<!--E-mail-->
+	<bean id="adminExtPersEmail" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_PERS_EMAIL" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>	
+	</bean>
+	
+	<bean id="importTemlatesSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+				<ref bean="importTemplatesSearchBlockDescription" />
+			</list>
+		</property>
+		
+		<property name="title" value="importTemplatesSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="admin/import_templates.xml"/>
+				
+	</bean>
+	
+	<bean id="importTemplatesSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype" init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+	    <property name="id" value="importTemplatesSearchBlockId" />
+		<property name="name" value="importTemplatesSearchBlock.title"/>
+		
+		<property name="searchAttributes">
+			<list>
+				<ref bean="nameCommon" />
+				<ref bean="commonAuthor" />
+				<ref bean="creationDate" />
+				<ref bean="changeDate" />
+				<ref bean="loadingDict" />
+				<ref bean="state" />
+			</list>
+		</property>
+	
+	</bean>
+	
+	<!-- Загружаемый справочник -->
+	<bean id="loadingDict" class="com.aplana.dbmi.model.ListAttribute"  scope="prototype">
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMP_LOAD_DICT" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Расширенный поиск для Статистики ГОСТ -->
+	<bean id="gostStatisticSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+		<property name="searchBlockDescriptions">
+			<list merge="true">
+				<ref bean="gostStatisticSearchBlockDescription"/>
+			</list>
+		</property>
+		<property name="title" value="gostStatisticSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="test/gost_statistic.xml"/>
+	</bean>
+	<bean id="gostStatisticSearchBlockDescription" parent="commonSearchBlockDescriptionEmpty" scope="prototype">
+		<property name="id" value="gostStatisticSearchBlockId"/>
+		<property name="name" value="gostStatisticSearchForm.title"/>
+		<property name="searchAttributes">
+			<list>
+				<ref bean="creationYearDatePeriod"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Расширенный поиск для Статистики по документам -->
+	<bean id="docsStatisticSearchFormDescription" class="com.aplana.dbmi.search.SearchFormDescription" scope="prototype">
+		<property name="searchBlockDescriptions">
+			<list merge="true">
+				<ref bean="gostStatisticSearchBlockDescription"/>
+			</list>
+		</property>
+		<property name="title" value="docsStatisticSearchForm.title"/>
+		<property name="defaultSearchConfigFile" value="test/docs_statistics.xml"/>
+	</bean>
+
+    <!-- Исполнитель и соисполнитель поручений -->
+    <bean id="resolutionExecutorsAndCoExecutors" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="FilteredObjectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0"/>
+                <constructor-arg value="JBR_INFD_EXEC_LINK" index="1"/>
+                <constructor-arg value="backLink:JBR_ALL_RESOLUTIONS" index="2" />
+                <constructor-arg index="3">
+                    <list>
+                        <ref bean="resolutionCoExecutor"/>
+                    </list>
+                </constructor-arg>
+                <constructor-arg index="4">
+                    <list>
+                        <ref bean="stateDraft"/>
+                        <ref bean="stateCancel"/>
+                    </list>
+                </constructor-arg>
+                <constructor-arg type="boolean" value="true" index="5" />
+            </bean>
+        </property>
+
+        <property name="nameEn" value="search.assignmentExecutor" />
+
+        <property name="nameRu" value="search.assignmentExecutor" />
+
+    </bean>
+
+    <bean id="resolutionCoExecutor" parent="objectIdDef" >
+        <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+        <constructor-arg value="ADMIN_255974" />
+    </bean>
+</beans>

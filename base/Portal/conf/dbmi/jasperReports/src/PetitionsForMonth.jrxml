@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PetitionsForMonth" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="12"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="year" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new java.text.SimpleDateFormat("yyyy").format(java.util.Calendar.getInstance().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="month" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1,2,3,4,5,6,7,8,9,10,11,12"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\FSIN\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select
+c.card_id
+,av_out_number.string_value as out_number
+,av_doc_date.date_value + interval '$P!{tz_hour} hour' as doc_date
+,av_reg_num.string_value as reg_num
+,av_reg_date.date_value + interval '$P!{tz_hour} hour' as reg_date
+
+from card c
+-- Дата регистрации
+join attribute_value av_reg_date on av_reg_date.card_id = c.card_id and av_reg_date.attribute_code='JBR_REGD_DATEREG'
+-- Номер исходящего
+left outer join attribute_value av_out_number on av_out_number.card_id = c.card_id and av_out_number.attribute_code='JBR_REGD_NUMOUT'
+-- Дата документа
+left outer join attribute_value av_doc_date on av_doc_date.card_id = c.card_id and av_doc_date.attribute_code='JBR_REGD_DATEOUT'
+-- Регистрационный номер
+join attribute_value av_reg_num on av_reg_num.card_id = c.card_id and av_reg_num.attribute_code='JBR_REGD_REGNUM'
+-- Регистрационный номер числовой (он же порядковый)
+left join attribute_value av_reg_num_d on av_reg_num_d.card_id = c.card_id and av_reg_num_d.attribute_code='JBR_REGD_REGNUM_D'
+
+where c.template_id = 864
+and c.status_id not in (301,302,303990,1)
+and extract('year' from av_reg_date.date_value + interval '$P!{tz_hour} hour') = $P!{year}
+and extract('month' from av_reg_date.date_value + interval '$P!{tz_hour} hour') = $P!{month}
+order by av_reg_num_d.number_value, reg_num]]>
+	</queryString>
+	<field name="card_id" class="java.math.BigDecimal"/>
+	<field name="out_number" class="java.lang.String"/>
+	<field name="doc_date" class="java.sql.Timestamp"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_date" class="java.sql.Timestamp"/>
+	<title>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="812" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчёт по обращениям граждан за "+
+($P{month}.equals("1") ? "январь" :
+$P{month}.equals("2") ? "февраль" :
+$P{month}.equals("3") ? "март" :
+$P{month}.equals("4") ? "апрель" :
+$P{month}.equals("5") ? "май" :
+$P{month}.equals("6") ? "июнь" :
+$P{month}.equals("7") ? "июль" :
+$P{month}.equals("8") ? "август" :
+$P{month}.equals("9") ? "сентябрь" :
+$P{month}.equals("10") ? "октябрь" :
+$P{month}.equals("11") ? "ноябрь" :
+$P{month}.equals("12") ? "декабрь" : "")
++
+" "+$P{year}+" г."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="38" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["№п/п"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="432" y="0" width="120" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Адрес заявителя"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="0" width="120" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ФИО заявителя"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="38" y="0" width="65" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["№ исходящего"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="168" y="0" width="79" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Регистрационный номер"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="247" y="0" width="65" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дата регистрации"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="0" width="65" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дата исходящего"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="552" y="0" width="65" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Тип источника"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="617" y="0" width="79" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Содержание письма"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="696" y="0" width="58" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["№ \nсвязанного исх."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="754" y="0" width="58" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дата связанного исх."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="812" height="20"/>
+				<subreport>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="812" height="20"/>
+					<subreportParameter name="reg_num">
+						<subreportParameterExpression><![CDATA[$F{reg_num}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="tz_hour">
+						<subreportParameterExpression><![CDATA[$P{tz_hour}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="rep_count">
+						<subreportParameterExpression><![CDATA[$V{REPORT_COUNT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="doc_date">
+						<subreportParameterExpression><![CDATA[$F{doc_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="out_number">
+						<subreportParameterExpression><![CDATA[$F{out_number}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reg_date">
+						<subreportParameterExpression><![CDATA[$F{reg_date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"petitionsForMonthSub.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+</jasperReport>

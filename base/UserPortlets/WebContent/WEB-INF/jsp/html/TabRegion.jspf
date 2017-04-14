@@ -1,0 +1,116 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+
+<%@page import="com.aplana.dbmi.card.*"%>
+<%@page import="com.aplana.dbmi.gui.*"%>
+<%@page import="java.util.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags/dbmi" prefix="dbmi"%>
+
+
+<% 		  blocks = ((TabView)tabsManager.getActiveTab()).getContainer().getRegion(regionID);
+		  for (ListIterator i = blocks.listIterator(); i.hasNext(); ){
+			  final BlockView block = (BlockView)i.next();
+			  String blockViewID = regionID+"_"+block.getBlock().getId().toString();
+			  if (block.getCurrentState() == BlockViewParam.COLLAPSE){			%>
+			<dbmi:blockHeader id="<%= blockViewID %>" title="<%= block.getName() %>" 
+					displayed="false" savestate="false"/>
+			<div class="divPadding" id="<%="BODY_BLOCK_"+blockViewID %>"
+				style="height: auto; display: none;">
+<%			  } else {		%>
+			<dbmi:blockHeader id="<%= blockViewID %>" title="<%= block.getName() %>" 
+				displayed="true" savestate="false"/>
+			<div class="divPadding" id="<%="BODY_BLOCK_"+blockViewID %>">
+<%			  }						%>
+			  <table class="content" width="100%">
+				<col Width="30%"/>
+				<col Width="60%"/>
+				<col Width="10%"/>
+<% 			  for (ListIterator j = block.getAttributeViews().listIterator(); j.hasNext(); ) {
+				final AttributeView av = (AttributeView)j.next();
+				if (!av.isVisible())
+					// пропускаем невидимые...
+					continue;
+				final String attrKey = (String)block.getBlock().getId() + "_" + (String)av.getAttribute().getId().getId();
+				final AttributeEditor viewer = av.getEditor();
+				boolean collapsable = viewer!= null && viewer.isValueCollapsable();
+				boolean collapsed = collapsable && viewer.isCollapsedByDefault();
+				%>
+ 				<tr>
+<%  			if (viewer == null || !viewer.doesFullRendering(av.getAttribute())) {  %>
+				  <td>
+				  	<span
+<%				if ((CardPortlet.CARD_EDIT_MODE.equals(sessionBean.getCurrentMode()))&&
+					(av.isMandatory() && av.isEmpty() )){ %> 
+					class="obligatory" 
+<% 				} 			%> 
+					>				  	
+				  
+				  	  <c:out value="<%= av.getName()%>"/>
+				  	</span>
+				  </td>
+				  <td>
+<%				} else {		%>
+				  <td colspan="2">
+				  	<span
+<%				if ((CardPortlet.CARD_EDIT_MODE.equals(sessionBean.getCurrentMode()))&&
+					(av.isMandatory() && av.isEmpty() )){ %> 
+					class="obligatory" 
+<% 				} 			%> 
+					>				  	
+				  		<c:out value="<%= av.getName()%>"/>
+				  	</span>		
+<%				}				%>
+					<div id="<%= "BODY_"+attrKey %>" <%= collapsable && collapsed ? "style=\"display:none;\"" : "" %> >
+<%				if (viewer == null) {						%>
+									<%= (av.getStringValue() != null) 
+											? av.getStringValue()
+												.replaceAll("\\&", "&amp;")
+												.replaceAll("<", "&lt;")
+												.replaceAll("\\n", "<br>")
+											: ""							%>
+<%				} else {
+					out.flush();
+					try {
+						CardPortletCardInfo ci = sessionBean.getActiveCardInfo();
+						if (Boolean.TRUE.equals(ci.getAttributeEditorData(av.getId(), AttributeEditor.KEY_VALUE_CHANGED))) {
+							viewer.loadAttributeValues(av.getAttribute(), renderRequest);
+							ci.setAttributeEditorData(av.getId(), AttributeEditor.KEY_VALUE_CHANGED, Boolean.FALSE);
+						}
+						viewer.writeEditorCode(renderRequest, renderResponse, av.getAttribute());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}								%>
+					</div>
+				  </td>
+				  <td>
+<%						// if attr textArea or tree or cardLinks - collapse 
+				if (collapsable) { %>
+					<A HREF="javascript:form_collapse('<%= attrKey %>')" class="noLine">  
+						<span  class="<%= collapsed ? "arrow_up" : "arrow" %>" id="<%= "ARROW_"+attrKey %>">&nbsp;</span>
+					</A>
+<%				} 						%>
+				  </td>
+				</tr>
+<%			  } // for j				%>
+			  </table>	<%-- end of content table --%>
+			</div>
+<%		  } 										 %>			

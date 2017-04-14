@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.replication.processors">
+	
+	<!-- ������������ � ��� ����� � ��� ���������� ��������, ��� ��� ��� ������������� �������
+	     ��������� �� ���������� ��������
+	 -->
+	<action type="OverwriteCardAttributes">
+		<post-process class="ReplicationProcessor" runOrder="1000000"/>
+		<post-process class="CopyChangesFromLocalCardProcessor" runOrder= "1000010"/>
+	</action>
+	
+	<action type="ChangeState">
+		<specific property="card.template" value="jbr.replication" load="true" equals="false">
+			<post-process class="ReplicationProcessor" runOrder="1000000"/>
+			<post-process class="CopyChangesFromLocalCardProcessor" runOrder= "1000010"/>
+		</specific>
+		
+		<specific property="card.template" value="jbr.replication" load="true">
+			<specific property="workflowMove.toState" value="jbr.replication.notProcessed">
+				<post-process class="ReplicationProcessorNotProcessed" />
+			</specific>
+			
+			<specific property="workflowMove.toState" value="jbr.replication.accepted">
+				<post-process class="SetAttributeValueProcessor" package="com.aplana.dbmi.jbr.processors">
+					<parameter name="attributeId" value="number:jbr.replication.retries"/>
+					<parameter name="value" value="0"/>
+					<parameter name="saveKind" value="SAVE_ATTR"/>
+				</post-process>
+				<post-process class="SetAttributeValueProcessor" package="com.aplana.dbmi.jbr.processors">
+					<parameter name="attributeId" value="html:jbr.replication.replicXmlNotif"/>
+					<parameter name="value" value=""/>
+					<parameter name="saveKind" value="SAVE_ATTR"/>
+				</post-process>
+				<post-process class="SetAttributeValueProcessor" package="com.aplana.dbmi.jbr.processors">
+					<parameter name="attributeId" value="text:jbr.replication.error.message"/>
+					<parameter name="value" value=""/>
+					<parameter name="saveKind" value="SAVE_ATTR"/>
+				</post-process>
+			</specific>
+			
+			<specific property="workflowMove.id" value="jbr.replication.notProcessedToNeedRequest">
+				<post-process class="ReplicationProcessorNeedRequest" />
+			</specific>
+			
+			<specific property="workflowMove.id" value="jbr.replication.notProcessedToQueued">
+				<post-process class="ReplicationProcessorNeedRequest" />
+			</specific>
+			
+			<specific property="workflowMove.id" value="jbr.replication.notProcessedToAccepted">
+				<post-process class="ReplicationProcessorAccepted" runOrder= "10"/>
+				<post-process class="CopyChangesToLocalCardProcessor" runOrder= "20"/>
+			</specific>
+			
+			<specific property="workflowMove.id" value="jbr.replication.acceptedToCollision">
+				<post-process class="ReplicationProcessorCollision" />
+			</specific>			
+		</specific>
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="LinkResolver">
+		<query package="com.aplana.dbmi.replication.query" class="DoLinkResolve" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="CalculateReplicationState">
+		<query package="com.aplana.dbmi.replication.query" class="DoCalculateReplicationState" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="CreateReplicationPackage">
+		<query package="com.aplana.dbmi.replication.query" class="DoCreateReplicationPackage" />
+	</action>
+		
+	<action package="com.aplana.dbmi.replication.action" type="HandlingPackage">
+		<query package="com.aplana.dbmi.replication.query" class="DoHandlingPackage" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="GetPerson">
+		<query package="com.aplana.dbmi.replication.query" class="DoGetPerson" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="SendErrorNotification">
+		<query package="com.aplana.dbmi.replication.query" class="DoSendErrorNotification" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="GetReservCardId">
+		<query package="com.aplana.dbmi.replication.query" class="DoGetReservCardId" />
+	</action>
+	
+	<action package="com.aplana.dbmi.replication.action" type="GetReplicationHistoryForCard">
+		<query package="com.aplana.dbmi.replication.query" class="DoGetReplicationHistoryForCard" />
+	</action>
+
+	<action package="com.aplana.dbmi.replication.action" type="CheckStopCondition">
+		<query package="com.aplana.dbmi.replication.query" class="DoCheckStopCondition" />
+	</action>
+</queries>		

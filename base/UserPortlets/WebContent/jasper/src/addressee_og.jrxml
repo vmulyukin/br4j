@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="addressee_inside" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+                av_rec1.string_value as name,
+                av_rec2.string_value as job,
+                av_date.date_value + interval '$P!{tz_hour} hour' as ddate,
+                av_cons_val.value_rus as cons,
+                av_rec_st.name_rus as status,
+                av_rec_st.status_id as status_id,
+                av_org_name.string_value as org_name
+            from
+                card c
+
+            --Рассматривающие
+            JOIN attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+                JOIN attribute_value av_rec on av_rassm.number_value = av_rec.card_id and av_rec.attribute_code = 'JBR_RASSM_PERSON'
+                    JOIN card av_rec_card on av_rec.card_id = av_rec_card.card_id
+                        JOIN card_status av_rec_st on av_rec_card.status_id = av_rec_st.status_id
+                    JOIN person p_rec on av_rec.number_value = p_rec.person_id
+                        LEFT JOIN attribute_value av_rec1 on p_rec.card_id = av_rec1.card_id and av_rec1.attribute_code = 'JBR_PERS_SNAME_NM'
+                        LEFT JOIN attribute_value av_rec2 on p_rec.card_id = av_rec2.card_id and av_rec2.attribute_code = 'JBR_PERS_POSITION'
+                LEFT JOIN attribute_value av_date on av_rassm.number_value = av_date.card_id and av_date.attribute_code = 'JBR_RASSM_TODATE'
+                LEFT JOIN attribute_value av_cons on av_rassm.number_value = av_cons.card_id and av_cons.attribute_code = 'JBR_RESPONS_CONSIDER'
+                    LEFT JOIN values_list av_cons_val on av_cons.value_id = av_cons_val.value_id
+                left join -- организация адресата
+                    attribute_value av_org_link on (av_org_link.card_id = p_rec.card_id and av_org_link.attribute_code = 'JBR_PERS_ORG')
+                left join -- сокр. наим. организации адресата
+                    attribute_value av_org_name on (av_org_name.card_id = av_org_link.number_value and av_org_name.attribute_code = 'JBR_DORG_SHORTNAME')
+
+            where c.card_id = $P{card_id} order by case
+            when av_rec_st.status_id <> 34145 then av_cons_val.value_rus
+            end asc, av_rassm.attr_value_id asc]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="job" class="java.lang.String"/>
+	<field name="ddate" class="java.util.Date"/>
+	<field name="cons" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="org_name" class="java.lang.String"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="3" width="554" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{name} != null ? ($F{name} ) : "") +
+((($F{name} != null) && ($F{job} != null || $F{ddate} != null)) ? ", " : "") +
+($F{job} != null ? $F{job} : "") +
+((($F{name} != null || $F{job} != null) && ($F{ddate} != null)) ? ", " : "") +
+($F{org_name} != null ? $F{org_name} : "") +
+($F{org_name} != null ? ", " : "") +
+($F{ddate} != null ? ("срок "+ (new SimpleDateFormat("dd.MM.yyyy")).format($F{ddate})) : "") +
+(($F{cons} != null && "Да".equalsIgnoreCase($F{cons}.trim())) ? " (отв.)" : "") +
+($F{status} != null ? "("+($F{status})+")" : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

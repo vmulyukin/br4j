@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="deadlinesControlOfControlDocumentsReport_resol2" pageWidth="206" pageHeight="842" columnWidth="206" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="resol_id" class="java.lang.Integer"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:/java/JBossReferent-APO/UserPortlets/WebContent/jasper/src/"]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select av_resolution.string_value as resolution,
+av_executor_sname_nm.string_value as executor_sn,
+av_executor_sname.string_value as executor_s,
+av_executor_name.string_value as executor_n,
+av_executor_mname.string_value as executor_m,
+av_executor_pos.string_value as executor_pos,
+av_date_ex.date_value + interval '$P!{tz_hour} hour' as date_ex,
+av_resol.card_id as resol_id
+From card c
+LEFT OUTER JOIN attribute_value av_resol on (av_resol.number_value = c.card_id and av_resol.attribute_code = 'JBR_RIMP_PARASSIG')
+LEFT OUTER JOIN card c_resol on c_resol.card_id = av_resol.card_id
+LEFT OUTER JOIN attribute_value av_resolution on (av_resolution.card_id = c_resol.card_id and av_resolution.attribute_code = 'JBR_GIPA_RESOLUT')
+LEFT OUTER JOIN attribute_value av_executor on (av_executor.card_id = c_resol.card_id and av_executor.attribute_code = 'JBR_INFD_EXEC_LINK')
+LEFT OUTER JOIN person p_executor on (p_executor.person_id = av_executor.number_value)
+LEFT OUTER JOIN attribute_value av_executor_sname_nm on (av_executor_sname_nm.card_id = p_executor.card_id and av_executor_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+LEFT OUTER JOIN attribute_value av_executor_sname on (av_executor_sname.card_id = p_executor.card_id and av_executor_sname.attribute_code = 'JBR_PERS_SNAME')
+LEFT OUTER JOIN attribute_value av_executor_name on (av_executor_name.card_id = p_executor.card_id and av_executor_name.attribute_code = 'JBR_PERS_NAME')
+LEFT OUTER JOIN attribute_value av_executor_mname on (av_executor_mname.card_id = p_executor.card_id and av_executor_mname.attribute_code = 'JBR_PERS_MNAME')
+LEFT OUTER JOIN attribute_value av_executor_pos on (av_executor_pos.card_id = p_executor.card_id and av_executor_pos.attribute_code = 'JBR_PERS_POSITION')
+LEFT OUTER JOIN attribute_value av_date_ex on (av_date_ex.card_id = av_resol.card_id and av_date_ex.attribute_code = 'JBR_TCON_TERM')
+where c.card_id=$P{resol_id}
+and c_resol.status_id <> 34145
+order by c_resol.card_id]]>
+	</queryString>
+	<field name="resolution" class="java.lang.String"/>
+	<field name="executor_sn" class="java.lang.String"/>
+	<field name="executor_s" class="java.lang.String"/>
+	<field name="executor_n" class="java.lang.String"/>
+	<field name="executor_m" class="java.lang.String"/>
+	<field name="executor_pos" class="java.lang.String"/>
+	<field name="date_ex" class="java.sql.Timestamp"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="206" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+					<reportElement positionType="Float" mode="Transparent" x="120" y="0" width="86" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($F{executor_sn} != null && !"".equals($F{executor_sn}.trim()))
+    ? (($F{executor_pos}!=null && !"".equals($F{executor_pos}.trim()))
+        ? $F{executor_sn}.trim() + ", "
+        : $F{executor_sn}.trim()
+      )
+    : (($F{executor_s} != null && !"".equals($F{executor_s}.trim()))
+        ? (($F{executor_n} != null && !"".equals($F{executor_n}.trim()) && $F{executor_n}.trim().length() > 0)
+            ? (($F{executor_m} != null && !"".equals($F{executor_m}.trim()) && $F{executor_m}.trim().length() > 0)
+                ? (($F{executor_pos}!=null && !"".equals($F{executor_pos}.trim()))
+                    ? $F{executor_s}.trim() + " " + $F{executor_n}.trim().substring(0, 1) + ". " + $F{executor_m}.trim().substring(0, 1) + "., "
+                    : $F{executor_s}.trim() + " " + $F{executor_n}.trim().substring(0, 1) + ". " + $F{executor_m}.trim().substring(0, 1) + "."
+                  )
+                : (($F{executor_pos}!=null && !"".equals($F{executor_pos}.trim()))
+                    ? $F{executor_s}.trim() + " " + $F{executor_n}.trim().substring(0, 1) + "., "
+                    : $F{executor_s}.trim() + " " + $F{executor_n}.trim().substring(0, 1) + "."
+                  )
+              )
+            : (($F{executor_pos}!=null && !"".equals($F{executor_pos}.trim()))
+                ? $F{executor_s}.trim() + ", "
+                : $F{executor_s}.trim()
+              )
+          )
+        : ""
+      )
+)
+
++
+
+(($F{executor_pos}!=null && !"".equals($F{executor_pos}.trim()))
+    ? $F{executor_pos}.trim()
+    : ""
+)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="120" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" leftIndent="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{resolution}==null?"":$F{resolution})
++ (($F{resolution}!=null)&&($F{date_ex}!=null)?",  ":"")
++ ($F{date_ex}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{date_ex}))]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

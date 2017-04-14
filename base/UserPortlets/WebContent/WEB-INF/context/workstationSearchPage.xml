@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<import resource="commonSearchPageApplicationContext.xml"/>
+	<import resource="searchPageStateTemplates.xml"/>
+	
+
+<!--  Represents configuration file for workstation advanced search  -->
+    
+    <!-- Краткое содержание (наименование текста)| Short description -->
+	<!-- <bean id="shortDescriptionWS" class="com.aplana.dbmi.model.TextAttribute"  > -->
+	<bean id="shortDescriptionWS" class="com.aplana.dbmi.model.StringAttribute"  >
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.shortDescription" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.shortDescription" />
+		
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_INFD_SHORTDESC" />
+			</bean>
+		</property>
+		
+	</bean>    
+	
+	<!-- ФИО подписанта --> 
+	<bean id="signatoryWS" class="com.aplana.dbmi.model.PersonAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_SIGNATORY" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.internalEmployee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.internalEmployee" />
+		
+		
+	</bean>
+	
+	<!-- Отправитель -->
+	<bean id="senderWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SENDER" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.organization" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.organization" />
+	</bean>
+	
+	<!-- Должность, ФИО лица, подписавшего документ -->
+	<bean id="visaResponsibleWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_SIGN_EXT" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.externalEmployee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.externalEmployee" />
+		
+	</bean>	
+	
+	
+		
+	<!-- Регистрационный номер | Registration number -->
+	<bean id="registrationNumberWS" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">
+	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_REGD_REGNUM" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>
+				<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.regNumber" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.regNumber" />
+		
+	</bean>
+	
+	<!-- Номер проекта | Project Number -->
+	<bean id="projectNumberWS" class="com.aplana.dbmi.model.IntegerAttribute" >
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.projectNumber" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.projectNumber" />
+	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.IntegerAttribute" />
+				<constructor-arg value="JBR_PROJECT_NUMBER" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Номер исходящего | Outgoing Number -->	
+	<bean id="outgoingNumberWS" class="com.aplana.dbmi.model.SearchStringCheckedAttribute"  scope="prototype">	
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_REGD_NUMOUT" />
+			</bean>
+		</property>
+		<property name="visibleCheckedFlag" value="true"/>
+		<property name="checkedFlag" value="true"/>		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.outgoingNumber" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.outgoingNumber" />
+	</bean>
+	
+	<!-- Адресат --> 
+	<bean id="receiverWS" class="com.aplana.dbmi.model.PersonAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_RECEIVER" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.internalEmployee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.internalEmployee" />
+		
+	</bean>
+	
+	<!-- Получатель исходящего -->
+	<bean id="outReceiverWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.organization" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.organization" />
+		
+	</bean>	
+	
+	<!--  Адресат исходящего -->
+	<bean id="outcomeExtUserWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_RECEIVER_EXT_USR" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.externalEmployee" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.externalEmployee" />
+		
+	</bean>	
+    
+	<!--  Дата регистрации | Registration date-->
+	<bean id="registrationDateWS" class="com.aplana.dbmi.model.DateAttribute"  >
+	
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_REGD_DATEREG" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!--  Период Дата регистрации | Registration date period-->
+	<bean id="registrationDatePeriodWS" class="com.aplana.dbmi.model.DatePeriodAttribute"  >
+		<constructor-arg ref="registrationDateWS" />
+
+	</bean>
+	
+	<!--  Период Дата документа | Document date period-->
+	<bean id="documentDatePeriodWS" class="com.aplana.dbmi.model.DatePeriodAttribute" scope="prototype">
+		<constructor-arg ref="documentDateWS" />
+	</bean>
+	
+	<!--  Дата документа | Creation date-->
+	<bean id="documentDateWS" class="com.aplana.dbmi.model.DateAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_REGD_DATEOUT" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!--  Период "Срок исполнения или предоставления ответа " |  "Data for" period-->
+	<bean id="resolutionDeadlinePeriodWS" class="com.aplana.dbmi.model.DatePeriodAttribute" scope="prototype">
+		<constructor-arg ref="resolutionDeadlineWS" />
+	</bean>
+	
+	<!--  "Срок исполнения или предоставления ответа " |  "Data for"  -->
+	<bean id="resolutionDeadlineWS" class="com.aplana.dbmi.model.DateAttribute" scope="prototype">
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_IMPL_DEADLINE" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Категория срочности | Urgency level -->
+	<bean id="urgencyLevelWS" class="com.aplana.dbmi.model.ListAttribute"  >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="ADMIN_290575" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Вид документа | Document type -->
+	<bean id="doctypeWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean  parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_INFD_TYPEDOC" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.docVariant" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.docVariant" />
+		
+	</bean>	
+		    
+	
+	<!--  Исполнитель(Автор проекта)  -->
+	<bean id="outcomeOutExecutorWS" class="com.aplana.dbmi.model.PersonAttribute"  >
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_INFD_EXECUTOR" />
+			</bean>
+		</property>
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.executor" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.executor" />
+		
+	</bean>
+	
+	<!--  Согласующие(Визы)  -->
+	<bean id="visaSignersWS" class="com.aplana.dbmi.model.PersonAttribute"  >
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.approvers" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.approvers" />
+	
+		<property name="id">
+			<bean parent="LinkedObjectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="JBR_VISA_RESPONSIBLE"/>
+				<constructor-arg value="JBR_VISA_VISA" />
+			</bean>
+		</property>
+		
+	</bean>	
+    
+	<!-- Тип контроля --> 
+	<bean id="typeControlWS" class="com.aplana.dbmi.model.ListAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_TYPECONT" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Исполнитель по документу  -->
+	<bean id="internalFoivWS" class="com.aplana.dbmi.model.CardLinkAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute" />
+				<constructor-arg value="JBR_IMPL_FOIV" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	<!-- Вид исполнения --> 
+	<bean id="kindOfPerfomWS" class="com.aplana.dbmi.model.ListAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.ListAttribute" />
+				<constructor-arg value="JBR_IMPL_KIND" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	<!-- Срок исполнения или предоставления ответа  -->
+	<bean id="deadLineDateWS" class="com.aplana.dbmi.model.DateAttribute"  >
+	
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_IMPL_DEADLINE" />
+			</bean>
+		</property>
+		
+	</bean>	
+	
+	
+	<!--  Период Срок исполнения или предоставления ответа-->
+	<bean id="deadLineDatePeriodWS" class="com.aplana.dbmi.model.DatePeriodAttribute"  >
+		<constructor-arg ref="deadLineDateWS" />
+		
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.deadLineDate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.deadLineDate" />
+		
+
+	</bean>	
+	
+	
+	<!-- Исполнитель/ Соисполнитель(Исполнители поручений скрытые)--> 
+	<bean id="incomingOrderExecutorsWS" class="com.aplana.dbmi.model.PersonAttribute"  >
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.hiddenExecutors" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.hiddenExecutors" />
+	
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+				<constructor-arg value="ADMIN_473763" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	<!-- Номер исходящего -->
+	<bean id="incomingOutnumberWS" class="com.aplana.dbmi.model.StringAttribute"  >
+		<property name="id">
+			<bean   parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.StringAttribute" />
+				<constructor-arg value="JBR_REGD_NUMOUT" />
+			</bean>
+		</property>
+		
+	</bean>
+	
+	
+	
+	<!--Дата исходящего(Дата документа) -->
+	<bean id="registrationDateOutWS" class="com.aplana.dbmi.model.DateAttribute"  >
+	
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.DateAttribute" />
+				<constructor-arg value="JBR_REGD_DATEOUT" />
+			</bean>
+		</property>
+	</bean>
+	
+	
+		<!--  Период Дата исходящего(Дата документа) -->
+	<bean id="registrationDateOutPeriodWS" class="com.aplana.dbmi.model.DatePeriodAttribute"  >
+		<constructor-arg ref="registrationDateOutWS" />
+
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.outcomingDate" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.outcomingDate" />
+
+	</bean>
+	
+	
+	
+	
+	
+	<!--Статус документа-->
+	<bean id="stateWS" class="com.aplana.dbmi.model.MultipleStateSearchItemAttribute"  >
+	
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.documentStatus" />
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.documentStatus" />
+	
+		<property name="id">
+			<bean parent="objectIdDef" >
+				<constructor-arg value="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" />
+				<constructor-arg value="_STATE_SEARCH_WS" />
+			</bean>
+		</property>
+		<property name="values">
+			<list>
+				<ref bean="draftPrepareStatusListStateSearchItemWS"/>
+				<ref bean="approveSignCardStatusListStateSearchItemWS" />
+				<ref bean="registrationSignCardStatusListStateSearchItemWS" />
+				<ref bean="considerExecCardStatusListStateSearchItemWS" />
+				<ref bean="executedCardStatusListStateSearchItemWS" />
+				<ref bean="inDeloCardStatusListStateSearchItemWS" />				
+			</list>	
+		</property>
+		
+	</bean>	
+	
+	<!--  Исполнитель поручений  -->
+	<bean id="resolutionExecutorWS" class="com.aplana.dbmi.model.PersonAttribute">
+		<!-- key in property file -->
+		<property name="nameEn" value="workstation.search.resolutionExecutor"/>
+		<!-- key in property file -->
+		<property name="nameRu" value="workstation.search.resolutionExecutor"/>
+		<property name="id">
+			<bean   parent="objectIdDef">
+				<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+				<constructor-arg value="ADMIN_473763"/>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--  search block, contains search atributes  -->
+	<bean id="firstSearchBlockDescriptionWS" class="com.aplana.dbmi.search.SearchBlockDescription"  init-method="initializeNames">	
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		<property name="id" value="firstSearchBlockDescriptionWSID"/>
+		<property name="divClass" value="single_column"/>
+		<property name="columnsNumber" value="2"/>
+		<property name="searchAttributes">
+			<list>
+				<ref bean="shortDescriptionWS" />
+			</list>
+		</property>
+		<property name="spanedAttributeIds">
+			<list>
+				<value>JBR_INFD_SHORTDESC</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<bean id="fromSearchBlockDescriptionWS" class="com.aplana.dbmi.search.SearchBlockDescription"  init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>
+		<property name="id" value="fromSearchBlockDescriptionWSID"/>
+		<property name="name" value="workstation.search.from"/>
+		<property name="divClass" value="left_column"/>
+		<property name="searchAttributes">
+			<list>
+				<ref bean="signatoryWS" />
+				<ref bean="senderWS" />
+				<ref bean="visaResponsibleWS" />
+			</list>
+		</property>
+		<property name="spanedAttributeIds">
+			<list>
+				<value>JBR_INFD_SIGNATORY</value>
+				<value>JBR_INFD_SENDER</value>
+				<value>JBR_INFD_SIGN_EXT</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="toSearchBlockDescriptionWS" class="com.aplana.dbmi.search.SearchBlockDescription"  init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>	
+		<property name="id" value="toSearchBlockDescriptionWSID"/>
+		<property name="name" value="workstation.search.to"/>
+		<property name="divClass" value="left_column"/>
+		<property name="searchAttributes">
+			<list>
+				<ref bean="receiverWS" />
+				<ref bean="outReceiverWS" />
+<!-- 				
+				<ref bean="outcomeExtUserWS" />
+ -->				
+			</list>
+		</property>
+		<property name="spanedAttributeIds">
+			<list>
+				<value>JBR_INFD_RECEIVER</value>
+				<value>JBR_RECEIVER_EXT</value>
+				<value>JBR_RECEIVER_EXT_USR</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="fourthSearchBlockDescriptionWS" class="com.aplana.dbmi.search.SearchBlockDescription"  init-method="initializeNames">
+		<property name="nameInitializer" ref="attributeNameInitializer"/>		
+		<property name="id" value="fourthSearchBlockDescriptionWSID"/>
+		<property name="divClass" value="single_column"/>
+		<property name="columnsNumber" value="2"/>
+
+		<property name="searchAttributes">
+			<list>
+				<ref bean="registrationNumberWS" />
+				<ref bean="projectNumberWS" />
+				<ref bean="outgoingNumberWS" />
+				<ref bean="doctypeWS" />
+				<ref bean="registrationDatePeriodWS" />
+				<ref bean="documentDatePeriodWS" />
+				<ref bean="resolutionDeadlinePeriodWS" />
+				<ref bean="templateWS" />
+				<ref bean="stateWS" />
+				<ref bean="outcomeOutExecutorWS" />
+				<ref bean="resolutionExecutorsAndCoExecutorsWS" />
+				<ref bean="visaSignersWS" />
+			</list>
+		</property>
+		<property name="spanedAttributeIds">
+			<list>
+				<value>_TEMPLATE_SEARCH_WS</value>
+				<value>_STATE_SEARCH_WS</value>
+				<value>JBR_REGD_DATEREG</value>
+				<value>JBR_REGD_DATEOUT</value>
+				<value>JBR_IMPL_DEADLINE</value>
+				<value>JBR_INFD_EXEC_LINK</value>
+				<value>JBR_VISA_RESPONSIBLE</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+		
+	<bean id="searchFormDescriptionWS" class="com.aplana.dbmi.search.SearchFormDescription" >
+	
+		<property name="searchBlockDescriptions">
+			<list merge="true" >
+			
+				<ref bean="firstSearchBlockDescriptionWS" />
+				<ref bean="fromSearchBlockDescriptionWS" />
+				<ref bean="toSearchBlockDescriptionWS" />
+				<ref bean="fourthSearchBlockDescriptionWS" />
+			</list>
+		</property>
+		
+		<property name="defaultSearchConfigFile" value="page-extendedSearch/workstation.xml"/>
+	</bean>		
+
+	<bean id="resolutionCoExecutorWS" parent="objectIdDef" >
+		<constructor-arg value="com.aplana.dbmi.model.PersonAttribute" />
+		<constructor-arg value="ADMIN_255974" />
+	</bean>
+	<bean id="resolutionExecutorsAndCoExecutorsWS" class="com.aplana.dbmi.model.PersonAttribute"  scope="prototype">
+        <property name="id">
+            <bean   parent="FilteredObjectIdDef" >
+                <constructor-arg value="com.aplana.dbmi.model.PersonAttribute" index="0"/>
+                <constructor-arg value="JBR_INFD_EXEC_LINK" index="1"/>
+                <constructor-arg value="backLink:JBR_ALL_RESOLUTIONS" index="2" />
+                <constructor-arg index="3">
+                    <list>
+                        <ref bean="resolutionCoExecutorWS"/>
+                    </list>
+                </constructor-arg>
+                <constructor-arg index="4">
+                    <list>
+                        <ref bean="stateDraftWS"/>
+                        <ref bean="stateCancelWS"/>
+                    </list>
+                </constructor-arg>
+                <constructor-arg type="boolean" value="true" index="5" />
+            </bean>
+        </property>
+		
+		<!-- key in property file -->
+  		<property name="nameEn" value="search.assignmentExecutor" />
+  		<!-- key in property file -->
+  		<property name="nameRu" value="search.assignmentExecutor" />
+	</bean>
+
+    <bean id="stateDraftWS" parent="objectIdDef" >
+        <constructor-arg value="com.aplana.dbmi.model.CardState" />
+        <constructor-arg value="1" />
+    </bean>
+
+    <bean id="stateCancelWS" parent="objectIdDef" >
+        <constructor-arg value="com.aplana.dbmi.model.CardState" />
+        <constructor-arg value="34145" />
+    </bean>
+
+</beans>

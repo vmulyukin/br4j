@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans >	
+	
+	<bean name="ReplicationTask" class="com.aplana.dbmi.replication.task.ReplicationTask" lazy-init="true"/>
+
+	<!-- Список айдишников (ArrayList<ObjectId>) "независимых" шаблонов (справочные) -->
+	<bean name="dictionaryTemplates" class="com.aplana.dbmi.replication.processors.ReplicationConfiguration" factory-method="getIndependentTemplates"/>
+	
+	<bean name="replicationMbean" class="com.aplana.dbmi.replication.management.ReplicationManagerBean">
+		<property name="dataService" ref="systemDataServiceFacade"/>
+	</bean>
+	
+	<!-- 
+		==================================================================================================================================== 
+		Копирование из промежуточного в итоговое состояние
+		==================================================================================================================================== 
+	-->
+	
+	<!-- Абстрактный родитель -->
+	<bean name="createLocalCopyBase" abstract="true" class="com.aplana.dbmi.replication.processors.beans.CopyChangesToLocalCard">
+		<property name="dataService" ref="systemDataServiceFacade"/>
+	</bean>
+	
+	<!-- Входящий -->
+	<bean name="createLocalCopy224" parent="createLocalCopyBase" scope="prototype"
+		  class="com.aplana.dbmi.replication.processors.beans.CopyChangesToLocalCardForDocument">
+		<property name="filteredAttributes">
+			<list>
+				<value>JBR_REGD_REGNUM</value>
+				<value>JBR_REGD_DATEREG</value>
+				<value>JBR_REGD_REGJOURN</value>
+				<value>JBR_REGD_INDEX</value>
+				<value>JBR_REGD_REGISTRAR</value>
+				<value>JBR_REGD_REGNUM_D</value>
+				<value>JBR_MANUALLY_NUMBER</value>
+				<value>JBR_REG_LAST_REG</value>
+				<value>REPLICATED_DOC_TYPE</value>
+				<value>REPLIC_LOCAL_DOC_LNK</value>
+				<value>REPLICATED_DOC_LNK</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- ОГ -->
+	<bean name="createLocalCopy864" parent="createLocalCopyBase" scope="prototype"
+		  class="com.aplana.dbmi.replication.processors.beans.CopyChangesToLocalCardForDocument">
+		<property name="filteredAttributes">
+			<list>
+				<value>JBR_REGD_REGNUM</value>
+				<value>JBR_REGD_DATEREG</value>
+				<value>JBR_REGD_REGJOURN</value>
+				<value>JBR_REGD_INDEX</value>
+				<value>JBR_REGD_REGISTRAR</value>
+				<value>JBR_REGD_REGNUM_D</value>
+				<value>JBR_MANUALLY_NUMBER</value>
+				<value>JBR_REG_LAST_REG</value>
+				<value>REPLICATED_DOC_TYPE</value>
+				<value>REPLIC_LOCAL_DOC_LNK</value>
+				<value>REPLICATED_DOC_LNK</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Поручение -->
+	<bean name="createLocalCopy324" parent="createLocalCopyBase" scope="prototype"/>
+		
+	<!-- Рассмотрение -->
+	<bean name="createLocalCopy504" parent="createLocalCopyBase" scope="prototype"/>
+
+	<!-- Отчет об исполнении -->
+	<bean name="createLocalCopy1044" parent="createLocalCopyBase" scope="prototype"/>
+	
+	<!-- Отчет об исполнении внешним исполнителем -->
+	<bean name="createLocalCopy1064" parent="createLocalCopyBase" scope="prototype"/>
+	
+	<!-- Ознакомление с поручением -->
+	<bean name="createLocalCopy1144" parent="createLocalCopyBase" scope="prototype"/>
+	
+	<!-- Файл -->
+	<bean name="createLocalCopy284" parent="createLocalCopyBase" scope="prototype"/>
+	 
+	<!-- Перенаправление ОГ -->
+	<bean name="createLocalCopy931" parent="createLocalCopyBase" scope="prototype"/>
+	
+	<!-- Результаты рассмотрения -->
+	<bean name="createLocalCopy925" parent="createLocalCopyBase" scope="prototype"/>
+	
+	<!-- Внешняя резолюция -->
+	<bean name="createLocalCopy2324" parent="createLocalCopyBase" scope="prototype"/>
+
+	<!--
+		====================================================================================================================================
+		Копирование из итогового в промежуточное состояние
+		====================================================================================================================================
+	-->
+	
+	<!-- Абстрактный родитель -->
+	<bean name="updateByLocalCopyBase" abstract="true" class="com.aplana.dbmi.replication.processors.beans.CopyChangesFromLocalCard">
+		<property name="dataService" ref="systemDataServiceFacade"/>
+		<property name="dictionaryTemplates" ref="dictionaryTemplates"/>
+	</bean>
+	
+	<!-- Входящий -->
+	<bean name="updateByLocalCopy224" parent="updateByLocalCopyBase" scope="prototype"
+		  class="com.aplana.dbmi.replication.processors.beans.CopyChangesFromLocalCardForDocument">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Резолюции -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.resolutions"/>
+				</bean>
+				<!-- Рассмотрение -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.acquant"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ОГ -->
+	<bean name="updateByLocalCopy864" parent="updateByLocalCopyBase" scope="prototype"
+		  class="com.aplana.dbmi.replication.processors.beans.CopyChangesFromLocalCardForDocument">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Перенаправленные обращения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.redirected.requests"/>
+				</bean>
+				<!-- Результаты рассмотрения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.ResultOfConsuder"/>
+				</bean>
+				<!-- Резолюции -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.resolutions"/>
+				</bean>
+				<!-- Рассмотрение -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.acquant"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- Поручение -->
+	<bean name="updateByLocalCopy324" parent="updateByLocalCopyBase" scope="prototype">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Резолюция -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.resolutionText"/>
+				</bean>
+				<!-- Cвязанные поручения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.rimp.byrimp"/>
+				</bean>
+				<!-- ДО -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.main.doc"/>
+				</bean>
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.rimp.bydoc"/>
+				</bean>
+				<!-- Исполнитель -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.AssignmentExecutor"/>
+				</bean>
+				<!-- Соисполнители -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.CoExecutor"/>
+				</bean>
+				<!-- К сведению -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.Fyi"/>
+				</bean>
+				<!-- Должность фамилия и инициалы лица подписавшего резолюцию -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.resolution.FioSign"/>
+				</bean>
+				<!-- Дата подписания -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.resolution.SignDate"/>
+				</bean>
+				<!-- Отправил на исполнение -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.report.sent.execute"/>
+				</bean>
+				<!-- На контроле -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="jbr.oncontrol"/>
+				</bean>
+				<!-- Срок -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.resolutionTerm"/>
+				</bean>
+				<!-- Контролер -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.commission.inspector"/>
+				</bean>
+				<!-- Предварительный срок -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.resolutionTermPreliminary"/>
+				</bean>
+				<!-- Вложения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.files"/>
+				</bean>
+				<!-- Отчет об исполнении -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.reports"/>
+				</bean>
+				<!-- Отчеты внешних исполнителей -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.BackLinkAttribute"/>
+					<constructor-arg value="jbr.resolution.ExtReport"/>
+				</bean>
+				<!-- Категория срочности -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="jbr.category.howfast"/>
+				</bean>
+				<!-- Подпись -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute"/>
+					<constructor-arg value="jbr.uzdo.signature"/>
+				</bean>
+				<!-- Владелец репликации -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="common.replicationOwner"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Рассмотрение -->
+	<bean name="updateByLocalCopy504" parent="updateByLocalCopyBase" scope="prototype">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Предыдущий рассматривающий -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.exam.previous.person"/>
+				</bean>
+				<!-- Рассматривающий -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.exam.person"/>
+				</bean>
+				<!-- Ответственный рассматривающий -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="jbr.responsibility.consider"/>
+				</bean>
+				<!-- Рассмотреть до -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.exam.term"/>
+				</bean>
+				<!-- Комментарий -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.exam.comment"/>
+				</bean>
+				<!-- Дата исполнения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.rassm.executeDate"/>
+				</bean>
+				<!-- Срочность -->
+				<bean class="com.aplana.dbmi.model.ObjectId">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="JBR_MANAG_URGENCY"/>
+				</bean>
+				<!-- Категория срочности -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="jbr.boss.urgency"/>
+				</bean>
+				<!-- Подпись -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute"/>
+					<constructor-arg value="jbr.uzdo.signature"/>
+				</bean>
+				<!-- Владелец репликации -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="common.replicationOwner"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Отчет об исполнении -->
+	<bean name="updateByLocalCopy1044" parent="updateByLocalCopyBase" scope="prototype">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Автор обращения-->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.report.int.author"/>
+				</bean>
+				<!-- Исполнитель -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.report.int.executor"/>
+				</bean>
+				<!-- Дата утверждения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.report.int.approvaldate"/>
+				</bean>
+				<!-- Утверждающий скрытый -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.report.int.dynamic_role.approver.hidden"/>
+				</bean>
+				<!-- Текущий отчет -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.report.currentText"/>
+				</bean>
+				<!-- Комментарий -->
+				<bean class="com.aplana.dbmi.model.ObjectId">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="ADMIN_6888758"/>
+				</bean>
+				<!-- Дата исполнения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.report.done.date"/>
+				</bean>
+				<!-- Отчет -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute"/>
+					<constructor-arg value="jbr.report.text"/>
+				</bean>
+				<!-- Вложения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.attachments"/>
+				</bean>
+				<!-- Подготовленные документы -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TypedCardLinkAttribute"/>
+					<constructor-arg value="jbr.report.result"/>
+				</bean>
+				<!-- Рассмотрен в АРМ скрытый -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="jbr.arm_flag"/>
+				</bean>
+				<!-- Фрагмент отчета скрытый -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.report.hidden.text"/>
+				</bean>
+				<!-- Контролер -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.commission.inspector"/>
+				</bean>
+				<!-- Категория срочности -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.ListAttribute"/>
+					<constructor-arg value="jbr.boss.urgency"/>
+				</bean>
+				<!-- Причина отправки на доработку -->
+				<bean class="com.aplana.dbmi.model.ObjectId">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="RREASON"/>
+				</bean>
+				<!-- Подпись -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute"/>
+					<constructor-arg value="jbr.uzdo.signature"/>
+				</bean>
+				<!-- ДО -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.int.document"/>
+				</bean>
+				<!-- Поручение -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.int.parent"/>
+				</bean>
+				<!-- Владелец репликации -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="common.replicationOwner"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Отчет об исполнении внешним исполнителем -->
+	<bean name="updateByLocalCopy1064" parent="updateByLocalCopyBase" scope="prototype">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Текущий отчет -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.report.currentText"/>
+				</bean>
+				<!-- Отчет -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.HtmlAttribute"/>
+					<constructor-arg value="jbr.report.text"/>
+				</bean>
+				<!-- Вложения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.attachments"/>
+				</bean>
+				<!-- Подготовленные документы -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TypedCardLinkAttribute"/>
+					<constructor-arg value="jbr.report.result"/>
+				</bean>
+				<!-- Рассмотрен в АРМ скрытый -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="jbr.arm_flag"/>
+				</bean>
+				<!-- Фрагмент отчета -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="jbr.report.hidden.text"/>
+				</bean>
+				<!-- Комментарий -->
+				<bean class="com.aplana.dbmi.model.ObjectId">
+					<constructor-arg value="com.aplana.dbmi.model.TextAttribute"/>
+					<constructor-arg value="ADMIN_6888758"/>
+				</bean>
+				<!-- Дата исполнения -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.report.done.date"/>
+				</bean>
+				<!-- Исполнитель -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.ext.executor"/>
+				</bean>
+				<!-- Контролер -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.commission.inspector"/>
+				</bean>
+				<!-- ДО -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.ext.document"/>
+				</bean>
+				<!-- Поручение -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.CardLinkAttribute"/>
+					<constructor-arg value="jbr.report.ext.parent"/>
+				</bean>
+				<!-- Владелец репликации -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="common.replicationOwner"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Ознакомление с поручением -->
+	<bean name="updateByLocalCopy1144" parent="updateByLocalCopyBase" scope="prototype">
+		<property name="copiedAttributes">
+			<list>
+				<!-- Рассмотрен в арм скрытый -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="jbr.arm_flag.two"/>
+				</bean>
+				<!-- Кому ознакомиться -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.PersonAttribute"/>
+					<constructor-arg value="jbr.adnotamCommission.person"/>
+				</bean>
+				<!-- Ознакомиться до -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.adnotamCommission.term"/>
+				</bean>
+				<!-- Дата ознакомления -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.DateAttribute"/>
+					<constructor-arg value="jbr.adnotamCommission.date"/>
+				</bean>
+				<!-- Владелец репликации -->
+				<bean class="com.aplana.dbmi.model.ObjectId" factory-method="predefined">
+					<constructor-arg value="com.aplana.dbmi.model.StringAttribute"/>
+					<constructor-arg value="common.replicationOwner"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Файл -->
+	<bean name="updateByLocalCopy284" parent="updateByLocalCopyBase" scope="prototype"
+		  class="com.aplana.dbmi.replication.processors.beans.CopyChangesFromLocalCardWithMaterial"/>
+
+	<!-- Перенаправление ОГ -->
+	<bean name="updateByLocalCopy931" parent="updateByLocalCopyBase" scope="prototype"/>
+
+	<!-- Результаты рассмотрения -->
+	<bean name="updateByLocalCopy925" parent="updateByLocalCopyBase" scope="prototype"/>
+	
+	<!-- Внешняя резолюция -->
+	<bean name="updateByLocalCopy2324" parent="updateByLocalCopyBase" scope="prototype"/>
+	
+</beans>

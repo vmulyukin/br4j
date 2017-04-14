@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+         	SELECT p.person_login, p.full_name, l.log_date, a.action_name_eng, l.card_id as obj_id, t.template_name_eng, l.ip_address
+         	FROM action_log l
+         	LEFT OUTER JOIN person p ON l.actor_id=p.person_id
+         	LEFT OUTER JOIN action a ON l.action_code=a.action_code
+         	LEFT OUTER JOIN card c ON l.card_id=c.card_id
+         	LEFT OUTER JOIN template t ON c.template_id=t.template_id
+         	WHERE p.person_login LIKE '%'||:login||'%'
+         	  AND l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+         	ORDER BY l.log_date DESC
+         </sql>
+         <parameters>
+             <param name="login" dispaly-name="Login" type="string" />
+             <param name="dateStart" dispaly-name="Start date" type="calendar" />
+             <param name="dateEnd" dispaly-name="End date" type="calendar" />
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+         	SELECT p.person_login, p.full_name, l.log_date, a.action_name_rus, l.card_id as obj_id, t.template_name_rus, l.ip_address
+         	FROM action_log l
+         	LEFT OUTER JOIN person p ON l.actor_id=p.person_id
+         	LEFT OUTER JOIN action a ON l.action_code=a.action_code
+         	LEFT OUTER JOIN card c ON l.card_id=c.card_id
+         	LEFT OUTER JOIN template t ON c.template_id=t.template_id
+         	WHERE p.person_login LIKE '%'||:login||'%'
+             AND l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+             and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+         	ORDER BY l.log_date DESC
+         </sql>
+         <parameters>
+             <param name="login" dispaly-name="Логин пользователя" type="string" />
+             <param name="dateStart" dispaly-name="Дата начала" type="calendar" />
+             <param name="dateEnd" dispaly-name="Дата окончания" type="calendar" />
+         </parameters>
+     </query>
+     <table title="Users activity log" pagesize="20">
+	     <column-description name="PERSON_LOGIN" display-name="Login" is-sortable="true"/>
+	     <column-description name="FULL_NAME" display-name="User name" is-sortable="true"/>
+	     <column-description name="LOG_DATE" display-name="Date and time" is-sortable="true"/>
+	     <column-description name="ACTION_NAME_ENG" display-name="Action" is-sortable="true"/>
+	     <column-description name="OBJ_ID" display-name="Object ID" is-sortable="true"/>
+	     <column-description name="TEMPLATE_NAME_ENG" display-name="Template" is-sortable="true"/>
+	     <column-description name="IP_ADDRESS" display-name="IP address" is-sortable="true"/>
+     </table>
+     <table lang="ru" title="Пользователи" pagesize="20">
+	     <column-description name="PERSON_LOGIN" display-name="Логин" is-sortable="true"/>
+	     <column-description name="FULL_NAME" display-name="Имя пользователя" is-sortable="true"/>
+	     <column-description name="LOG_DATE" display-name="Дата и время" is-sortable="true"/>
+	     <column-description name="ACTION_NAME_RUS" display-name="Действие" is-sortable="true"/>
+	     <column-description name="OBJ_ID" display-name="Идентификатор объекта" is-sortable="true"/>
+	     <column-description name="TEMPLATE_NAME_RUS" display-name="Шаблон" is-sortable="true"/>
+	     <column-description name="IP_ADDRESS" display-name="IP-адрес" is-sortable="true"/>
+     </table>
+</universal-portlet>

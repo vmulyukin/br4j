@@ -1,0 +1,15 @@
+#Wed Oct 23 21:54:23 YEKST 2013
+eclipse.preferences.version=1
+encoding//WebContent/js/crypto.js=UTF-8
+encoding//src/com/aplana/cms/ContentUtils.java=Cp1251
+encoding//src/com/aplana/dbmi/card/AttributeEditor.java=Cp1251
+encoding//src/com/aplana/dbmi/card/CardPortlet.java=Cp1251
+encoding//src/com/aplana/dbmi/card/CardPortletSessionBean.java=Cp1251
+encoding//src/com/aplana/dbmi/card/MaterialAttributeEditor.java=Cp1251
+encoding//src/com/aplana/dbmi/card/SignatureAttributeEditor.java=Cp1251
+encoding//src/com/aplana/dbmi/crypto/SignatureData.java=Cp1251
+encoding//src/com/aplana/dbmi/search/SearchPortlet.java=Cp1251
+encoding//src/com/aplana/dbmi/showlist/SearchAdapter.java=Cp1251
+encoding//src/com/aplana/dbmi/showlist/ShowListTableDecorator.java=Cp1251
+encoding/<project>=Cp1251
+encoding/README=Cp1251

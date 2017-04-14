@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" id="com.aplana.dbmisearch.DBMISearchPortlet">
+ 	<portlet>
+		<portlet-name>BrowsingReportsPortlet</portlet-name>
+		<display-name>BrowsingReportsPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.BrowsingReportsPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.BrowsingReportsPortlet</resource-bundle>
+		<portlet-info>
+			<title>BrowsingReportsPortlet</title>
+			<short-title>BrowsingReportsPortlet</short-title>
+			<keywords>BrowsingReportsPortlet</keywords>
+		</portlet-info>
+	</portlet>
+ 	
+ 	<portlet>
+		<portlet-name>CreateCardByExamplePortlet</portlet-name>
+		<display-name>CreateCardByExamplePortlet</display-name>
+		<display-name xml:lang="en">CreateCardByExamplePortlet</display-name>
+                <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/context/portlet/createCardByExample.xml</value>
+	 	</init-param>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<portlet-info>
+			<title>CreateCardByExamplePortlet</title>
+			<short-title>CreateCardByExamplePortlet</short-title>
+			<keywords>CreateCardByExamplePortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>QuickResolutionPortlet</portlet-name>
+		<display-name>QuickResolutionPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.QuickResolutionPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.QuickResolutionPortlet</resource-bundle>
+		<portlet-info>
+			<title>QuickResolutionPortlet</title>
+			<short-title>QuickResolutionPortlet</short-title>
+			<keywords>QuickResolutionPortlet</keywords>
+		</portlet-info>
+	</portlet>
+    <portlet>
+        <portlet-name>QuickIndepResolutionPortlet</portlet-name>
+        <display-name>QuickIndepResolutionPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.QuickIndepResolutionPortlet</portlet-class>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>ru</supported-locale>
+        <resource-bundle>com.aplana.dbmi.portlet.nl.QuickIndepResolutionPortlet</resource-bundle>
+        <portlet-info>
+            <title>QuickIndepResolutionPortlet</title>
+            <short-title>QuickIndepResolutionPortlet</short-title>
+            <keywords>QuickIndepResolutionPortlet</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet>
+		<portlet-name>MassResolutionPortlet</portlet-name>
+		<display-name>MassResolutionPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.MassResolutionPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.QuickResolutionPortlet</resource-bundle>
+		<portlet-info>
+			<title>MassResolutionPortlet</title>
+			<short-title>MassResolutionPortlet</short-title>
+			<keywords>MassResolutionPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>RequestToChangeConsPortlet</portlet-name>
+		<display-name>RequestToChangeConsPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.RequestToChangeConsPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.QuickResolutionPortlet</resource-bundle>
+		<portlet-info>
+			<title>RequestToChangeConsPortlet</title>
+			<short-title>RequestToChangeConsPortlet</short-title>
+			<keywords>RequestToChangeConsPortlet</keywords>
+		</portlet-info>
+	</portlet>
+    <portlet>
+		<portlet-name>AdditionalEndorsementPortlet</portlet-name>
+		<display-name>AdditionalEndorsementPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.AdditionalEndorsementPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.AdditionalEndorsementPortlet</resource-bundle>
+		<portlet-info>
+			<title>AdditionalEndorsementPortlet</title>
+			<short-title>AdditionalEndorsementPortlet</short-title>
+			<keywords>AdditionalEndorsementPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>AcquaintancePortlet</portlet-name>
+		<display-name>AcquaintancePortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.AcquaintancePortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.AcquaintancePortlet</resource-bundle>
+		<portlet-info>
+			<title>AcquaintancePortlet</title>
+			<short-title>AcquaintancePortlet</short-title>
+			<keywords>AcquaintancePortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>ChooseDocTemplatePortlet</portlet-name>
+		<display-name>ChooseDocTemplatePortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.ChooseDocTemplatePortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.ChooseDocTemplatePortlet</resource-bundle>
+		<portlet-info>
+			<title>ChooseDocTemplatePortlet</title>
+			<short-title>ChooseDocTemplatePortlet</short-title>
+			<keywords>ChooseDocTemplatePortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>DocumentDataPortlet</portlet-name>
+		<display-name>DocumentDataPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.DocumentDataPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.DocumentDataPortlet</resource-bundle>
+		<portlet-info>
+			<title>DocumentDataPortlet</title>
+			<short-title>DocumentDataPortlet</short-title>
+			<keywords>DocumentDataPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>ResolutionReportPortlet</portlet-name>
+		<display-name>ResolutionReportPortlet</display-name>
+        <portlet-class>com.aplana.dbmi.portlet.ResolutionReportPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.ResolutionReportPortlet</resource-bundle>
+		<portlet-info>
+			<title>ResolutionReportPortlet</title>
+			<short-title>ResolutionReportPortlet</short-title>
+			<keywords>ResolutionReportPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>	
+		<portlet-name>SearchPortlet</portlet-name>
+		<display-name xml:lang="ru">SearchPortlet</display-name>
+		<display-name>SearchPortlet</display-name>
+		<display-name xml:lang="en">SearchPortlet</display-name>
+
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/context/portlet/search.xml</value>
+		</init-param>
+
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmisearch.nl.SearchPortletResource</resource-bundle>
+		<portlet-info>
+			<title>SearchPortlet</title>
+			<short-title>SearchPortlet</short-title>
+			<keywords>SearchPortlet</keywords>
+		</portlet-info>
+		<portlet-preferences>
+			<preference>
+				<name>searchViewType</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>extendedSearchPath</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>submitSearchPath</name>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>		
+	</portlet>
+	<portlet>
+		<portlet-name>SearchFilterPortlet</portlet-name>
+		<display-name>SearchFilterPortlet</display-name>
+		<display-name xml:lang="ru">CardPortlet</display-name>
+		<display-name xml:lang="en">CardPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.search.SearchFilterPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.card.nl.CardPortletResource</resource-bundle>
+		<portlet-info>
+			<title>CardPortlet</title>
+			<short-title>CardPortlet</short-title>
+			<keywords>SearchFilterPortlet</keywords>
+		</portlet-info>
+	</portlet>
+
+	<portlet>
+		<portlet-name>WorkstationAdvancedSearchPortlet</portlet-name>
+		<display-name>WorkstationAdvancedSearchPortlet</display-name>
+		<display-name xml:lang="ru">WorkstationAdvancedSearchPortlet</display-name>
+		<display-name xml:lang="en">WorkstationAdvancedSearchPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.search.workstation.WorkstationAdvancedSearchPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>search</resource-bundle>
+		<portlet-info>
+			<title>WorkstationAdvancedSearchPortlet</title>
+			<short-title>WorkstationAdvancedSearchPortlet</short-title>
+			<keywords>WorkstationAdvancedSearchPortlet</keywords>
+		</portlet-info>
+	</portlet>
+
+	<portlet>
+		<portlet-name>PersonalSearchPortlet</portlet-name>
+		<display-name xml:lang="ru">PersonalSearchPortlet</display-name>
+		<display-name>PersonalSearchPortlet</display-name>
+		<display-name xml:lang="en">PersonalSearchPortlet</display-name>
+
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/context/portlet/personalsearch.xml</value>
+		</init-param>
+
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmisearch.nl.PersonalSearchPortletResource</resource-bundle>
+		<portlet-info>
+			<title>PersonalSearchPortlet</title>
+			<short-title>PersonalSearchPortlet</short-title>
+			<keywords>PersonalSearchPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>CardListPortlet</portlet-name>
+		<display-name>CardListPortlet</display-name>
+		<display-name xml:lang="ru">CardListPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.showlist.MIShowListPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.showlist.nl.MIShowListPortletResource</resource-bundle>
+		<portlet-info>
+			<title>CardListPortlet</title>
+			<short-title>CardListPortlet</short-title>
+			<keywords>CardListPortlet</keywords>
+		</portlet-info>
+
+		<portlet-preferences>		
+			<preference>
+				<name>pgSize</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>showHeader</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>link.Url</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>link.Page</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>header.jsp</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>header.text</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>showBtnRefresh</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>showToolbar</name>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>		
+		
+	</portlet>
+
+	<portlet>
+		<portlet-name>FavoriteCardListPortlet</portlet-name>
+		<display-name>FavoriteCardListPortlet</display-name>
+		<display-name xml:lang="ru">FavoriteCardListPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.showlist.MIShowListPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<init-param>
+			<name>isFavoritesPortlet</name>
+			<value>true</value>
+		</init-param>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.showlist.nl.MIShowListPortletResource</resource-bundle>
+		<portlet-info>
+			<title>FavoriteCardListPortlet</title>
+			<short-title>FavoriteCardListPortlet</short-title>
+			<keywords>FavoriteCardListPortlet</keywords>
+		</portlet-info>
+	</portlet>
+
+	<portlet>
+		<portlet-name>CardPortlet</portlet-name>
+		<display-name>CardPortlet</display-name>
+		<display-name xml:lang="ru">CardPortlet</display-name>
+		<display-name xml:lang="en">CardPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.card.CardPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.card.nl.CardPortletResource</resource-bundle>
+		<portlet-info>
+			<title>CardPortlet</title>
+			<short-title>CardPortlet</short-title>
+			<keywords>CardPortlet</keywords>
+		</portlet-info>
+		<portlet-preferences>
+			<preference>
+				<name>cardDetector</name>
+				<value>com.aplana.dbmi.card.UrlCardDetector</value>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>
+	</portlet>
+	
+	<portlet>
+		<portlet-name>CardImportPortlet</portlet-name>
+		<display-name>CardImportPortlet</display-name>
+		<display-name xml:lang="ru">CardImportPortlet</display-name>
+		<display-name xml:lang="en">CardImportPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.portlet.CardImportPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.portlet.nl.CardImportPortlet</resource-bundle>
+		<portlet-info>
+			<title>CardImportPortlet</title>
+			<short-title>CardImportPortlet</short-title>
+			<keywords>CardImportPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	
+	<portlet>
+        <portlet-name>WorkstationCardPortlet</portlet-name>
+        <display-name>WorkstationCardPortlet</display-name>
+        <display-name xml:lang="ru">WorkstationCardPortlet</display-name>
+        <display-name xml:lang="en">WorkstationCardPortlet</display-name>
+        <portlet-class>com.aplana.cms.card.WorkstationCardPortlet</portlet-class>
+        <init-param>
+            <name>wps.markup</name>
+            <value>html</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>ru</supported-locale>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>com.aplana.dbmi.card.nl.CardPortletResource</resource-bundle>
+        <portlet-info>
+            <title>WorkstationCardPortlet</title>
+            <short-title>WorkstationCardPortlet</short-title>
+            <keywords>WorkstationCardPortlet</keywords>
+        </portlet-info>
+    </portlet>	
+
+	<!-- Moved from ContentPortlets -->
+	<portlet>
+		<portlet-name>ContentViewPortlet</portlet-name>
+		<display-name xml:lang="ru">БДМИ/СУСС - Просмотр материала</display-name>
+		<display-name>DBMI/CMS - Content view</display-name>
+		<display-name xml:lang="en">DBMI/CMS - Content view</display-name>
+
+        <portlet-class>com.aplana.cms.ContentViewPortlet</portlet-class>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<!-- <resource-bundle>com.aplana.cms.nl.ContentViewPortletResource</resource-bundle> -->
+		<portlet-info>
+			<title>DBMI/CMS - Content view</title>
+			<short-title>DBMI/CMS - Content view</short-title>
+			<keywords>DBMI CMS Content</keywords>
+		</portlet-info>
+		<portlet-preferences>
+			<preference>
+				<name>search</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>views</name>
+				<read-only>false</read-only>
+			</preference>
+			<preference>
+				<name>item</name>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>
+	</portlet>
+	<portlet>
+		<portlet-name>NavigationPortlet</portlet-name>
+		<display-name xml:lang="ru">БДМИ/СУСС - Навигация</display-name>
+		<display-name>DBMI/CMS - Navigation</display-name>
+		<display-name xml:lang="en">DBMI/CMS - Navigation</display-name>
+
+        <portlet-class>com.aplana.cms.NavigationPortlet</portlet-class>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<!-- <resource-bundle>com.aplana.cms.nl.ContentViewPortletResource</resource-bundle> -->
+		<portlet-info>
+			<title>DBMI/CMS - Navigation</title>
+			<short-title>DBMI/CMS - Navigation</short-title>
+			<keywords>DBMI CMS Navigation</keywords>
+		</portlet-info>
+		<portlet-preferences>
+			<preference>
+				<name>navigator</name>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>
+	</portlet>
+	
+	<portlet>
+		<portlet-name>SimpleSearchPortlet</portlet-name>
+		<display-name xml:lang="ru">SimpleSearchPortlet</display-name>
+		<display-name>SimpleSearchPortlet</display-name>
+		<display-name xml:lang="en">SimpleSearchPortlet</display-name>
+
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/context/portlet/simpleSearch.xml</value>
+		</init-param>
+
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<portlet-info>
+			<title>SimpleSearchPortlet</title>
+			<short-title>SimpleSearchPortlet</short-title>
+			<keywords>SimpleSearchPortlet</keywords>
+		</portlet-info>
+		<portlet-preferences>
+			<preference>
+				<name>redirect</name>
+				<read-only>false</read-only>
+			</preference>
+		</portlet-preferences>
+	</portlet>
+
+
+	<!-- DELEGATIONS -->
+	<portlet>
+		<portlet-name>DelegateListPortlet</portlet-name>
+		<display-name>DelegateListPortlet</display-name>
+		<display-name xml:lang="ru">Портлет делегирований</display-name>
+		<display-name xml:lang="en">Delegationportlet</display-name>
+		<portlet-class>com.aplana.dbmi.delegate.DelegateListPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.delegate.nls.DelegateListPortletResource</resource-bundle>
+		<portlet-info>
+			<title>Delegation portlet</title>
+			<short-title>DelegationPortlet</short-title>
+			<keywords>DelegationPortlet</keywords>
+		</portlet-info>
+
+		<portlet-preferences>
+
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showTitle</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>title.my</name>
+					<value>DelegateListPortlet.title.my</value>
+				</preference>
+
+				<preference>
+					<name>title.history</name>
+					<value>DelegateListPortlet.title.history</value>
+				</preference>
+
+				<preference>
+					<name>title.2me</name>
+					<value>DelegateListPortlet.title.2me</value>
+				</preference>
+				
+		</portlet-preferences>
+	</portlet>
+	
+	
+	<!-- EVENT LOG -->
+	<portlet>
+		<portlet-name>EventLogPortlet</portlet-name>
+		<display-name>EventLogPortlet</display-name>
+		<display-name xml:lang="ru">Портлет событийной активности</display-name>
+		<display-name xml:lang="en">Event log portlet</display-name>
+		<portlet-class>com.aplana.dbmi.event.EventLogPortlet</portlet-class>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.event.nls.EventLogPortletResource</resource-bundle>
+		<portlet-info>
+			<title>EventLog portlet</title>
+			<short-title>EventLogPortlet</short-title>
+			<keywords>EventLogPortlet</keywords>
+		</portlet-info>
+
+		<portlet-preferences>
+		
+				<preference>
+					<name>showBtnRefresh</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showToolbar</name>
+					<value>true</value>
+				</preference>
+
+				<preference>
+					<name>showTitle</name>
+					<value>true</value>
+				</preference>
+							
+		</portlet-preferences>
+		
+	</portlet>
+
+	<portlet>
+		<portlet-name>RolesAdminPortlet</portlet-name>
+		<display-name>RolesAdminPortlet</display-name>
+		<display-name xml:lang="ru">RolesAdminPortlet</display-name>
+		<display-name xml:lang="en">RolesAdminPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.roleadmin.RoleAdminPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.roleadmin.nl.RoleAdminPortletResource</resource-bundle>
+		<portlet-info>
+			<title>RolesAdminPortlet</title>
+			<short-title>RolesAdminPortlet</short-title>
+			<keywords>RolesAdminPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	
+	<portlet>
+		<portlet-name>GroupsAdminPortlet</portlet-name>
+		<display-name>GroupsAdminPortlet</display-name>
+		<display-name xml:lang="ru">GroupsAdminPortlet</display-name>
+		<display-name xml:lang="en">GroupsAdminPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.groupadmin.GroupAdminPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.groupadmin.nl.GroupAdminPortletResource</resource-bundle>
+		<portlet-info>
+			<title>GroupsAdminPortlet</title>
+			<short-title>GroupsAdminPortlet</short-title>
+			<keywords>GroupsAdminPortlet</keywords>
+		</portlet-info>
+	</portlet>
+
+
+	<!-- Moved from ContentPortlets -->
+	<custom-portlet-mode>
+		<portlet-mode>config</portlet-mode>
+	</custom-portlet-mode>
+</portlet-app>

@@ -1,0 +1,626 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from OvdAdminService WSDL service -->
+
+  <service name="OvdAdminPort" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="uri:ovd"/>
+      <parameter name="wsdlServiceElement" value="OvdAdminService"/>
+      <parameter name="schemaUnqualified" value="uri:ovd"/>
+      <parameter name="wsdlServicePort" value="OvdAdminPort"/>
+      <parameter name="className" value="com.aplana.owriter.ulteo.rpcclient.OvdAdminBindingImpl"/>
+      <parameter name="wsdlPortType" value="OvdAdminPortType"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="test_link_connected" qname="operNS:test_link_connected" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#test_link_connected" >
+      </operation>
+      <operation name="getInitialConfiguration" qname="operNS:getInitialConfiguration" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#getInitialConfiguration" >
+      </operation>
+      <operation name="system_switch_maintenance" qname="operNS:system_switch_maintenance" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#system_switch_maintenance" >
+        <parameter qname="parameters" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="INOUT"/>
+      </operation>
+      <operation name="administrator_password_set" qname="operNS:administrator_password_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#administrator_password_set" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="settings_get" qname="operNS:settings_get" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#settings_get" >
+      </operation>
+      <operation name="settings_set" qname="operNS:settings_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#settings_set" >
+        <parameter qname="parameters" type="tns:any" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="settings_domain_integration_preview" qname="operNS:settings_domain_integration_preview" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#settings_domain_integration_preview" >
+        <parameter qname="parameters" type="tns:any" xmlns:tns="uri:ovd" mode="INOUT"/>
+      </operation>
+      <operation name="servers_list" qname="operNS:servers_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#servers_list" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_info" qname="operNS:server_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#server_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_remove" qname="operNS:server_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_register" qname="operNS:server_register" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_register" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_switch_maintenance" qname="operNS:server_switch_maintenance" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_switch_maintenance" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="maintenance" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_set_available_sessions" qname="operNS:server_set_available_sessions" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_set_available_sessions" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="nb_session" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_set_display_name" qname="operNS:server_set_display_name" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_set_display_name" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="display_name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_unset_display_name" qname="operNS:server_unset_display_name" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_unset_display_name" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_set_fqdn" qname="operNS:server_set_fqdn" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_set_fqdn" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="fqdn" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_set_external_name" qname="operNS:server_set_external_name" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_set_external_name" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="external_name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_unset_external_name" qname="operNS:server_unset_external_name" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_unset_external_name" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_set_rdp_port" qname="operNS:server_set_rdp_port" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_set_rdp_port" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="rdp_port" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_unset_rdp_port" qname="operNS:server_unset_rdp_port" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_unset_rdp_port" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_role_enable" qname="operNS:server_role_enable" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_role_enable" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="role" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_role_disable" qname="operNS:server_role_disable" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_role_disable" >
+        <parameter qname="server_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="role" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_add_static_application" qname="operNS:server_add_static_application" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#adddStaticApplicationOnServer" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="server_remove_static_application" qname="operNS:server_remove_static_application" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#server_remove_static_application" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_groups_list" qname="operNS:servers_groups_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#servers_groups_list" >
+      </operation>
+      <operation name="servers_group_info" qname="operNS:servers_group_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#servers_group_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_add" qname="operNS:servers_group_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_remove" qname="operNS:servers_group_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_modify" qname="operNS:servers_group_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="published" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_add_server" qname="operNS:servers_group_add_server" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_add_server" >
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_remove_server" qname="operNS:servers_group_remove_server" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_remove_server" >
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_publication_add" qname="operNS:servers_group_publication_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_publication_add" >
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_group_publication_remove" qname="operNS:servers_group_publication_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#servers_group_publication_remove" >
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="tasks_list" qname="operNS:tasks_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#tasks_list" >
+      </operation>
+      <operation name="task_info" qname="operNS:task_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#task_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_remove" qname="operNS:task_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_debian_install_packages" qname="operNS:task_debian_install_packages" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_debian_install_packages" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_debian_installable_application" qname="operNS:task_debian_installable_application" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_debian_installable_application" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_debian_upgrade" qname="operNS:task_debian_upgrade" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#task_debian_upgrade" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="INOUT"/>
+      </operation>
+      <operation name="task_debian_server_replicate" qname="operNS:task_debian_server_replicate" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_debian_server_replicate" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_debian_application_install" qname="operNS:task_debian_application_install" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_debian_install_application" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="task_debian_application_remove" qname="operNS:task_debian_application_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#task_debian_remove_application" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_list" qname="operNS:applications_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#applications_list" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_info" qname="operNS:application_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:application" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#application_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_remove" qname="operNS:application_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_publish" qname="operNS:application_publish" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_publish" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="publish" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_remove_orphans" qname="operNS:applications_remove_orphans" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_remove_orphans" >
+      </operation>
+      <operation name="application_clone" qname="operNS:application_clone" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_clone" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_icon_get" qname="operNS:application_icon_get" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#application_icon_get" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="INOUT"/>
+      </operation>
+      <operation name="application_icon_set" qname="operNS:application_icon_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_icon_set" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="icon" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_icon_getFromServer" qname="operNS:application_icon_getFromServer" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_icon_getFromServer" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_icon_setFromServer" qname="operNS:application_icon_setFromServer" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_icon_setFromServer" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_static_add" qname="operNS:application_static_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_static_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="command" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_static_remove" qname="operNS:application_static_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_static_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_static_removeIcon" qname="operNS:application_static_removeIcon" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_static_removeIcon" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_webapp_add" qname="operNS:application_webapp_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_webapp_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="url_prefix" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="configuration" type="tns:any" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="application_webapp_info" qname="operNS:application_webapp_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:web_application" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#application_webapp_info" >
+        <parameter qname="application_id" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_webapp_modify" qname="operNS:application_webapp_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_webapp_modify" >
+        <parameter qname="application_id" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="parameters" type="tns:web_application" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="application_webapp_set_values" qname="operNS:application_webapp_set_values" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_webapp_set_values" >
+        <parameter qname="application_id" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="values" type="tns:any" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="application_webapp_clone" qname="operNS:application_webapp_clone" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_webapp_clone" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_webapp_remove" qname="operNS:application_webapp_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_webapp_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_static_modify" qname="operNS:application_static_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_static_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="command" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_weblink_add" qname="operNS:application_weblink_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_weblink_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="url" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="default_browser_get" qname="operNS:default_browser_get" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#default_browser_get" >
+      </operation>
+      <operation name="default_browser_set" qname="operNS:default_browser_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#default_browser_set" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="undefault_browser_set" qname="operNS:undefault_browser_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#undefault_browser_set" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_groups_list" qname="operNS:applications_groups_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#applications_groups_list" >
+      </operation>
+      <operation name="applications_group_info" qname="operNS:applications_group_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#applications_group_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_group_add" qname="operNS:applications_group_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_group_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_group_remove" qname="operNS:applications_group_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_group_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_group_modify" qname="operNS:applications_group_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_group_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="published" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_group_add_application" qname="operNS:applications_group_add_application" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_group_add_application" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_group_remove_application" qname="operNS:applications_group_remove_application" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_group_remove_application" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="mime_types_list" qname="operNS:mime_types_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#mime_types_list" >
+      </operation>
+      <operation name="mime_type_info" qname="operNS:mime_type_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#mime_type_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="application_add_mime_type" qname="operNS:application_add_mime_type" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#application_add_mime_type" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="mime_type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="applications_remove_mime_type" qname="operNS:applications_remove_mime_type" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#applications_remove_mime_type" >
+        <parameter qname="application" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="mime_type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="scripts_groups_list" qname="operNS:scripts_groups_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#scripts_groups_list" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_list_partial" qname="operNS:users_list_partial" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#users_list_partial" >
+        <parameter qname="search" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="search_fields" type="tns:string_array" xmlns:tns="uri:ovd" itemQName="item"/>
+        <parameter qname="search_user" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="data" type="tns:any" xmlns:tns="uri:ovd" mode="OUT"/>
+        <parameter qname="partial" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+      </operation>
+      <operation name="user_info" qname="operNS:user_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#user_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_add" qname="operNS:user_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_add" >
+        <parameter qname="login" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="displayname" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="password" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_remove" qname="operNS:user_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_modify" qname="operNS:user_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_modify" >
+        <parameter qname="login" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="displayname" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="password" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_populate" qname="operNS:users_populate" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_populate" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_settings_set" qname="operNS:user_settings_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_settings_set" >
+        <parameter qname="user_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="container" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="setting" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="value" type="tns:any" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="user_settings_remove" qname="operNS:user_settings_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_settings_remove" >
+        <parameter qname="user_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="container" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="setting" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_groups_list_partial" qname="operNS:users_groups_list_partial" xmlns:operNS="urn:OvdAdmin" soapAction="urn:OvdAdmin#users_groups_list_partial" >
+        <parameter qname="search" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="search_fields" type="tns:string_array" xmlns:tns="uri:ovd" itemQName="item"/>
+        <parameter qname="search_user" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="data" type="tns:any" xmlns:tns="uri:ovd" mode="OUT"/>
+        <parameter qname="partial" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+      </operation>
+      <operation name="users_group_info" qname="operNS:users_group_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#users_group_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_add" qname="operNS:users_group_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_remove" qname="operNS:users_group_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_modify" qname="operNS:users_group_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="published" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="system_set_default_users_group" qname="operNS:system_set_default_users_group" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#system_set_default_users_group" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="system_unset_default_users_group" qname="operNS:system_unset_default_users_group" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#system_unset_default_users_group" >
+      </operation>
+      <operation name="users_group_dynamic_add" qname="operNS:users_group_dynamic_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_dynamic_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="validation_type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_dynamic_modify" qname="operNS:users_group_dynamic_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_dynamic_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="rules" type="tns:any" xmlns:tns="uri:ovd"/>
+        <parameter qname="validation_type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_dynamic_cached_add" qname="operNS:users_group_dynamic_cached_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_dynamic_cached_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="description" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="validation_type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="schedule" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_dynamic_cached_set_schedule" qname="operNS:users_group_dynamic_cached_set_schedule" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_dynamic_cached_set_schedule" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="schedule" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_settings_set" qname="operNS:users_group_settings_set" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_settings_set" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="container" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="setting" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="value" type="tns:any" xmlns:tns="uri:ovd"/>
+      </operation>
+      <operation name="users_group_settings_remove" qname="operNS:users_group_settings_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_settings_remove" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="container" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="setting" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_add_policy" qname="operNS:users_group_add_policy" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_add_policy" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="rule" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_remove_policy" qname="operNS:users_group_remove_policy" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_remove_policy" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="rule" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_add_user" qname="operNS:users_group_add_user" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_add_user" >
+        <parameter qname="user_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_remove_user" qname="operNS:users_group_remove_user" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#users_group_remove_user" >
+        <parameter qname="user_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="publication_add" qname="operNS:publication_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#publication_add" >
+        <parameter qname="users_group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="applications_group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="publication_remove" qname="operNS:publication_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#publication_remove" >
+        <parameter qname="users_group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="applications_group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="scripts_list" qname="operNS:scripts_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#scripts_list" >
+      </operation>
+      <operation name="script_modify" qname="operNS:script_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#script_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="os" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="data" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="script_add" qname="operNS:script_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#script_add" >
+        <parameter qname="name" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="os" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="type" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="data" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="script_remove" qname="operNS:script_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#script_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_add_script" qname="operNS:users_group_add_script" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#script_remove" >
+        <parameter qname="script" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_group_remove_script" qname="operNS:users_group_remove_script" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#script_remove" >
+        <parameter qname="script" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="group" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="script_info" qname="operNS:script_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#script_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folders_list" qname="operNS:shared_folders_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#shared_folders_list" >
+      </operation>
+      <operation name="shared_folder_info" qname="operNS:shared_folder_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#shared_folder_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folder_add" qname="operNS:shared_folder_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#shared_folder_add" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folder_remove" qname="operNS:shared_folder_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#shared_folder_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folder_rename" qname="operNS:shared_folder_rename" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#shared_folder_rename" >
+        <parameter qname="first" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folder_add_group" qname="operNS:shared_folder_add_group" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#shared_folder_add_group" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="share_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="mode" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="shared_folder_remove_group" qname="operNS:shared_folder_remove_group" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#shared_folder_remove_group" >
+        <parameter qname="group_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="share_id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="users_profiles_list" qname="operNS:users_profiles_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#users_profiles_list" >
+      </operation>
+      <operation name="user_profile_info" qname="operNS:user_profile_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#user_profile_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_profile_add" qname="operNS:user_profile_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_profile_add" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="user_profile_remove" qname="operNS:user_profile_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#user_profile_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="network_folder_remove" qname="operNS:network_folder_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#network_folder_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="sessions_count" qname="operNS:sessions_count" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_count" >
+      </operation>
+      <operation name="sessions_list" qname="operNS:sessions_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_list" >
+        <parameter qname="parameters" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="sessions_list_by_server" qname="operNS:sessions_list_by_server" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_list_by_server" >
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="offset" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_info" qname="operNS:session_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#session_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_kill" qname="operNS:session_kill" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#session_kill" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_disconnect" qname="operNS:session_disconnect" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#session_disconnect" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_simulate" qname="operNS:session_simulate" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#session_simulate" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="has_valid_certificate" qname="operNS:has_valid_certificate" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#has_valid_certificate" >
+      </operation>
+      <operation name="certificates_list" qname="operNS:certificates_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#certificates_list" >
+      </operation>
+      <operation name="certificates_limits" qname="operNS:certificates_limits" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#certificates_limits" >
+      </operation>
+      <operation name="certificate_del" qname="operNS:certificate_del" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#certificate_del" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="certificate_reset_named_users" qname="operNS:certificate_reset_named_users" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#certificate_reset_named_users" >
+      </operation>
+      <operation name="log_preview" qname="operNS:log_preview" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#log_preview" >
+      </operation>
+      <operation name="log_download" qname="operNS:log_download" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#log_download" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="sessions_reports_list" qname="operNS:sessions_reports_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_reports_list" >
+        <parameter qname="first" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="sessions_reports_list2" qname="operNS:sessions_reports_list2" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_reports_list2" >
+        <parameter qname="start" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="stop" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="server" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="sessions_reports_list3" qname="operNS:sessions_reports_list3" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#sessions_reports_list3" >
+        <parameter qname="from" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="to" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="user" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="limit" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_report_info" qname="operNS:session_report_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#getSessionsReport" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="session_report_remove" qname="operNS:session_report_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#session_report_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="servers_reports_list" qname="operNS:servers_reports_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#servers_reports_list" >
+        <parameter qname="first" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="second" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="checkup" qname="operNS:checkup" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#checkup" >
+      </operation>
+      <operation name="cleanup_liaisons" qname="operNS:cleanup_liaisons" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#cleanup_liaisons" >
+      </operation>
+      <operation name="cleanup_preferences" qname="operNS:cleanup_preferences" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#cleanup_preferences" >
+      </operation>
+      <operation name="news_list" qname="operNS:news_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#news_list" >
+      </operation>
+      <operation name="news_info" qname="operNS:news_info" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#news_info" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="news_modify" qname="operNS:news_modify" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#news_modify" >
+        <parameter qname="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="title" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="content" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="news_add" qname="operNS:news_add" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#news_add" >
+        <parameter qname="title" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="content" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="news_remove" qname="operNS:news_remove" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:boolean" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:OvdAdmin#news_remove" >
+        <parameter qname="parameters" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="admin_actions_list" qname="operNS:admin_actions_list" xmlns:operNS="urn:OvdAdmin" returnQName="parameters" returnType="rtns:any" xmlns:rtns="uri:ovd" soapAction="urn:OvdAdmin#admin_actions_list" >
+        <parameter qname="parameters" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="applications_group_add_application user_info session_report_remove script_modify server_set_available_sessions user_remove servers_group_add server_remove_static_application application_icon_getFromServer tasks_list mime_types_list application_webapp_modify shared_folder_remove server_info applications_remove_mime_type task_debian_application_remove default_browser_set mime_type_info news_remove task_debian_application_install applications_remove_orphans server_unset_rdp_port users_group_remove_user server_switch_maintenance application_info server_unset_external_name servers_group_remove cleanup_preferences shared_folder_add_group applications_group_info script_info user_profile_add default_browser_get users_list_partial session_disconnect network_folder_remove settings_set cleanup_liaisons task_info server_add_static_application applications_group_remove application_webapp_set_values news_modify application_icon_set news_list application_webapp_info session_report_info task_debian_server_replicate applications_group_modify users_profiles_list server_unset_display_name user_modify user_settings_set application_static_modify sessions_list_by_server application_webapp_add users_group_dynamic_cached_set_schedule servers_group_info server_set_rdp_port users_group_remove_policy servers_group_remove_server settings_get script_remove administrator_password_set application_weblink_add undefault_browser_set test_link_connected shared_folder_rename server_set_display_name servers_groups_list application_webapp_clone sessions_reports_list3 sessions_reports_list2 users_group_remove_script scripts_list log_preview application_add_mime_type users_populate server_set_fqdn application_icon_setFromServer application_icon_get system_unset_default_users_group shared_folder_info admin_actions_list users_group_add_policy applications_group_remove_application users_group_remove task_debian_upgrade system_set_default_users_group servers_group_publication_remove application_remove applications_list server_remove checkup server_register certificate_reset_named_users sessions_count user_profile_remove shared_folder_add news_add session_kill users_group_add_script application_publish servers_group_add_server application_clone publication_add users_group_modify task_debian_installable_application servers_list settings_domain_integration_preview application_webapp_remove users_group_dynamic_add users_group_dynamic_cached_add applications_group_add script_add server_set_external_name user_add publication_remove servers_group_publication_add scripts_groups_list news_info task_debian_install_packages application_static_add servers_reports_list server_role_enable task_remove users_group_add_user application_static_removeIcon sessions_list log_download users_group_dynamic_modify certificates_limits session_info system_switch_maintenance users_group_add certificate_del user_profile_info users_groups_list_partial shared_folder_remove_group users_group_info has_valid_certificate session_simulate servers_group_modify users_group_settings_remove getInitialConfiguration applications_groups_list user_settings_remove sessions_reports_list application_static_remove shared_folders_list server_role_disable certificates_list users_group_settings_set"/>
+
+      <typeMapping
+        xmlns:ns="uri:ovd"
+        qname="ns:application"
+        type="java:com.aplana.owriter.ulteo.rpcclient.Application"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="uri:ovd"
+        qname="ns:any"
+        type="java:com.aplana.owriter.ulteo.rpcclient.Any"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="uri:ovd"
+        qname="ns:string_array"
+        type="java:java.lang.String[]"
+        innerType="cmp-ns:string" xmlns:cmp-ns="http://www.w3.org/2001/XMLSchema"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="uri:ovd"
+        qname="ns:web_application"
+        type="java:com.aplana.owriter.ulteo.rpcclient.Web_application"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

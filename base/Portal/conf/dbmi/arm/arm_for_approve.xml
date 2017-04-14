@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+<!-- search byAttr="false" specialSQL="arm_for_approvingSQL.xml"-->
+	<name lang="ru">На согласовании</name>
+	<name lang="en">On sight</name>
+	
+	<template>jbr.visa</template>
+	
+	<status>agreement</status>
+	<status>jbr.visa.waitEnclosed</status>
+	
+	<attribute id="JBR_VISA_RESPONSIBLE" type="user">
+		<value var="current"/>
+	</attribute>
+	
+	<column id="JBR_HOWFAST" excelIgnore="true">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column> 	
+	<column id="_STATE">
+		<icon value="6833780" image="onEnclosed" tooltipRu="На дополнительном согласовании" tooltipEn="On Enclosed"/>
+		<default_icon image="noImage" tooltipRu="Не на дополнительном согласовании" tooltipEn="Not On Enclosed"/>
+	</column>		
+	<column id="ADMIN_6849958"  excelIgnore="true">
+		<default_icon image="innerEnded" tooltipRu="Дополнительное согласование завершено" tooltipEn="Inner negotiation is ended"/>
+		<empty_icon image="noImage" tooltipRu="Дополнительное согласование не завершено" tooltipEn="Inner negotiation is not ended"/>		
+	</column>
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+	
+	<column id="JBR_INCOMEDATE" width="40" sort="asc" link="true" columnTitleRu="Дата поступления"/>
+	<column id="NAME" width="120" columnTitleRu="Название" link="true"/>
+	<column id="JBR_VISA_TODATE" width="40" columnTitleRu="Завизировать до"/>	
+	<column id="_STATE" width="50" />
+</search>

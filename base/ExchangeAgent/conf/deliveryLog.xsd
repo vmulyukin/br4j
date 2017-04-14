@@ -1,0 +1,94 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="DeliveryLog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="record" type="recordType" maxOccurs="unbounded"
+					minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="recordType">
+		<xs:sequence>
+			<xs:element name="transport-agent" type="transportAgentType"
+				maxOccurs="1" minOccurs="1"/>
+			<xs:element name="agent" type="agentType" maxOccurs="1"
+				minOccurs="1"/>
+			<xs:element name="action" type="actionType" maxOccurs="1"
+				minOccurs="1"/>
+			<xs:element name="from" type="fromType" maxOccurs="1"
+				minOccurs="1"/>
+			<xs:element name="to" type="toType" maxOccurs="1"
+				minOccurs="1"/>
+			<xs:element name="packet" type="packetType" maxOccurs="1"
+				minOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="date" type="xs:dateTime"/>
+	</xs:complexType>
+
+	<xs:complexType name="transportAgentType">
+		<xs:attribute name="uuid" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="agentType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="actionType">
+		<xs:attribute name="id" type="idType" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="fromType">
+		<xs:attribute name="url" type="xs:string" use="required"/>
+		<xs:attribute name="nodeName" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="toType">
+		<xs:attribute name="url" type="xs:string" use="required"/>
+		<xs:attribute name="nodeName" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="packetType">
+		<xs:sequence>
+			<xs:element name="file" type="fileType" maxOccurs="unbounded" minOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="messageId" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:simpleType name="idType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="receive"/>
+			<xs:enumeration value="send"/>
+			<xs:enumeration value="copy"/>
+			<xs:enumeration value="refuse"/>
+			<xs:enumeration value="postpone"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="fileType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="size" type="xs:double" use="required"/>
+		<xs:attribute name="md5" type="xs:string"  use="required"/>
+	</xs:complexType>
+</xs:schema>

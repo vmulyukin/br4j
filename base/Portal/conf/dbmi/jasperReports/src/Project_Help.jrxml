@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Project Help" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\bsirazetdinov\\workspace\\FSIN2\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\erentsov\\My Documents\\Projects\\JBossReferent-APO\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[--select * from attribute_value where attribute_code = 'JBR_VISA_VISA' order by card_id desc
+
+
+select
+	vc.template_id,
+	vstage.number_value as negotiation_stage,
+		(case when get2ndlvldep(vdep.number_value) is not null then get2ndlvldep(vdep.number_value) || ', '  else '' end) || case when p_name.string_value <> '' then p_name.string_value else p_name_full.string_value end || ' - '
+		|| vpos.string_value as negotiation_instance,
+	vin_date.date_value as incoming_date,
+	plan_neg_date.date_value as planned_negotiation_date,
+	neg_date.date_value as negotiation_date,
+	vcs.name_rus as status,
+	case when vsol.long_binary_value is not null and vsol.long_binary_value <> '' and vc.status_id in (1, 6092498, 201, 202) then
+		xmlserialize(content (xpath(cast('/report/part[text()!=""][last()]/text()' as varchar),
+		cast(convert_from(vsol.long_binary_value, 'UTF8') as xml)))[1] as varchar)
+	else ''
+	end
+	as decision,
+	case when vc.status_id in (201, 202) then 1 else 0 end as accepted,
+	case when vc.status_id in (1, 6092498) then 1 else 0 end as declined,
+	case when
+		vc.status_id not in (1, 41466, 6092498)
+		and plan_neg_date.date_value is not null
+		and (
+			date_trunc('day', neg_date.date_value) > date_trunc('day', plan_neg_date.date_value)
+			or (
+				neg_date.date_value is null
+				and current_date > plan_neg_date.date_value
+			)
+		)
+		then 1 else 0 end as overdued,
+	case when vc.status_id in (107, 73992, 6833780) then 1 else 0 end as processing,
+	1 as isVisa
+from card c
+join attribute_value visas on visas.card_id = c.card_id and visas.attribute_code = 'JBR_VISA_VISA'
+left outer join card vc on visas.number_value = vc.card_id and vc.status_id not in (303990)
+left outer join attribute_value plan_neg_date on plan_neg_date.card_id = visas.number_value  and plan_neg_date.attribute_code = 'JBR_VISA_TODATE'
+left outer join attribute_value neg_date on neg_date.card_id = visas.number_value and neg_date.attribute_code = 'JBR_VISA_D_A_CONSENT'
+left outer join attribute_value vstage on vstage.card_id = vc.card_id and vstage.attribute_code = 'JBR_VISA_NUMBER'
+left outer join attribute_value neg_inst on neg_inst.card_id = vc.card_id and neg_inst.attribute_code  = 'JBR_VISA_RESPONSIBLE'
+left outer join person vp on vp.person_id = neg_inst.number_value
+left outer join attribute_value p_name on p_name.card_id = vp.card_id and p_name.attribute_code = 'JBR_PERS_SNAME_NM'
+left outer join attribute_value p_name_full on p_name_full.card_id = vp.card_id and p_name_full.attribute_code = 'NAME'
+left outer join attribute_value vdep on vdep.card_id = vp.card_id and vdep.attribute_code = 'JBR_PERS_DEPT_LINK'
+left outer join attribute_value vpos on vpos.card_id = vp.card_id and vpos.attribute_code = 'JBR_PERS_POSITION'
+left outer join attribute_value vin_date on vin_date.card_id = vc.card_id and vin_date.attribute_code = 'JBR_INCOMEDATE'
+left outer join card_status vcs on vcs.status_id = vc.status_id
+left outer join attribute_value vsol on vsol.card_id = vc.card_id and vsol.attribute_code = 'JBR_VISA_SOLUTION'
+where c.card_id = $P{card_id}
+union
+select
+	vc.template_id,
+	vstage.number_value as negotiation_stage,
+		(case when get2ndlvldep(vdep.number_value) is not null then get2ndlvldep(vdep.number_value) || ', '   else '' end)|| case when p_name.string_value <> '' then p_name.string_value else p_name_full.string_value end || ' - '
+		|| vpos.string_value as negotiation_instance,
+	vin_date.date_value as incoming_date,
+	plan_neg_date.date_value as planned_negotiation_date,
+	neg_date.date_value as negotiation_date,
+	vcs.name_rus as status,
+	case when vsol.long_binary_value is not null and vsol.long_binary_value <> '' and vc.status_id in (1, 6092498, 108, 204) then
+		xmlserialize(content (xpath(cast('/report/part[text()!=""][last()]/text()' as varchar),
+		cast(convert_from(vsol.long_binary_value, 'UTF8') as xml)))[1] as varchar)
+	else ''
+	end
+	as decision,
+	0 as accepted, 0 as declined, 0 as overdued, 0 as processing, 0 as isVisa
+from card c
+join attribute_value visas on visas.card_id = c.card_id and visas.attribute_code = 'JBR_SIGN_SIGNING'
+left outer join card vc on visas.number_value = vc.card_id and vc.status_id not in (303990)
+left outer join attribute_value plan_neg_date on plan_neg_date.card_id = visas.number_value  and plan_neg_date.attribute_code = 'JBR_SIGN_TODATE'
+left outer join attribute_value neg_date on neg_date.card_id = visas.number_value and neg_date.attribute_code = 'JBR_ACTAUL_DATE_SIGN'
+left outer join attribute_value vstage on vstage.card_id = vc.card_id and vstage.attribute_code = 'JBR_SIGN_NUMBER'
+left outer join attribute_value neg_inst on neg_inst.card_id = vc.card_id and neg_inst.attribute_code  = 'JBR_SIGN_RESPONSIBLE'
+left outer join person vp on vp.person_id = neg_inst.number_value
+left outer join attribute_value p_name on p_name.card_id = vp.card_id and p_name.attribute_code = 'JBR_PERS_SNAME_NM'
+left outer join attribute_value p_name_full on p_name_full.card_id = vp.card_id and p_name_full.attribute_code = 'NAME'
+left outer join attribute_value vdep on vdep.card_id = vp.card_id and vdep.attribute_code = 'JBR_PERS_DEPT_LINK'
+left outer join attribute_value vpos on vpos.card_id = vp.card_id and vpos.attribute_code = 'JBR_PERS_POSITION'
+left outer join attribute_value vin_date on vin_date.card_id = vc.card_id and vin_date.attribute_code = 'JBR_INCOMEDATE'
+left outer join card_status vcs on vcs.status_id = vc.status_id
+left outer join attribute_value vsol on vsol.card_id = vc.card_id and vsol.attribute_code = 'JBR_SIGN_COMMENT'
+where c.card_id = $P{card_id}
+order by template_id, negotiation_stage]]>
+	</queryString>
+	<field name="template_id" class="java.math.BigDecimal"/>
+	<field name="negotiation_stage" class="java.math.BigDecimal"/>
+	<field name="negotiation_instance" class="java.lang.String"/>
+	<field name="incoming_date" class="java.sql.Timestamp"/>
+	<field name="planned_negotiation_date" class="java.sql.Timestamp"/>
+	<field name="negotiation_date" class="java.sql.Timestamp"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="decision" class="java.lang.String"/>
+	<field name="accepted" class="java.lang.Integer"/>
+	<field name="declined" class="java.lang.Integer"/>
+	<field name="overdued" class="java.lang.Integer"/>
+	<field name="processing" class="java.lang.Integer"/>
+	<field name="isvisa" class="java.lang.Integer"/>
+	<variable name="total_approvers" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{isvisa}]]></variableExpression>
+	</variable>
+	<variable name="total_approved" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{accepted}]]></variableExpression>
+	</variable>
+	<variable name="total_declined" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{declined}]]></variableExpression>
+	</variable>
+	<variable name="total_overdued" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{overdued}]]></variableExpression>
+	</variable>
+	<variable name="total_processing" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{processing}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="150" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="1" width="802" height="149"/>
+				<subreportParameter name="card_id">
+					<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "Project_Help_title_subreport.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="42">
+			<staticText>
+				<reportElement style="table" x="509" y="0" width="254" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Примечания (временное)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="0" width="34" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Этап]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="395" y="0" width="114" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Результат]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="325" y="0" width="70" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Дата согласования]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="255" y="0" width="70" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Контрольная дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="34" y="0" width="161" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Согласующая инстанция]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="195" y="0" width="60" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Дата получения]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="763" y="0" width="39" height="42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Просроченных дней]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="34" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{negotiation_stage}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="325" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{negotiation_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{negotiation_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="34" y="0" width="161" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{negotiation_instance}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="509" y="0" width="254" height="20" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{decision}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="395" y="0" width="114" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="255" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{planned_negotiation_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{planned_negotiation_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="195" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11" isStrikeThrough="false" pdfFontName="Font name Times New Roman" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{incoming_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{incoming_date}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" x="763" y="0" width="39" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdued}.equals(new Integer(0)) ? "" :
+$F{planned_negotiation_date} == null ? "" :
+$F{negotiation_date} == null ?
+String.valueOf(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, new Date())
+)
+:
+String.valueOf(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, $F{negotiation_date})
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="84" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="84"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Всего согласующих инстанций: " + ($V{total_approvers}!=null?$V{total_approvers}.toString():"0") + "\n" +
+"Всего согласовано: " + ($V{total_approved}!=null?$V{total_approved}.toString():"0") + "\n" +
+"Всего отклонено: " + ($V{total_declined}!=null?$V{total_declined}.toString():"0") + "\n" +
+"Всего просрочено: " + ($V{total_overdued}!=null?$V{total_overdued}.toString():"0") + "\n" +
+"На рассмотрении: " + ($V{total_processing}!=null?$V{total_processing}.toString():"0")]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

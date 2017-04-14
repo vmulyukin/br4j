@@ -1,0 +1,64 @@
+Для того, чтобы JBoss использовал навигацию с двухуровневыми закладками нужно:
+
+1) развернуть проект на JBoss
+2) настроить JBoss Portal, чтобы использовал другие jsp для меню навигации, для этого нужно:
+    a) открыть файл <Путь к профилю JBOSS>\deploy\jboss-portal.sar\META-INF\jboss-service.xml
+    b) найти определение bean PageCustomizerInterceptor:
+
+            <…>
+   <mbean
+           code="org.jboss.portal.core.aspects.controller.PageCustomizerInterceptor"
+           name="portal:service=Interceptor,type=Command,name=PageCustomizer"
+           xmbean-dd=""
+           xmbean-code="org.jboss.portal.jems.as.system.JBossServiceModelMBean">
+      <xmbean/>
+      <attribute name="TargetContextPath">/portal-core</attribute>
+      <attribute name="HeaderPath">/WEB-INF/jsp/header/header.jsp</attribute>
+      <attribute name="TabsPath">/WEB-INF/jsp/header/tabs.jsp</attribute>
+            <…>
+
+    c) Заменить в нем строки
+
+      <attribute name="TargetContextPath">/portal-core</attribute>
+      <attribute name="HeaderPath">/WEB-INF/jsp/header/header.jsp</attribute>
+      <attribute name="TabsPath">/WEB-INF/jsp/header/tabs.jsp</attribute>
+
+            На
+
+      <attribute name="TargetContextPath">/DBMI-Portal</attribute>
+      <attribute name="HeaderPath">/WEB-INF/header/header.jsp</attribute>
+      <attribute name="TabsPath">/WEB-INF/header/tabs.jsp</attribute>
+      
+      *В TargetContextPath должно быть то же имя, что и значение свойства Portal.name
+      в файле jboss-build.properties (без .ear). 
+
+3) Для интересующей страницы портала выбрать тему dbmi_theme  и layout dbmi_layout 
+	в режиме администратора портала 
+	(ну или указать их в *-object.xml для всего portal instance:
+		<portal>			
+			<portal-name>DBMI-portal</portal-name>
+			<supported-modes>
+ 				<mode>view</mode>
+				<mode>edit</mode>
+				<mode>help</mode>			
+			</supported-modes>
+			<properties>
+				<property>
+					<name>layout.id</name>
+					<value>dbmi_layout</value>
+				</property>
+				<property>
+					<name>theme.id</name>
+					<value>dbmi_theme</value>
+				</property>
+			</properties>
+			...
+		</portal>
+	).
+
+ВНИМАНИЕ. 
+Портал будет использовать новые закладки только для страниц, для которых устрановлена
+тема оформления dbmi_theme, для остальных будет использована стандартная навигация
+
+AVorotnikov: Добавлена такая фича: если у страницы есть свойство Hidden, и оно
+установлено в true, то страница в закладках не показывается.

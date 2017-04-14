@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog readOnly="false">
+				<hierarchy>
+					<cardSet stored="true" alias="distributions" labelAttr="jbr.distributionItem.recipient" maxLength="70" labelAttrType="link" linkedLabelAttr="NAME" collapsed="false">
+						<!-- <children>
+							<link targetSet="resolutions" linkAttr="jbr.linkedResolutions"isReversed="false"/>
+						</children> -->
+					</cardSet>
+				</hierarchy>
+				<columns>
+					<column id="jbr.distributionItem.sendDate" width="60"/>
+					<column id="jbr.distributionItem.method" width="60"/>
+					<column id="jbr.distributionItem.ackInfo" width="150" />
+					<column id="_STATE" width="100" link="true"/>
+				</columns>
+				<actions>
+					<!-- ������ �� addGroup 
+					<action id="addRecipient"
+							handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandler"
+							selectionType="none"
+							title="addRecipientTitle">
+						<parameters>
+							<parameter name="template" value="jbr.DistributionListElement"/>
+						</parameters>
+					</action> -->
+					<action id="addGroup"
+							handler="com.aplana.dbmi.card.actionhandler.multicard.AddTemplateGeneratedCardsActionHandler"
+							selectionType="none"
+							title="addGroupTitle">
+						<parameters>
+							<parameter name="template" value="jbr.distributionItem.template"/>
+							<parameter name="target_template" value="jbr.DistributionListElement"/>
+							<parameter name="mapping_package" value="com.aplana.dbmi.card.actionhandler.multicard"/>
+							<parameter name="mapping" value="SplitCardLinkToCardLink(link:jbr.distributionItem.template.recipient)->(link:jbr.distributionItem.recipient)"/>					
+						</parameters>
+					</action>
+					<action id="addList"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionListAddHandler"
+							selectionType="none"
+							title="addListTitle"/>
+					<action id="remove"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionListRemoveLinksHandler"
+							selectionType="multiple"
+							title="removeTitle">
+						<parameters>
+							<parameter name="mustBeEmptyId" value="date: jbr.distributionItem.sendDate"/>
+						</parameters>
+					</action>
+					<action id="send"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionListSendHandler"
+							selectionType="multiple"
+							title="sendTitle"
+							mode="view">
+						<!-- <parameters>
+							<parameter name="moveId" value="jbr.distributionItem.send"/>
+						</parameters> -->
+					</action>
+					<action id="beginSend"
+							handler="com.aplana.dbmi.card.actionhandler.jbr.DistributionListBeginSendingHandler"
+							selectionType="multiple"
+							title="beginSendTitle"
+							mode="view">
+					</action>
+					<action id="downloadFiles"
+							selectionType="multiple"
+							title="downloadFilesTitle"
+							mode="view"
+							roleForMode="A">
+						<extraJavascript class="com.aplana.dbmi.card.extra.DownloadCardsJSBuilder" >
+						</extraJavascript>
+					</action>
+					<action id="MI_SIGN_ATTACHMENTS_CARD_ACTION"
+						selectionType="none"
+						title="ds.sign.attachments"
+						handler="com.aplana.dbmi.card.actionhandler.jbr.SelectFilesForDSHandler"
+					/>
+				</actions>	
+				<styling>
+				</styling>
+				<selectableCardCondition>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<!-- <message key="addRecipientTitle" value="Add single recipient"/> -->
+			<message key="addGroupTitle" value="Add recipients"/>
+			<message key="addListTitle" value="Add distribution list"/>
+			<message key="removeTitle" value="Remove"/>
+			<message key="sendTitle" value="Send"/>
+			<message key="beginSendTitle" value="Begin sending"/>
+            <message key="downloadFilesTitle" value="Download card in to the file"/>
+
+			
+			<message key="sendNone" value="No recipients to send document"/>
+			<message key="sendOk" value="Document successfully sent to {0} recipients"/>
+			<message key="sendError" value="Error sending document to {0}: {1}"/>
+			<message key="sendMethod" value="Can''t send document to {0} because sending method is not e-mail"/>
+			<message key="ds.sign.attachments" value="Sign attachments"/>
+		</lang>	
+		<lang code="ru">
+			<!-- <message key="addRecipientTitle" value="�������� ����������"/> -->
+			<message key="addGroupTitle" value="�������� �����������"/>
+			<message key="addListTitle" value="�������� ������ ��������"/>
+			<message key="removeTitle" value="�������"/>
+			<message key="sendTitle" value="���������"/>	
+			<message key="beginSendTitle" value="������ ��������"/>
+            <message key="downloadFilesTitle" value="��������� �������� � ����"/>
+
+
+			<message key="sendNone" value="��� ����������� ��� �������� ���������"/>
+			<message key="sendOk" value="�������� ������� ��������� {0} ���������"/>
+			<message key="sendError" value="������ ��� �������� ��������� �������� ''{0}'': {1}"/>
+			<message key="sendMethod" value="�������� �� ��������� �������� ''{0}'', ��� ��� ����� ����� ��������, �������� �� e-mail"/>
+			<message key="ds.sign.attachments" value="��������� ��������"/>
+		</lang>
+	</messages>
+</settings>

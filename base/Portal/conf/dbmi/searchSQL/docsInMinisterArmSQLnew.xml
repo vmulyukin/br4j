@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+						with 
+						
+						boss as (select av_b.number_value from attribute_value as av_b
+								join card as c_b on av_b.card_id = c_b.card_id and c_b.template_id = 544 and c_b.status_id = 4
+								join attribute_value as av_assist on av_assist.card_id = av_b.card_id 
+									and av_assist.attribute_code = 'JBR_ARM_ASSISTANT' and av_assist.number_value = (%CURRENTUSERS%)
+						
+								where av_b.attribute_code = 'JBR_ARM_MANAGER'
+						)
+						
+						select distinct crds.card_id 
+						
+						from (
+								-- изменили постановку см BR4J00039749
+								select c.card_id from card as c								
+								join attribute_value as av_1 on av_1.card_id = c.card_id and av_1.attribute_code in ('ADMIN_702311') 
+								join attribute_value as av_2 on av_2.card_id = av_1.card_id 
+									and av_2.attribute_code in ('JBR_INFD_EXECUTOR','ADMIN_255974')
+									and av_2.number_value = (select number_value from boss)		
+						
+								where c.template_id in (1044) 
+								and c.status_id = 102	
+						
+								union all
+						
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('JBR_FOR_INFORMATION') and av_1.number_value = (select number_value from boss)		
+						
+								where c.template_id in (524) 
+								and c.status_id = 67424	
+						
+								union all
+						
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('ADMIN_726874') and av_1.number_value = (select number_value from boss)		
+						
+								where c.template_id in (1144) 
+								and c.status_id = 67424	
+						
+								union all
+								-- изменили постановку см BR4J00039749
+								select c.card_id from card as c 
+								join attribute_value as av_1 on av_1.card_id = c.card_id 
+									and av_1.attribute_code in ('JBR_RASSM_PERSON') and av_1.number_value = (select number_value from boss)		
+						
+								where c.template_id in (504) 
+								and c.status_id = 102
+								-- без рассмотрений, если имеется «Запрос на изменение рассматривающего»...
+								and not exists (select 1 from card as crd_rassm_ch
+												-- кардлинк у "запроса на рассм-е" на "рассмотрение"
+												join attribute_value as av_rassm_ch on av_rassm_ch.card_id = crd_rassm_ch.card_id 
+													and av_rassm_ch.attribute_code = 'JBR_REQUEST_CONS'
+													and av_rassm_ch.number_value = c.card_id
+												-- тип запроса 
+												join attribute_value as av_rassm_ch_type on av_rassm_ch_type.card_id = av_rassm_ch.card_id
+													and av_rassm_ch_type.attribute_code = 'JBR_REQUEST_TYPE'
+													and av_rassm_ch_type.value_id in (1125,1128)							
+												
+												where crd_rassm_ch.status_id = 102
+												and crd_rassm_ch.template_id = 967)
+						
+								
+							) as crds
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

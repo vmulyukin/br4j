@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="docsInMinisterUseSQLnew.xml">
+	<name lang="ru">���������, ����������� ������������ �� ������������</name>
+	<name lang="en">Minister incoming documents for look at</name>
+
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="���� ��������� ���������" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="��� ��������� ���������" tooltipEn="No category of urgency"/>
+	</column>	
+	<column id="ADMIN_702311" labelAttrId="JBR_TCON_ONCONT">
+		<icon value="1449" image="resolutionOnControl" tooltipRu="��������� �� ��������" tooltipEn="Resolution on control"/>
+		<icon value="1450" image="resolutionNotOnControl" tooltipRu="��������� �� �� ��������" tooltipEn="Resolution not control"/>
+	</column>	
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="���� ��������" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="��� ��������" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+	
+	<column id="JBR_INCOMEDATE" width="40" sort="asc" link="true"/>
+	<!-- ��������������� ����� -->
+	<column id="JBR_RASSM_PARENT_DOC:JBR_INFORM_DOC:ADMIN_702311:ADMIN_702604:JBR_ADO_DOCBASE"  labelAttrId="JBR_REGD_REGNUM" isParentName="false" width="25"  
+		sortAttrId="jbr.exam.parent->regnumberdigital;jbr.info.parent->regnumberdigital;jbr.report.int.parent->regnumberdigital;jbr.report.int.document->regnumberdigital;jbr.ado.docbase->regnumberdigital"/>
+	<column id="NAME" width="120" columnTitleRu="��������" link="true" />
+	<!-- ���� -->
+	<column id="JBR_RASSM_TODATE" secondaryColumn="jbr.report.int.parent->jbr.resolutionTerm" secondaryColumn1="jbr.report.int.document->jbr.incoming.deadline"
+		sortAttrId="jbr.exam.term;jbr.report.int.parent->jbr.resolutionTerm;jbr.report.int.document->jbr.incoming.deadline"
+		width="30" columnTitleRu="����" columnTitleEn="Term" nullValueEn="" nullValueRu="" timePattern="dd-MM-yyyy"/>
+</search>

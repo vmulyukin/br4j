@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description package="com.aplana.dmsi.expansion.fsin">
+	<config forClass="FSIN0100ExpansionType" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.incoming</template>
+		<field name="application">
+			<valueSources>
+				<config forClass="Application">
+					<field name="totalPages">
+						<valueSources>
+							<attribute type="number">jbr.original.attach.quantitypaper</attribute>
+						</valueSources>
+					</field>
+					<field name="otherInformation">
+						<valueSources>
+							<attribute type="text">jbr.original.commentOnApp</attribute>
+						</valueSources>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="FSIN0100ForOgExpansionType" extendsConfigOf="FSIN0100ExpansionType">
+		<template>jbr.citizenrequest</template>
+		<field name="rubric">
+			<valueSources>
+				<attribute type="link">jbr.question.thematic.OG</attribute>
+			</valueSources>
+			<type name="fsin.Rubric"/>
+		</field>
+		<field name="pages">
+			<valueSources>
+				<config forClass="Pages">
+					<field name="companion">
+						<valueSources>
+							<attribute type="number">jbr.original.quantityAccDoc</attribute>
+						</valueSources>
+					</field>
+					<field name="attachment">
+						<valueSources>
+							<attribute type="number">jbr.original.attach.quantitypaper</attribute>
+						</valueSources>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<!-- field name="category">
+		</field-->
+		<field name="regHistory">
+			<valueSources>
+				<config forClass="RegHistory">
+					<field name="regnumber">
+						<valueSources>
+							<attribute type="string">regnumber</attribute>
+						</valueSources>
+					</field>
+					<field name="regdate">
+						<valueSources>
+							<attribute type="date">regdate</attribute>
+						</valueSources>
+						<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+					</field>
+					<field name="registrator">
+						<valueSources>
+							<attribute type="user">jbr.incoming.registrar</attribute>
+						</valueSources>
+						<type name="fsin.Registrator"/>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="FSIN0100ForOutcomeExpansionType" extendsConfigOf="FSIN0100ExpansionType">
+		<template>jbr.outcoming</template>
+	</config>
+	<config forClass="FSIN0100ForORDExpansionType" extendsConfigOf="FSIN0100ExpansionType">
+		<template>jbr.ord</template>
+	</config>
+	<config forClass="FSIN0100ForIncomeExpansionType" extendsConfigOf="FSIN0100ExpansionType">
+		<template>jbr.incoming</template>
+	</config>
+	<config forClass="FSIN0100ForAckExpansionType" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.gost.ack</template>
+	</config>
+	<config forClass="Rubric" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.theme</template>
+		<field name="code">
+			<valueSources>
+				<attribute type="string">jbr.thematic.code</attribute>
+			</valueSources>
+		</field>
+		<field name="name">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="RubricSubject" extendsConfigOf="Rubric">
+		<template>jbr.thematic</template>
+	</config>
+</description>

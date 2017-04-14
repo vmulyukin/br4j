@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="jar" name="Crypto Module">
+
+	<!--<property file="deploy/crypto-build.properties"/>-->
+
+	
+	<target name="clean">
+		  <delete dir="${CryptoModule.dir.build}"/>
+		  <mkdir dir="${CryptoModule.dir.build}/${CryptoModule.dir.classes}"/>
+    </target>
+
+    <target name="init" depends="clean">
+        
+    </target>
+
+    <target name="compile" depends="init">
+        <javac debug="true"
+        	debuglevel="${debuglevel}" 
+        	destdir="${CryptoModule.dir.build}/${CryptoModule.dir.classes}" 
+        	includes="**/*.java"
+        	srcdir="${CryptoModule.dir.src}"
+        	source="${source}"
+        	target="${target}"
+        	encoding="${encoding}" 
+        	nowarn="${nowarn}">
+        	<classpath refid="classpath"/>
+        	<classpath>        		
+        		<pathelement location="${SharedLib.location}/asn1rt.jar"/>        		
+           		<pathelement location="${SharedLib.location}/AsnLite.jar"/>
+           		<pathelement location="${SharedLib.location}/jna.jar"/>
+        		<pathelement location="${Platform.location}/${dir.build}/${Platform.name}"/>   
+        		<pathelement location="${SharedLib.location}/bcpkix-jdk15on-147.jar" />
+        		<pathelement location="${SharedLib.location}/bcprov-ext-jdk15on-147.jar" />
+        		<pathelement location="${SharedLib.location}/commons-lang-2.6.jar" />
+        		<pathelement location="${SharedLib.location}/JCPRevTools.jar" />
+        		<pathelement location="${SharedLib.location}/JCP_ASN.jar" />
+        		<pathelement location="${java.home}/lib/plugin.jar"/>
+        	</classpath>
+        </javac>
+    	<copy todir="${dir.classes}">
+    		<fileset dir="${CryptoModule.dir.src}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+        </copy>
+    </target>
+	
+	<target name="signapplet" depends="init">
+		<jar destfile="${CryptoModule.dir.build}/${CryptoModule.jar.file}"
+			basedir="${CryptoModule.dir.build}/${CryptoModule.dir.classes}">
+		</jar>
+		<jarjar jarfile="${CryptoModule.dir.build}/tempJar.jar">
+			<fileset dir="${dir.classes}"/>				
+			<zipfileset src="${SharedLib.location}/jna.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="${SharedLib.location}/bcpkix-jdk15on-147.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="${SharedLib.location}/bcprov-ext-jdk15on-147.jar" excludes="META-INF/**/*.*"/>
+			<zipfileset src="${SharedLib.location}/commons-lang-2.6.jar" excludes="META-INF/**/*.*"/>
+			
+			<keep pattern="com.aplana.**"/>
+			<manifest>
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Codebase" value="*"/>
+				<attribute name="Application-Name" value="Crypto аpplet"/>
+				<attribute name="Caller-Allowable-Codebase" value="*"/>
+			</manifest>
+		</jarjar>
+		<echo>${AppletsSignature.keystore.location}</echo>
+		<signjar
+			jar="${CryptoModule.dir.build}/tempJar.jar"
+			keystore="${AppletsSignature.keystore.location}"
+			storepass="${AppletsSignature.keystore.password}"
+			keypass="${AppletsSignature.key.password}"
+			alias="${AppletsSignature.key.alias}"
+			signedjar="${CryptoModule.dir.build}/${CryptoModule.signedjar.file}"
+		/>
+	</target>
+
+	<target name="jar" depends="compile, signapplet">
+	</target>	
+</project>

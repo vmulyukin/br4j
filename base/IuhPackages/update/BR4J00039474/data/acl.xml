@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Визирование" template_id="348">
+        <Permission Status="1" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="c012d68becdaea4821275c82df0c70e9"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="3c55ea1d529cb19c7f64c0737ca7f4b2"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="6f7840d8378ad5e67e4acee31fc67430"
+                    name="На согласование-35267->Ожидание согласования"
+                    wfm_id="35267" Action="remove"/>
+                <WfMove permHash="b2ce421148f791b809404061a0dbb57f"
+                    name="Отменить-15000020->Отменен" wfm_id="15000020" Action="remove"/>
+                <WfMove permHash="20c4b0e803f6de56ad8cd0be12be36a9"
+                    name="Удалить-9450137->Корзина" wfm_id="9450137" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="73992" Rule="Пр_Пом для/Согласующий">
+            <Operations>
+                <Operation permHash="959d18382f52e99052ea59602c442a70"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="3eee449e67e0065455091dabb8ee572d"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="60d35e61e2058988d190368df35f4d52"
+                    name="В АРМ руководителю-825531" wfm_id="825531" Action="add"/>
+                <WfMove permHash="8e2881735632a34f40cab9262ee5a951"
+                    name="На дополнительное согласование (помощник)-15000009"
+                    wfm_id="15000009" Action="add"/>
+                <WfMove permHash="97ac93c32135c7bf4490f3a28f6f60a9"
+                    name="Обработка помощником - Черновик-9478569"
+                    wfm_id="9478569" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="73992" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="959d18382f52e99052ea59602c442a70"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="3eee449e67e0065455091dabb8ee572d"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="60d35e61e2058988d190368df35f4d52"
+                    name="В АРМ руководителю-825531" wfm_id="825531" Action="remove"/>
+                <WfMove permHash="97ac93c32135c7bf4490f3a28f6f60a9"
+                    name="Обработка помощником - Черновик-9478569"
+                    wfm_id="9478569" Action="remove"/>
+                <WfMove permHash="8e2881735632a34f40cab9262ee5a951"
+                    name="На дополнительное согласование (помощник)-15000009"
+                    wfm_id="15000009" Action="remove"/>
+                <WfMove permHash="9536786dcea032dca2c999473d511862"
+                    name="Заменить согласующего-9478562->Ожидание согласования"
+                    wfm_id="9478562" Action="remove"/>
+                <WfMove permHash="57b921854d3b5e29ead8cfa2b9cc46a9"
+                    name="Не согласен-825532->Не согласован"
+                    wfm_id="825532" Action="remove"/>
+                <WfMove permHash="99c5ec84934c30ce169ab3f4285aba43"
+                    name="Отклонить помощником-9478563->Отклонен"
+                    wfm_id="9478563" Action="remove"/>
+                <WfMove permHash="68858ee600114305a217dedf76af6520"
+                    name="Отменить-15000023->Отменен" wfm_id="15000023" Action="remove"/>
+                <WfMove permHash="0827815de4959c8e583c234730dec069"
+                    name="Согласен-825574->Согласован" wfm_id="825574" Action="remove"/>
+                <WfMove permHash="a0cc02d4702a6343fcd04c9a5665dcd3"
+                    name="Согласовать с замечаниями-825530->Согласован с замечаниями"
+                    wfm_id="825530" Action="remove"/>
+                <WfMove permHash="220ff74c5a00d673fb1dafc0dc119cc0"
+                    name="Удалить (системный)-15000018->Корзина"
+                    wfm_id="15000018" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="6833780" Rule="Пр_Пом для/Согласующий">
+            <Operations>
+                <Operation permHash="06eaa641cebf850239f73891b1a06589"
+                    OperationType="read" Action="add"/>
+                <Operation permHash="d25d0c463cd215ff2a2912cc26ac2488"
+                    OperationType="write" Action="add"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="b862f06779d1179d6771f090bd503ae9"
+                    name="Завершить дополнительное согласование-15000014"
+                    wfm_id="15000014" Action="add"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="6833780" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="06eaa641cebf850239f73891b1a06589"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="d25d0c463cd215ff2a2912cc26ac2488"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="b862f06779d1179d6771f090bd503ae9"
+                    name="Завершить дополнительное согласование-15000014"
+                    wfm_id="15000014" Action="remove"/>
+                <WfMove permHash="e6de0210d8e221641c51b937a05ca0f4"
+                    name="Дополнительное согласование - Обработка помощником (системный)-15000010->Обработка помощником"
+                    wfm_id="15000010" Action="remove"/>
+                <WfMove permHash="1a9656ecd6da85ef92d243048a80ba2a"
+                    name="Дополнительное согласование - отклонено (системный)-15000001->Отклонен"
+                    wfm_id="15000001" Action="remove"/>
+                <WfMove permHash="a05031e3046f6cdd712aeb0d3de7b780"
+                    name="Дополнительное согласование - черновик (системный)-15000000->Черновик"
+                    wfm_id="15000000" Action="remove"/>
+                <WfMove permHash="ee74acd10cabe1fd214347e554f43a2b"
+                    name="Завершить дополнительное согласование (системный)-6833781->Согласование"
+                    wfm_id="6833781" Action="remove"/>
+                <WfMove permHash="cc1b00999b4f961de5eb0194f5c6e921"
+                    name="Отменить-15000022->Отменен" wfm_id="15000022" Action="remove"/>
+                <WfMove permHash="ee047040ec1cfe137f918f916b4848e1"
+                    name="Удалить (системный)-15000019->Корзина"
+                    wfm_id="15000019" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="1" Rule="Пр_Пом для/Согласующий">
+            <Operations>
+                <Operation permHash="c012d68becdaea4821275c82df0c70e9"
+                    OperationType="read" Action="add"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="6840598" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="79c0974b6ca1b6bd9ed8d41d3123acaa"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="589545eae413262933ebc40d2edc86cd"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="d3cc0252e6bb2b197b1b7227aad72c82"
+                    name="На доработку-6840621->Черновик"
+                    wfm_id="6840621" Action="remove"/>
+                <WfMove permHash="6c137024efe50977dde3f405e5dd51ac"
+                    name="На следующую итерацию согласования-6842178->Ожидание согласования"
+                    wfm_id="6842178" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="303990" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="2c45eae41418f7d0da24448946b4baa6"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="292ee1448e014d488bdb6ec77143d3f9"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="10000110" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="bb0023ff5c882273363dfb5d27ee4590"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="fdbb1832119b8439a45d45fff9598ee6"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="203" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="7e7fde4e9b8cdb0c91a1d7bacf173d5d"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="161df9a346b5f6be7bdcdd0a4b8563c7"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="729d0c8357b8e520317642504e388510"
+                    name="Вернуть на согласование-38678->Ожидание согласования"
+                    wfm_id="38678" Action="remove"/>
+                <WfMove permHash="d8a86fa25ea456e6b3db7c0a1a15d164"
+                    name="Удалить-9450141->Корзина" wfm_id="9450141" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="2031" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="52361b461dc6bb3e789b45fc473a5f41"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="8c54954b0fc57a92ce7f38be52d0e8fa"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="4617dd19069e2116c250be6a37530439"
+                    name="Не согласен-9450144->Не согласован"
+                    wfm_id="9450144" Action="remove"/>
+                <WfMove permHash="4c8d114ac0a3c567d03b25aceddb6357"
+                    name="Удалить (системный)-15000017->Корзина"
+                    wfm_id="15000017" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="41466" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="353c1e682c5fbe63f6cdaf91d7b90bc3"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="65fd75096b4e1e59f9fb3ebe78d47272"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="d027cfc74a8bf699c53a920d59a7a433"
+                    name="Ожидание согласования - Черновик-9478568->Черновик"
+                    wfm_id="9478568" Action="remove"/>
+                <WfMove permHash="a34867bdb0ab36a06efbff8bac83dba2"
+                    name="Отклонить-15000011->Отклонен"
+                    wfm_id="15000011" Action="remove"/>
+                <WfMove permHash="20884821d9dcde38164c5153fcc23aa1"
+                    name="Отменить-15000021->Отменен" wfm_id="15000021" Action="remove"/>
+                <WfMove permHash="01c05bf8bf1eab7b36c36054af75e7bc"
+                    name="Отослать согласующему-41467->Согласование"
+                    wfm_id="41467" Action="remove"/>
+                <WfMove permHash="784eaf2a7613806fff860c6849474c74"
+                    name="Помощнику на обработку-825533->Обработка помощником"
+                    wfm_id="825533" Action="remove"/>
+                <WfMove permHash="5ce02553d0632c52563aaab290886b4c"
+                    name="Удалить-1076471->Корзина" wfm_id="1076471" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="6092498" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="3db13d2ae49c12c1a871ed1f0527b0d9"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="bdb76cb52fc241728fc3d01458273884"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="09fa32037e116e159911ac3a125500e2"
+                    name="Удалить-6840618->Корзина" wfm_id="6840618" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="34145" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="622a54ed38ff64ba061b823dfa960787"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="9221d1844a2882a4c6dc5f4538c50b52"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="66185" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="16a5cfa603f1dd9d1d8ab5c901639cce"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="f2957a4a23f5db1fd1a555250624dc5c"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="201" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="8a5aab0d1bd6b82054248953d96b38ba"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="9522e87168a527bf683fe20f9e43f27b"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="adca08ac48dff85855bae2afce8c1fad"
+                    name="Вернуть на согласование-38677->Ожидание согласования"
+                    wfm_id="38677" Action="remove"/>
+                <WfMove permHash="faa6eba272991b1cb698f3dede459241"
+                    name="В черновик-9478570->Черновик" wfm_id="9478570" Action="remove"/>
+                <WfMove permHash="e9574d84d77e889ea9a2f821f7e8ab4c"
+                    name="Удалить-9450140->Корзина" wfm_id="9450140" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="107" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="18a19b2165660f3a09d66181fa60a3f2"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="9e5f4ec1520e45136fd2b11c5859b987"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="b12568ce9c4731eae8db8e46eb083239"
+                    name="Вернуть на согласование-42089->Ожидание согласования"
+                    wfm_id="42089" Action="remove"/>
+                <WfMove permHash="64be3825c9e86d20340b1573726eac30"
+                    name="Заменить согласующего-9478561->Ожидание согласования"
+                    wfm_id="9478561" Action="remove"/>
+                <WfMove permHash="5f4bd688640230ce9b4e1be83f751b95"
+                    name="На дополнительное согласование-6833782->Дополнительное согласование"
+                    wfm_id="6833782" Action="remove"/>
+                <WfMove permHash="7251bff7c77eaff7b1d8caf6da07ef10"
+                    name="На доработку-6840622->Черновик"
+                    wfm_id="6840622" Action="remove"/>
+                <WfMove permHash="e53a947cd0b1e31114e3c3bb3c4ee65d"
+                    name="Направлен ошибочно-15000115->Направлен ошибочно"
+                    wfm_id="15000115" Action="remove"/>
+                <WfMove permHash="df281e69db80dd01f632bc8d412667d9"
+                    name="Не согласен-35266->Не согласован руководителем"
+                    wfm_id="35266" Action="remove"/>
+                <WfMove permHash="c6f652a81b58a02174db893b5497df9c"
+                    name="Организовать дополнительное согласование (вернуть помощнику)-15000008->Обработка помощником"
+                    wfm_id="15000008" Action="remove"/>
+                <WfMove permHash="6ab33a7a35df7488ad4459742a8c07de"
+                    name="Отклонить-6840620->Отклонен" wfm_id="6840620" Action="remove"/>
+                <WfMove permHash="513877fdcdfb0d0a7057312820d3425e"
+                    name="Отменить-15000024->Отменен" wfm_id="15000024" Action="remove"/>
+                <WfMove permHash="aac8416c9f660aed610184b00377dc48"
+                    name="Пропустить согласование-9450143->Согласование пропущено"
+                    wfm_id="9450143" Action="remove"/>
+                <WfMove permHash="6566927d55341937bf2a3d62f676cc83"
+                    name="Пропустить согласование-1076472->Пропущен"
+                    wfm_id="1076472" Action="remove"/>
+                <WfMove permHash="ac89a23b285a456bd6098ea0bf90b558"
+                    name="Согласен-15000013->Согласован"
+                    wfm_id="15000013" Action="remove"/>
+                <WfMove permHash="3656e9deabb3bebbc440059f4e8e096f"
+                    name="Согласен-35269->Согласован руководителем"
+                    wfm_id="35269" Action="remove"/>
+                <WfMove permHash="17e9d18353a01ddf6a8a14d33a19b31c"
+                    name="Согласован с замечаниями-35268->Согласован с замечаниями"
+                    wfm_id="35268" Action="remove"/>
+                <WfMove permHash="523ec05866beb9fe4d3c326a2c6cd6f4"
+                    name="Удалить (системный)-15000015->Корзина"
+                    wfm_id="15000015" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="9450136" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="e02be90859f249178ba9343da1c19395"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="4fc34d907f2bda0dbe9d2433b5890086"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="07851d46fcd1c60b0ee68a6cba3095ba"
+                    name="Удалить-9450139->Корзина" wfm_id="9450139" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="2011" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="9a1bb593e6f8cbc413325e3139c3e1ec"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="018191c9e4b5f51530f35dd0de1ce793"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="d9c152e36fdbae2d95fc36a3e2b742b4"
+                    name="На следующее согласование-6840619->Ожидание согласования"
+                    wfm_id="6840619" Action="remove"/>
+                <WfMove permHash="1ec9a15113d08f4e94a784a4149d5adf"
+                    name="Согласен-9450145->Согласован" wfm_id="9450145" Action="remove"/>
+                <WfMove permHash="a7ed06814fbc7f1ac2c43b15a2f14366"
+                    name="Удалить (системный)-15000016->Корзина"
+                    wfm_id="15000016" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="202" Rule="Пр_Пом для\Согласующий">
+            <Operations>
+                <Operation permHash="463343f1b41a547661cff7937355b83f"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="33b808f65eda6364237271e73122c9d4"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="a1853e6600d6f8c9e97f38cfb647d5a2"
+                    name="Вернуть на согласование-115929->Ожидание согласования"
+                    wfm_id="115929" Action="remove"/>
+                <WfMove permHash="d7a4962915f942ac5f177ed4ad775a28"
+                    name="В черновик-9478571->Черновик" wfm_id="9478571" Action="remove"/>
+                <WfMove permHash="2ce27ebc2f1aeebc3ad4414acb184962"
+                    name="Удалить-9450142->Корзина" wfm_id="9450142" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д1_Визирующий ДС" ruleHash="508d1efbff5e73ef8d341dccc4520dff">
+                <RulePerson name="Д1_Визирующий ДС"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE"
+                    ruleHash="508d1efbff5e73ef8d341dccc4520dff" link="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Д1_Исполнитель ДО ВН" ruleHash="896cd514a638ed13b363784e19866061">
+                <RulePerson name="Д1_Исполнитель ДО ВН"
+                    personAttributeCode="JBR_INFD_EXECUTOR"
+                    ruleHash="896cd514a638ed13b363784e19866061" link="JBR_VISA_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Д1_Контролер по документу ВН" ruleHash="666028a1934684013c080ed2adc078a0">
+                <RulePerson name="Д1_Контролер по документу ВН"
+                    personAttributeCode="JBR_IMPL_INSPECTOR"
+                    ruleHash="666028a1934684013c080ed2adc078a0" link="JBR_VISA_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Д1_Руководитель скрытый НПА" ruleHash="d9abb367919c1fc2be462f42b1d306f0">
+                <RulePerson name="Д1_Руководитель скрытый НПА"
+                    personAttributeCode="JBR_HIDDEN_CHIEF"
+                    ruleHash="d9abb367919c1fc2be462f42b1d306f0" link="JBR_VISA_PARENT_DOC"/>
+            </Rule>
+            <Rule name="Д2_Визирующие ДО ВН" ruleHash="31d1168d96493487eca627465ad85e97">
+                <RulePerson name="Д2_Визирующие ДО ВН"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE"
+                    ruleHash="31d1168d96493487eca627465ad85e97"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Д2_Исполнитель резолюции ВН" ruleHash="36ac02492b1d90a6c7301a65c26214bd">
+                <RulePerson name="Д2_Исполнитель резолюции ВН"
+                    personAttributeCode="JBR_INFD_EXECUTOR"
+                    ruleHash="36ac02492b1d90a6c7301a65c26214bd"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д2_Исполнитель резолюции НПА" ruleHash="36ac02492b1d90a6c7301a65c26214bd">
+                <RulePerson name="Д2_Исполнитель резолюции НПА"
+                    personAttributeCode="JBR_INFD_EXECUTOR"
+                    ruleHash="36ac02492b1d90a6c7301a65c26214bd"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д2_Контролер резолюции ВН" ruleHash="515eef4d4704c28dd5d02e24679b2693">
+                <RulePerson name="Д2_Контролер резолюции ВН"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="515eef4d4704c28dd5d02e24679b2693"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д2_Контролер резолюции НПА" ruleHash="515eef4d4704c28dd5d02e24679b2693">
+                <RulePerson name="Д2_Контролер резолюции НПА"
+                    personAttributeCode="JBR_TCON_INSPECTOR"
+                    ruleHash="515eef4d4704c28dd5d02e24679b2693"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д2_Подписант ДО ВН" ruleHash="4c2d7f601a180380b04c5d868383e234">
+                <RulePerson name="Д2_Подписант ДО ВН"
+                    personAttributeCode="JBR_SIGN_RESPONSIBLE"
+                    ruleHash="4c2d7f601a180380b04c5d868383e234"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_SIGN_SIGNING"/>
+            </Rule>
+            <Rule name="Д2_Рассматривающие ВН" ruleHash="98cfbb5578bfceb660dee31e1d3f0237">
+                <RulePerson name="Д2_Рассматривающие ВН"
+                    personAttributeCode="JBR_RASSM_PERSON"
+                    ruleHash="98cfbb5578bfceb660dee31e1d3f0237"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_ACQUAINT"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель резолюции ВН" ruleHash="2ea440aeb743ccefa56ec3cef77109d9">
+                <RulePerson name="Д2_Соисполнитель резолюции ВН"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="2ea440aeb743ccefa56ec3cef77109d9"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д2_Соисполнитель резолюции НПА" ruleHash="2ea440aeb743ccefa56ec3cef77109d9">
+                <RulePerson name="Д2_Соисполнитель резолюции НПА"
+                    personAttributeCode="ADMIN_255974"
+                    ruleHash="2ea440aeb743ccefa56ec3cef77109d9"
+                    link="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Д_Основной согласующий" ruleHash="48cce57d0e020b7ecf38c68f072738d0">
+                <RulePerson name="Д_Основной согласующий"
+                    personAttributeCode="JBR_VISA_APP_MAIN" ruleHash="48cce57d0e020b7ecf38c68f072738d0"/>
+            </Rule>
+            <Rule name="Д_Согласующий (ДС)" ruleHash="9ade717d9cdc8541ceb826638778764d">
+                <RulePerson name="Д_Согласующий (ДС)"
+                    personAttributeCode="JBR_VISA_RESPONSIBLE" ruleHash="9ade717d9cdc8541ceb826638778764d"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Помощник руководителя" ruleHash="4de9036f0d0a0e1cc9ee60739603042b">
+                <RuleRole name="Помощник руководителя"
+                    ruleHash="4de9036f0d0a0e1cc9ee60739603042b" roleCode="JBR_MH"/>
+            </Rule>
+            <Rule name="Регистратор" ruleHash="6e7274e128c0b4fadb05753594d7937a">
+                <RuleRole name="Регистратор"
+                    ruleHash="6e7274e128c0b4fadb05753594d7937a" roleCode="JBR"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+            <Rule name="Старший регистратор" ruleHash="de5d0962786dd481fc7cc645be1d35b1">
+                <RuleRole name="Старший регистратор"
+                    ruleHash="de5d0962786dd481fc7cc645be1d35b1" roleCode="JBR_CHR"/>
+            </Rule>
+            <Rule name="Участник визирования" ruleHash="f4411c33b79ccbab788b3214086ba639">
+                <RuleRole name="Участник визирования"
+                    ruleHash="f4411c33b79ccbab788b3214086ba639" roleCode="JBR_VISA_PART"/>
+            </Rule>
+            <Rule name="Читатель всех документов" ruleHash="69e1fc9d9c3e31e67697883394568a65">
+                <RuleRole name="Читатель всех документов"
+                    ruleHash="69e1fc9d9c3e31e67697883394568a65" roleCode="JBR_READER"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Визирующие ДО ВН" ruleHash="1f96b0a3cb41c5f935586b710f6523c5">
+                <RuleProfile name="Пр2_Пом для/Визирующие ДО ВН"
+                    ruleHash="1f96b0a3cb41c5f935586b710f6523c5"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_VISA_RESPONSIBLE"
+                    linkAttributeCode="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_VISA_VISA"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Исполнитель резолюции ВН" ruleHash="a3a8bd6e6fc392e4c1d94f5406beef48">
+                <RuleProfile name="Пр2_Пом для/Исполнитель резолюции ВН"
+                    ruleHash="a3a8bd6e6fc392e4c1d94f5406beef48"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_INFD_EXECUTOR"
+                    linkAttributeCode="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Подписант ДО ВН" ruleHash="7c3fd964f97f158eec7abe09fc6b0c64">
+                <RuleProfile name="Пр2_Пом для/Подписант ДО ВН"
+                    ruleHash="7c3fd964f97f158eec7abe09fc6b0c64"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_SIGN_RESPONSIBLE"
+                    linkAttributeCode="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_SIGN_SIGNING"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Рассматривающие ВН" ruleHash="f56cc716191e134ecf240ccced6cf7f6">
+                <RuleProfile name="Пр2_Пом для/Рассматривающие ВН"
+                    ruleHash="f56cc716191e134ecf240ccced6cf7f6"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="JBR_RASSM_PERSON"
+                    linkAttributeCode="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_ACQUAINT"/>
+            </Rule>
+            <Rule name="Пр2_Пом для/Соисполнитель резолюции ВН" ruleHash="82a19e889689069d9c5de6b79b79aa63">
+                <RuleProfile
+                    name="Пр2_Пом для/Соисполнитель резолюции ВН"
+                    ruleHash="82a19e889689069d9c5de6b79b79aa63"
+                    profileAttributeCode="JBR_ASSISTANT_FOR"
+                    targetAttributeCode="ADMIN_255974"
+                    linkAttributeCode="JBR_VISA_PARENT_DOC" intermedAttributeCode="JBR_IMPL_RESOLUT"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Предыдущий_согласующий" ruleHash="75d3a03df8048463b000bd72f7ec605c">
+                <RuleProfile name="Пр_Пом для/Предыдущий_согласующий"
+                    ruleHash="75d3a03df8048463b000bd72f7ec605c"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_VISA_PR_RESPONS"/>
+            </Rule>
+            <Rule name="Пр_Пом для/Согласующий" ruleHash="77f25db47845c0e859a729e99461e181">
+                <RuleProfile name="Пр_Пом для/Согласующий"
+                    ruleHash="77f25db47845c0e859a729e99461e181"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_VISA_RESPONSIBLE"/>
+            </Rule>
+            <Rule name="Пр_Пом для\Согласующий" ruleHash="77f25db47845c0e859a729e99461e181">
+                <RuleProfile name="Пр_Пом для\Согласующий"
+                    ruleHash="77f25db47845c0e859a729e99461e181"
+                    profileAttributeCode="JBR_ASSISTANT_FOR" targetAttributeCode="JBR_VISA_RESPONSIBLE"/>
+            </Rule>
+            <Rule name="Дел_Документ-основание" ruleHash="4560d26a97a0f61d3d30860c11ef090e">
+                <RuleDelegation name="Дел_Документ-основание"
+                    ruleHash="4560d26a97a0f61d3d30860c11ef090e" linkAttributeCode="JBR_VISA_PARENT_DOC"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Возвращен на доработку" status_id="6840598"/>
+        <Status name="Дополнительное согласование" status_id="6833780"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Направлен ошибочно" status_id="10000110"/>
+        <Status name="Не согласован" status_id="203"/>
+        <Status name="Не согласован руководителем" status_id="2031"/>
+        <Status name="Обработка помощником" status_id="73992"/>
+        <Status name="Ожидание согласования" status_id="41466"/>
+        <Status name="Отклонен" status_id="6092498"/>
+        <Status name="Отменен" status_id="34145"/>
+        <Status name="Пропущен" status_id="66185"/>
+        <Status name="Согласован" status_id="201"/>
+        <Status name="Согласование" status_id="107"/>
+        <Status name="Согласование пропущено" status_id="9450136"/>
+        <Status name="Согласован руководителем" status_id="2011"/>
+        <Status name="Согласован с замечаниями" status_id="202"/>
+        <Status name="Черновик" status_id="1"/>
+        <WFMoveType name="В АРМ руководителю-825531" wfm_id="825531"
+            wfm_from="Обработка помощником" wfm_to="Согласование"
+            wfm_from_status="73992" wfm_to_status="107"/>
+        <WFMoveType name="Вернуть на согласование-42089" wfm_id="42089"
+            wfm_from="Согласование" wfm_to="Ожидание согласования"
+            wfm_from_status="107" wfm_to_status="41466"/>
+        <WFMoveType name="Вернуть на согласование-115929"
+            wfm_id="115929" wfm_from="Согласован с замечаниями"
+            wfm_to="Ожидание согласования" wfm_from_status="202" wfm_to_status="41466"/>
+        <WFMoveType name="Вернуть на согласование-38677" wfm_id="38677"
+            wfm_from="Согласован" wfm_to="Ожидание согласования"
+            wfm_from_status="201" wfm_to_status="41466"/>
+        <WFMoveType name="Вернуть на согласование-38678" wfm_id="38678"
+            wfm_from="Не согласован" wfm_to="Ожидание согласования"
+            wfm_from_status="203" wfm_to_status="41466"/>
+        <WFMoveType name="В черновик-9478571" wfm_id="9478571"
+            wfm_from="Согласован с замечаниями" wfm_to="Черновик"
+            wfm_from_status="202" wfm_to_status="1"/>
+        <WFMoveType name="В черновик-9478570" wfm_id="9478570"
+            wfm_from="Согласован" wfm_to="Черновик"
+            wfm_from_status="201" wfm_to_status="1"/>
+        <WFMoveType
+            name="Дополнительное согласование - Обработка помощником (системный)-15000010"
+            wfm_id="15000010" wfm_from="Дополнительное согласование"
+            wfm_to="Обработка помощником" wfm_from_status="6833780" wfm_to_status="73992"/>
+        <WFMoveType
+            name="Дополнительное согласование - отклонено (системный)-15000001"
+            wfm_id="15000001" wfm_from="Дополнительное согласование"
+            wfm_to="Отклонен" wfm_from_status="6833780" wfm_to_status="6092498"/>
+        <WFMoveType
+            name="Дополнительное согласование - черновик (системный)-15000000"
+            wfm_id="15000000" wfm_from="Дополнительное согласование"
+            wfm_to="Черновик" wfm_from_status="6833780" wfm_to_status="1"/>
+        <WFMoveType
+            name="Завершить дополнительное согласование-15000014"
+            wfm_id="15000014" wfm_from="Дополнительное согласование"
+            wfm_to="Дополнительное согласование"
+            wfm_from_status="6833780" wfm_to_status="6833780"/>
+        <WFMoveType
+            name="Завершить дополнительное согласование (системный)-6833781"
+            wfm_id="6833781" wfm_from="Дополнительное согласование"
+            wfm_to="Согласование" wfm_from_status="6833780" wfm_to_status="107"/>
+        <WFMoveType name="Заменить согласующего-9478562"
+            wfm_id="9478562" wfm_from="Обработка помощником"
+            wfm_to="Ожидание согласования" wfm_from_status="73992" wfm_to_status="41466"/>
+        <WFMoveType name="Заменить согласующего-9478561"
+            wfm_id="9478561" wfm_from="Согласование"
+            wfm_to="Ожидание согласования" wfm_from_status="107" wfm_to_status="41466"/>
+        <WFMoveType name="На дополнительное согласование-6833782"
+            wfm_id="6833782" wfm_from="Согласование"
+            wfm_to="Дополнительное согласование" wfm_from_status="107" wfm_to_status="6833780"/>
+        <WFMoveType
+            name="На дополнительное согласование (помощник)-15000009"
+            wfm_id="15000009" wfm_from="Обработка помощником"
+            wfm_to="Дополнительное согласование" wfm_from_status="73992" wfm_to_status="6833780"/>
+        <WFMoveType name="На доработку-6840621" wfm_id="6840621"
+            wfm_from="Возвращен на доработку" wfm_to="Черновик"
+            wfm_from_status="6840598" wfm_to_status="1"/>
+        <WFMoveType name="На доработку-6840622" wfm_id="6840622"
+            wfm_from="Согласование" wfm_to="Черновик"
+            wfm_from_status="107" wfm_to_status="1"/>
+        <WFMoveType name="Направлен ошибочно-15000115" wfm_id="15000115"
+            wfm_from="Согласование" wfm_to="Направлен ошибочно"
+            wfm_from_status="107" wfm_to_status="10000110"/>
+        <WFMoveType name="На следующее согласование-6840619"
+            wfm_id="6840619" wfm_from="Согласован руководителем"
+            wfm_to="Ожидание согласования" wfm_from_status="2011" wfm_to_status="41466"/>
+        <WFMoveType name="На следующую итерацию согласования-6842178"
+            wfm_id="6842178" wfm_from="Возвращен на доработку"
+            wfm_to="Ожидание согласования" wfm_from_status="6840598" wfm_to_status="41466"/>
+        <WFMoveType name="На согласование-35267" wfm_id="35267"
+            wfm_from="Черновик" wfm_to="Ожидание согласования"
+            wfm_from_status="1" wfm_to_status="41466"/>
+        <WFMoveType name="Не согласен-9450144" wfm_id="9450144"
+            wfm_from="Не согласован руководителем"
+            wfm_to="Не согласован" wfm_from_status="2031" wfm_to_status="203"/>
+        <WFMoveType name="Не согласен-825532" wfm_id="825532"
+            wfm_from="Обработка помощником" wfm_to="Не согласован"
+            wfm_from_status="73992" wfm_to_status="203"/>
+        <WFMoveType name="Не согласен-35266" wfm_id="35266"
+            wfm_from="Согласование" wfm_to="Не согласован руководителем"
+            wfm_from_status="107" wfm_to_status="2031"/>
+        <WFMoveType name="Обработка помощником - Черновик-9478569"
+            wfm_id="9478569" wfm_from="Обработка помощником"
+            wfm_to="Черновик" wfm_from_status="73992" wfm_to_status="1"/>
+        <WFMoveType name="Ожидание согласования - Черновик-9478568"
+            wfm_id="9478568" wfm_from="Ожидание согласования"
+            wfm_to="Черновик" wfm_from_status="41466" wfm_to_status="1"/>
+        <WFMoveType
+            name="Организовать дополнительное согласование (вернуть помощнику)-15000008"
+            wfm_id="15000008" wfm_from="Согласование"
+            wfm_to="Обработка помощником" wfm_from_status="107" wfm_to_status="73992"/>
+        <WFMoveType name="Отклонить-15000011" wfm_id="15000011"
+            wfm_from="Ожидание согласования" wfm_to="Отклонен"
+            wfm_from_status="41466" wfm_to_status="6092498"/>
+        <WFMoveType name="Отклонить-6840620" wfm_id="6840620"
+            wfm_from="Согласование" wfm_to="Отклонен"
+            wfm_from_status="107" wfm_to_status="6092498"/>
+        <WFMoveType name="Отклонить помощником-9478563" wfm_id="9478563"
+            wfm_from="Обработка помощником" wfm_to="Отклонен"
+            wfm_from_status="73992" wfm_to_status="6092498"/>
+        <WFMoveType name="Отменить-15000021" wfm_id="15000021"
+            wfm_from="Ожидание согласования" wfm_to="Отменен"
+            wfm_from_status="41466" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000022" wfm_id="15000022"
+            wfm_from="Дополнительное согласование" wfm_to="Отменен"
+            wfm_from_status="6833780" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000020" wfm_id="15000020"
+            wfm_from="Черновик" wfm_to="Отменен" wfm_from_status="1" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000024" wfm_id="15000024"
+            wfm_from="Согласование" wfm_to="Отменен"
+            wfm_from_status="107" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000023" wfm_id="15000023"
+            wfm_from="Обработка помощником" wfm_to="Отменен"
+            wfm_from_status="73992" wfm_to_status="34145"/>
+        <WFMoveType name="Отослать согласующему-41467" wfm_id="41467"
+            wfm_from="Ожидание согласования" wfm_to="Согласование"
+            wfm_from_status="41466" wfm_to_status="107"/>
+        <WFMoveType name="Помощнику на обработку-825533" wfm_id="825533"
+            wfm_from="Ожидание согласования"
+            wfm_to="Обработка помощником" wfm_from_status="41466" wfm_to_status="73992"/>
+        <WFMoveType name="Пропустить согласование-9450143"
+            wfm_id="9450143" wfm_from="Согласование"
+            wfm_to="Согласование пропущено" wfm_from_status="107" wfm_to_status="9450136"/>
+        <WFMoveType name="Пропустить согласование-1076472"
+            wfm_id="1076472" wfm_from="Согласование" wfm_to="Пропущен"
+            wfm_from_status="107" wfm_to_status="66185"/>
+        <WFMoveType name="Согласен-15000013" wfm_id="15000013"
+            wfm_from="Согласование" wfm_to="Согласован"
+            wfm_from_status="107" wfm_to_status="201"/>
+        <WFMoveType name="Согласен-825574" wfm_id="825574"
+            wfm_from="Обработка помощником" wfm_to="Согласован"
+            wfm_from_status="73992" wfm_to_status="201"/>
+        <WFMoveType name="Согласен-9450145" wfm_id="9450145"
+            wfm_from="Согласован руководителем" wfm_to="Согласован"
+            wfm_from_status="2011" wfm_to_status="201"/>
+        <WFMoveType name="Согласен-35269" wfm_id="35269"
+            wfm_from="Согласование" wfm_to="Согласован руководителем"
+            wfm_from_status="107" wfm_to_status="2011"/>
+        <WFMoveType name="Согласован с замечаниями-35268" wfm_id="35268"
+            wfm_from="Согласование" wfm_to="Согласован с замечаниями"
+            wfm_from_status="107" wfm_to_status="202"/>
+        <WFMoveType name="Согласовать с замечаниями-825530"
+            wfm_id="825530" wfm_from="Обработка помощником"
+            wfm_to="Согласован с замечаниями" wfm_from_status="73992" wfm_to_status="202"/>
+        <WFMoveType name="Удалить-6840618" wfm_id="6840618"
+            wfm_from="Отклонен" wfm_to="Корзина"
+            wfm_from_status="6092498" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-9450137" wfm_id="9450137"
+            wfm_from="Черновик" wfm_to="Корзина" wfm_from_status="1" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-9450142" wfm_id="9450142"
+            wfm_from="Согласован с замечаниями" wfm_to="Корзина"
+            wfm_from_status="202" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-9450141" wfm_id="9450141"
+            wfm_from="Не согласован" wfm_to="Корзина"
+            wfm_from_status="203" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-9450139" wfm_id="9450139"
+            wfm_from="Согласование пропущено" wfm_to="Корзина"
+            wfm_from_status="9450136" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-1076471" wfm_id="1076471"
+            wfm_from="Ожидание согласования" wfm_to="Корзина"
+            wfm_from_status="41466" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить-9450140" wfm_id="9450140"
+            wfm_from="Согласован" wfm_to="Корзина" wfm_from_status="201" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить (системный)-15000015"
+            wfm_id="15000015" wfm_from="Согласование" wfm_to="Корзина"
+            wfm_from_status="107" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить (системный)-15000017"
+            wfm_id="15000017" wfm_from="Не согласован руководителем"
+            wfm_to="Корзина" wfm_from_status="2031" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить (системный)-15000018"
+            wfm_id="15000018" wfm_from="Обработка помощником"
+            wfm_to="Корзина" wfm_from_status="73992" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить (системный)-15000019"
+            wfm_id="15000019" wfm_from="Дополнительное согласование"
+            wfm_to="Корзина" wfm_from_status="6833780" wfm_to_status="303990"/>
+        <WFMoveType name="Удалить (системный)-15000016"
+            wfm_id="15000016" wfm_from="Согласован руководителем"
+            wfm_to="Корзина" wfm_from_status="2011" wfm_to_status="303990"/>
+    </Template>
+</AccessConfig>

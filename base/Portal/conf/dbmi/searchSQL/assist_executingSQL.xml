@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- Поручения на исполнении в "Кабинет помощника"
+SELECT cardID
+FROM 
+ (
+  SELECT DISTINCT cardID, coalesce(urgencyId, 2000000000), dateMark
+  FROM
+		(
+		-- "отчет об исполнении" для исполнителя
+		SELECT c.card_id as cardID, av.date_value as dateMark, av_u.value_id as urgencyId
+		FROM Card c
+
+			-- -- (1044) "Отчет об исполнении": "Дата утверждения"/D ('ADMIN_713534')
+			-- 'JBR_INCOMEDATE'/D="Дата поступления"
+			LEFT OUTER JOIN attribute_value av
+				ON	(av.card_id = c.card_id and (av.attribute_code = 'JBR_INCOMEDATE'))
+
+			-- "срочность"
+			LEFT JOIN attribute_value av_u
+				on	(av_u.card_id = c.card_id)
+				and (av_u.attribute_code = 'JBR_HOWFAST')
+
+			INNER JOIN attribute_value avUser ON (
+					avUser.card_id = c.card_id
+                    -- (1044) "Отчет об исполнении": "Исполнитель" = 'ADMIN_702335'
+					-- (1064) "Зам. Испонителя"/U ('ADMIN_702512')
+                    and avUser.attribute_code in ('ADMIN_702335', 'ADMIN_702512')   --  Исполнитель или зам.Исполнитель
+				)
+		WHERE 
+			(
+				(
+					(	-- "Отчет об исполнении"(1044), статус: "принят" (702239)
+						(c.template_id=1044) and (c.status_id in (702239))
+					)
+                    -- текущий пользователь помощник исполнителя ...
+                    and (avUser.attribute_code = 'ADMIN_702335')                          -- Исполнитель
+                    and avUser.number_value in ( 
+                        SELECT e_av.number_value
+                        FROM attribute_value e_av 
+                        JOIN person e_p ON (e_p.person_id IN (%CURRENTUSERS%) AND e_p.card_id = e_av.card_id )
+                        WHERE e_av.attribute_code = 'JBR_ASSISTANT_FOR' 
+                    )
+				) or 
+				(
+					(
+						-- "Отчет об исполнении внешним исполнителем"(1064), статус: "отправлен" (556656)
+						(c.template_id=1064) and (c.status_id in (556656))
+					)
+					-- помощник "Зам. Исполнителя" ...
+					and (avUser.attribute_code = 'ADMIN_702512')
+					and (
+						exists (
+							-- помошники для персоны из avUser.number_value
+							select 1 
+							from attribute_value av_m join attribute_value av_a
+									on av_a.card_id = av_m.card_id
+								join card arm_c on arm_c.card_id = av_a.card_id
+							where	av_m.attribute_code = 'JBR_ARM_MANAGER'
+									and av_m.number_value = avUser.number_value
+									and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+									and av_a.number_value in (%CURRENTUSERS%)
+									and arm_c.status_id not in (34145, 6)
+						) -- exists
+					) -- and
+				) -- or 
+
+			) -- WHERE
+
+        -- "Отчет об исполнении"(1044) (для контролера)
+		--  используетя документ-основание по B-ссылке 
+		-- -- "Отчет об исполнении"(1044): "Исполнитель"/U ('ADMIN_702335')
+		-- 324 "Поручение": "Ответственный редактор"/U ('EDITOR')
+		UNION SELECT c_otchet.card_id as cardID, av.date_value as dateMark, av_u.value_id as urgencyId
+		FROM Card c_otchet
+
+				-- -- (1044) "Отчет об исполнении": "Дата утверждения"/D ('ADMIN_713534')
+				-- 'JBR_INCOMEDATE'/D="Дата поступления"
+				LEFT OUTER JOIN attribute_value av
+					ON	(av.card_id = c_otchet.card_id and (av.attribute_code = 'JBR_INCOMEDATE'))
+
+				-- Соот-щее родительское "Поручение"(324) через связь
+				--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+				JOIN attribute_value avParent ON c_otchet.card_id = avParent.card_id
+							and avParent.attribute_code in ('ADMIN_702311')
+
+				-- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+				-- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXECUTOR')
+				-- "Поручение" (324): "Соисполнители"/U ('ADMIN_255974')
+				-- -- "Поручение" (324): "Контролер"/U ('JBR_TCON_INSPECTOR')
+				JOIN attribute_value avUser on
+						avUser.card_id=avParent.number_value
+                    and avUser.attribute_code in ( 'JBR_TCON_INSPECTOR')   --'ADMIN_255974''JBR_INFD_EXEC_LINK','JBR_INFD_EXECUTOR', 
+
+
+				-- только, если испольнитель указан в конкретном отчете
+				-- здесь требуется "Утверждающий"
+				-- "Контролер"/U ('ADMIN_702513')
+           --     JOIN attribute_value avOtchetExec on
+           --         avOtchetExec.card_id=c_otchet.card_id
+           --         and  avOtchetExec.attribute_code = 'JBR_RPT_DR_APPROVER'
+           --         and  avOtchetExec.number_value=avUser.number_value
+
+				-- "срочность"
+				LEFT JOIN attribute_value av_u
+					on	(av_u.card_id = c_otchet.card_id)
+					and (av_u.attribute_code = 'JBR_HOWFAST')
+
+		WHERE (
+			-- "Отчет об исполнении"(1044), статус: "принят" (702239)
+			(c_otchet.template_id=1044) and (c_otchet.status_id in (702239))
+
+			and (
+                
+                --(avUserHlp.number_value in (currentuser))
+                -- текущий пользователь - помощник исполнителя ...
+                avUser.number_value IN (
+                    SELECT e_av.number_value
+                    FROM attribute_value e_av 
+                    JOIN person e_p ON (e_p.person_id IN (%CURRENTUSERS%) AND e_p.card_id = e_av.card_id )
+                    WHERE e_av.attribute_code = 'JBR_ASSISTANT_FOR' 
+                )
+
+				-- текущий пользователь явный помощник Исполнителя ...
+				--or (
+				--	exists (
+				--		-- помошники для персоны из avUser.number_value
+				--		select 1 
+				--		from attribute_value av_m join attribute_value av_a
+				--				on av_a.card_id = av_m.card_id
+				--		where	av_m.attribute_code = 'JBR_ARM_MANAGER'
+				--				and av_m.number_value = avUser.number_value
+				--				and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+				--				and av_a.number_value in (%CURRENTUSERS%)
+				--	) -- exists
+				--) -- or
+			) -- and
+
+		) -- /WHERE
+
+--		ORDER by 2 DESC -- av.date_value
+
+ 	) AS b				
+	ORDER BY 2 ASC, 3
+ ) AS a
+--	ORDER by 1 DESC
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

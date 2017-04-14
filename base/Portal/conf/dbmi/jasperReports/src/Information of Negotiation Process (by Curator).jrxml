@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Information of Negotiation Process (by Curator)" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<style name="table_1" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<parameter name="from_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="curators" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="document_type" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Work_projects\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="department" class="java.lang.String">
+		<defaultValueExpression><![CDATA["null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="negotiate_with_late" class="java.lang.Boolean"/>
+	<parameter name="negotiate_without_late" class="java.lang.Boolean"/>
+	<parameter name="on_negotiation" class="java.lang.Boolean"/>
+	<parameter name="not_approved" class="java.lang.Boolean"/>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- таблица ссылок на непосредственый вышестоящий департамент
+-- id - департамент, pid - непосредлственно вышестоящий департамент
+with dep_parent (id, pid) as (
+	select cr.card_id as id, av_parent.number_value as pid
+	from card cr
+	left join attribute_value av_parent on av_parent.card_id = cr.card_id and av_parent.attribute_code = 'JBR_DEPT_PARENT_LINK'
+	where cr.template_id = 484
+),
+-- таблица ссылок на все вышестоящие департаменты + на саму себя
+dep_all_parent (id, pid) as (
+	with recursive dep_all_parent_rec (b_id, id, pid) as (
+		select id, id, pid
+		from dep_parent
+		union
+		select dap.b_id, dp.id, dp.pid
+		from dep_all_parent_rec dap, dep_parent dp
+		where dap.pid = dp.id
+	)
+	select b_id, id
+	from dep_all_parent_rec
+)
+SELECT
+	DISTINCT c.card_id,
+	doc_name.string_value as act_type,
+	--
+	depart_acronim.string_value || ' (' ||
+		(case when depart_chief.number_value is not null then
+			chief_sname.string_value
+			|| ' '
+			|| chief_nname.string_value
+			|| ' '
+			||  chief_mname.string_value  else 'руководитель отсутствует' end) || ')' as develover,
+	--
+	coalesce(cur_name.string_value || coalesce(' - ' || cur_pos.string_value, ''), 'куратор отсутствует') as curator,
+	sending_date.date_value + interval '$P!{tz_hour} hour' as sending_date,
+	plan_neg_date.date_value + interval '$P!{tz_hour} hour' as planned_negotiation_date,
+	(case when other.status = true then null else negotiation_date.date_value + interval '$P!{tz_hour} hour' end)  as factical_negotiation_date,
+	approved.status as approved,
+	remark.status as remark,
+    other.status as other,
+	revision.card_id as revision,
+	c.status_id as card_status,
+	descr.string_value as description,
+	regnumber.string_value as register_number
+
+FROM card c
+	JOIN attribute_value doc_card ON doc_card.card_id = c.card_id AND doc_card.attribute_code = 'JBR_INFD_TYPEDOC'
+	JOIN attribute_value doc_name ON doc_name.card_id = doc_card.number_value AND doc_name.attribute_code = 'NAME'  --Тип документ
+
+	JOIN attribute_value depart_card ON depart_card.card_id = c.card_id AND depart_card.attribute_code = 'ADMIN_6079618'
+	inner join dep_all_parent parent_deps on parent_deps.id = depart_card.number_value
+	JOIN attribute_value depart_acronim ON depart_acronim.card_id =depart_card.number_value AND depart_acronim.attribute_code = 'NAME'  --Имя департамента
+	JOIN attribute_value depart_chief ON depart_chief.card_id = depart_card.number_value AND depart_chief.attribute_code = 'JBR_DEPT_CHIEF' --Шеф
+	left outer join attribute_value chief_sname on chief_sname.card_id = depart_chief.number_value and chief_sname.attribute_code = 'JBR_PERS_SNAME'	--Ф
+	left outer join attribute_value chief_nname on chief_nname.card_id = depart_chief.number_value and chief_nname.attribute_code = 'JBR_PERS_NAME'	--И
+	left outer join attribute_value chief_mname on chief_mname.card_id = depart_chief.number_value and chief_mname.attribute_code = 'JBR_PERS_MNAME'	--О
+
+	JOIN attribute_value curator_card ON curator_card.card_id = c.card_id AND curator_card.attribute_code = 'ADMIN_6075258'
+	JOIN person curator_person ON curator_person.person_id = curator_card.number_value
+	left outer join attribute_value cur_name on cur_name.card_id = curator_person.card_id and cur_name.attribute_code = 'JBR_PERS_SNAME_NM'
+	left outer join attribute_value cur_pos on cur_pos.card_id = curator_person.card_id and cur_pos.attribute_code = 'JBR_PERS_POSITION'
+	join(
+		select c.card_id, min(visa_date.date_value + interval '$P!{tz_hour} hour') as date_value
+		FROM card c
+			join attribute_value visa on visa.card_id = c.card_id and visa.attribute_code = 'JBR_VISA_VISA' --Карточки согласования
+			join card vc on vc.card_id = visa.number_value
+			left outer join attribute_value visa_date on vc.card_id = visa_date.card_id and visa_date.attribute_code = 'JBR_INCOMEDATE' -- Дата поступления
+		WHERE c.template_id in (1226) and visa_date.date_value is not null
+		GROUP BY c.card_id
+	) sending_date on sending_date.card_id = c.card_id
+	left outer join attribute_value plan_neg_date on c.card_id = plan_neg_date.card_id and plan_neg_date.attribute_code ='ADMIN_5976960'  --Плановая дата согласования
+--фактическое согласование
+	left outer join(
+		select c.card_id, max(visa_date.date_value + interval '$P!{tz_hour} hour') date_value
+		FROM card c
+			join attribute_value visa on visa.card_id = c.card_id and visa.attribute_code = 'JBR_VISA_VISA' --Карточки согласования
+			join card vc on vc.card_id = visa.number_value
+			left outer join attribute_value visa_date on vc.card_id = visa_date.card_id and visa_date.attribute_code = 'JBR_VISA_D_A_CONSENT' -- Дата поступления
+		WHERE c.template_id in (1226) and visa_date.date_value is not null
+		GROUP BY c.card_id
+	) negotiation_date on negotiation_date.card_id = c.card_id
+--согласован
+	left outer join(
+		select DISTINCT c1.card_id, true as status
+		FROM card c1
+			join attribute_value visa on visa.card_id = c1.card_id and visa.attribute_code = 'JBR_VISA_VISA' --Карточки согласования
+			join card vc on vc.card_id = visa.number_value
+		where c1.template_id in (1226) and  vc.status_id = 201
+		)approved on approved.card_id = c.card_id
+--согласован с замечниями
+	left outer join(
+		select DISTINCT c1.card_id, true as status
+		FROM card c1
+			join attribute_value visa on visa.card_id = c1.card_id and visa.attribute_code = 'JBR_VISA_VISA' --Карточки согласования
+			join card vc on vc.card_id = visa.number_value
+		where c1.template_id in (1226) and vc.status_id in (202)
+		)remark on remark.card_id = c.card_id
+--прочие статусы кроме 201, 202 и 303990
+	left outer join(
+		select DISTINCT c1.card_id, true as status
+		FROM card c1
+			join attribute_value visa on visa.card_id = c1.card_id and visa.attribute_code = 'JBR_VISA_VISA' --Карточки согласования
+			join card vc on vc.card_id = visa.number_value
+		where c1.template_id in (1226) and (vc.status_id not in (1,201,202,303990,34145) or (vc.status_id not in (201,202,303990) and c1.status_id in (106,6092498)))
+		)other on other.card_id = c.card_id
+LEFT OUTER JOIN(
+		select distinct c.card_id from card c
+			join card_version cv on c.card_id = cv.card_id
+			where cv.status_id = 107 and c.status_id in (106,6092498)
+)revision ON revision.card_id = c.card_id
+left outer join attribute_value descr on c.card_id = descr.card_id and descr.attribute_code = 'JBR_INFD_SHORTDESC'
+left outer join attribute_value regnumber on c.card_id = regnumber.card_id and regnumber.attribute_code = 'JBR_REGD_REGNUM'
+
+WHERE c.template_id in (1226)
+	and (($P!{document_type}) is null or doc_card.number_value in ($P!{document_type}) )
+	and (($P!{curators}) is null or curator_person.card_id in ($P!{curators}) )
+	and (($P!{department}) is null or parent_deps.pid in ($P!{department}) )
+	and date_trunc('day', sending_date.date_value + interval '$P!{tz_hour} hour') >= $P{from_date}
+	and date_trunc('day', sending_date.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+    and
+	(
+		($P{negotiate_with_late} = true and  	date_trunc('day', negotiation_date.date_value + interval '$P!{tz_hour} hour') > date_trunc('day', plan_neg_date.date_value + interval '$P!{tz_hour} hour') and other.status is null) or
+		($P{negotiate_without_late}=true and 	date_trunc('day',plan_neg_date.date_value + interval '$P!{tz_hour} hour') >=	date_trunc('day',negotiation_date.date_value + interval '$P!{tz_hour} hour') and other.status is null) or
+		($P{on_negotiation}=true and 	sending_date.date_value is not null and other.status = true and revision.card_id is NULL ) or
+		($P{not_approved}=true and 	other.status = true and c.status_id in (106,6092498) and revision.card_id is not NULL)
+	)
+order by curator, planned_negotiation_date desc]]>
+	</queryString>
+	<field name="act_type" class="java.lang.String"/>
+	<field name="develover" class="java.lang.String"/>
+	<field name="curator" class="java.lang.String"/>
+	<field name="sending_date" class="java.sql.Timestamp"/>
+	<field name="planned_negotiation_date" class="java.sql.Timestamp"/>
+	<field name="factical_negotiation_date" class="java.sql.Timestamp"/>
+	<field name="approved" class="java.lang.Boolean"/>
+	<field name="remark" class="java.lang.Boolean"/>
+	<field name="revision" class="java.math.BigDecimal"/>
+	<field name="card_status" class="java.lang.Long"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="register_number" class="java.lang.String"/>
+	<field name="other" class="java.lang.Boolean"/>
+	<group name="Curator" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{curator}]]></groupExpression>
+		<groupHeader>
+			<band height="99">
+				<frame>
+					<reportElement positionType="Float" x="0" y="0" width="802" height="34"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="def" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="34"/>
+						<textElement textAlignment="Left" verticalAlignment="Bottom">
+							<font size="11" pdfFontName="times.ttf"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Согласующая инстанция: " + $F{curator}.toString()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="0" y="34" width="802" height="65"/>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="40" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[№ п/п]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="100" y="0" width="156" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Краткое содержание]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="256" y="0" width="80" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Разработчик]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="336" y="0" width="90" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Регистрационный номер]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="426" y="0" width="65" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Дата получения]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="491" y="0" width="85" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Срок согласования (дата)]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="576" y="0" width="80" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Дата фактического согласования]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="656" y="0" width="85" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Результат согласования]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="741" y="0" width="61" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Нарушение срока (в днях)]]></text>
+					</staticText>
+					<staticText>
+						<reportElement style="table" stretchType="RelativeToTallestObject" x="40" y="0" width="60" height="65"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+							<paragraph lineSpacing="Single"/>
+						</textElement>
+						<text><![CDATA[Вид документа]]></text>
+					</staticText>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="112" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" x="0" y="0" width="802" height="15"/>
+				<box bottomPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" pdfFontName="timesbd.ttf" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Информация о ходе согласования проектов нормативно-правовых актов]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["c " + (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " +
+(new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" x="0" y="30" width="802" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="def" x="0" y="45" width="802" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("HH:mm:ss")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement style="def" x="132" y="73" width="670" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new com.aplana.dbmi.jasperreports.GenerateNegotiationHeaders()).
+    generateString($P{REPORT_CONNECTION},$P{document_type})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement style="def" positionType="Float" x="132" y="97" width="670" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new com.aplana.dbmi.jasperreports.GenerateNegotiationHeaders()).
+    generateString($P{REPORT_CONNECTION},$P{department})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table" positionType="Float" x="0" y="97" width="132" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Разработчики:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="73" width="132" height="15"/>
+				<textElement textAlignment="Left">
+					<font size="11" pdfFontName="times.ttf" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Виды документов:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="100" y="0" width="156" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}==null?" ":$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="491" y="0" width="85" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy")).format($F{planned_negotiation_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="741" y="0" width="61" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{planned_negotiation_date} == null ? "" :
+$F{factical_negotiation_date} == null ?
+""
+:
+(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, $F{factical_negotiation_date})
+)<=0?"":
+(String.valueOf(
+    com.aplana.dbmi.module.docflow.calendar.CalendarAPI.getWorkInstance().
+    diff($F{planned_negotiation_date}, $F{factical_negotiation_date})
+))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="656" y="0" width="85" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{approved}.equals(Boolean.TRUE) && $F{remark}.equals(Boolean.FALSE) && $F{other}.equals(Boolean.FALSE) ) ? "Согласован" :
+($F{remark}.equals(Boolean.TRUE) && $F{other}.equals(Boolean.FALSE)) ? "Согласован с замечаниями" :
+($F{other}.equals(Boolean.TRUE) && $F{revision}== null) ? "На согласовании" :
+(String.valueOf($F{card_status}).equals("6092498"))?"Отклонен":
+$F{revision}!= null ? "Отправлен на доработку":""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="426" y="0" width="65" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy")).format($F{sending_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="576" y="0" width="80" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd.MM.yyyy")).format($F{factical_negotiation_date})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Curator_COUNT}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="336" y="0" width="90" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{register_number}==null?" ":$F{register_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="256" y="0" width="80" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{develover}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement style="table_1" stretchType="RelativeToBandHeight" x="40" y="0" width="60" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="times.ttf" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{act_type}==null?" ":$F{act_type}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

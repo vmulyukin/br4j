@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description>
+	<typedef name="Document">
+		<factory>com.aplana.dmsi.object.DocumentFactory</factory>
+		<entity>
+			<typeClass>ExportedIncomeDocumentType</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExportedOutcomeDocumentType</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExportedORDDocumentType</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExportedInternalDocumentType</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExportedOGDocumentType</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExportedOutcomeAsOGDocumentType</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="File">
+		<entity>
+			<typeClass>LinkDocTransfer</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="PrivatePerson">
+		<entity>
+			<typeClass>PrivatePerson</typeClass>
+		</entity>
+		<entity>
+			<typeClass>ExternalPrivatePerson</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="Addressee">
+		<factory>com.aplana.dmsi.object.AddresseeFactory</factory>
+		<entity>
+			<typeClass>Organization</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OrganizationFromExternalPerson</typeClass>
+		</entity>
+		<entity>
+			<typeClass>PrivatePerson</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="Author">
+		<factory>com.aplana.dmsi.object.AuthorFactory</factory>
+		<entity>
+			<typeClass>OrganizationWithSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OfficialPersonWithSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OfficialPersonWithSignFromSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>PrivatePersonWithSignFromRequestAuthor</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="AuthorForIncome">
+		<factory>com.aplana.dmsi.object.AuthorForIncomeFactory</factory>
+		<entity>
+			<typeClass>OrganizationWithSignFromExternalPerson</typeClass>
+		</entity>
+		<entity>
+			<typeClass>PrivatePersonWithSignFromRequestAuthor</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OrganizationWithSign</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="AuthorOrganization">
+		<factory>com.aplana.dmsi.object.AuthorOrganizationFactory</factory>
+		<entity>
+			<typeClass>OrganizationWithSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OfficialPersonWithSign</typeClass>
+		</entity>
+	</typedef>
+	
+
+	<typedef name="Writer">
+		<factory>com.aplana.dmsi.object.WriterFactory</factory>
+		<entity>
+			<typeClass>Organization</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OfficialPerson</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="Validator">
+		<factory>com.aplana.dmsi.object.ValidatorFactory</factory>
+		<entity>
+			<typeClass>OrganizationWithSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>PrivatePersonWithSign</typeClass>
+		</entity>
+		<entity>
+			<typeClass>PrivatePersonWithSignFromVisa</typeClass>
+		</entity>
+	</typedef>
+	<typedef name="ValidatorWrapper">
+		<entity>
+			<typeClass>Validator</typeClass>
+		</entity>
+	</typedef>
+	<typedef name="OrganizationOnly">
+		<entity>
+			<typeClass>OrganizationOnly</typeClass>
+		</entity>	
+	</typedef>
+
+	<typedef name="OfficialPerson">
+		<entity>
+			<typeClass>OfficialPerson</typeClass>
+		</entity>	
+		<entity>
+			<typeClass>ExternalOfficialPerson</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="OfficialPersonWithSign">
+		<entity>
+			<typeClass>OfficialPersonWithSign</typeClass>
+		</entity>	
+		<entity>
+			<typeClass>ExternalOfficialPersonWithSign</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="OutNumber">
+		<entity>
+			<typeClass>OutNumber</typeClass>
+		</entity>		
+	</typedef>
+
+	<typedef name="RegHistory">
+		<entity>
+			<typeClass>RegHistory</typeClass>
+		</entity>
+	</typedef>
+
+	<typedef name="Department">
+       <entity>
+           <typeClass>Department</typeClass>
+       </entity>
+    </typedef>
+    
+    <typedef name="Recipient">
+        <entity>
+            <typeClass>DistributionListElement</typeClass>
+        </entity>
+        <entity>
+            <typeClass>Organization</typeClass>
+        </entity>
+    </typedef>
+
+    <typedef name="Organization">
+        <entity>
+            <typeClass>Organization</typeClass>
+        </entity>
+        <entity>
+            <typeClass>OrganizationFromExternalPerson</typeClass>
+        </entity>
+    </typedef>
+    
+    <typedef name="InternalOrganizationWithSign">
+    	<factory>com.aplana.dmsi.object.InternalOrganizationWithSignFactory</factory>
+    	<entity>
+            <typeClass>OrganizationWithSign</typeClass>
+        </entity>
+        <entity>
+			<typeClass>OfficialPersonWithSign</typeClass>
+        </entity>
+    </typedef>
+    
+    <typedef name="Official">
+    	<entity>
+    		<typeClass>Official</typeClass>
+    	</entity>
+    	<entity>
+    		<typeClass>ExternalOfficial</typeClass>
+    	</entity>
+    </typedef>
+    
+    <typedef name="Task">
+    	<entity>
+    		<typeClass>TaskFromResolution</typeClass>
+    	</entity>
+    	<entity>
+    		<typeClass>TaskFromVisa</typeClass>
+    	</entity>
+    	<entity>
+    		<typeClass>TaskFromSign</typeClass>
+    	</entity>
+    	<entity>
+    		<typeClass>TaskFromExamination</typeClass>
+    	</entity>
+    	<entity>
+    		<typeClass>TaskFromInform</typeClass>
+    	</entity>
+    </typedef>
+    
+    <typedef name="Executor">
+		<entity>
+    		<typeClass>Executor</typeClass>
+		</entity>
+	</typedef>
+    <typedef name="Acknowledgement">
+    	<entity>
+    		<typeClass>AcknowledgementType</typeClass>
+    	</entity>
+    </typedef>
+	
+	<typedef name="TaskExecutor">
+		<factory>com.aplana.dmsi.object.ExecutorObjectFactory</factory>
+		<entity>
+			<typeClass>Organization</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OrganizationFromExternalPerson</typeClass>
+		</entity>
+		<entity>
+			<typeClass>OfficialPerson</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="Referred">
+		<entity>
+			<typeClass>Referred</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="Rubric">
+		<entity>
+			<typeClass>Rubric</typeClass>
+		</entity>
+		<entity>
+			<typeClass>SubRubric</typeClass>
+		</entity>
+	</typedef>
+	
+	<typedef name="Header">
+		<entity>
+			<typeClass>ExportedHeader</typeClass>
+		</entity>
+	</typedef>
+	
+</description>

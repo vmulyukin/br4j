@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execControlDocs_managers" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times" isDefault="true" fontName="Times New Roman" fontSize="12" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="times_bold" isDefault="true" fontName="Times New Roman" fontSize="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="big_title" style="times_bold" fontSize="14"/>
+	<style name="table" style="times">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_bold" style="times_bold">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="f_manager" class="java.lang.Boolean"/>
+	<parameter name="term_from" class="java.util.Date"/>
+	<parameter name="term_to" class="java.util.Date"/>
+	<parameter name="drep" class="java.util.Date"/>
+	<parameter name="templates" class="java.lang.String"/>
+	<parameter name="templates_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="jregs" class="java.lang.String"/>
+	<parameter name="jregs_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="executorDoc" class="java.lang.String"/>
+	<parameter name="executorDoc_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[-- Статистика по исполнению документов
+-- sql запрос для подотчетов execControlDocs_managers
+-- Список карточек "Федеральные органы исполнительной власти" у которых в зависимости от параметра f_manager
+-- - Подразделение = Руководство: id карточки справочника
+-- - Подразделение != Руководство: id карточки справочника
+with managers (card_id, name) as (
+	select cr.card_id, av_name.string_value
+	from card cr
+	left join attribute_value av_region on av_region.card_id = cr.card_id
+		and av_region.attribute_code = 'REGION'
+	left join attribute_value av_name on av_name.card_id = cr.card_id
+		and av_name.attribute_code = 'NAME'
+	where cr.template_id = 684 and cr.status_id = 4
+        and ($P{executorDoc_ISNULL} or cr.card_id in ($P!{executorDoc})) -- фильтрация по исполнителям
+		and (case when $P{f_manager} then av_region.value_id = 1 else (av_region is null or av_region.value_id != 1) end)
+	order by av_name.string_value
+),
+-- Список всех интересующих документов: id документа | id исполнителя по документу | срок
+all_doc (card_id, executor_id, term) as (
+	select cr.card_id, av_executor.number_value, av_term.date_value
+	from card cr
+	-- На контроле
+	inner join attribute_value av_oncont on av_oncont.card_id = cr.card_id
+		and av_oncont.attribute_code = 'JBR_IMPL_ONCONT'
+	-- Исполнитель по документу
+	inner join attribute_value av_executor on av_executor.card_id = cr.card_id
+		and av_executor.attribute_code = 'JBR_IMPL_FOIV'
+	-- Срок исполнения или предоставления ответа
+	inner join attribute_value av_term on av_term.card_id = cr.card_id
+		and av_term.attribute_code = 'JBR_IMPL_DEADLINE'
+	-- Журнал регистрации
+	inner join attribute_value av_jreg on av_jreg.card_id = cr.card_id
+		and av_jreg.attribute_code = 'JBR_REGD_REGJOURN'
+	where
+        not cr.status_id in (302, 1, 303990, 106, 6092498)
+        -- На контроле = Да
+		and av_oncont.value_id = 1432
+		-- Исполнитель - из руководсва
+		and av_executor.number_value in (select m.card_id from managers m)
+        -- Срок исполнения в указанном диапозоне
+		and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) >= $P{term_from}
+        and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) < (cast($P{term_to} as date) + interval '1 day')
+        -- Группа документов
+		and ($P{templates_ISNULL} or cr.template_id in ($P!{templates}))
+		-- Журнал регистрации
+		and ($P{jregs_ISNULL} or av_jreg.number_value in ($P!{jregs}))
+),
+-- Список "Исполнено.Всего": id документа | id исполнителя по документу | срок | дата исполнения
+all_doc_exec (card_id, executor_id, term, dend) as (
+	select ad.card_id, ad.executor_id, ad.term, av_dend.date_value
+	from all_doc ad
+	inner join attribute_value av_dend on av_dend.card_id = ad.card_id
+		and av_dend.attribute_code = 'ADMIN_220912'
+	where av_dend.date_value is not null
+),
+-- Список "Не исполнено.Всего": id документа | id исполнителя по документу | срок
+all_doc_notexec (card_id, executor_id, term) as (
+	select ad.card_id, ad.executor_id, ad.term
+	from all_doc ad
+	left join attribute_value av_dend on av_dend.card_id = ad.card_id
+		and av_dend.attribute_code = 'ADMIN_220912'
+	where av_dend.date_value is null
+),
+-- Список "Исполнено.В срок": id документа | id исполнителя документа
+right_exec (card_id, executor_id) as (
+    select ade.card_id, ade.executor_id
+    from all_doc_exec ade
+    where date_trunc('day', (ade.dend+ interval '$P!{tz_hour} hour')) <= date_trunc('day', (ade.term+ interval '$P!{tz_hour} hour'))
+),
+-- Список "Исполнено. С наруш. срока": id документа | id исполнителя документа
+bad_exec (card_id, executor_id) as (
+    select ade.card_id, ade.executor_id
+    from all_doc_exec ade
+    where date_trunc('day', (ade.dend+ interval '$P!{tz_hour} hour')) > date_trunc('day', (ade.term+ interval '$P!{tz_hour} hour'))
+),
+-- Список "Не исполнено. Срок истек": id документа | id исполнителя документа
+expire_notexec (card_id, executor_id) as (
+    select adn.card_id, adn.executor_id
+    from all_doc_notexec adn
+    where (adn.term + interval '$P!{tz_hour} hour') <= $P{drep}
+),
+-- Список "Не исполнено. Срок не истек": id документа | id исполнителя документа
+notexpire_notexec (card_id, executor_id) as (
+    select adn.card_id, adn.executor_id
+    from all_doc_notexec adn
+    where (adn.term + interval '$P!{tz_hour} hour') > $P{drep}
+)
+-- Статистика по каждому "исполнителю по документу"
+select m.name as executor, -- название исполнителя
+	-- число всех документов для данного исполнителя
+	(select count(doc) from all_doc doc where doc.executor_id = m.card_id) as count_all,
+	-- число "Исполнено.Всего"
+	(select count(doc) from all_doc_exec doc where doc.executor_id = m.card_id) as count_all_exec,
+	-- число "Не исполнено.Всего"
+	(select count(doc) from all_doc_notexec doc where doc.executor_id = m.card_id) as count_all_notexec,
+    -- число "Исполненно.В срок"
+    (select count(doc) from right_exec doc where doc.executor_id = m.card_id) as right_exec,
+     -- число "Исполненно. С наруш. срока"
+    (select count(doc) from bad_exec doc where doc.executor_id = m.card_id) as bad_exec,
+    -- число "Не исполнено. Срок истек"
+	(select count(doc) from expire_notexec doc where doc.executor_id = m.card_id) as expire_notexec,
+    -- число "Не исполнено. Срок не истек"
+	(select count(doc) from notexpire_notexec doc where doc.executor_id = m.card_id) as notexpire_notexec
+from managers m]]>
+	</queryString>
+	<field name="executor" class="java.lang.String"/>
+	<field name="count_all" class="java.lang.Long"/>
+	<field name="count_all_exec" class="java.lang.Long"/>
+	<field name="count_all_notexec" class="java.lang.Long"/>
+	<field name="right_exec" class="java.lang.Long"/>
+	<field name="bad_exec" class="java.lang.Long"/>
+	<field name="expire_notexec" class="java.lang.Long"/>
+	<field name="notexpire_notexec" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($P{f_manager} ? "1." : "2.")+$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="30" y="0" width="286" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{executor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table_bold" stretchType="RelativeToTallestObject" x="316" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count_all}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table_bold" stretchType="RelativeToTallestObject" x="370" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count_all_exec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="424" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count_all}.doubleValue()==0?"0%":
+new BigDecimal(
+    $F{count_all_exec}.doubleValue() /
+    $F{count_all}.doubleValue()*
+    100.0d).setScale(0, BigDecimal.ROUND_HALF_UP)
++"%"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table_bold" stretchType="RelativeToTallestObject" x="586" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count_all_notexec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="478" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{right_exec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="532" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bad_exec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="748" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{notexpire_notexec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="694" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{expire_notexec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="640" y="0" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count_all}.doubleValue()==0?"0%":
+new BigDecimal(
+    $F{count_all_notexec}.doubleValue() /
+    $F{count_all}.doubleValue()*
+    100.0d).setScale(0, BigDecimal.ROUND_HALF_UP)
++"%"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,61 @@
+==
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+==
+
+Инструкция по развертыванию модуля
+
+В проекте SOZExchange размещены два симметричных модуля для взаимодействия с системой СОЗ
+Для корректной работы необходимо произвести настройку параметров.
+
+I) Клинет, он же Адаптер SOZAdapter.jar (имя файла может отличаться, оно настраивается через SOZExchangeClientModule.name)
+является standalone Java приложением и запускается отдельным процессом.
+Проверяет содержимое soz.export.directory, пытается отправить файлы на вэбсервис, в случае успеха перемещает
+папку с документом в soz.export.directory.result.ok, иначе в soz.export.directory.result.fail
+ WIN: java -jar SOZAdapter.jar
+ *nix: [root@app- bin]# ./java -jar /opt/somepath/SOZAdapter.jar
+
+   В каталоге src\config.properties перед сборкой, либо в корне самой джарки
+необходимо прописать параметры взаимодейсвия клиента и внешнего сервера:
+
+1) soz.export.period.sec=120 периодичность, с которой активируется клиент
+
+2) soz.export.directory: Каталог с файлами для экспорта. Из нее Адаптер периодически отправляет на внешний вебсервис файлы, выгруженные системой СИР.
+    2.1) soz.export.directory.result.ok - каталог, куда будут перемещены успешно отправленные документы
+    2.2) soz.export.directory.result.fail - каталог, куда будут перемещены документы, на которых произошел сбой
+(!) Каталоги 2.1 - 2.2 не должны совпадать с 2, т.к. это зациклит Адаптер
+
+3) soz.server.url: адрес на внешнем сервере, по которому достпен WSDL
+
+пример фрагметна задеплоенного WSDL
+<service name="DMSExchangePortTypeImplService">
+    <port binding="tns:DMSExchangePortTypeBinding" name="DMSExchangePortTypeImplPort">
+	<soap:address location="http://localhost:8080/SOZExchangeModule/DMSExchangePortType"/>
+    </port>
+</service>
+по этому фрагменту определяем параметры 4-5
+
+4)
+soz.server.dms_exchange.service=DMSExchangePortTypeImplService # имя сервиса
+5) 
+soz.server.dms_exchange.port=DMSExchangePortType # имя порта 
+
+II) Сервер
+1)Так как wsdl содержит русские символы, в параметры jvm (например в run.bat) нужно добавить этот параметр:
+set JAVA_OPTS=-Dfile.encoding=UTF-8 %JAVA_OPTS%
+2)В каталоге \conf\dbmi\soz\config.properties (образец config.properties.example) необходимо прописать путь к in директории
+soz.in.directory: Каталог с файлами для импорта

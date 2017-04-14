@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" id="com.aplana.mtsuniversalportlet.MTSUniversalPortlet.cfbd150791">
+	<portlet>
+		<portlet-name>UniversalPortlet</portlet-name>
+		<display-name>UniversalPortlet</display-name>
+		<display-name xml:lang="en">UniversalPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.universalportlet.UniversalPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<!-- <init-param>	- will be taken from page or window properties
+			<name>portletDescription</name>
+			<value>log.xml</value>
+		</init-param> -->
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<!-- resource-bundle>com.aplana.dbmi.universalportlet.nl.UniversalPortletResource</resource-bundle -->
+		<portlet-info>
+			<title>UniversalPortlet</title>
+			<short-title>UniversalPortlet</short-title>
+			<keywords>UniversalPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>RoleListPortlet</portlet-name>
+		<display-name>RoleListPortlet</display-name>
+		<display-name xml:lang="en">RoleListPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.rolelistportlet.RoleListPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<!-- <init-param>	- will be taken from page or window properties
+			<name>portletDescription</name>
+			<value>log.xml</value>
+		</init-param> -->
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.rolelistportlet.nl.RoleListPortletResource</resource-bundle>
+		<portlet-info>
+			<title>RoleListPortlet</title>
+			<short-title>RoleListPortlet</short-title>
+			<keywords>RoleListPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>GroupListPortlet</portlet-name>
+		<display-name>GroupListPortlet</display-name>
+		<display-name xml:lang="en">GroupListPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.grouplistportlet.GroupListPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<!-- <init-param>	- will be taken from page or window properties
+			<name>portletDescription</name>
+			<value>log.xml</value>
+		</init-param> -->
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<resource-bundle>com.aplana.dbmi.grouplistportlet.nl.GroupListPortletResource</resource-bundle>
+		<portlet-info>
+			<title>GroupListPortlet</title>
+			<short-title>GroupListPortlet</short-title>
+			<keywords>GroupListPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>UniversalSearchPortlet</portlet-name>
+		<display-name>UniversalSearchPortlet</display-name>
+		<display-name xml:lang="en">UniversalSearchPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.universalportlet.UniversalSearchPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<!-- <init-param>	- will be taken from page or window properties
+			<name>portletDescription</name>
+			<value>log.xml</value>
+		</init-param> -->
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>ru</supported-locale>
+		<!-- resource-bundle>com.aplana.dbmi.universalportlet.nl.UniversalPortletResource</resource-bundle -->
+		<portlet-info>
+			<title>UniversalSearchPortlet</title>
+			<short-title>UniversalSearchPortlet</short-title>
+			<keywords>UniversalSearchPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>RolesImportPortlet</portlet-name>
+		<display-name>RolesImportPortlet</display-name>
+		<display-name xml:lang="ru">RolesImportPortlet</display-name>
+		<display-name xml:lang="en">RolesImportPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.importrolesportlet.RolesImportPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.importrolesportlet.nl.RoleImportPortlet</resource-bundle>
+		<portlet-info>
+			<title>RolesImportPortlet</title>
+			<short-title>RolesImportPortlet</short-title>
+			<keywords>RolesImportPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>GroupsImportPortlet</portlet-name>
+		<display-name>GroupsImportPortlet</display-name>
+		<display-name xml:lang="ru">GroupsImportPortlet</display-name>
+		<display-name xml:lang="en">GroupsImportPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.importgroupsportlet.GroupsImportPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.importgroupsportlet.nl.GroupImportPortlet</resource-bundle>
+		<portlet-info>
+			<title>GroupsImportPortlet</title>
+			<short-title>GroupsImportPortlet</short-title>
+			<keywords>GroupsImportPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>BaseImportPortlet</portlet-name>
+		<display-name>BaseImportPortlet</display-name>
+		<display-name xml:lang="ru">BaseImportPortlet</display-name>
+		<display-name xml:lang="en">BaseImportPortlet</display-name>
+		<portlet-class>com.aplana.dbmi.importbaseportlet.BaseImportPortlet</portlet-class>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>ru</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.aplana.dbmi.importbaseportlet.nl.BaseImportPortlet</resource-bundle>
+		<portlet-info>
+			<title>BaseImportPortlet</title>
+			<short-title>BaseImportPortlet</short-title>
+			<keywords>BaseImportPortlet</keywords>
+		</portlet-info>
+	</portlet>
+</portlet-app>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog>				
+				<hierarchy>
+					<cardSet stored="true" alias="mainDocSet" 
+							labelAttr="NAME" labelAttrType="string"
+							labelAsLink="true" collapsed="false" 
+							sortAttr="NAME" sortAttrType="string" sortOrder="asc"
+					>
+
+						<condition/>
+
+						<!-- Вложения (файлы) в док-основание ... 
+						<info collapsed="false">
+							<link targetSet="fileSet" linkAttr="jbr.files" isReversed="false"/>
+						</info>
+						-->
+
+						<children>
+							<link targetSet="fileSet" linkAttr="jbr.files" isReversed="false" status="9450137"/>
+						</children>
+
+					</cardSet>
+
+					<cardSet alias="fileSet"
+							labelAttr="MATERIAL_NAME" labelAttrType="string"
+							labelAsLink="download" collapsed="false"
+							columns="fileCols"
+					>
+						<!-- condition>
+							<status>published</status>
+						</condition-->
+						<!-- сами файлы иерархии не имеют ... -->
+						<children/>
+					</cardSet>
+
+				</hierarchy>
+
+				<!--  информация по док-основанию -->
+				<columns>					
+					<column hidden="true" id="mainDocSet" columnTitleRu="Название" columnTitleEn="Na" width="500" link="true"/>
+					<column hidden="true" id="AUTHOR" columnTitleRu="Автор" columnTitleEn="Author" width="150" link="true"/>
+					<column hidden="true" id="IS_PRIME" width="120" columnTitleRu="Является основным" columnTitleEn="Is prime" />
+					<column hidden="true" id="ADMIN_67129" width="80" columnTitleRu="Подпись" columnTitleEn="Signature" />
+				</columns>				
+
+
+				<!--  информация по одному файлу-вложению -->
+				<columns id="fileCols">
+					<column id="mainDocSet" width="500"/>
+					<column id="AUTHOR" width="150"/>
+					<column id="IS_PRIME" width="120"/>
+					<column id="ADMIN_67129" width="80"/>
+				</columns>
+
+				<actions/>
+
+				<styling/>
+
+				<selectableCardCondition/>
+			</hierarchyDialog>
+
+			<search/>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<!-- <message key="errorIntegerFieldIsEmpty" value="Order field for person {0} is empty"/>
+			  -->
+		</lang>
+		<lang code="ru">
+			<!--
+			<message key="errorIntegerFieldIsEmpty" value="Не указан порядок рассмотрения для пользователя {0}"/>
+			  -->
+		</lang>
+	</messages>
+</settings>

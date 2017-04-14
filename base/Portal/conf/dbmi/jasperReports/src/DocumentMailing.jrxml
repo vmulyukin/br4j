@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DocumentMailing" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" fontName="Times New Roman" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="def2" fontName="Times New Roman" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="startDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="journal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\SOURCE\\FSIN\\trunk\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select distinct
+c.card_id as card_id
+,av_reg_num.string_value as reg_num
+,av_reg_num_d.number_value as reg_num_d
+,av_date_reg.date_value + interval '$P!{tz_hour} hour' as reg_date
+,array_to_string(array(select number_value from attribute_value where card_id = c.card_id and attribute_code = 'ADMIN_222990'), ',') as mail_list
+from card c
+-- Регистрационный номер
+join attribute_value av_reg_num on (av_reg_num.card_id = c.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM' and av_reg_num.string_value is not null)
+-- Валовый номер
+left join attribute_value av_reg_num_d on (av_reg_num_d.card_id = c.card_id and av_reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D')
+-- Дата регистрации
+join attribute_value av_date_reg on (av_date_reg.card_id = c.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG')
+-- Журнал регистрации
+join attribute_value av_reg_journ on (av_reg_journ.card_id = c.card_id and av_reg_journ.attribute_code = 'JBR_REGD_REGJOURN')
+-- Список рассылки
+join attribute_value av_mail_list on (av_mail_list.card_id = c.card_id and av_mail_list.attribute_code = 'ADMIN_222990')
+where c.template_id=364
+and c.status_id in (101,104)
+and date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{startDate}  --param
+and date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}  --param
+and ($P{journal} is null or av_reg_journ.number_value in ($P!{journal}))  --param
+order by reg_num_d, reg_num]]>
+	</queryString>
+	<field name="card_id" class="java.lang.Long"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_num_d" class="java.lang.Long"/>
+	<field name="reg_date" class="java.sql.Timestamp"/>
+	<field name="mail_list" class="java.lang.String">
+		<fieldDescription><![CDATA[null]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="60">
+			<textField>
+				<reportElement style="def" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Рассылка по документу"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def2" stretchType="RelativeToBandHeight" x="0" y="20" width="802" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["На " + ((new SimpleDateFormat("dd.MM.yyyy HH:mm")).format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="def2" stretchType="RelativeToBandHeight" x="0" y="40" width="802" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Период " + ($P{startDate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($P{startDate}))
++ " - " + ($P{endDate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($P{endDate}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="80" splitType="Stretch">
+			<textField>
+				<reportElement style="def" x="0" y="0" width="802" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Рассылка документа № "+ $F{reg_num} + " от " +  ($F{reg_date}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{reg_date}))]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="0" y="20" width="802" height="55"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement x="0" y="0" width="802" height="55"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="mail_list">
+						<subreportParameterExpression><![CDATA[$F{mail_list}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="tz_hour">
+						<subreportParameterExpression><![CDATA[$P{tz_hour}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "DocumentMailing_sub.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15">
+			<textField>
+				<reportElement x="775" y="0" width="27" height="15">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="775" y="0" width="27" height="15" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} ==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} == 1 ? "" : "1"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+	<query>
+		<sql>
+			<![CDATA[
+					-- Входящие по номеру
+					
+					SELECT cards.cardID FROM ( 
+					   SELECT DISTINCT c.card_id AS cardID, av.date_value AS dateValue 
+					   FROM card c 
+					      INNER JOIN attribute_value av ON ( 
+					         av.card_id = c.card_id -- Добавляем соответствующие записи 
+					         AND av.attribute_code='CHANGED' -- Выбираем записи, где установлена дата создания или изменения 
+					      ) 
+					   WHERE c.template_id IN (224) -- Выбираем карточки для шаблона "Входящие" 
+					      AND c.status_id   IN (101, 103, 102, 206) -- Выбираем карточки в требуемых статусах 
+					      AND ( -- Выбираем карточки в требуемых временных интервалах 
+					         ((av.date_value >= (CURRENT_TIMESTAMP - (interval '7 days'))) AND (av.date_value <= (CURRENT_TIMESTAMP + (interval '1 days')))) 
+					         AND EXISTS ( 
+					            SELECT 1 FROM attribute_value cav WHERE cav.card_id = av.card_id AND cav.attribute_code = 'JBR_REGD_REGNUM' 
+					         ) -- Выбираем карточки с установленным атрибутом "Регистрационный номер" 
+					      ) 
+					   --ORDER BY av.date_value DESC 
+					) AS cards 
+			]]>
+		</sql>
+	</query>
+</searchQuery>

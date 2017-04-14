@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+WITH 
+reports_user_var AS
+( 
+	 Select av_user.card_id, av_user.attribute_code from attribute_value av_user where
+	 av_user.attribute_code = 'JBR_RPT_DR_APPROVER' -- "Утверждающий скрытый"
+	 AND av_user.number_value IN (%CURRENTUSERS%) -- Id users
+	 AND av_user.template_id = 1044 -- Отчёты
+),
+reports_on_doc_var AS 
+(
+	 SELECT DISTINCT c.card_id, c.status_id FROM card c where c.card_id in (
+	  Select reports_on_doc.card_id 
+	  from attribute_value AS reports_on_doc 
+	  where reports_on_doc.attribute_code = 'ADMIN_702604' -- На документ
+	  and reports_on_doc.card_id in (Select card_id from reports_user_var)
+	)
+),
+reports_date_exec_var AS 
+(
+	 Select reports_date_exec.card_id from attribute_value reports_date_exec where 
+	 reports_date_exec.attribute_code = 'JBR_REP_DT_DONE' -- "Дата исполнения отчёта"
+	 AND reports_date_exec.card_id in (Select card_id from reports_user_var where reports_user_var.attribute_code = 'JBR_RPT_DR_APPROVER')
+	 AND reports_date_exec.card_id in (Select card_id from reports_on_doc_var where status_id IN (206))
+	 AND 
+	 (
+	  (date(reports_date_exec.date_value) >= current_date - 6) AND 
+	  (date(reports_date_exec.date_value) <= current_date)
+	 )
+	 order by reports_date_exec.date_value
+),
+reports_limit_date_exec_var AS 
+(
+	select card_id from reports_date_exec_var LIMIT 30
+),
+doc_more_sync_var AS
+(
+	Select doc.number_value from attribute_value doc
+	INNER JOIN attribute_value changed ON
+	doc.number_value = changed.card_id  	
+	AND doc.card_id in (select card_id from reports_limit_date_exec_var)
+	AND doc.attribute_code = 'ADMIN_702604'
+	AND changed.template_id IN (224, 764, 784, 864, 1226, 1255)
+	AND changed.attribute_code = 'CHANGED' 
+	AND changed.date_value > %DATE_SYNC_IN%
+)
+Select number_value from doc_more_sync_var
+]]></sql></query></searchQuery>

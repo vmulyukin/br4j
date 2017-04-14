@@ -1,0 +1,59 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.io.*;
+import org.tmatesoft.svn.core.wc.*;
+
+buildscript {
+    apply from: 'dependencies.gradle', to: buildscript
+}
+
+def matcher = releaseName =~ "[0-9]{2}\\.[0-9]{1}\\.[0-9]{3}\\."
+def currentClientRelease
+if (matcher.size() > 0) {
+    currentClientRelease = matcher[0][0..-2] // => 01.4.006
+} else {
+    throw new IllegalArgumentException("Неверное имя релиза (должно начинаться с id заказчика - ХХ.Х.ХХХ): $releaseName")
+}
+
+ext.releases = getSvnList(SVNURL.parseURIEncoded("${releaseUrl}"), -1, currentClientRelease).keySet().sort()
+println "\n Все релизы данному заказчику: $releases"
+def validReleaseName = releases.any { it == releaseName} || releases.every { it <= releaseName }
+
+if (!validReleaseName) {
+    throw new IllegalArgumentException("Неверное имя релиза: $releaseName. Должно быть следующим за $releases")
+}
+
+if (paths.length == 6) {
+    println "Заказали релиз ${releaseName} [сборка ${buildNum}]"
+}
+if (paths.length == 7) {
+    println "Заказали патч ${patchNum} для релиза ${releaseName} [сборка ${buildNum}]"
+
+    if (!patchAncestor) {
+    	throw new IllegalArgumentException("Не указано на основе какого патча (или сборки) собирать заказанный патч: patchAncestor = '$patchAncestor'")
+    }
+    if (patchAncestor ==~ /p\d{2}/) {
+    	if (patchAncestor >= patchNum) {
+    		throw new IllegalArgumentException("Неверно задан предок для патча, создается ${patchNum}, предок должен быть одним из предыдущих патчей или 'release' (можно задать 'prev')")
+    	}
+    } else {
+    	if (patchAncestor != 'release' && patchAncestor != 'prev') {
+    		throw new IllegalArgumentException("Неверно задан предок для патча, предок должен быть одним из предыдущих патчей или 'release' (можно задать 'prev')")
+    	}
+    }
+}

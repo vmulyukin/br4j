@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog>
+				<hierarchy>
+					<cardSet stored="true" alias="visaSet" labelAttr="jbr.visa.person" labelAttrType="user" showOrg="true"
+							labelAsLink="true" collapsed="false" sortAttr="jbr.visa.order" sortAttrType="number" sortOrder="asc">
+						<children>
+							<link targetSet="visaSet" linkAttr="jbr.visa.enclosedSet" isReversed="false"/>
+						</children>
+					</cardSet>
+				</hierarchy>
+				<columns>
+					<!-- column id="jbr.visa.person" width="30" link="true"/-->
+					<!-- column id="jbr.visa.order" width="100" sort="asc"/-->
+					<column id="jbr.visa.order" width="100"/>
+					<column id="jbr.visa.income_date" width="100"/>
+					<!-- column id="jbr.visa.negotiation_period" width="100"/-->
+					<column id="jbr.visa.to_date" width="100"/>
+					<column id="jbr.visa.date_actual_consent" width="100"/>
+					<column id="_STATE" width="100"/>
+					<!--column id="jbr.uzdo.signature" width="100"/-->
+				</columns>
+				<actions>
+					<action id="addGroup"
+							handler="com.aplana.dbmi.card.actionhandler.multicard.AddTemplateGeneratedCardsActionHandler"
+							selectionType="none"
+							title="addGroupTitle">
+						<parameters>
+							<parameter name="template" value="jbr.visa.template"/>
+							<parameter name="target_template" value="jbr.visa"/>
+							<parameter name="mapping_package" value="com.aplana.dbmi.card.actionhandler.multicard"/>
+							<parameter name="mapping" value="SplitTypedCardLinkToPersonAndInteger(typedLink:jbr.visa.template.person)->(user:jbr.visa.person,number:jbr.visa.order)"/>
+						</parameters>
+					</action>
+					<action id="editOrder"
+							handler="com.aplana.dbmi.card.actionhandler.ChangeOrderAction"
+							selectionType="none"
+							title="editOrderTitle">
+						<condition>
+							<status>preparation</status>
+						</condition>
+						<parameters>
+							<parameter name="columns" value="jbr.visa.person,_STATE"/>
+							<parameter name="orderAttribute" value="jbr.visa.order"/>
+							<parameter name="referenceId" value="JBR_VISA_NUMBER"/>
+						</parameters>
+					</action>
+					<action id="remove"
+							handler="com.aplana.dbmi.card.actionhandler.RemoveLinksHandler"
+							selectionType="multiple"
+							title="removeTitle">
+						<parameters>
+							<parameter name="templates" value="jbr.resolution"/>
+							<parameter name="states" value="agreement"/>
+						</parameters>
+					</action>
+				</actions>
+				<selectableCardCondition>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<message key="addGroupTitle" value="Add coordinators"/>
+			<message key="editOrderTitle" value="Edit order"/>
+			<message key="removeTitle" value="Delete coordinators"/>
+			<message key="errorIntegerFieldIsEmpty" value="Order field for person {0} is empty"/>
+			<message key="errorSomePersonNotFound" value="Cards given: {0}. Person found: {1} ({2})"/>
+		</lang>
+		<lang code="ru">
+			<message key="addGroupTitle" value="Добавить согласующих"/>
+			<message key="editOrderTitle" value="Изменить порядок"/>
+			<message key="removeTitle" value="Удалить согласующих"/>
+			<message key="errorIntegerFieldIsEmpty" value="Не указан порядок рассмотрения для пользователя {0}"/>
+			<message key="errorSomePersonNotFound" 
+			value="Выбрано карточек: {0}. Найдено пользователей по карточкам: {1}. Найденные пользователи: {2}."/>
+		</lang>
+	</messages>
+</settings>

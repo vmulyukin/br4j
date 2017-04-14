@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="addressee" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Work_projects\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select
+av_question.number_value as question_id,
+av_them_name.string_value as them,
+av_thematic_name.string_value as thematic,
+av_part_name.string_value as part
+from card c
+left outer join -- категория вопроса
+	attribute_value av_question on (av_question.card_id = c.card_id and av_question.attribute_code = 'ADMIN_277251')
+left outer join -- тема
+	attribute_value av_them on (av_them.card_id = av_question.number_value and av_them.attribute_code = 'ADMIN_278045')
+left outer join -- тема
+	attribute_value av_them_name on (av_them_name.card_id = av_them.number_value and av_them_name.attribute_code = 'NAME')
+left outer join -- тематика
+	attribute_value av_thematic on (av_thematic.card_id = av_them.number_value and av_thematic.attribute_code = 'ADMIN_275720')
+left outer join -- тематика
+	attribute_value av_thematic_name on (av_thematic_name.card_id = av_thematic.number_value and av_thematic_name.attribute_code = 'NAME')
+left outer join -- раздел
+	attribute_value av_part on (av_part.card_id = av_thematic.number_value and av_part.attribute_code = 'ADMIN_275722')
+left outer join -- раздел
+	attribute_value av_part_name on (av_part_name.card_id = av_part.number_value and av_part_name.attribute_code = 'NAME')
+where c.card_id=$P{card_id}]]>
+	</queryString>
+	<field name="them" class="java.lang.String"/>
+	<field name="thematic" class="java.lang.String"/>
+	<field name="part" class="java.lang.String"/>
+	<field name="question_id" class="java.lang.Long"/>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="91" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Раздел]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="91" y="0" width="91" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Тематика]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="182" y="0" width="92" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Тема]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="274" y="0" width="281" height="15" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Вопрос из тематического классификатора]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="text" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" isPrintWhenDetailOverflows="true"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="91" height="15" isPrintWhenDetailOverflows="true"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{part} != null ? $F{part} : ""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="91" y="0" width="91" height="15" isPrintWhenDetailOverflows="true"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{thematic} != null ? $F{thematic} : ""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="182" y="0" width="92" height="15" isPrintWhenDetailOverflows="true"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{them} != null ? $F{them} : ""]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="274" y="0" width="281" height="15" isPrintWhenDetailOverflows="true"/>
+					<subreport>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="281" height="15"/>
+						<subreportParameter name="card_id">
+							<subreportParameterExpression><![CDATA[$F{question_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA[$P{path} + "query_category.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

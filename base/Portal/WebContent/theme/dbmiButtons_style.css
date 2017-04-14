@@ -1,0 +1,249 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+div.buttonPanel ul li a
+{
+	color:#555;
+}
+
+.buttonPanel a,
+.buttonPanel a.disable
+{
+	display:inline-block;
+}
+
+.buttonPanel
+{
+	font:14px 'Trebuchet MS', Arial, sans-serif;
+	color:#555;
+}
+
+.buttonPanel ul
+{
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+
+.buttonPanel li,
+.buttonPanel li.back,
+.buttonPanel li.back_select,
+.buttonPanel li.back_hover
+{
+	height: 39px;
+	float:left;
+	margin:0;
+	padding:0;
+	cursor:hand;
+	background:url(./images/button_simple.gif) left top no-repeat;
+}
+
+.buttonPanel li.back,
+.buttonPanel li.back_select,
+.buttonPanel li.back_hover
+{
+	background:url(./images/button_back.gif) left top no-repeat;
+}
+
+.buttonPanel a,
+.buttonPanel a.disable
+{
+	font-size: 110%;       
+	margin:0;
+	color:#555;
+	text-decoration:none;
+	background:url(./images/button_simple.gif) right -114px no-repeat;
+	height:29px;
+	padding:10px 10px 0px 10px; 
+
+}
+
+div.buttonPanel ul li a:hover
+{
+	text-decoration:none;
+}
+
+.buttonPanel a.disable
+{
+	color:#c7c7c7;
+}
+
+.buttonPanel li:hover,
+.buttonPanel li.hover,
+.buttonPanel li.back_hover
+{
+	background-position:left -38px;
+}
+
+.buttonPanel a:hover,
+.buttonPanel a.hover
+{
+	background-position:right -152px;
+}
+
+.buttonPanel li:hover.disable
+{
+	background-position:left top;
+}
+
+.buttonPanel a:hover.disable
+{
+	background-position:right -114px;
+}
+
+.buttonPanel div
+{
+	float:left;
+	margin-top:-8px;
+	border:0;
+	display:block;
+	cursor:hand;
+}
+
+.buttonPanel .img
+{
+	width:32px;
+	height:32px;
+}
+
+.buttonPanel p
+{
+	margin:0;
+	cursor:hand;
+	margin:0;
+	float:left;
+	padding-left:5px;
+	font-size: 110%;
+}
+
+.buttonPanel li.select,
+.buttonPanel li.back_select 
+{
+	background-position:left -76px;
+}
+
+.buttonPanel a.select,
+.buttonPanel a.back_select 
+{
+	background-position:right -190px;
+}
+/* ----------------------------------------- */
+
+.ico_edit
+{
+		background:transparent url(./images/ico_edit.png) no-repeat scroll 0 0;    
+}
+
+.check_on_repeat
+{
+		background:transparent url(./images/check_on_repeat.png) no-repeat scroll 0 0;    
+}
+
+.reg_number
+{
+		background:transparent url(./images/reg_number.png) no-repeat scroll 0 0;    
+}
+
+.ico_new
+{
+		background:transparent url(./images/ico_new.png) no-repeat scroll 0 0;    
+}
+
+.ico_favour
+{
+		background:transparent url(./images/ico_favour.png) no-repeat scroll 0 0;    
+}
+
+.ico_clone
+{
+		background:transparent url(./images/ico_clone.png) no-repeat scroll 0 0;    
+}
+
+.ico_xls
+{
+		background:transparent url(./images/ico_xls.png) no-repeat scroll 0 0;
+}
+
+.ico_home
+{
+		background:transparent url(./icons/page/home.gif) no-repeat scroll 0 0;
+		margin: 1px -10px 1px 1px !important;    
+}
+
+.ico_csv_in
+{
+		background:transparent url(./images/ico_csv_in.png) no-repeat scroll 0 0;    
+}
+
+.ico_csv_out
+{
+		background:transparent url(./images/ico_csv_out.png) no-repeat scroll 0 0;    
+}
+
+.ico_groupexec
+{
+		background:transparent url(./images/groupexec.png) no-repeat scroll 0 0;    
+}
+
+.ico_groupres
+{
+		background:transparent url(./images/group_resolutions.png) no-repeat scroll 0 0;    
+}
+
+.ico_xls_in
+{
+		background:transparent url(./images/ico_xls_in.png) no-repeat scroll 0 0;    
+}
+
+.ico_back
+{
+		background:transparent url(./images/ico_back.png) no-repeat scroll 0 0;    
+}
+
+.ico_print
+{
+		background:transparent url(./images/ico_print.png) no-repeat scroll 0 0;    
+}
+
+.ico_mail
+{
+		background:transparent url(./images/ico_mail.png) no-repeat scroll 0 0;    
+}
+
+.ico_scan
+{
+		background:transparent url(./images/ico_scan.png) no-repeat scroll 0 0;    
+}
+.ico_save_xml
+{
+		background:transparent url(./images/save_xml.png) no-repeat scroll 0 0;    
+}
+.copy_files {
+	background:transparent url(./images/pages_add.png) no-repeat scroll 0 0; 
+}
+
+.ico_file
+{
+		background:transparent url(./images/file.png) no-repeat scroll 0 0;    
+}
+.ico_archive_page
+{
+		background:transparent url(./images/archive_page.png) no-repeat scroll 0 0;    
+}
+.ico_archive_all
+{
+		background:transparent url(./images/archive_all.png) no-repeat scroll 0 0;    
+}

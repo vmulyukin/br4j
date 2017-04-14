@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog>
+				<hierarchy>
+					<cardSet stored="true" alias="resolutions" labelAttr="jbr.resolution.FioSign" labelAttrType="user" showOrg="true" labelFormat="authorFormat" labelAsLink="true" collapsed="false"
+							sortAttr="jbr.resolution.FioSign" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.rimp.byrimp" isParentAttrLinkReversed="false">
+						<info collapsed="false">
+							<link targetSet="reports" linkAttr="jbr.reports" isReversed="false"/>
+							<link targetSet="externalReports" linkAttr="jbr.resolution.ExtReport" isReversed="false"/>
+							<link targetSet="adnotam" linkAttr="jbr.resolution.FyiReport" isReversed="false"/>
+						</info>
+						<children>
+							<link targetSet="resolutions" linkAttr="jbr.linkedResolutions"	isReversed="false"/>
+						</children>
+						<condition>
+							<status>draft</status>
+							<status>execution</status>
+							<status>agreement</status>
+							<status>done</status>
+							<status>ratified</status>
+							<status>poruchcancelled</status>
+							<status>closedviaparent</status>
+							<status>jbr.task.taskAgreed</status>
+						</condition>
+					</cardSet>
+					<cardSet alias="reports" labelAttr="jbr.report.int.executor" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="executors" columns="report"
+						sortAttr="jbr.report.int.executor" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.report.int.parent" isParentAttrLinkReversed="false"/>
+					<cardSet alias="externalReports" labelAttr="jbr.report.ext.executor" labelAttrType="link" linkedLabelAttr="NAME" labelAsLink="true" collapsed="false" group="external" columns="report"/>
+					<cardSet alias="adnotam" labelAttr="jbr.adnotamCommission.person" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="adnotam" columns="report"/>
+				</hierarchy>
+				<columns>
+					<column id="jbr.resolutionTerm" width="90"/>
+					<column id="jbr.resolutionText" width="250"/>
+					<column id="_STATE" width="120"/>
+				</columns>
+				<columns id="report">
+					<column id="NON_EXISTANT" width="90"/>
+					<column id="jbr.report.hidden.text" width="250"/>
+					<column id="_STATE" width="120"/>
+				</columns>
+				<actions>
+					<!-- <action title="editCardListTitle" handler="com.aplana.dbmi.card.actionhandler.EditCardLinksActionHandler" selectionType="none" id="editCardList">
+					</action> -->
+					<action title="addPoruchTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardImmediateActionHandler" selectionType="none" id="addPoruch" mode="all">
+						<parameters>
+							<parameter name="template" value="jbr.resolution"/>
+							<parameter name="isLinked" value="true"/>							
+							<parameter name="statesAllowed" value="execution"/>
+						</parameters>
+					</action>
+				</actions>	
+				<styling>
+				</styling>
+				<selectableCardCondition>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<message key="addPoruchTitle" value="Add new"/>
+			<message key="authorFormat" value="Author: {0}"/>
+			<message key="executors" value="Executors:"/>
+			<message key="adnotam" value="Ad notam:"/>
+			<message key="external" value="External coexecutors:"/>
+		</lang>	
+		<lang code="ru">
+			<message key="addPoruchTitle" value="Новое поручение"/>
+			<message key="authorFormat" value="Автор: {0}"/>
+			<message key="executors" value="Исполнители:"/>
+			<message key="adnotam" value="К сведению:"/>
+			<message key="external" value="Внешние соисполнители:"/>
+		</lang>
+	</messages>
+</settings>

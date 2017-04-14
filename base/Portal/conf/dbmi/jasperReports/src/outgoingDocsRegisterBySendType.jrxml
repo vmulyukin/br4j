@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="outgoingDocsRegisterBySendType" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="department" class="java.lang.String"/>
+	<parameter name="organization" class="java.lang.String"/>
+	<parameter name="journal" class="java.lang.String"/>
+	<parameter name="sendDate" class="java.util.Date"/>
+	<parameter name="sendTypes" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\FSIN\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- таблица ссылок на непосредственый вышестоящий департамент
+-- id - департамент, pid - непосредлственно вышестоящий департамент
+with dep_parent (id, pid) as (
+	select cr.card_id as id, av_parent.number_value as pid
+	from card cr
+	left join attribute_value av_parent on av_parent.card_id = cr.card_id and av_parent.attribute_code = 'JBR_DEPT_PARENT_LINK'
+	where cr.template_id = 484
+),
+-- таблица ссылок на все вышестоящие департаменты + на саму себя
+dep_all_parent (id, pid) as (
+	with recursive dep_all_parent_rec (b_id, id, pid) as (
+		select id, id, pid
+		from dep_parent
+		union
+		select dap.b_id, dp.id, dp.pid
+		from dep_all_parent_rec dap, dep_parent dp
+		where dap.pid = dp.id
+	)
+	select b_id, id
+	from dep_all_parent_rec
+)
+Select distinct
+av_reg_num.string_value as reg_num,
+av_reg_num_d.number_value as reg_num_d,
+av_date_reg.date_value + interval '$P!{tz_hour} hour' as date_reg,
+av_short_desk.string_value as short_desk,
+av_journ_name.string_value as journ_name,
+av_dept_name.string_value as dept_name,
+array_to_string(array(select distinct coalesce(coalesce(av_full_name.string_value, av_short_name.string_value), coalesce(av_full_name_deep.string_value, av_short_name_deep.string_value))
+					    from card cc
+                        left join attribute_value av_mail on (av_mail.card_id = cc.card_id and av_mail.attribute_code = 'ADMIN_222990')
+                            left join attribute_value av_send_method_locale on (av_send_method_locale.card_id = av_mail.number_value and av_send_method_locale.attribute_code = 'ADMIN_222147')
+                            left join attribute_value av_receiv on (av_receiv.card_id = av_mail.number_value and av_receiv.attribute_code = 'ADMIN_222015')
+                                left join attribute_value av_full_name on (av_full_name.card_id = av_receiv.number_value and av_full_name.attribute_code = 'JBR_DORG_FULLNAME')
+                                left join attribute_value av_short_name on (av_short_name.card_id = av_receiv.number_value and av_short_name.attribute_code = 'JBR_DORG_SHORTNAME')
+                                left join attribute_value av_per_org on (av_per_org.card_id = av_receiv.number_value and av_per_org.attribute_code = 'JBR_PERS_ORG')
+                                    left join attribute_value av_full_name_deep on (av_full_name_deep.card_id = av_per_org.number_value and av_full_name_deep.attribute_code = 'JBR_DORG_FULLNAME')
+                                    left join attribute_value av_short_name_deep on (av_short_name_deep.card_id = av_per_org.number_value and av_short_name_deep.attribute_code = 'JBR_DORG_SHORTNAME')
+					    where cc.card_id = c.card_id
+                        and av_send_method_locale.value_id = av_send_method.value_id
+                        and ($P{organization} is null or av_receiv.number_value in ($P!{organization}))
+					    ), ',' || chr(13)) as kuda,
+
+array_to_string(array(select distinct coalesce(out_sname.string_value,'') || ' ' || coalesce(out_name.string_value,'') || ' ' || coalesce(out_mname.string_value,'') as person_komu
+					    from card cc
+                        left join attribute_value av_addr_out on (av_addr_out.card_id = cc.card_id and av_addr_out.attribute_code = 'JBR_RECEIVER_EXT_USR')
+                            left join attribute_value out_sname on (out_sname.card_id = av_addr_out.number_value and out_sname.attribute_code = 'JBR_PERS_SNAME')
+                            left join attribute_value out_name on (out_name.card_id = av_addr_out.number_value and out_name.attribute_code = 'JBR_PERS_NAME')
+                            left join attribute_value out_mname on (out_mname.card_id = av_addr_out.number_value and out_mname.attribute_code = 'JBR_PERS_MNAME')
+					    where cc.card_id = c.card_id
+                        and out_sname.template_id = 464
+                        union
+                        select coalesce(og_sname.string_value,'') || ' ' || coalesce(og_name.string_value,'') || ' ' || coalesce(og_mname.string_value,'') as person_komu
+					    from card cc
+                        left join attribute_value av_addr_og on (av_addr_og.card_id = cc.card_id and av_addr_og.attribute_code = 'JBR_INFD_RECEIVER_CA')
+                            left join attribute_value og_sname on (og_sname.card_id = av_addr_og.number_value and og_sname.attribute_code = 'ADMIN_274992')
+                            left join attribute_value og_name on (og_name.card_id = av_addr_og.number_value and og_name.attribute_code = 'ADMIN_281034')
+                            left join attribute_value og_mname on (og_mname.card_id = av_addr_og.number_value and og_mname.attribute_code = 'ADMIN_281035')
+					    where cc.card_id = c.card_id
+                        and og_sname.template_id = 780
+					    ), ',' || chr(13)) as komu,
+
+vl_send_method.value_rus as send_method,
+
+(
+	select sum(CAST(trim(av_mass.string_value) as numeric))
+
+	from card cc
+	left join attribute_value av_mail on (av_mail.card_id = cc.card_id and av_mail.attribute_code = 'ADMIN_222990')
+	    left join attribute_value av_method on (av_method.card_id = av_mail.number_value and av_method.attribute_code = 'ADMIN_222147')
+	    left join attribute_value av_mass on (av_mass.card_id = av_mail.number_value and av_mass.attribute_code = 'MASS')
+	where cc.card_id = c.card_id
+	and av_method.value_id = av_send_method.value_id
+) as massa,
+(
+	select sum(CAST(trim(av_pay.string_value) as numeric))
+	from card cc
+	left join attribute_value av_mail on (av_mail.card_id = cc.card_id and av_mail.attribute_code = 'ADMIN_222990')
+	    left join attribute_value av_method on (av_method.card_id = av_mail.number_value and av_method.attribute_code = 'ADMIN_222147')
+	    left join attribute_value av_pay on (av_pay.card_id = av_mail.number_value and av_pay.attribute_code = 'PAYMENT')
+	where cc.card_id = c.card_id
+	and av_method.value_id = av_send_method.value_id
+) as pay
+
+From card c
+JOIN attribute_value av_reg_num on (av_reg_num.card_id = c.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM')
+LEFT JOIN attribute_value av_reg_num_d on (av_reg_num_d.card_id = c.card_id and av_reg_num_d.attribute_code = 'JBR_REGD_REGNUM_D')
+LEFT OUTER JOIN attribute_value av_date_reg on (av_date_reg.card_id = c.card_id and av_date_reg.attribute_code = 'JBR_REGD_DATEREG')
+LEFT OUTER JOIN attribute_value av_short_desk on (av_short_desk.card_id = c.card_id and av_short_desk.attribute_code = 'JBR_INFD_SHORTDESC')
+JOIN attribute_value av_reg_journ on (av_reg_journ.card_id = c.card_id and av_reg_journ.attribute_code = 'JBR_REGD_REGJOURN')
+    LEFT OUTER JOIN attribute_value av_journ_name on (av_journ_name.card_id = av_reg_journ.number_value and av_journ_name.attribute_code = 'NAME')
+    LEFT OUTER JOIN attribute_value av_journ_type on (av_journ_type.card_id = av_reg_journ.number_value and av_journ_type.attribute_code = 'JBR_REGLOG_TYPE_J')
+LEFT OUTER JOIN attribute_value av_exec on (av_exec.card_id = c.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR')
+    LEFT OUTER JOIN person p on (p.person_id = av_exec.number_value)
+		LEFT OUTER JOIN attribute_value av_dept_link on (av_dept_link.card_id = p.card_id and av_dept_link.attribute_code = 'JBR_PERS_DEPT_LINK')
+			-- текущий и все выщестоящие департаменты для исполнителя поручения
+			left join dep_all_parent parent_deps on parent_deps.id = av_dept_link.number_value
+				LEFT OUTER JOIN attribute_value av_dept_name on (av_dept_name.card_id = parent_deps.pid and av_dept_name.attribute_code = 'NAME')
+LEFT OUTER JOIN attribute_value av_mailing on (av_mailing.card_id = c.card_id and av_mailing.attribute_code = 'ADMIN_222990')
+    LEFT OUTER JOIN attribute_value av_rec on (av_rec.card_id = av_mailing.number_value and av_rec.attribute_code = 'ADMIN_222015')
+    LEFT OUTER JOIN attribute_value av_date_send on (av_date_send.card_id = av_mailing.number_value and av_date_send.attribute_code = 'ADMIN_222019')
+    LEFT OUTER JOIN attribute_value av_send_method on (av_send_method.card_id = av_mailing.number_value and av_send_method.attribute_code = 'ADMIN_222147')
+        LEFT OUTER JOIN values_list vl_send_method on (vl_send_method.value_id = av_send_method.value_id)
+where c.template_id=364
+and c.status_id in (101,104)
+and av_reg_num.string_value <> ''
+and (date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+and (date_trunc('day',av_date_reg.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+and ($P{journal} is null or av_reg_journ.number_value in ($P!{journal}))
+and av_journ_type.value_id = 1711
+and ($P{department} is null or parent_deps.pid in ($P!{department}))
+and ($P{organization} is null or av_rec.number_value in ($P!{organization}))
+and date_trunc('day',av_date_send.date_value + interval '$P!{tz_hour} hour') = $P{sendDate}
+and ($P{sendTypes} is null or av_send_method.value_id in ($P!{sendTypes}))
+Order by dept_name, journ_name, date_reg, reg_num_d, reg_num]]>
+	</queryString>
+	<field name="date_reg" class="java.util.Date"/>
+	<field name="reg_num" class="java.lang.String"/>
+	<field name="reg_num_d" class="java.lang.Long"/>
+	<field name="short_desk" class="java.lang.String"/>
+	<field name="journ_name" class="java.lang.String"/>
+	<field name="dept_name" class="java.lang.String"/>
+	<field name="kuda" class="java.lang.String"/>
+	<field name="komu" class="java.lang.String"/>
+	<field name="send_method" class="java.lang.String"/>
+	<field name="massa" class="java.lang.Integer"/>
+	<field name="pay" class="java.lang.Integer"/>
+	<group name="dept">
+		<groupExpression><![CDATA[$F{dept_name}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<frame>
+					<reportElement positionType="Float" x="0" y="0" width="802" height="35" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="35" isPrintWhenDetailOverflows="true"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Подразделение: " + ($F{dept_name} == null ? "" : $F{dept_name})]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<group name="journ">
+		<groupExpression><![CDATA[$F{journ_name}]]></groupExpression>
+		<groupHeader>
+			<band height="45">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="0" width="115" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" Журнал регистрации: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="115" y="0" width="687" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{journ_name} != null ? $F{journ_name} : "")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="135" y="15" width="95" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Дата документа]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="365" y="15" width="135" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Куда]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="230" y="15" width="135" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Краткое содержание]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="40" y="15" width="95" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Регистрационный
+номер]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="15" width="40" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[№п/п]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="500" y="15" width="135" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Кому]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="635" y="15" width="65" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Способ отправки]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="700" y="15" width="51" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Масса (г)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="751" y="15" width="51" height="30"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Оплата (руб)]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="115" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Реестр исходящих документов, зарегистрированных]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с " + (new SimpleDateFormat("dd.MM.yyyy").format($P{startDate})) + " по " + (new SimpleDateFormat("dd.MM.yyyy").format($P{endDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="802" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" на дату " + (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format($P{sendDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="65" width="115" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Способ отправки: "]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="65" width="687" height="15" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="687" height="15" forecolor="#FFFFFF"/>
+					<subreportParameter name="sendTypes">
+						<subreportParameterExpression><![CDATA[$P{sendTypes}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"outgoingDocsRegisterBySendType_method.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<textField>
+				<reportElement x="0" y="90" width="115" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Организация: "]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="90" width="687" height="15" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="687" height="15" forecolor="#FFFFFF"/>
+					<subreportParameter name="organization">
+						<subreportParameterExpression><![CDATA[$P{organization}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"outgoingDocsRegister_reciver.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="40" y="0" width="95" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{reg_num}==null?"":$F{reg_num})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="135" y="0" width="95" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{date_reg}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{date_reg}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="230" y="0" width="135" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{short_desk}==null?"":$F{short_desk})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="40" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{journ_COUNT}+"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="365" y="0" width="135" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{kuda}==null?"":$F{kuda})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="500" y="0" width="135" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{komu}==null?"":$F{komu})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="635" y="0" width="65" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{send_method}==null?"":$F{send_method})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="751" y="0" width="51" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{pay}==null?"":$F{pay})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="700" y="0" width="51" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{massa}==null?"":$F{massa})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="145">
+			<textField>
+				<reportElement x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["с " + (new SimpleDateFormat("dd.MM.yyyy").format($P{startDate})) + " по " + (new SimpleDateFormat("dd.MM.yyyy").format($P{endDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="802" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" на дату " + (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format($P{sendDate}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="65" width="115" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Способ отправки: "]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="65" width="687" height="15" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="687" height="15" forecolor="#FFFFFF"/>
+					<subreportParameter name="sendTypes">
+						<subreportParameterExpression><![CDATA[$P{sendTypes}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"outgoingDocsRegisterBySendType_method.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<textField>
+				<reportElement x="0" y="90" width="115" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Организация: "]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="90" width="687" height="15" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="687" height="15" forecolor="#FFFFFF"/>
+					<subreportParameter name="organization">
+						<subreportParameterExpression><![CDATA[$P{organization}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"outgoingDocsRegister_reciver.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Реестр исходящих документов, зарегистрированных]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="130" width="802" height="15"/>
+				<textField>
+					<reportElement x="0" y="0" width="802" height="15"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="11" isItalic="true" pdfFontName="Font name Times New Roman" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Не найдено ни одного документа"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</noData>
+</jasperReport>

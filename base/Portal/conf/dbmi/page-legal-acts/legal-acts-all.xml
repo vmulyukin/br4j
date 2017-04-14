@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+	<name lang="ru">��� ���</name>
+	<name lang="en">��� ���</name>
+
+	<!-- 1226/764	��� � ���: ��� ������� -->
+	<template>jbr.npa</template>
+	<template>jbr.ord</template>
+
+	<column	id="JBR_IMPL_ONCONT">
+		<icon value="1432" image="onControl" tooltipRu="�� ��������" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="�� �� ��������" tooltipEn="Not control"/>
+	</column>
+	<column id="_P_APPROVE_STATE">
+		<icon value="1" image="approved" tooltipRu="����������" tooltipEn="Agreed"/>
+		<icon value="2" image="forApprovalNotOverdued" tooltipRu="�� ������������, �� ���������" tooltipEn="For approval, not overdued"/>
+		<icon value="3" image="forApprovalOverdued" tooltipRu="�� ������������, ���������" tooltipEn="For approval, overdued"/>
+		<icon value="4" image="noRoute" tooltipRu="��������! �� �������� ������� ������������." tooltipEn="Attention! Approval route is not filled."/>
+		<icon value="5" image="returnForRework" tooltipRu="��������� �� ���������/��������" tooltipEn="Returned for rework"/>
+		<default_icon image="notApproved" tooltipRu="�� ����������" tooltipEn="Not agreed"/>
+	</column>
+	<column id="ADMIN_290575">
+		<default_icon image="urgent" tooltipRu="���� ��������� ���������" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="��� ��������� ���������" tooltipEn="No category of urgency"/>
+	</column> 
+	<column id="JBR_IMPL_RESOLUT">
+		<default_icon image="boundRes" tooltipRu="���� ���������" tooltipEn="There is a resolution"/>
+		<empty_icon image="notBoundRes" tooltipRu="��� ���������" tooltipEn="No resolutions"/>
+	</column>
+	<column id="JBR_DOCL_RELATDOC">
+		<default_icon image="boundDoc" tooltipRu="���� ��������� ���������" tooltipEn="There are related documents"/>
+		<empty_icon image="notBoundDoc" tooltipRu="��� ��������� ����������" tooltipEn="No related documents"/>
+	</column>
+	<column id="ADMIN_221237">
+		<default_icon image="boundDoc" tooltipRu="���� ������ �� ��������" tooltipEn="There is links to the document"/>
+		<empty_icon image="notBoundDoc" tooltipRu="��� ������ �� ��������" tooltipEn="There is no links to the document"/>
+	</column>
+    <column id="_DIGITAL_SIGNATURE" >
+        <default_icon image="edsSigned" tooltipRu="�������� ��" tooltipEn="There is DS"/>
+        <empty_icon image="noImage" tooltipRu="�� �������� ��" tooltipEn="There is no DS"/>
+        <action id="reportDS"/>
+    </column>
+
+	<column id="JBR_REGD_REGNUM" width="50" sort="asc" sortAttrId="regnumberdigital"/>
+	<column id="JBR_REGD_DATEREG"  width="50"/>
+	<column id="JBR_INFD_SHORTDESC"  width="200" columnTitleRu="Краткое содержание"/>
+
+	<column id="jbr.outcoming.signatory"  width="70" columnTitleRu="Подписант" />
+	<column id="jbr.commission.responsible"  width="70" />
+</search>

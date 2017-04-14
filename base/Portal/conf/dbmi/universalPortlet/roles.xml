@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+         	select r.role_name_eng, r.role_code, array_to_string(array_agg(sg.group_name_eng), ', ') as groups
+			from system_role r
+					left join group_role gr on gr.role_code = r.role_code
+					left join system_group sg on sg.group_code = gr.group_code
+					group by r.role_name_eng, r.role_code
+					order by r.role_name_eng asc
+         </sql>
+     </query>
+     <query lang="ru">
+         <sql>
+         	select r.role_name_rus, r.role_code, array_to_string(array_agg(sg.group_name_rus), ', ') as groups
+			from system_role r
+					left join group_role gr on gr.role_code = r.role_code
+					left join system_group sg on sg.group_code = gr.group_code
+					group by r.role_name_rus, r.role_code
+					order by r.role_name_rus asc
+         </sql>
+     </query>
+     <table pagesize="20">
+     	 <column-description name="ROLE_NAME_ENG" display-name="Role name" is-sortable="true" width="50" linkColumn="ROLE_CODE" link="MI_OPEN_ENTITY_ID={0}"/>
+	     <column-description name="ROLE_CODE" display-name="Role code" is-sortable="true"  width="50"/>
+	     <column-description name="GROUPS" display-name="Role groups" is-sortable="true"  width="200"/>
+     </table>
+     <table lang="ru" pagesize="20">
+     	 <column-description name="ROLE_NAME_RUS" display-name="Название роли" is-sortable="true"  width="50" linkColumn="ROLE_CODE" link="MI_OPEN_ENTITY_ID={0}"/>
+	     <column-description name="ROLE_CODE" display-name="Код роли" is-sortable="true"  width="50"/>
+	     <column-description name="GROUPS" display-name="Роль принадлежит группам" is-sortable="true"  width="200"/>
+     </table>
+</universal-portlet>

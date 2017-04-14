@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+/*
+Отфильтровать по переданной дате синхронизации:
+   а) Если дата синхронизации меньше даты обновления документа и меньше даты обновления резолюции - возвращаем док/поручение
+   б) Если дата синхронизации меньше даты обновления документа и больше даты обновления резолюции - возвращаем док/поручение
+   в) Если дата синхронизации больше даты обновления документа и меньше даты обновления резолюции - возвращаем док/поручение
+   г) Если дата синхронизации больше даты обновления документа и больше даты обновления резолюции - не возвращаем док/поручение
+
+Алгоритм:
+1. Находим поручения привязанные к докам без учёта даты синхронизации (doc_and_resolut_var)
+2. Находим поручения с учётом п.1 и фильтром по дате синхронизации: дата обновления < даты синхронизации (resolut_less_sync_var)
+3. Из набора полученного в п.2 вычитаем набор из п.1 - получаем поручения удовлетворяющие пунктам а, б, в.
+4. При переходе по бэклинку на документ, автоматом вернуться доки удовлетворяющие пунктам а, б, в.
+*/
+
+
+WITH 
+resolut_user_var AS
+(	
+	Select resolut_user.card_id from attribute_value resolut_user --where 
+	INNER JOIN card c ON
+	c.card_id = resolut_user.card_id
+	AND resolut_user.attribute_code = 'JBR_INFD_SGNEX_LINK' -- ФИО, должность лица подписавшего поручение
+	AND resolut_user.number_value IN (%CURRENTUSERS%)
+	AND resolut_user.template_id = 324 -- Поручения
+	AND c.status_id = 103
+),
+resolut_date_term_var AS 
+(
+	Select av_date.card_id, av_date.attribute_code, av_date.date_value from attribute_value av_date where 
+	av_date.card_id in (Select card_id from resolut_user_var)
+	AND attribute_code = 'JBR_TCON_TERM'  -- Срок
+	AND 
+	(
+		(date(av_date.date_value) >= current_date) 
+		AND (date(av_date.date_value) <= current_date + 6)
+	)
+),
+doc_and_resolut_var AS
+(
+	Select doc.card_id, res.card_id as number_value
+	from attribute_value res 
+	join attribute_value doc on res.number_value = doc.card_id
+	where res.card_id in (Select card_id from resolut_date_term_var)
+	AND res.attribute_code = 'JBR_MAINDOC' -- Все уровни поручений
+	AND doc.template_id IN (224, 764, 784, 864, 1226, 1255)
+),
+resolut_less_sync_var AS
+(
+	Select distinct resolut_less_sync.card_id from attribute_value resolut_less_sync
+	INNER JOIN attribute_value av ON 
+	av.card_id = resolut_less_sync.card_id 
+	AND resolut_less_sync.card_id IN (Select number_value from doc_and_resolut_var) 
+	AND av.attribute_code = 'CHANGED' 
+	AND av.date_value < %DATE_SYNC_IN%
+)
+Select dar.number_value from doc_and_resolut_var dar
+INNER JOIN attribute_value av ON
+dar.number_value = av.card_id
+AND av.attribute_code = 'JBR_TCON_TERM'
+AND dar.number_value NOT IN (Select card_id from resolut_less_sync_var)
+order by av.date_value desc LIMIT 30
+]]></sql></query></searchQuery>

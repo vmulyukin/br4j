@@ -1,0 +1,32 @@
+==
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+==
+
+1. Сделайте бэкап и удалите старую конфигурацию ТА на JBoss сервере приложения BR4J, конфигурация расположена в каталоге 
+	$JBOSS_HOME/server/default/conf/dbmi/transportAgent (все файлы).
+	В дальнейшем бэкап старой конфигурации может быть использован для написания конфигурации в новом формате.
+2. Скопируйте содержимое каталога с ТА в каталог рабочей конфигурации сервера, обычно $JBOSS_HOME/server/default.
+3. Скопируйте файл таблицы маршрутизации conf/dbmi/transportAgent/routeTable.example.xml 
+	в файл conf/dbmi/transportAgent/routeTable.xml.
+4. Произведите необходимую настройку таблицы маршрутизации. Правила и примеры конфигурирования описаны 
+	в файле примера conf/dbmi/transportAgent/routeTable.example.xml. Если существует рабочая конфигурация старой версии ТА, 
+	то её необходимо преобразовывать в новый формат.
+5. Проверьте корректность конфигурации таблицы маршрутизации с помощью:
+	Linux: команда: xmllint --noout --schema routeTable.xsd routeTable.xml
+	Windows: GUI утилита: http://xerces.apache.org/
+6. Запустите сервер JBossAS.

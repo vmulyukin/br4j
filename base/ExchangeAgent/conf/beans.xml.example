@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+    <!--
+    Transport plugins configuration describes available plugins and theirs parameters.
+    Only global properties should be set here.
+    Specific properties and parameters for each recipient like e-mails, folders, URLs etc. should be specified in routeorg.xml
+    Bean names are referred in routeorg.xml in Address elements
+    -->
+
+    <bean name="sender" abstract="true" class="com.aplana.agent.plugin.sender.Sender"/>
+    <bean name="receiver" abstract="true" class="com.aplana.agent.plugin.receiver.Receiver"/>
+
+    <bean name="exportQueue" class="com.aplana.agent.ExportQueue"/>
+    <bean name="exportQueueCleaner" class="com.aplana.agent.ExportQueueCleaner"/>
+    
+	<bean name="sendRetryStorage" class="com.aplana.agent.SendRetryStorage">
+		<!-- Configures number of retry attempts-->
+		<property name="numberOfAttemps" value="5"></property>
+	</bean>	
+
+    <bean name="mailSender" parent="sender" class="com.aplana.agent.plugin.sender.SMTPSender">
+        <property name="parameters">
+            <props>
+            	<!-- Configuration of SMTP server used by this plugin -->
+                <prop key="smtpConfiguration">smtp.properties</prop>
+            </props>
+        </property>
+    </bean>
+    <bean name="mailReceiver" parent="receiver" class="com.aplana.agent.plugin.receiver.SMTPReceiver">
+        <property name="parameters">
+            <props>
+            	<!-- Configuration of SMTP server used by this plugin -->
+                <prop key="smtpConfiguration">smtp.properties</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="fileReceiver" parent="receiver" class="com.aplana.agent.plugin.receiver.FileSystemReceiver">
+        <property name="parameters">
+            <props>
+                <prop key="deleteOnReceive">true</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean name="fileSender" parent="sender" class="com.aplana.agent.plugin.sender.FileSender">
+        <property name="parameters">
+            <props>                
+            </props>
+        </property>
+    </bean>
+
+    <bean name="replicationWsReceiver" class="com.aplana.agent.plugin.receiver.WebServiceReceiver">
+        <property name="parameters">
+            <props>
+                <prop key="storeFolder">c:/temp/wsInput</prop>
+            </props>
+        </property>
+    </bean>
+    <bean name="sozWsReceiver" class="com.aplana.agent.plugin.receiver.WebServiceReceiver">
+        <property name="parameters">
+            <props>
+                <prop key="storeFolder">c:/temp/wsInput</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="soapSozSender" parent="sender" class="com.aplana.agent.plugin.sender.SoapSozSender">
+        <property name="parameters">
+            <props>
+            	<!-- Configuration web service called by this plugin -->
+                <prop key="soapConfiguration">soz.properties</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="soapReplicationSender" parent="sender" class="com.aplana.agent.plugin.sender.SoapReplicationSender">
+        <property name="parameters">
+            <props>
+                <prop key="serviceName">ReplicationImplService</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

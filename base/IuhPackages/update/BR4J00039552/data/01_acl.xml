@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Запрос на резервирование номера" template_id="965">
+        <Permission Status="6883561" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="48ff1483bf25459b8beffd1cebc8f4a5"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="63d1f00cf45de2ac2404930204fc2748"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="76084cd093c3bb7dfefd6aed1e36744f"
+                    name="Отменить-15000113->Отменен" wfm_id="15000113" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="6" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="c0071b7dfa052287ffa57ebe06c1761a"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="6655aea9060744c8d256763244e9f5db"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="303990" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="d5025a2483be2346d4039376f709cf5f"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="ba6e429197013060d278782e3bfdd147"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Permission Status="6883562" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="7d9e0ee8c2535a863a5aee75a19aaea2"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="6a5304f7ad6e8c3ea26c7109535bfe2b"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="7d6787aab61a9eb02a8e507254a596a0"
+                    name="Отменить-15000114->Отменен" wfm_id="15000114" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="6883560" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="d8ea1a257c4f94bba6d986852aef7a26"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="5e4a99436c721f1a3fcd027022fcb603"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="d5465b0dbb62e2db4cb4fdb57e2bb85b"
+                    name="Дубликат-15000110->Дубликат" wfm_id="15000110" Action="remove"/>
+                <WfMove permHash="d69d452f882637843e3e550fda54fddb"
+                    name="Зарезервировать-6883564->Зарезервирован"
+                    wfm_id="6883564" Action="remove"/>
+                <WfMove permHash="b14434a8f76531d3b0202b7d5098356b"
+                    name="Отказать в резервировании-6883565->Не зарезервирован"
+                    wfm_id="6883565" Action="remove"/>
+                <WfMove permHash="5567261cce4ff789ad177c3894a1d3d2"
+                    name="Отменить-15000112->Отменен" wfm_id="15000112" Action="remove"/>
+                <WfMove permHash="b180f97a9d1f60d3270db61f8cf0e6ba"
+                    name="Удалить в корзину-15000111->Корзина"
+                    wfm_id="15000111" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Permission Status="34145" Rule="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR">
+            <Operations>
+                <Operation permHash="9493f70343af2c9bf1fa166013fac601"
+                    OperationType="read" Action="remove"/>
+                <Operation permHash="3434904740a8de88116060c22d1e21e3"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves/>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Д_Автор" ruleHash="8c8dc43d91634483b92b2dafb4996d19">
+                <RulePerson name="Д_Автор" personAttributeCode="AUTHOR" ruleHash="8c8dc43d91634483b92b2dafb4996d19"/>
+            </Rule>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Верификатор запросов на резервирование" ruleHash="66a86b6b1f4e53f22db67fee0135f656">
+                <RuleRole name="Верификатор запросов на резервирование"
+                    ruleHash="66a86b6b1f4e53f22db67fee0135f656" roleCode="JBR_RESERVE_VERIFY"/>
+            </Rule>
+            <Rule name="Система" ruleHash="f359fa72d40c9ff86129e933f2d84c75">
+                <RuleRole name="Система"
+                    ruleHash="f359fa72d40c9ff86129e933f2d84c75" roleCode="_SYSTEM_"/>
+            </Rule>
+            <Rule name="Создатель запросов на резервирование" ruleHash="67379ddfe1a5b784bb04689deaa8553f">
+                <RuleRole name="Создатель запросов на резервирование"
+                    ruleHash="67379ddfe1a5b784bb04689deaa8553f" roleCode="JBR_RESERVE_CREATE"/>
+            </Rule>
+            <Rule
+                name="Пр_Зона ДОУ/Верификатор_SYSTEM_JBR_RESERVE_VERIFY" ruleHash="66599c9b8f4ab5ca4b44c21c47a65702">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Верификатор_SYSTEM_JBR_RESERVE_VERIFY"
+                    ruleHash="66599c9b8f4ab5ca4b44c21c47a65702"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_RESERVE_VERIFY"/>
+            </Rule>
+            <Rule name="Пр_Зона ДОУ/Регистратор_SYSTEM_JBR" ruleHash="dfff687b0664244bef955dfbbb4d3b06">
+                <RuleProfile name="Пр_Зона ДОУ/Регистратор_SYSTEM_JBR"
+                    ruleHash="dfff687b0664244bef955dfbbb4d3b06"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR"/>
+            </Rule>
+            <Rule name="Пр_Зона ДОУ/Ст.регистратор_SYSTEM_JBR_CHR" ruleHash="c7042fd0e624794717c82282d772538a">
+                <RuleProfile
+                    name="Пр_Зона ДОУ/Ст.регистратор_SYSTEM_JBR_CHR"
+                    ruleHash="c7042fd0e624794717c82282d772538a"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW" roleCode="JBR_CHR"/>
+            </Rule>
+            <Rule name="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR" ruleHash="363658d609789d50058abf4d190d03b4">
+                <RuleProfile name="Пр1_Зона ДОУ/Регистратор_SYSTEM_JBR"
+                    ruleHash="363658d609789d50058abf4d190d03b4"
+                    profileAttributeCode="JBR_ZONE_DOW"
+                    targetAttributeCode="JBR_ZONE_DOW"
+                    linkAttributeCode="ADMIN_6883558" roleCode="JBR"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Дубликат" status_id="6"/>
+        <Status name="Зарезервирован" status_id="6883561"/>
+        <Status name="Корзина" status_id="303990"/>
+        <Status name="Не зарезервирован" status_id="6883562"/>
+        <Status name="Опубликован" status_id="6883560"/>
+        <Status name="Отменен" status_id="34145"/>
+        <WFMoveType name="Дубликат-15000110" wfm_id="15000110"
+            wfm_from="Опубликован" wfm_to="Дубликат"
+            wfm_from_status="6883560" wfm_to_status="6"/>
+        <WFMoveType name="Зарезервировать-6883564" wfm_id="6883564"
+            wfm_from="Опубликован" wfm_to="Зарезервирован"
+            wfm_from_status="6883560" wfm_to_status="6883561"/>
+        <WFMoveType name="Отказать в резервировании-6883565"
+            wfm_id="6883565" wfm_from="Опубликован"
+            wfm_to="Не зарезервирован" wfm_from_status="6883560" wfm_to_status="6883562"/>
+        <WFMoveType name="Отменить-15000114" wfm_id="15000114"
+            wfm_from="Не зарезервирован" wfm_to="Отменен"
+            wfm_from_status="6883562" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000112" wfm_id="15000112"
+            wfm_from="Опубликован" wfm_to="Отменен"
+            wfm_from_status="6883560" wfm_to_status="34145"/>
+        <WFMoveType name="Отменить-15000113" wfm_id="15000113"
+            wfm_from="Зарезервирован" wfm_to="Отменен"
+            wfm_from_status="6883561" wfm_to_status="34145"/>
+        <WFMoveType name="Удалить в корзину-15000111" wfm_id="15000111"
+            wfm_from="Опубликован" wfm_to="Корзина"
+            wfm_from_status="6883560" wfm_to_status="303990"/>
+    </Template>
+</AccessConfig>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!--
+				Отчет по исполнению контрольных поручений
+				за период c 00.00.0000 по 00.00.0000
+_____________________________________________________________________
+№ п/п |Исполнитель |Исполнение |Срок       |Дата фактич. |Предмет   |
+      |            |поручения  |исполнения |выполнения   |поручения	|	
+______|____________|___________|___________|_____________|__________|
+ -->
+<universal-portlet>
+     <query>
+         <sql>
+select 
+      --row_number() over() as rn,
+      av_nexctr.string_value as exctr,
+      av_rt.string_value as reptext,
+      av_tr.DATE_VALUE term,
+      case when cr.status_id = 206 then cv_fin.VERSION_DATE when cr.status_id = 207 then cv_lbo.VERSION_DATE end as date_impl, 
+      av_it.STRING_VALUE item
+from  Attribute_Value av_cr, Attribute_Value av_cn, Card cr
+-- Исполнитель
+ left outer join
+--(2010/05/12) OLD: Attribute_Value av_exctr on (av_exctr.attribute_code = 'JBR_INFD_EXECUTOR' and av_exctr.card_id = cr.card_id)
+      Attribute_Value av_exctr on (av_exctr.attribute_code = 'JBR_INFD_EXEC_LINK' and av_exctr.card_id = cr.card_id)
+ left outer join
+--(2010/05/12) OLD: Person pr_exctr on (pr_exctr.person_id = av_exctr.number_value)
+	Person pr_exctr on (pr_exctr.card_id = av_exctr.number_value)
+ left outer join
+      Card cr_exctr on (cr_exctr.card_id = pr_exctr.card_id)
+ left outer join
+      Attribute_Value av_nexctr on (av_nexctr.attribute_code = 'NAME' and av_nexctr.card_id = cr_exctr.card_id)
+-- Исполнение поручения
+ left outer join
+      Attribute_Value av_rp on (av_rp.attribute_code = 'JBR_RIMP_REPORT' and av_rp.card_id = cr.card_id)
+ left outer join
+      Card cr_fr on (cr_fr.card_id = av_rp.number_value and cr_fr.template_id = 424 and cr_fr.status_id = 211)
+ left outer join
+     Attribute_Value av_rt on (av_rt.attribute_code = 'JBR_RIMP_REPTEXT' and av_rt.card_id = cr_fr.card_id)
+--
+ left outer join
+     ATTRIBUTE_VALUE av_tr on (av_tr.ATTRIBUTE_CODE = 'JBR_TCON_TERM' and av_tr.CARD_ID = cr.CARD_ID)
+ left outer join
+     CARD_VERSION cv_fin on (cv_fin.card_id = cr.card_id)
+ left outer join
+     CARD_VERSION cv_lbo on (cv_lbo.card_id = cr.card_id and cv_lbo.version_id != cv_fin.version_id)
+ left outer join
+     ATTRIBUTE_VALUE av_it on (av_it.ATTRIBUTE_CODE = 'JBR_INFD_ITEM' and av_it.CARD_ID = cr.CARD_ID)
+where cr.template_id = 324 and cr.status_id != 1 and
+      (av_cn.attribute_code = 'JBR_TCON_ONCONT' and av_cn.value_id = 1449) and
+      (av_cr.ATTRIBUTE_CODE = 'CREATED' and av_cr.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC') and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')) and
+      (av_cn.card_id = cr.card_id and av_cr.card_id = cr.card_id) and
+      -- выводим единственного исполнителя
+      ((av_exctr.attr_value_id is NULL) or
+        (av_exctr.attr_value_id = (select MAX(attr_value_id) 
+                from Attribute_Value 
+-- (2010/05/12) OLD: where attribute_code = 'JBR_INFD_EXECUTOR' and card_id = cr.card_id))) and
+                where attribute_code = 'JBR_INFD_EXEC_LINK' and card_id = cr.card_id))) and
+      --            
+       ((av_rp.ATTR_VALUE_ID is NULL) or 
+      (((select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211) is NOT NULL) and
+       (av_rp.ATTR_VALUE_ID = (select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211))) or
+      (((select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211) is NULL) and
+       (av_rp.ATTR_VALUE_ID = (select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID))))
+       and
+       ((cv_fin.VERSION_ID is NULL) or
+      (cv_fin.VERSION_DATE = (select MAX(VERSION_DATE)
+                  from CARD_VERSION
+                  where card_id = cr.card_id)))
+       and
+       ((cv_lbo.VERSION_ID is NULL) or
+      (cv_lbo.VERSION_DATE = (select MAX(VERSION_DATE)
+                  from CARD_VERSION
+                  where card_id = cr.card_id and version_id != cv_fin.version_id)))            
+         </sql>
+         <parameters>
+             <param name="dateSt" dispaly-name="With:" type="calendar" />
+             <param name="dateFh" dispaly-name="To:" type="calendar" />
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+select 
+      --row_number() over() as rn,
+      av_nexctr.string_value as exctr,
+      av_rt.string_value as reptext,
+      av_tr.DATE_VALUE term,
+      case when cr.status_id = 206 then cv_fin.VERSION_DATE when cr.status_id = 207 then cv_lbo.VERSION_DATE end as date_impl, 
+      av_it.STRING_VALUE item
+from  Attribute_Value av_cr, Attribute_Value av_cn, Card cr
+-- Исполнитель
+ left outer join
+-- (2010/05/12) OLD:  Attribute_Value av_exctr on (av_exctr.attribute_code = 'JBR_INFD_EXECUTOR' and av_exctr.card_id = cr.card_id)
+      Attribute_Value av_exctr on (av_exctr.attribute_code = 'JBR_INFD_EXEC_LINK' and av_exctr.card_id = cr.card_id)
+ left outer join
+-- (2010/05/12) OLD:  Person pr_exctr on (pr_exctr.person_id = av_exctr.number_value)
+      Person pr_exctr on (pr_exctr.card_id = av_exctr.number_value)
+ left outer join
+      Card cr_exctr on (cr_exctr.card_id = pr_exctr.card_id)
+ left outer join
+      Attribute_Value av_nexctr on (av_nexctr.attribute_code = 'NAME' and av_nexctr.card_id = cr_exctr.card_id)
+-- Исполнение поручения
+ left outer join
+      Attribute_Value av_rp on (av_rp.attribute_code = 'JBR_RIMP_REPORT' and av_rp.card_id = cr.card_id)
+ left outer join
+      Card cr_fr on (cr_fr.card_id = av_rp.number_value and cr_fr.template_id = 424 and cr_fr.status_id = 211)
+ left outer join
+     Attribute_Value av_rt on (av_rt.attribute_code = 'JBR_RIMP_REPTEXT' and av_rt.card_id = cr_fr.card_id)
+--
+ left outer join
+     ATTRIBUTE_VALUE av_tr on (av_tr.ATTRIBUTE_CODE = 'JBR_TCON_TERM' and av_tr.CARD_ID = cr.CARD_ID)
+ left outer join
+     CARD_VERSION cv_fin on (cv_fin.card_id = cr.card_id)
+ left outer join
+     CARD_VERSION cv_lbo on (cv_lbo.card_id = cr.card_id and cv_lbo.version_id != cv_fin.version_id)
+ left outer join
+     ATTRIBUTE_VALUE av_it on (av_it.ATTRIBUTE_CODE = 'JBR_INFD_ITEM' and av_it.CARD_ID = cr.CARD_ID)
+where cr.template_id = 324 and cr.status_id != 1 and
+      (av_cn.attribute_code = 'JBR_TCON_ONCONT' and av_cn.value_id = 1449) and
+      (av_cr.ATTRIBUTE_CODE = 'CREATED' and av_cr.date_value BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC') and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')) and
+      (av_cn.card_id = cr.card_id and av_cr.card_id = cr.card_id) and
+      -- выводим единственного исполнителя
+      ((av_exctr.attr_value_id is NULL) or
+        (av_exctr.attr_value_id = (select MAX(attr_value_id) 
+                from Attribute_Value 
+-- (2010/05/12) OLD: where attribute_code = 'JBR_INFD_EXECUTOR' and card_id = cr.card_id))) and
+                where attribute_code = 'JBR_INFD_EXEC_LINK' and card_id = cr.card_id))) and
+      --            
+       ((av_rp.ATTR_VALUE_ID is NULL) or 
+      (((select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211) is NOT NULL) and
+       (av_rp.ATTR_VALUE_ID = (select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211))) or
+      (((select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1, CARD cr_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID and
+                     cr_t1.CARD_ID = av_t1.NUMBER_VALUE and cr_t1.STATUS_ID = 211) is NULL) and
+       (av_rp.ATTR_VALUE_ID = (select MAX(av_t1.ATTR_VALUE_ID)
+                 from ATTRIBUTE_VALUE av_t1
+                 where av_t1.ATTRIBUTE_CODE = 'JBR_RIMP_REPORT' and av_t1.CARD_ID = av_rp.CARD_ID))))
+       and
+       ((cv_fin.VERSION_ID is NULL) or
+      (cv_fin.VERSION_DATE = (select MAX(VERSION_DATE)
+                  from CARD_VERSION
+                  where card_id = cr.card_id)))
+       and
+       ((cv_lbo.VERSION_ID is NULL) or
+      (cv_lbo.VERSION_DATE = (select MAX(VERSION_DATE)
+                  from CARD_VERSION
+                  where card_id = cr.card_id and version_id != cv_fin.version_id)))           
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="С:" type="calendar" />
+             <param name="dateEnd" dispaly-name="По:" type="calendar" />
+         </parameters>
+     </query>
+     <table title="List" pagesize="20">
+     	 <!--column-description name="RN" display-name="№ p/p" is-sortable="true"/-->
+	     <column-description name="EXCTR" display-name="Executor" is-sortable="true"/>
+	     <column-description name="REPTEXT" display-name="Execution order" is-sortable="true"/>
+	     <column-description name="TERM" display-name="Term" is-sortable="true"/>
+	     <column-description name="DATE_IMPL" display-name="Date implemention" is-sortable="true"/>
+	     <column-description name="ITEM" display-name="Item" is-sortable="true"/>
+     </table>
+     <table lang="ru" title="Реестр" pagesize="20">
+     	 <!--column-description name="RN" display-name="№ п/п" is-sortable="true"/-->
+	     <column-description name="EXCTR" display-name="Исполнитель" is-sortable="true"/>
+	     <column-description name="REPTEXT" display-name="Исполнение поручения" is-sortable="true"/>	     
+	     <column-description name="TERM" display-name="Срок" is-sortable="true"/>
+	     <column-description name="DATE_IMPL" display-name="Дата фактич. выполнения" is-sortable="true"/>
+	     <column-description name="ITEM" display-name="Предмет поручения" is-sortable="true"/>
+     </table>
+</universal-portlet>

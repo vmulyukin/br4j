@@ -1,0 +1,11 @@
+#Wed Sep 14 18:27:28 EEST 2011
+org.aplana.br4j.dynamicaccess.xmldef.config.ParameterGroup=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.ParameterGroupDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.AttributeListItem=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.AttributeListItemDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.ParameterGroupItem=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.ParameterGroupItemDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.SimpleParameter=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.SimpleParameterDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.Attribute=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.AttributeDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.AccessRulesConfig=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.AccessRulesConfigDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.Param=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.ParamDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.AttributeList=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.AttributeListDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.AccessRulesConfigItem=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.AccessRulesConfigItemDescriptor
+org.aplana.br4j.dynamicaccess.xmldef.config.Parameter=org.aplana.br4j.dynamicaccess.xmldef.config.descriptors.ParameterDescriptor

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execControlDocs_executorsPages" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="term_from" class="java.util.Date"/>
+	<parameter name="term_to" class="java.util.Date"/>
+	<parameter name="templates" class="java.lang.String"/>
+	<parameter name="templates_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="jregs" class="java.lang.String"/>
+	<parameter name="jregs_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="executorDoc" class="java.lang.String"/>
+	<parameter name="executorDoc_ISNULL" class="java.lang.Boolean"/>
+	<parameter name="drep" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\EclipseJ2ee\\pr-indigo-asyncation-branches\\br4j\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[-- Список исполнителей у которых есть не исполненные документы
+-- sql запрос для подотчета execControlDocs_executorsPages
+-- Список карточек "Федеральные органы исполнительной власти" которые являются исполнителями
+with executors (card_id, name, f_manager) as (
+	select  cr.card_id,
+		av_name.string_value,
+		(case when av_region.value_id = 1 then 1 else 0 end) as f_manager
+	from card cr
+	left join attribute_value av_region on av_region.card_id = cr.card_id
+		and av_region.attribute_code = 'REGION'
+	left join attribute_value av_name on av_name.card_id = cr.card_id
+		and av_name.attribute_code = 'NAME'
+	where cr.template_id = 684 and cr.status_id = 4
+        and ($P{executorDoc_ISNULL} or cr.card_id in ($P!{executorDoc})) -- фильтрация по исполнителям
+	order by f_manager desc, av_name.string_value
+)
+-- выводим только тех у кого есть не исполненные документы
+-- проверяем на существование не исполненных документов
+select execs.card_id as executor_id
+from executors execs
+where exists (
+	select 1
+	from card cr
+	inner join attribute_value av_oncont on av_oncont.card_id = cr.card_id
+		and av_oncont.attribute_code = 'JBR_IMPL_ONCONT'
+	inner join attribute_value av_executor on av_executor.card_id = cr.card_id
+		and av_executor.attribute_code = 'JBR_IMPL_FOIV'
+	-- Срок исполнения или предоставления ответа
+	inner join attribute_value av_term on av_term.card_id = cr.card_id
+		and av_term.attribute_code = 'JBR_IMPL_DEADLINE'
+	-- Журнал регистрации
+	inner join attribute_value av_jreg on av_jreg.card_id = cr.card_id
+		and av_jreg.attribute_code = 'JBR_REGD_REGJOURN'
+	-- Дата снятия с контроля
+	left join attribute_value av_dend on av_dend.card_id = cr.card_id
+		and av_dend.attribute_code = 'ADMIN_220912'
+	where
+        not cr.status_id in (302, 1, 303990, 106, 6092498)
+        and av_oncont.value_id = 1432
+		and av_executor.number_value = execs.card_id
+		-- Срок исполнения в указанном диапозоне
+		and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) >= $P{term_from}
+        and date_trunc('day', (av_term.date_value + interval '$P!{tz_hour} hour')) < (cast($P{term_to} as date) + interval '1 day')
+		-- Группа документов
+		and ($P{templates_ISNULL} or cr.template_id in ($P!{templates}))
+		-- Журнал регистрации
+		and ($P{jregs_ISNULL} or av_jreg.number_value in ($P!{jregs}))
+		-- Дата снятия с контроля
+		and av_dend.date_value is null
+	)]]>
+	</queryString>
+	<field name="executor_id" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="2" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="1" width="802" height="1"/>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executor_id">
+					<subreportParameterExpression><![CDATA[$F{executor_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_executorsPages_info.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="0" width="802" height="1"/>
+			</break>
+		</band>
+	</detail>
+</jasperReport>

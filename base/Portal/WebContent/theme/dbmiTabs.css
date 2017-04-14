@@ -1,0 +1,104 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+	div.tabmenu {
+	  background-color: #F0F0F0;
+	  background-position: 0 0;
+	  background-repeat: no-repeat;
+	  height: 34px;
+	}
+
+	div.tabmenu ul {
+	  list-style-type: none;
+	  list-style-position: outside;
+	  font-size:  14px;
+	  padding: 0 0 0 0;
+	  margin: 0 0 0 0;
+	  height: 34px;
+	}
+
+	div.tabmenu li a  {
+	  width: 100%;
+	  display: block;
+	  padding-left: 10px;
+	  padding-right: 10px;
+	  padding-top: 8px;
+	  padding-bottom: 10px;
+	  height: 16px;
+	}
+
+	div.tabmenu  li a:visited,  div.tabmenu  li a:link , div.tabmenu li.selectTab a:hover {
+	  text-decoration: none;
+	}
+
+	div.tabmenu  li.tab a:hover {
+	  text-decoration: underline;
+	}
+
+	div.tabmenu li {
+	  text-align: center;
+	  vertical-align: middle;
+	  float: left;
+	  display: list-item;
+	  height: 34px;
+	}
+
+	div.tabmenu li.selectTab {
+	  font-weight: bold;
+	  background-color: #FFFFFF;
+	  background-image: url("./images/tabs/tab_left.gif");
+	  background-position: 0 0;
+	  background-repeat: no-repeat;
+	}
+
+	div.tabmenu li.selectTab a{
+	  font-weight: bold;
+	  background-color: tansparent;
+	  background-image: url("./images/tabs/tab_right.gif");
+	  background-position: right top;
+	  background-repeat: no-repeat;
+	  background-attachment: scroll;
+	}
+
+	tr.cardContent td.cont{
+	  border-top: none;
+	  border-bottom-width: 2px;
+	  border-bottom-style: solid;
+	  border-right-width: 2px;
+	  border-right-style: solid;
+	  border-left-width: 2px;
+	  border-left-style: solid;
+	  border-color: #F0F0F0;
+	  border-collapse: collapse;
+	}
+	
+	tr.cardContent td.cont{
+	  padding: 5px;
+	  padding-top: 10px;
+	}
+
+	td.tabsContent{
+	  border-right-width: 2px;
+	  border-right-style: solid;
+	  border-left-width: 2px;
+	  border-left-style: solid;
+	  border-top-width: 4px;
+	  border-top-style: solid;
+	  border-color: #F0F0F0;
+	  border-collapse: collapse;
+	}
+	
+	

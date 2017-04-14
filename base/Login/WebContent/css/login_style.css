@@ -1,0 +1,71 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+    table
+    {
+        border-collapse: collapse;
+        width:100%;
+        height:100%;
+        table-layout:fixed;        
+    }    
+
+    td, th
+    {
+        margin: 0;
+        padding: 0;
+    }
+
+	.test
+	{    
+    	width:225px;
+    	text-align:right;
+    	padding:0 35 0 0;
+    }
+    
+    .rect
+    { 
+        width:600px;
+        height:450px;   
+/*
+        border:4px;
+        border-color:red;
+        border-style:solid;
+*/        
+        z-index:-1;
+/*        background-color: darkred; */
+/*        background-image: url('../images/pic2.jpg'); */  
+/*        background-position :        right bottom; */
+/*        background-attachment: scroll;*/
+        display:block;
+    }
+    
+    table#loginheader {
+        font-size: 17px;
+    }
+    
+    table#loginheader td#loginlogo {
+        text-align:left;
+        vertical-align:top;
+        width: 160px;
+    }
+    
+    table#loginheader td#logintitle {
+        text-align:right;
+        vertical-align:top;
+        padding:10 0 0 0;
+        font-size: 17px;
+    }
+    

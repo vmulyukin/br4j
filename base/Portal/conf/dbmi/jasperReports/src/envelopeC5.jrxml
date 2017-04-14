@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="envelopeC5" pageWidth="649" pageHeight="459" orientation="Landscape" columnWidth="609" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" isDefault="false" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" isDefault="false" style="dejavu_bold"/>
+	<style name="table" isDefault="false" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1" isDefault="false">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" isDefault="false" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" isDefault="false" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" isDefault="false" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<parameter name="card_id" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\malinina\\My Documents\\project\\JBossReferent\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+av_org_name.string_value as org_from,
+av_org_city.string_value as address_city,
+av_org_adr.string_value as address_address,
+av_org_index.string_value as address_index,
+av_org_descr.string_value as address_descr,
+av_doc_num.string_value as doc_reg_num,
+av_send_method.value_id as send_method
+
+from
+	card c
+
+left outer join -- Элемент рассылки
+	attribute_value av_rec_info on (av_rec_info.card_id = c.card_id and av_rec_info.attribute_code = 'ADMIN_222015')
+left outer join
+	card cr_org on (cr_org.card_id = av_rec_info.number_value)
+left outer join -- Информация об организации
+	attribute_value av_org_info on ( av_org_info.card_id = cr_org.card_id and av_org_info.attribute_code = 'JBR_PERS_ORG' )
+left outer join -- Информация об организации. Наименование
+	attribute_value av_org_name on (av_org_name.card_id = av_org_info.number_value and av_org_name.attribute_code = 'JBR_DORG_FULLNAME')
+left outer join -- Информация об организации. Адрес-город
+	attribute_value av_city on (av_city.card_id = av_org_info.number_value and av_city.attribute_code = 'ADMIN_894334')
+left outer join -- Информация об организации. Адрес-город
+	attribute_value av_org_city on (av_org_city.card_id = av_city.number_value and av_org_city.attribute_code = 'NAME')
+left outer join -- Информация об организации. Адрес-адрес
+	attribute_value av_org_adr on (av_org_adr.card_id = av_org_info.number_value and
+av_org_adr.attribute_code = 'ADMIN_232429')
+left outer join -- Информация об организации. Адрес-индекс
+	attribute_value av_org_index on (av_org_index.card_id = av_org_info.number_value and av_org_index.attribute_code = 'ADMIN_894336')
+left outer join -- Информация об организации. Адрес-описание
+	attribute_value av_org_descr on (av_org_descr.card_id = av_org_info.number_value and av_org_descr.attribute_code = 'DESCR')
+left outer join -- документ-основание
+	attribute_value av_doc_info on (av_doc_info.number_value = c.card_id and av_doc_info.attribute_code = 'ADMIN_222990')
+left outer join -- документ-основание. номер
+	attribute_value av_doc_num on (av_doc_num.card_id = av_doc_info.card_id and av_doc_num.attribute_code = 'JBR_REGD_REGNUM')
+left outer join -- Метод отправки
+	attribute_value av_send_method on (av_send_method.card_id = c.card_id and av_send_method.attribute_code = 'ADMIN_222147')
+where c.card_id  in ($P!{card_id}) and cr_org.template_id = '464'
+union
+select
+av_org_name.string_value as org_from,
+av_org_city.string_value as address_city,
+av_org_adr.string_value as address_address,
+av_org_index.string_value as address_index,
+av_org_descr.string_value as address_descr,
+av_doc_num.string_value as doc_reg_num,
+av_send_method.value_id as send_method
+
+from
+	card c
+
+left outer join -- Элемент рассылки
+	attribute_value av_rec_info on (av_rec_info.card_id = c.card_id and av_rec_info.attribute_code = 'ADMIN_222015')
+left outer join
+	card cr_org on (cr_org.card_id = av_rec_info.number_value)
+left outer join -- Информация об организации. Наименование
+	attribute_value av_org_name on (av_org_name.card_id = cr_org.card_id and av_org_name.attribute_code = 'JBR_DORG_FULLNAME')
+left outer join -- Информация об организации. Адрес-город
+	attribute_value av_city on (av_city.card_id = av_rec_info.number_value and av_city.attribute_code = 'ADMIN_894334')
+left outer join -- Информация об организации. Адрес-город
+	attribute_value av_org_city on (av_org_city.card_id = av_city.number_value and av_org_city.attribute_code = 'NAME')
+left outer join -- Информация об организации. Адрес-адрес
+	attribute_value av_org_adr on (av_org_adr.card_id = av_rec_info.number_value and
+av_org_adr.attribute_code = 'ADMIN_232429')
+left outer join -- Информация об организации. Адрес-индекс
+	attribute_value av_org_index on (av_org_index.card_id = av_rec_info.number_value and av_org_index.attribute_code = 'ADMIN_894336')
+left outer join -- Информация об организации. Адрес-описание
+	attribute_value av_org_descr on (av_org_descr.card_id = av_rec_info.number_value and av_org_descr.attribute_code = 'DESCR')
+left outer join -- документ-основание
+	attribute_value av_doc_info on (av_doc_info.number_value = c.card_id and av_doc_info.attribute_code = 'ADMIN_222990')
+left outer join -- документ-основание. номер
+	attribute_value av_doc_num on (av_doc_num.card_id = av_doc_info.card_id and av_doc_num.attribute_code = 'JBR_REGD_REGNUM')
+left outer join -- Метод отправки
+	attribute_value av_send_method on (av_send_method.card_id = c.card_id and av_send_method.attribute_code = 'ADMIN_222147')
+where c.card_id in ($P!{card_id}) and cr_org.template_id = '222']]>
+	</queryString>
+	<field name="org_from" class="java.lang.String"/>
+	<field name="address_city" class="java.lang.String"/>
+	<field name="address_index" class="java.lang.String"/>
+	<field name="address_address" class="java.lang.String"/>
+	<field name="address_descr" class="java.lang.String"/>
+	<field name="doc_reg_num" class="java.lang.String"/>
+	<field name="send_method" class="java.lang.String"/>
+	<detail>
+		<band height="37" splitType="Stretch">
+			<subreport>
+				<reportElement isPrintRepeatedValues="false" x="0" y="18" width="609" height="19">
+					<printWhenExpression><![CDATA[$F{send_method}.equals("1583") ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="address_address">
+					<subreportParameterExpression><![CDATA[$F{address_address}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="org_from">
+					<subreportParameterExpression><![CDATA[$F{org_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doc_reg_num">
+					<subreportParameterExpression><![CDATA[$F{doc_reg_num}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="send_method">
+					<subreportParameterExpression><![CDATA[$F{send_method}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="address_index">
+					<subreportParameterExpression><![CDATA[$F{address_index}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="address_city">
+					<subreportParameterExpression><![CDATA[$F{address_city}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{path} + "envelopeC5_subreport_post.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="609" height="18">
+					<printWhenExpression><![CDATA[$F{send_method}.equals("2124") ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="org_from">
+					<subreportParameterExpression><![CDATA[$F{org_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doc_reg_num">
+					<subreportParameterExpression><![CDATA[$F{doc_reg_num}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="address_city">
+					<subreportParameterExpression><![CDATA[$F{address_city}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{path} + "envelopeC5_subreport_flink.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

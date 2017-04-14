@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+    <name lang="ru">Архив: входящие</name>
+    <name lang="en">Archive: incoming</name>
+    
+	<status>delo</status>
+	<!-- 224	Входящий -->
+	<template>jbr.incoming</template>
+
+	<!-- Дата перемещения в оперативный архив -->
+    <column id="jbr.doc.arch.date" width="30" sort="asc" link="true"/>
+    <!-- Регистрационный номер -->
+    <column id="regnumber" width="20" sortAttrId="regnumberdigital"/>
+    <!-- Год регистрации -->
+    <column id="regdate" width="20"/>
+    <!-- Индекс дела -->
+    <column id="index" width="60" labelAttrId="NAME" nullValueRu="Номенклатура не определена" nullValueEn="nomenclature is not defined" columnTitleRu="Индекс номенклатуры" columnTitleEn="Nomenclature index"/>
+    <!-- Краткое содержание -->
+    <column id="jbr.document.title" width="120" link="true" columnTitleRu="Краткое содержание"/>
+    <!-- Вид документа  -->
+    <column id="jbr.reg.doctype" width="30" labelAttrId="NAME" isParentName="true"/>"/>
+</search>

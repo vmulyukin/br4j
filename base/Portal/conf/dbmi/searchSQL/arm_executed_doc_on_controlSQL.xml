@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+	<query>
+		<sql>
+			<![CDATA[
+				SELECT c.card_id
+				FROM card c 
+				JOIN attribute_value av_inspector ON (av_inspector.card_id = c.card_id AND av_inspector.attribute_code = 'JBR_IMPL_INSPECTOR' AND av_inspector.number_value = %CURRENTUSERS%)
+				LEFT JOIN attribute_value av_deadline ON (av_deadline.card_id = c.card_id AND av_deadline.attribute_code = 'JBR_IMPL_DEADLINE')
+				LEFT JOIN attribute_value av_digit_regnum ON (av_digit_regnum.card_id = c.card_id AND av_digit_regnum.attribute_code = 'JBR_REGD_REGNUM_D')
+				WHERE c.template_id in (224, 864, 784, 764, 1226) AND c.status_id = 206
+				ORDER BY date_trunc('day', av_deadline.date_value), av_digit_regnum.number_value
+			]]>
+		</sql>
+	</query>
+</searchQuery>

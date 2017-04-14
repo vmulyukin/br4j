@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<description package="com.aplana.medo.types">
+	<config forClass="ImportedDocument" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.ImportedDocument</template>
+		<field name="uid">
+			<valueSources>
+				<attribute type="string">jbr.importedDoc.UID</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="XMLPacket" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<field name="typePacket">
+			<valueSources>
+				<attribute type="link">jbr.reg.doctype</attribute>
+			</valueSources>
+			<type name="DocType"/>
+			<converter class="com.aplana.medo.types.converters.DMSIObjectTypePacketEnumConverter">
+				<parameter name="REQUEST">jbr.medo_og.informationRequestDocType</parameter>
+				<parameter name="REPLY">jbr.medo_og.informationResponseDocType</parameter>
+			</converter>
+		</field>
+		<field name="typeInfo">
+			<valueSources>
+				<attribute type="list">jbr.medo_og.reqType</attribute>
+			</valueSources>
+			<converter class="com.aplana.medo.types.converters.TypeInfoEnumListConverter">
+				<parameter name="FULL">jbr.medo_og.reqType.full</parameter>
+				<parameter name="SHORT">jbr.medo_og.reqType.short</parameter>
+			</converter>
+		</field>
+		<field name="requestID">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.reqId</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="IncomeXMLPacket" extendsConfigOf="XMLPacket">
+		<template>jbr.incoming</template>
+		<field name="deliveryMethod">
+			<valueSources>
+				<attribute type="list">jbr.deliveryItem.method</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DeliveryMethodEnumListConverter">
+				<parameter name="MEDO">modeDeliveryMEDO</parameter>
+			</converter>
+		</field>
+		<field name="importedDocument">
+			<valueSources>
+				<attribute type="link">jbr.original.source</attribute>
+			</valueSources>
+		</field>
+		<field name="date">
+			<valueSources>
+				<attribute type="date">jbr.incoming.outdate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="outNumber">
+			<valueSources>				
+				<attribute type="string">jbr.incoming.outnumber</attribute> <!-- JBR_REGD_NUMOUT -->
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.StringConverter"/>
+		</field>
+	</config>
+	<config forClass="IncomeRequestXMLPacket" extendsConfigOf="IncomeXMLPacket"> 
+		<field name="author" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.reqObject</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="IncomeResponseXMLPacket" extendsConfigOf="IncomeXMLPacket">
+		<field name="info" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.respData</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="OutcomeXMLPacket" extendsConfigOf="XMLPacket">
+		<field name="date">
+			<valueSources>
+				<attribute type="date">regdate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="author">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.reqObject</attribute>
+			</valueSources>
+			<type name="RequestObject"/>
+		</field>
+	</config>
+	<config forClass="OutcomeRequestXMLPacket" extendsConfigOf="OutcomeXMLPacket">
+		<template>jbr.outcoming</template>
+		<field name="author">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.initReqObject</attribute>
+			</valueSources>
+			<type name="ReqAuthor"/>
+		</field>		
+	</config>
+	<config forClass="OutcomeFullResponseXMLPacket" extendsConfigOf="OutcomeXMLPacket">
+		<template>jbr.outcoming</template>
+		<field name="infos">
+			<valueSources>
+				<attribute type="typedLink">jbr.relatdocs.request</attribute>
+			</valueSources>
+			<type name="FullInfo"/>
+			<filter class="com.aplana.medo.types.filters.ByLinkTypeFilter">
+				<parameter name="restricted">jbr.medo_og.responseLinkType</parameter>
+			</filter>
+		</field>
+	</config>
+	<config forClass="OutcomeShortResponseXMLPacket" extendsConfigOf="OutcomeXMLPacket">
+		<template>jbr.outcoming</template>
+		<field name="infos">
+			<valueSources>
+				<attribute type="typedLink">jbr.relatdocs.request</attribute>
+			</valueSources>
+			<type name="ShortInfo"/>
+			<filter class="com.aplana.medo.types.filters.ByLinkTypeFilter">
+				<parameter name="restricted">jbr.medo_og.responseLinkType</parameter>
+			</filter>
+		</field>
+	</config>
+	<config forClass="OutcomeShortInfo">
+		<field name="regNum">
+			<valueSources>
+				<attribute type="string">regnumber</attribute>
+			</valueSources>
+		</field>
+		<field name="regDate">
+			<valueSources>
+				<attribute type="date">regdate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+	</config>
+	<config forClass="OutcomeShortInfoFromIncome" extendsConfigOf="OutcomeShortInfo">
+		<template>jbr.incoming</template>		
+	</config>
+	<config forClass="OutcomeShortInfoFromOutcome" extendsConfigOf="OutcomeShortInfo">
+		<template>jbr.outcoming</template>		
+	</config>
+	<config forClass="OutcomeShortInfoFromOG" extendsConfigOf="OutcomeShortInfo">
+		<template>jbr.incomingpeople</template>		
+	</config>
+	<config forClass="OutcomeFullInfo" extendsConfigOf="OutcomeShortInfo">
+		<field name="image">
+			<valueSources>
+				<config forClass="Image">
+					<field name="xmlImage">
+						<valueSources>
+							<attribute type="link">jbr.files</attribute>
+						</valueSources>
+						<type name="XMLImage"/>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<field name="notify">
+			<valueSources>
+				<attribute type="backLink">jbr.doclinks.references</attribute>
+			</valueSources>
+			<filter class="com.aplana.medo.types.filters.ByLinkTypeFilter">
+				<parameter name="allowed">1502</parameter>
+			</filter>
+			<type name="Notify"/>
+		</field>
+	</config>
+	<config forClass="OutcomeFullInfoFromIncome" extendsConfigOf="OutcomeFullInfo">
+		<template>jbr.incoming</template>		
+	</config>
+	<config forClass="OutcomeFullInfoFromOutcome" extendsConfigOf="OutcomeFullInfo">
+		<template>jbr.outcoming</template>		
+	</config>
+	<config forClass="OutcomeFullInfoFromOG" extendsConfigOf="OutcomeFullInfo">
+		<template>jbr.incomingpeople</template>		
+	</config>
+	<config forClass="Author" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.requestObject</template>
+		<field name="name">
+			<valueSources>
+				<attribute type="string">name</attribute>
+			</valueSources>
+		</field>
+		<field name="lastName">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjSName</attribute>
+			</valueSources>
+		</field>
+		<field name="firstName">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjFName</attribute>
+			</valueSources>
+		</field>
+		<field name="midleName">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjMName</attribute>
+			</valueSources>
+		</field>
+		<field name="depart">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjOrgAuth</attribute>
+			</valueSources>
+		</field>
+		<field name="zipCode">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjIndex</attribute>
+			</valueSources>
+			<converter class="com.aplana.medo.types.converters.StringLongConverter"/>
+		</field>
+		<field name="fullRegionName">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjFNameReg</attribute>
+			</valueSources>    
+		</field>
+		<field name="address">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjAddress</attribute>
+			</valueSources>
+		</field>
+		<field name="email">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.dtObjEmail</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="XMLImage" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.file</template>
+		<field name="filename">
+			<valueSources>
+				<attribute type="material">MATERIAL</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.MaterialNameConverter"/>
+		</field>	
+		<field name="image">
+			<valueSources>
+				<attribute type="material">MATERIAL</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.MaterialDataConverter"/>
+		</field>
+		<field name="materialName">
+			<valueSources>
+				<attribute type="string">jbr.materialName</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="ReferenceXMLImage" extendsConfigOf="XMLImage">
+		<field name="filename">
+			<valueSources>
+				<attribute type="material">MATERIAL</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Notify" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.outcoming</template>
+		<field name="regNum">
+			<valueSources>
+				<attribute type="string">regnumber</attribute>
+			</valueSources>
+		</field>
+		<field name="regDate">
+			<valueSources>
+				<attribute type="date">regdate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="image">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+			<type name="XMLImage"/>
+		</field>
+	</config>
+	<config forClass="Info" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.response</template>
+		<field name="regNum">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.hndlInfRegNum</attribute>
+			</valueSources>
+		</field>
+		<field name="regDate">
+			<valueSources>
+				<attribute type="date">jbr.medo_og.hndlInfRegDate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+		<field name="rubric">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.hndlInfArtHead</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="author">
+			<valueSources>
+				<config forClass="Author" extendsConfigOf="Author">
+				</config>
+			</valueSources>
+		</field>
+		<field name="vid">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.hndlInfArtType</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="event">
+			<valueSources>
+				<attribute type="link">jbr.medo_og.hndlInfArtForm</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchConverter">
+				<parameter name="states">published</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="image">
+			<valueSources>
+				<config forClass="Image">
+					<field name="xmlImage" newCard="true">
+						<valueSources>
+							<attribute type="link">jbr.medo_og.hndlInfImage</attribute>
+						</valueSources>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<field name="directionInfo">
+			<valueSources>
+				<config forClass="DirectionInfo">
+					<field name="xmlDirectionInfo">
+						<valueSources>
+							<config forClass="XMLDirectionInfo">
+								<field name="regNum">
+									<valueSources>
+										<attribute type="string">jbr.medo_og.dirOrgRegNum</attribute>
+									</valueSources>
+								</field>
+								<field name="regDate">
+									<valueSources>
+										<attribute type="date">jbr.medo_og.dirOrgRegDate</attribute>
+									</valueSources>
+									<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+								</field>
+								<field name="departName">
+									<valueSources>
+										<attribute type="string">jbr.medo_og.dirOrgOrgName</attribute>
+									</valueSources>
+								</field>
+								<field name="result">
+									<valueSources>
+										<config forClass="Result">
+											<field name="string">
+												<valueSources>
+													<attribute type="string">jbr.medo_og.dirOrgResult</attribute>
+												</valueSources>
+											</field>
+										</config>
+									</valueSources>
+								</field>
+								<field name="replyDepart">
+									<valueSources>
+										<config forClass="ReplyDepart">
+											<field name="xmlReplyDepart">
+												<valueSources>
+													<config forClass="XMLReplyDepart">
+														<field name="regNum">
+															<valueSources>
+																<attribute type="string">jbr.medo_og.hndlInfRegNum</attribute>
+															</valueSources>
+														</field>
+														<field name="regDate">
+															<valueSources>
+																<attribute type="date">jbr.medo_og.hndlInfRegDate</attribute>
+															</valueSources>
+															<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+														</field>
+														<field name="image">
+															<valueSources>
+																<config forClass="Image">
+																	<field name="xmlImage" newCard="true">
+																		<valueSources>
+																			<attribute type="link">jbr.medo_og.dirOrgImgResp</attribute>
+																		</valueSources>
+																	</field>
+																</config>
+															</valueSources>
+														</field>
+													</config>
+												</valueSources>
+											</field>
+										</config>
+									</valueSources>
+								</field>
+							</config>
+						</valueSources>
+					</field>
+				</config>
+			</valueSources>
+		</field>
+		<field name="notify">
+			<valueSources>
+				<config forClass="Notify">
+					<field name="regNum">
+						<valueSources>
+							<attribute type="string">jbr.medo_og.imgNtfRegNum</attribute>
+						</valueSources>
+					</field>
+					<field name="regDate">
+						<valueSources>
+							<attribute type="date">jbr.medo_og.imgNtfRegDate</attribute>
+						</valueSources>
+						<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+					</field>
+					<field name="image" newCard="true">
+						<valueSources>
+							<attribute type="link">jbr.medo_og.imgNtfImgNtf</attribute>
+						</valueSources>					
+					</field>				
+				</config>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Vid" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.itemsOfRequestsTypesGlossary</template>
+		<field name="shortName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemShortName</attribute>
+			</valueSources>
+		</field>
+		<field name="fullName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemFullName</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Event" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.itemsOfRequestFormsGlossary</template>
+		<field name="shortName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemShortName</attribute>
+			</valueSources>
+		</field>
+		<field name="fullName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemFullName</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="Rubric" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.medo_og.itemsOfRubricGlossary</template>
+		<field name="shortName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemShortName</attribute>
+			</valueSources>
+		</field>
+		<field name="fullName" useInSearch="true">
+			<valueSources>
+				<attribute type="string">jbr.medo_og.glossaryItemFullName</attribute>
+			</valueSources>
+		</field>
+	</config>
+	<config forClass="OGDocument" extendsConfigOf="com.aplana.dmsi.types.DMSIObject">
+		<template>jbr.incomingpeople</template>
+		<field name="author">
+			<valueSources>
+				<attribute type="link">jbr.ReqAuthor</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.medo.types.converters.RequestAuthorObjectConverter">
+				<parameter name="duplicateStates">doublet</parameter>
+				<parameter name="originalAttr">jbr.requestAuthor.originalValue</parameter>
+				<parameter name="states">published,dictionaryNew</parameter>
+				<parameter name="createCard">true</parameter>
+				<parameter name="mainSearchFieldNames">lastName,firstName,midleName,area,region,town</parameter>
+				<parameter name="extraSearchFieldNames">lastName,firstName,midleName</parameter>
+			</complexFieldConverter>
+			<type name="ReqAuthor"/>
+		</field>
+		<field name="importedDocument">
+			<valueSources>
+				<attribute type="link">jbr.original.source</attribute>
+			</valueSources>
+		</field>
+		<field name="deliveryMethod">
+			<valueSources>
+				<attribute type="list">jbr.deliveryItem.method</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DeliveryMethodEnumListConverter">
+				<parameter name="MEDO">modeDeliveryMEDO</parameter>
+			</converter>
+		</field>
+		<field name="annotation">
+			<valueSources>
+				<attribute type="text">jbr.shortcontext</attribute>
+			</valueSources>
+		</field>
+		<field name="receiptSource" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.SourceOfCome</attribute>
+			</valueSources>
+			<type name="ReceiptSource"/>
+		</field>
+		<field name="files" newCard="true">
+			<valueSources>
+				<attribute type="link">jbr.files</attribute>
+			</valueSources>
+			<type name="XMLImage"/>
+		</field>
+		<field name="rubric">
+			<valueSources>
+				<attribute type="link">jbr.QuestionOfQuery</attribute>
+			</valueSources>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchWithDuplicatesConverter">
+				<parameter name="duplicateStates">doublet</parameter>
+				<parameter name="originalAttr">jbr.refQuestionOfAddress.originalValue</parameter>
+				<parameter name="states">published,dictionaryNew</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="correspondent">
+			<valueSources>
+				<attribute type="link">jbr.incoming.sender</attribute>
+			</valueSources>
+			<type name="Organization"/>
+			<complexFieldConverter class="com.aplana.dmsi.card.DMSIObjectBySearchWithDuplicatesConverter">
+				<parameter name="duplicateStates">doublet</parameter>
+				<parameter name="originalAttr">jbr.organization.originalOrganization</parameter>
+				<parameter name="states">published,dictionaryNew</parameter>
+				<parameter name="createCard">true</parameter>
+			</complexFieldConverter>
+		</field>
+		<field name="regNumber">
+			<valueSources>
+				<attribute type="string">jbr.incoming.outnumber</attribute>
+			</valueSources>
+		</field>
+		<field name="regDate">
+			<valueSources>
+				<attribute type="date">jbr.incoming.outdate</attribute>
+			</valueSources>
+			<converter class="com.aplana.dmsi.value.converters.DateConverter"/>
+		</field>
+	</config>
+</description>

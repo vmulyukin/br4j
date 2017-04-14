@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<web-app
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="TransportAgent"
+	version="2.5">
+ <display-name>Transport Agent</display-name>
+
+<listener>
+	<listener-class>com.aplana.agent.TransportAgentContextListener</listener-class>
+</listener>
+    <servlet>
+        <description>JAX-WS endpoint</description>
+        <display-name>WSServlet</display-name>
+        <servlet-name>WSServlet</servlet-name>
+        <servlet-class>com.aplana.ws.replication.service.ReplicationImpl</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WSServlet</servlet-name>
+        <url-pattern>/ws/Replication</url-pattern>
+    </servlet-mapping>
+
+<servlet>
+	<display-name>DMSExchangePortType Servlet</display-name>
+	<servlet-name>DMSExchangePortType</servlet-name>
+	<servlet-class>com.aplana.ws.soz.endpoint.impl.DMSExchangePortTypeImpl</servlet-class>
+	<load-on-startup>100</load-on-startup>
+</servlet>	
+<servlet-mapping>
+	<servlet-name>DMSExchangePortType</servlet-name>
+	<url-pattern>/ws/DMSExchangePortType</url-pattern>
+</servlet-mapping>
+</web-app>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<reports>
+	<exportType>pdf</exportType>
+	<report id="deadlinesControlOfControlDocumentsReport" title="deadlinesControlOfControlDocumentsReport" rootKit="rootKit" fileName="deadlinesControlOfControlDocumentsReport_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="startDate" type="Date" title="startDate" require="true"/>
+				<parameter name="endDate" type="Date" title="endDate" require="true"/>
+				<parameter name="onDate" type="Date" title="onDate" require="true"/>
+				<parameter name="docGroup" type="SelectKit" title="docGroup" multiValued="true" allGroups="all_doc_groups">
+                	<option ref="224" title="incoming"/>
+                	<option ref="784" title="internal"/>
+                	<option ref="864" title="OG"/>
+                	<option ref="764" title="ORD"/>
+                	<option ref="1226" title="NPA"/>
+                </parameter>
+				<parameter name="inspectors" type="Cards" title="inspectors_title" require="false" query="jasperReports/persons.xml"/>
+				<parameter name="addressees" type="Cards" title="addressees_title" require="false" query="jasperReports/persons.xml"/>
+				<parameter name="document_type" type="ValuesRefList" title="typecon" require="false" idRef="ADMIN_26975"/>
+			</kit>
+		</kits>
+	</report>
+	<report id="controlOfResolutionExecutionReport" title="controlOfResolutionExecutionReport" rootKit="rootKit" fileName="controlOfResolutionExecutionReport_@currentDate_dd.MM.yyyy@">
+		<kits>
+			<kit id="rootKit">
+				<parameter name="startDateRes" type="Date" title="startDateRes" require="true"/>
+				<parameter name="endDateRes" type="Date" title="endDateRes" require="true"/>
+				<parameter name="startDateExec" type="Date" title="startDateExec" require="true"/>
+				<parameter name="endDateExec" type="Date" title="endDateExec" require="true"/>
+				<parameter name="authors" type="Cards" title="authors" require="false" query="jasperReports/persons.xml"/>
+				<parameter name="executors" type="Cards" title="executors" require="false" query="jasperReports/persons.xml"/>
+				<parameter name="inspectors" type="Cards" title="inspectors_title" require="false" query="jasperReports/persons.xml"/>
+				<parameter name="docGroup" type="SelectKit" title="docGroup" multiValued="true" allGroups="all_doc_groups" require="true">
+                	<option ref="224" title="incoming"/>
+                	<option ref="784" title="internal"/>
+                	<option ref="864" title="OG"/>
+                	<option ref="764" title="ORD"/>
+                	<option ref="1226" title="NPA"/>
+                </parameter>
+			</kit>
+		</kits>
+	</report>
+	<messages>
+		<lang code="en">
+			<message key="controlOfResolutionExecutionReport" value="Отчет по контролю исполнения поручений"/>
+			<message key="deadlinesControlOfControlDocumentsReport" value="Dead lines control of control documents report"/>
+			<message key="incomingDocsRegister" value="List of incoming correspondence"/>
+			<message key="outgoingDocsRegister" value="List of outgoing correspondence"/>
+			<message key="dateReg" value="Registration date"/>
+			<message key="dateDeparture" value="Departure date"/>
+			<message key="instrsMinister" value="List of instructions minister"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Information on the coordination of projects"/>
+			<message key="Registered_Legal_Acts_report_title" value="Registered Legal Acts report"/>
+			<message key="registered_docs_list_title" value="Registered documents list"/>
+			<message key="SFA_administative_docs_help_title" value="Administative documents help"/>
+			<message key="lim_term" value="Date of execution orders"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="startDate" value="From"/>
+			<message key="endDate" value="Till"/>
+			<message key="startDateRes" value="Дата поручения с "/>
+			<message key="endDateRes" value="Дата поручения по "/>
+			<message key="startDateExec" value="Срок исполнения с "/>
+			<message key="endDateExec" value="Срок исполнения по "/>
+			<message key="onDate" value="On date"/>
+			<message key="journal" value="Journal"/>
+			<message key="curators_title" value="Curator"/>
+			<message key="developer_title" value="Developer"/>
+			<message key="department_title" value="department"/>
+			<message key="group_by_year_title" value="Group by year"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="document_type_title" value="Document types"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="inspectors_title" value="Inspectors"/>
+			<message key="addressees_title" value="Addressees"/>
+			<message key="onControl" value="На контроле"/>
+			<message key="authors" value="Автор"/>
+			<message key="executors" value="Исполнитель"/>
+			<message key="docGroup" value="Document groups"/>
+			<message key="all_doc_groups" value="By all groups of documents"/>
+			<message key="incoming" value="incoming"/>
+            <message key="internal" value="internal"/>
+            <message key="OG" value="OG"/>
+            <message key="NPA" value="NPA"/>
+            <message key="ORD" value="ORD"/>
+		</lang>	
+		<lang code="ru">
+			<message key="deadlinesControlOfControlDocumentsReport" value="Отчет по контролю сроков исполнения контрольных документов"/>
+			<message key="controlOfResolutionExecutionReport" value="Отчет по контролю исполнения поручений"/>
+			<message key="incomingDocsRegister" value="Реестр входящих документов"/>
+			<message key="outgoingDocsRegister" value="Реестр исходящих документов"/>
+			<message key="dateReg" value="Дата регистрации"/>
+			<message key="dateDeparture" value="Дата отправления"/>
+			<message key="instrsMinister" value="Список поручений министра"/>
+			<message key="Information of Negotiation Process (by Curator)_title" value="Информация о ходе согласования проектов"/>
+			<message key="Registered_Legal_Acts_report_title" value="Отчет по принятым НПА"/>
+			<message key="registered_docs_list_title" value="Перечень зарегистрированных документов"/>
+			<message key="SFA_administative_docs_help_title" value="Справка о выпуске распорядительных документов"/>
+			<message key="lim_term" value="Дата исполнения поручений"/>
+			<message key="selectParMain" value="Дополнительные параметры поиска"/>
+			<message key="kitExec" value="по исполнителю"/>
+			<message key="kitAuthor" value="по автору поручения"/>
+			<message key="kitNumReg" value="по номеру документа"/>
+			<message key="kitTerm" value="срок истек"/>
+			<message key="exec" value="Исполнитель"/>
+			<message key="author" value="Автор поручения"/>
+			<message key="numReg" value="Номер документа"/>
+			<message key="term" value="Срок истек"/>
+			<message key="selectParTerm" value="Дополнительные параметры поиска"/>
+			<message key="kitTermExec" value="по исполнителю"/>
+			<message key="kitTermAuthor" value="по автору поручения"/>
+			<message key="termExec" value="Исполнитель"/>
+			<message key="termAuthor" value="Автор поручения"/>
+			<message key="startDate" value="С      "/>
+			<message key="endDate" value="По     "/>
+			<message key="startDateRes" value="Дата поручения с "/>
+			<message key="endDateRes" value="Дата поручения по "/>
+			<message key="startDateExec" value="Срок исполнения с "/>
+			<message key="endDateExec" value="Срок исполнения по "/>
+			<message key="onDate" value="На дату"/>
+			<message key="journal" value="Журнал"/>
+			<message key="curators_title" value="Куратор"/>
+			<message key="developer_title" value="Разработчик"/>
+			<message key="group_by_year_title" value="Группировать по годам"/>
+			<message key="negotiate_with_late_title" value="Выбрать документы, согласованные с опозданием"/>
+			<message key="negotiate_without_late_title" value="Выбрать документы, согласованные без опоздания"/>
+			<message key="department_title" value="Подразделение"/>
+			<message key="kitNeg" value="Согласующая инстанция"/>
+			<message key="document_type_title" value="Виды документов"/>
+			<message key="typecon" value="Тип контроля"/>
+			<message key="inspectors_title" value="Контролёр"/>
+			<message key="addressees_title" value="Адресат"/>
+			<message key="onControl" value="На контроле"/>
+			<message key="authors" value="Автор"/>
+			<message key="executors" value="Исполнитель"/>
+			<message key="docGroup" value="Группы документов"/>
+			<message key="all_doc_groups" value="По всем группам документов"/>
+			<message key="incoming" value="Входящие"/>
+            <message key="internal" value="Внутренние"/>
+            <message key="OG" value="Обращения граждан"/>
+            <message key="NPA" value="НПА"/>
+            <message key="ORD" value="ОРД"/>
+		</lang>		
+	</messages>
+</reports>

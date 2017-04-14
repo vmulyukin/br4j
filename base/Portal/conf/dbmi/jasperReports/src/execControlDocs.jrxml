@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="execControlDocs" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times" isDefault="true" fontName="Times New Roman" fontSize="12" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="times_bold" isDefault="true" fontName="Times New Roman" fontSize="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="big_title" style="times_bold" fontSize="14"/>
+	<style name="table" style="times">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_bold" style="times_bold">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["D:\\EclipseJ2ee\\pr-indigo-asyncation-branches\\br4j\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="term_from" class="java.util.Date"/>
+	<parameter name="term_to" class="java.util.Date"/>
+	<parameter name="templates" class="java.lang.String"/>
+	<parameter name="templates_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="jregs" class="java.lang.String"/>
+	<parameter name="jregs_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="drep" class="java.util.Date"/>
+	<parameter name="executorDoc" class="java.lang.String"/>
+	<parameter name="executorDoc_ISNULL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select 1]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="107">
+			<staticText>
+				<reportElement style="big_title" x="0" y="0" width="802" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[СПРАВКА]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="times" x="0" y="20" width="802" height="36"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["ДОКУМЕНТЫ С КОНТРОЛЬНЫМИ СРОКАМИ ИСПОЛНЕНИЯ с "
++(new java.text.SimpleDateFormat("dd.MM.yyyy")).format($P{term_from})
++" по "
++(new java.text.SimpleDateFormat("dd.MM.yyyy")).format($P{term_to})]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="0" y="66" width="802" height="15"/>
+				<subreport>
+					<reportElement positionType="Float" mode="Opaque" x="108" y="0" width="694" height="15"/>
+					<subreportParameter name="docGroup">
+						<subreportParameterExpression><![CDATA[($P{templates})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "deadlinesControlOfControlDocumentsReport_DocumentGroups.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="108" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Группа документов:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="81" width="802" height="15"/>
+				<subreport>
+					<reportElement positionType="Float" mode="Opaque" x="121" y="0" width="681" height="15"/>
+					<subreportParameter name="jregs">
+						<subreportParameterExpression><![CDATA[($P{jregs})]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "journals.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="121" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" size="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					</textElement>
+					<text><![CDATA[Журнал регистрации:]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="162" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" x="0" y="0" width="30" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[№]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="30" y="0" width="286" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ИСПОЛНИТЕЛЬ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="316" y="0" width="54" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Всего
+док-тов]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_bold" x="0" y="45" width="30" height="20"/>
+				<textElement/>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_bold" x="30" y="45" width="772" height="20"/>
+				<textElement/>
+				<text><![CDATA[Руководство]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="0" y="65" width="802" height="0"/>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="f_manager">
+					<subreportParameterExpression><![CDATA[java.lang.Boolean.TRUE]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_managers.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="134" width="802" height="0"/>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_executorsPages.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement style="table_bold" positionType="Float" x="0" y="65" width="30" height="20"/>
+				<textElement/>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_bold" positionType="Float" x="30" y="65" width="772" height="20"/>
+				<textElement/>
+				<text><![CDATA[Управления]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="85" width="802" height="0"/>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="f_manager">
+					<subreportParameterExpression><![CDATA[java.lang.Boolean.FALSE]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_managers.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement style="table" x="370" y="0" width="216" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="370" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="424" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="478" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[в срок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="532" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[с наруш.
+срока]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="748" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[срок не
+истек]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="586" y="0" width="216" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Не исполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="694" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[срок истек]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="640" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="586" y="15" width="54" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[всего]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="times" positionType="Float" x="0" y="104" width="613" height="16"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Исполнение на: "+(new java.text.SimpleDateFormat("dd.MM.yyyy")).format($P{drep})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="times" positionType="Float" x="0" y="120" width="613" height="16"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Дата формирования отчета: "+(new java.text.SimpleDateFormat("dd.MM.yyyy")).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="86" width="802" height="0"/>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_managers_all.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="146" width="802" height="6"/>
+				<subreportParameter name="jregs_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{jregs_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="jregs">
+					<subreportParameterExpression><![CDATA[$P{jregs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_to">
+					<subreportParameterExpression><![CDATA[$P{term_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="drep">
+					<subreportParameterExpression><![CDATA[$P{drep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates">
+					<subreportParameterExpression><![CDATA[$P{templates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="term_from">
+					<subreportParameterExpression><![CDATA[$P{term_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc">
+					<subreportParameterExpression><![CDATA[$P{executorDoc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="executorDoc_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{executorDoc_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="templates_ISNULL">
+					<subreportParameterExpression><![CDATA[$P{templates_ISNULL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "execControlDocs_executedDelayPages.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

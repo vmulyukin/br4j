@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+WITH
+favorites_var AS
+(
+    select distinct favorites.card_id 
+    from attribute_value favorites 
+    where favorites.template_id = 2250
+    and favorites.attribute_code = 'JBR_FAV_DOC_PERSON'
+    and favorites.number_value IN (%CURRENTUSERS%)
+),
+favorites_card_var AS
+(
+    select favorites_card.card_id 
+    from card favorites_card 
+    where favorites_card.card_id in (select card_id from favorites_var)
+    and favorites_card.status_id = 6883560
+)
+Select Distinct favorites_doc.number_value
+from attribute_value favorites_doc 
+Where favorites_doc.card_id in (select card_id from favorites_card_var)
+and favorites_doc.attribute_code = 'JBR_FAV_DOC_DOC'
+and favorites_doc.number_value NOTNULL
+]]></sql></query></searchQuery>

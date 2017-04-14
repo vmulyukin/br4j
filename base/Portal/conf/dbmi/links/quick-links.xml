@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<links-portlet>
+	<caption>Quick Links</caption>
+	<caption lang="ru">Быстрый переход</caption>
+	<link-list>
+		<pageLink pageName="dbmi.personal.Favorites">Favorites</pageLink>
+		<pageLink pageName="dbmi.personal.Searches">My Searches</pageLink>
+		<pageLink pageName="dbmi.personal.Subscriptions">My Subscriptions</pageLink>
+		<pageLink pageName="dbmi.personal.Rejected" checkAction="com.aplana.dbmi.action.CreateCard">Card for Revision</pageLink>
+		<pageLink pageName="dbmi.personal.Ready" checkAction="com.aplana.dbmi.action.PublishCard">Card for Approval</pageLink>
+		<pageLink pageName="dbmi.personal.Distributions" checkAction="com.aplana.dbmi.action.PublishCard">Distribution Lists</pageLink>
+		<separator />
+		<pageLink pageName="dbmi.Card" portletName="dbmi.Card.w.Card" params="MI_CREATE_CARD=MI_CREATE_CARD;MI_BACK_URL_FIELD=$" checkAction="com.aplana.dbmi.action.CreateCard">Add material</pageLink>
+		<pageLink pageName="dbmi.Card" portletName="dbmi.Card.w.Card" params="MI_CREATE_CARD=3;MI_BACK_URL_FIELD=$" checkAction="com.aplana.dbmi.action.CreateCard">Add request</pageLink>
+		<!-- <link href="/wps/myportal/mi/card?MI_CREATE_CARD=MI_CREATE_CARD&amp;MI_BACK_URL_FIELD=/wps/myportal/mi" checkAction="com.aplana.dbmi.action.CreateCard">Add material</link>
+		<link href="/wps/myportal/mi/card?MI_CREATE_CARD=3&amp;MI_BACK_URL_FIELD=/wps/myportal/mi" checkAction="com.aplana.dbmi.action.CreateRequest">Add request</link> -->
+		<!-- <mailLink hrefTemplate="mailto:{0}" action="GetEditorEmail">Write to editor</mailLink> -->
+		<mailLink hrefTemplate="mailto:{0}?subject={1}" subject="Letter to Administrator" action="com.aplana.dbmi.action.GetAdminEmail">Write to administrator</mailLink>
+	</link-list>
+	<link-list lang="ru">
+		<pageLink pageName="dbmi.personal.Favorites">Избранное</pageLink>
+		<pageLink pageName="dbmi.personal.Searches">Мой поиск</pageLink>
+		<pageLink pageName="dbmi.personal.Subscriptions">Мои подписки</pageLink>
+		<pageLink pageName="dbmi.personal.Rejected" checkAction="com.aplana.dbmi.action.CreateCard">На доработку</pageLink>
+		<pageLink pageName="dbmi.personal.Ready" checkAction="com.aplana.dbmi.action.PublishCard">На утверждение</pageLink>
+		<pageLink pageName="dbmi.personal.Distributions" checkAction="com.aplana.dbmi.action.PublishCard">Параметры рассылки</pageLink>
+		<separator />
+		<pageLink pageName="dbmi.Card" portletName="dbmi.Card.w.Card" params="MI_CREATE_CARD=MI_CREATE_CARD;MI_BACK_URL_FIELD=$" checkAction="com.aplana.dbmi.action.CreateCard">Добавить материал</pageLink>
+		<pageLink pageName="dbmi.Card" portletName="dbmi.Card.w.Card" params="MI_CREATE_CARD=3;MI_BACK_URL_FIELD=$" checkAction="com.aplana.dbmi.action.CreateCard">Добавить заявку</pageLink>
+		<!-- <link href="/wps/myportal/mi/card?MI_CREATE_CARD=MI_CREATE_CARD&amp;MI_BACK_URL_FIELD=/wps/myportal/mi" checkAction="com.aplana.dbmi.action.CreateCard">Добавить материал</link>
+		<link href="/wps/myportal/mi/card?MI_CREATE_CARD=3&amp;MI_BACK_URL_FIELD=/wps/myportal/mi" checkAction="com.aplana.dbmi.action.CreateRequest">Добавить заявку</link> -->
+		<!-- <mailLink hrefTemplate="mailto:{0}" action="GetEditorEmail">Письмо редактору</mailLink> -->
+		<mailLink hrefTemplate="mailto:{0}?subject={1}" subject="Письмо администратору" action="com.aplana.dbmi.action.GetAdminEmail">Письмо администратору</mailLink>
+	</link-list>
+</links-portlet>

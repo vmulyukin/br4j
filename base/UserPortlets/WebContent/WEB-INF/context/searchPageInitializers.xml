@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "../dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="searchInitializer" class="com.aplana.dbmi.search.SearchInitializer" >
+		<property name="attrInitializersByClassMap">
+			<map>
+				<entry key="com.aplana.dbmi.model.IntegerAttribute" value-ref="searchIntegerAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.DateAttribute" value-ref="searchDateAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.TextAttribute" value-ref="searchTextAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.StringAttribute" value-ref="searchStringAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchStringCheckedAttribute" value-ref="searchStringCheckAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.StateSearchAttribute" value-ref="stateSearchAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.TemplateSearchAttribute" value-ref="templateSearchAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.ListAttribute" value-ref="searchListAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.MultiListAttribute" value-ref="searchMultiListAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.TreeAttribute" value-ref="searchTreeAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.CardLinkAttribute" value-ref="searchCardLinkAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.PersonAttribute" value-ref="searchPersonAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.DatePeriodAttribute" value-ref="searchDatePeriodAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" value-ref="multipleStateSearchItemAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.YearPeriodAttribute" value-ref="searchYearPeriodAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchTextCheckedAttribute" value-ref="searchTextCheckAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchYearDatePeriodChoiceAttribute" value-ref="searchYearDatePeriodChoiceAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchIntegerCheckedAttribute" value-ref="searchIntegerCheckedAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.IsExistSearchAttribute" value-ref="isExistSearchAttributeInitializer" />
+			</map>
+		</property>	
+	</bean>
+	<bean id="searchIntegerCheckedAttributeInitializer" class="com.aplana.dbmi.search.SearchIntegerCheckedAttributeInitializer" />
+	<bean id="searchIntegerAttributeInitializer" class="com.aplana.dbmi.search.SearchIntegerAttributeInitializer" />
+	<bean id="searchDateAttributeInitializer" class="com.aplana.dbmi.search.SearchDateAttributeInitializer" />
+	<bean id="searchTextAttributeInitializer" class="com.aplana.dbmi.search.SearchTextAttributeInitializer" />
+	<bean id="searchStringAttributeInitializer" class="com.aplana.dbmi.search.SearchStringAttributeInitializer" />
+	<bean id="stateSearchAttributeInitializer" class="com.aplana.dbmi.search.StateSearchAttributeInitializer" />
+	<bean id="templateSearchAttributeInitializer" class="com.aplana.dbmi.search.TemplateSearchAttributeInitializer" />
+	<bean id="searchListAttributeInitializer" class="com.aplana.dbmi.search.SearchListAttributeInitializer" />
+	<bean id="searchMultiListAttributeInitializer" class="com.aplana.dbmi.search.SearchMultiListAttributeInitializer" />
+	<bean id="searchTreeAttributeInitializer" class="com.aplana.dbmi.search.SearchTreeAttributeInitializer" />
+	<bean id="searchCardLinkAttributeInitializer" class="com.aplana.dbmi.search.SearchCardLinkAttributeInitializer" />
+	<bean id="searchPersonAttributeInitializer" class="com.aplana.dbmi.search.SearchPersonAttributeInitializer" />
+	<bean id="searchDatePeriodAttributeInitializer" class="com.aplana.dbmi.search.SearchDatePeriodAttributeInitializer" />
+	<bean id="multipleStateSearchItemAttributeInitializer" class="com.aplana.dbmi.search.MultipleStateSearchItemAttributeInitializer" />
+	<bean id="searchStringCheckAttributeInitializer" class="com.aplana.dbmi.search.SearchStringCheckAttributeInitializer" />
+	<bean id="searchYearPeriodAttributeInitializer" class="com.aplana.dbmi.search.SearchYearPeriodAttributeInitializer" />
+	<bean id="searchTextCheckAttributeInitializer" class="com.aplana.dbmi.search.SearchTextCheckAttributeInitializer" />
+	<bean id="searchYearDatePeriodChoiceAttributeInitializer" class="com.aplana.dbmi.search.SearchYearDatePeriodChoiceAttributeInitializer" />
+	<bean id="isExistSearchAttributeInitializer" class="com.aplana.dbmi.search.IsExistSearchAttributeInitializer" />
+	
+	
+
+	<bean id="searchFilterInitializer" class="com.aplana.dbmi.search.init.SearchFilterInitializer" >
+		<property name="attrInitializersByClassMap">
+			<map>
+				<entry key="com.aplana.dbmi.model.IntegerAttribute" value-ref="searchFilterIntegerAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.DateAttribute" value-ref="searchFilterDateAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.TextAttribute" value-ref="searchFilterTextAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.StringAttribute" value-ref="searchFilterStringAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.DatePeriodAttribute" value-ref="searchFilterDatePeriodAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.ListAttribute" value-ref="searchFilterListAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.MultiListAttribute" value-ref="searchFilterMultiListAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.TreeAttribute" value-ref="searchFilterTreeAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.StateSearchAttribute" value-ref="stateSearchFilterAttributeInitlizer" />
+				<entry key="com.aplana.dbmi.model.CardLinkAttribute" value-ref="searchFlterCardLinkAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.PersonAttribute" value-ref="searchFlterPersonAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.MultipleStateSearchItemAttribute" value-ref="multipleStateSearchFilterItemAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchYearDatePeriodChoiceAttribute" value-ref="SearchYearDatePeriodChoiceAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchIntegerCheckedAttribute" value-ref="SearchFilterIntegerCheckedAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchTextCheckedAttribute" value-ref="SearchFilterTextCheckedAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.SearchStringCheckedAttribute" value-ref="SearchFilterStringCheckedAttributeInitializer" />
+				<entry key="com.aplana.dbmi.model.IsExistSearchAttribute" value-ref="searchFilterExistAttributeInitializer" />
+			</map>
+		</property>	
+		
+		<property name="attrInitializersByIdMap">
+ 			<map>
+ 				<entry key-ref="stateSearchPCabinetId"  value-ref="multipleStateSearchFilterItemAttributeInitializer" />
+				<entry key-ref="pCabinetTemplateId"  value-ref="templateStateSearchFilterItemAttributeInitlizer" />
+			</map>
+		</property>
+	</bean>
+	<bean id="SearchFilterIntegerCheckedAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterIntegerCheckedAttributeInitializer" />
+	<bean id="SearchFilterTextCheckedAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterTextCheckedAttributeInitializer" />
+	<bean id="SearchFilterStringCheckedAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterStringCheckedAttributeInitializer" />
+	<bean id="templateStateSearchFilterItemAttributeInitlizer" class="com.aplana.dbmi.search.init.TemplateStateSearchFilterItemAttributeInitlizer" />
+	<bean id="searchFilterPersonAttributePostInitStrategy" class="com.aplana.dbmi.search.init.SearchFilterPersonAttributePostInitStrategy" />
+	<bean id="searchFilterDateAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterDateAttributeInitializer" />
+	<bean id="searchFilterTextAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterTextAttributeInitializer" />
+	<bean id="stateSearchFilterAttributeInitlizer" class="com.aplana.dbmi.search.init.StateSearchFilterAttributeInitlizer" />
+	<bean id="searchFilterIntegerAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterIntegerAttributeInitializer" />
+	<bean id="searchFilterStringAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterStringAttributeInitializer" />
+	<bean id="searchFilterDatePeriodAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterDatePeriodAttributeInitializer" />
+	<bean id="searchFilterListAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterListAttributeInitializer" />
+	<bean id="searchFilterExistAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterExistAttributeInitializer" />
+	<bean id="searchFilterMultiListAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterMultiListAttributeInitializer" />
+	<bean id="searchFilterTreeAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFilterTreeAttributeInitializer" />
+	<bean id="searchFlterCardLinkAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFlterCardLinkAttributeInitializer" />
+	<bean id="searchFlterPersonAttributeInitializer" class="com.aplana.dbmi.search.init.SearchFlterPersonAttributeInitializer" >
+		<property name="postInitStrategy" ref="searchFilterPersonAttributePostInitStrategy" />
+	</bean>
+	<bean id="multipleStateSearchFilterItemAttributeInitializer" class="com.aplana.dbmi.search.init.MultipleStateSearchFilterItemAttributeInitializer" />
+	<bean id="SearchYearDatePeriodChoiceAttributeInitializer" class="com.aplana.dbmi.search.init.SearchYearDatePeriodChoiceAttributeInitializer" />
+</beans>

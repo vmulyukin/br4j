@@ -1,0 +1,1203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.module.docflow">
+	<action type="ChangeState">		
+		<!--  Специфичные для Приказов (764)-->
+		<specific property="card.template" value="jbr.ord">
+			<specific property="workflowMove.toState" value="preparation">
+				<post-process class="FillCuratorDeveloperExecutorPostProcessor" runOrder="1000"/>
+			</specific>
+		</specific>
+		
+		<!--  Специфичные для НПА (1226)-->
+		<specific property="card.template" value="jbr.npa">
+			<specific property="workflowMove.toState" value="preparation">
+				<post-process class="FillCuratorDeveloperExecutorPostProcessor" runOrder="1000"/>
+			</specific>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.send" policy="IterationPolicy">
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1000"/>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.send.assistent" policy="IterationPolicy">
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1000"/>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.waiting.to.trash">
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1000"/>
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.delete" policy="IterationPolicy">
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1000"/>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.return.to.assistent">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.change.approver">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.change.approver.assistant">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.document.visa.return.for.revision">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.sign.return.for.revision">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="sign" />
+				<parameter name="targetState" value="preparation" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.sign.return.for.revision.assistant">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="sign" />
+				<parameter name="targetState" value="preparation" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.additional.approving.return">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.enclosedSet" />
+				<!--parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" /-->
+				<parameter name="targetState" value="trash" />
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.visa.to.boss.arm">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.sign.to.boss.arm">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.sign.reassign.waiting">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.document.visa.agreed.with.comments.to.draft">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.document.visa.processing.assistent.to.draft">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+				
+		<specific property="workflowMove.id" value="jbr.document.visa.agreed.to.draft">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.outcoming.preparation.agreement">
+				<pre-process class="CompareNegotiationRouteWithDocVisa" runOrder="1000">
+					<parameter name="negListAttr" value="jbr.saveNegotiationList"/>
+				</pre-process>
+		</specific>
+		 <!-- Согласование -->
+		<specific property="workflowMove.id" value="jbr.visa.agree">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+		
+		
+		<!-- Отклонение согласования с карточки визы  -->
+		<specific property="workflowMove.id" value="jbr.visa.reject">
+			<!--post-process class="CancalNegotiationFromVisa">
+				<parameter name="typeOfLinkedCards" value="visa"/>
+			</post-process-->
+			<pre-process class="NegotiationHistory" runOrder="1000"/>	
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.visa.parent" />
+				<parameter name="affectedStates" value="agreement" />
+				<parameter name="targetState" value="rejected" />
+				<parameter name="unlockParent" value="true" />
+			</post-process>
+		</specific>
+			
+		<!-- Если виза отклоняется системой из статуса "Дополнительное согласование",
+		необходимо также отклонить дочерние визы.-->
+		<specific property="workflowMove.id" value="jbr.visa.additional.approving.reject">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.enclosedSet" />
+				<!--parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent" /-->
+				<parameter name="targetState" value="trash" />
+				<parameter name="unlockParent" value="true" />
+			</post-process>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.end.agreed">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010">
+				<parameter name="updatePlanDate" value="false" />
+			</post-process>	
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.visa.disagree">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>				
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.end.disagreed">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1005"/>				
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.error.sending">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>	
+
+		<specific property="workflowMove.id" value="jbr.visa.cancel">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010">
+				<parameter name="updatePlanDate" value="false" />
+			</post-process>		
+			<pre-process class="NegotiationHistory" runOrder="1000"/>					
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+		<!-- 
+			jbr.visa.skip=1076472, jbr.visa.miss=9450143  "Пропустить согласование" из "Согласование" в "Согласование пропущено и в "Пропущен"
+		 -->
+		<specific property="workflowMove.id" value="jbr.visa.skip">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.miss">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<!-- Переход больше не используется и удален из базы -->
+		<!-- specific property="workflowMove.id" value="jbr.visa.cease">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific-->
+
+		<specific property="workflowMove.id" value="ord.cancal_negotiation_from_signing">
+			<post-process class="CancalNegotiation" runOrder="1000"/>
+		</specific>
+		<!-- specific property="workflowMove.id" value="jbr.ord.cancal_negotiation_from_negotiation">
+			<post-process class="CancalNegotiation"/>
+		</specific-->
+		<!-- Согласование помошником: 348	Визирование 
+				workflowmove.jbr.visa.agree.from_assist=825574	Согласен	Обработка помощником	73992	Согласован	201
+				workflowmove.jbr.visa.disagree.from_assist=825532 Не согласен	Обработка помощником	73992	Не согласован	203
+				workflowmove.jbr.visa.cancel.from_assist=825530	""	Обработка помощником	73992	Ошибочно направлен	202
+		  -->
+		<specific property="workflowMove.id" value="jbr.visa.agree.from_assist">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010">
+				<parameter name="updatePlanDate" value="false" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.agree.from_boss">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010">
+				<parameter name="updatePlanDate" value="false" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>	
+		<specific property="workflowMove.id" value="jbr.visa.disagree.from_assist">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+		</specific>
+		<specific property="workflowMove.id" value="jbr.visa.cancel.from_assist">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010">
+				<parameter name="updatePlanDate" value="false" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.taskVisa.agree.from_boss">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.taskVisa.agree.from_assist">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1010"/>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1015">
+				<parameter name="visaLinkAttr" value="jbr.visa.parentVisa" />
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.visa.startEnclosed">
+			<pre-process class="CheckEnclosedNegotiationPeriodProcessor" runOrder="1000">
+				<parameter name="ignoreStates" value="trash"/>				
+			</pre-process>			
+			<pre-process class="ValidateVisasListProcessor" runOrder="1005">
+				<parameter name="ignoreNotDraft" value="true"/>
+			</pre-process>
+			<pre-process class="NegotiationHistory" runOrder="1010"/>			
+			<post-process class="VisaTrigger" runOrder="1015">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1020"/>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.visa.assistent.additional.approving">
+			<pre-process class="CheckEnclosedNegotiationPeriodProcessor" runOrder="1000">
+				<parameter name="ignoreStates" value="trash"/>				
+			</pre-process>
+			<pre-process class="ValidateVisasListProcessor" runOrder="1005">
+				<parameter name="ignoreNotDraft" value="true"/>
+			</pre-process>
+			<pre-process class="NegotiationHistory" runOrder="1010"/>			
+			<post-process class="VisaTrigger" runOrder="1015">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+			<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1020"/>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.additional.approving.assistent">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>			
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.endEnclosed">
+			<pre-process class="NegotiationHistory" runOrder="1000"/>		
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.visa.finish.additional.approving">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeStateRecursive" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.enclosedSet" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned"/>
+				<parameter name="targetState" value="trash" />
+			</post-process>	
+			<post-process package="com.aplana.dbmi.jbr.processors" class="ClearCardAttributePostProcessorEx" runOrder="1005">
+				<parameter name="attrId" value="text:jbr.visa.current.resolution"/>
+			</post-process>	
+			<post-process package="com.aplana.dbmi.module.docflow" class="EndEnclosedProcessor" runOrder="1010">
+			    <parameter name="configBean" value="visaConfig"/>
+			</post-process>	
+			<post-process class="NegotiationHistory" runOrder="1015"/>		
+		</specific>
+		<!-- Подписание (365, wf=35244) 
+			wfm_id	name_rus				from status						into status
+			35246	Отклонить				Подписание				108		Отклонено	205
+				workflowmove.jbr.sign.reject=35246
+			477960	""						Обработка помощником	73992	Отклонено	205
+				workflowmove.jbr.sign.reject.assistant=477960
+			477964	""						Отклонен руководителем	477933	Отклонено	205
+				workflowmove.jbr.sign.reject.boss.assistant=477964
+			477965	""						Подписан руководителем	477934	Отклонено	205
+				workflowmove.jbr.sign.sign.reject=477965
+
+			35245	Подписать				Подписание				108		Подписано	204
+				workflowmove.jbr.sign.sign=35245
+			477961	""						Отклонен руководителем	477933	Подписано	204
+				workflowmove.jbr.sign.sign.signed=477961
+			477962	""						Обработка помощником	73992	Подписано	204
+				workflowmove.jbr.sign.sign.assistant=477962
+			477963	""						Подписан руководителем	477934	Подписано	204
+				workflowmove.jbr.sign.sign.boss.assistant=477963
+		  -->
+		<specific property="workflowMove.id" value="jbr.sign.sign">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+			<!--  Подписание самим боссом: 	workflowmove.jbr.sign.sign.boss=477968
+					переход из "Подписание"(108) -> в "Подписан руководителем"(477934)
+			  -->
+		<specific property="workflowMove.id" value="jbr.sign.sign.boss">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.reject=35246 -->
+		<specific property="workflowMove.id" value="jbr.sign.reject">
+			<!--post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process-->
+			<!-- post-process class="CancalNegotiationFromVisa">
+				<parameter name="typeOfLinkedCards" value="sign"/>
+			</post-process-->
+			<pre-process class="NegotiationHistory" runOrder="1000"/>	
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="agreement" />
+				<parameter name="targetState" value="rejected" />
+			</post-process>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.sign.signed=477961 -->
+		<specific property="workflowMove.id" value="jbr.sign.sign.signed">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.sign.reject=477965 -->
+		<specific property="workflowMove.id" value="jbr.sign.sign.reject">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<!--  post-process class="CancalNegotiationFromVisa">
+				<parameter name="typeOfLinkedCards" value="sign"/>
+			</post-process-->	
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="sign" />
+				<parameter name="targetState" value="rejected" />
+			</post-process>
+		</specific>
+
+		<!-- Обработка помощником  -->
+
+		<!--  workflowmove.jbr.sign.reject.assistant=477960 -->
+		<specific property="workflowMove.id" value="jbr.sign.reject.assistant">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<!-- post-process class="CancalNegotiationFromVisa">
+				<parameter name="typeOfLinkedCards" value="sign"/>
+			</post-process-->
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1010">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="sign" />
+				<parameter name="targetState" value="rejected" />
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.sign.assistant=477962 -->
+		<specific property="workflowMove.id" value="jbr.sign.sign.assistant">
+			<post-process class="VisaTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<pre-process class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.sign.boss.assistant=477963 -->
+		<specific property="workflowMove.id" value="jbr.sign.sign.boss.assistant">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+		</specific>
+
+		<!-- workflowmove.jbr.sign.reject.boss.assistant=477964 -->
+		<specific property="workflowMove.id" value="jbr.sign.reject.boss.assistant">
+			<!--post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process-->
+			<!-- post-process class="CancalNegotiationFromVisa">
+				<parameter name="typeOfLinkedCards" value="sign"/>
+			</post-process-->	
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="backLink:jbr.sign.parent" />
+				<parameter name="affectedStates" value="sign" />
+				<parameter name="targetState" value="rejected" />
+			</post-process>
+			<pre-process package="com.aplana.dbmi.module.docflow" class="NegotiationHistory" runOrder="1000"/>
+		</specific>
+
+		<!-- Рассмотрение 
+
+			Обрабатываем "разом" все переходы ведущие в статусы:
+				"В дело"
+				"Исполнение"
+				"Пропущен"
+
+			workflowmove.jbr.exam.execute=47255: из "Рассмотрение"(102) в "Исполнение"(103)
+			workflowmove.jbr.exam.archive=47256: из "Рассмотрение"(102) в "Дело"(104)
+
+		<specific property="workflowMove.id" value="jbr.exam.execute">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.archive">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		 -->
+        <specific property="workflowMove.id" value="jbr.exam.archive.assistant">
+            <post-process class="VisaTrigger" runOrder="1000">
+                <parameter name="processorBean" value="syncExamProcessor"/>
+                <parameter name="configBean" value="examConfig"/>
+            </post-process>
+        </specific>
+        <!--specific property="workflowMove.id" value="jbr.exam.send_execute">
+            <post-process class="VisaTrigger">
+                <parameter name="processorBean" value="syncExamProcessor"/>
+                <parameter name="configBean" value="examConfig"/>
+            </post-process>
+        </specific-->
+        <specific property="workflowMove.id" value="jbr.exam.archive.boss">
+            <post-process class="VisaTrigger" runOrder="1000">
+                <parameter name="processorBean" value="syncArchiveProcessor"/>
+                <parameter name="configBean" value="toArchiveConfig"/>
+            </post-process>
+        </specific>
+		 
+		<!-- workflowmove.jbr.exam.skip=66186 из "Рассмотрение"(102) в "Пропущен"(66185) -->
+		<specific property="workflowMove.id" value="jbr.exam.skip">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+
+		<!-- ("Рассмотрение"(504)) "Передать другому рук-лю"  = переход из 
+			"Рассмотрения"(102) в "Ожидание рассмотрения"(52086)):
+				workflowmove.jbr.exam.goto-another.boss=677294
+		  -->
+		<specific property="workflowMove.id" value="jbr.exam.goto-another.boss">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+
+		<!-- Отмена согласования (пропустить) -->		
+		<specific property="workflowMove.id" value="jbr.document.visa.cancel">
+			<post-process class="PlainTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncCancelProcessor"/>
+			</post-process>
+		</specific>
+
+		<!-- Обработка для шаблона Рассмотрение: приход в статус "в дело" 
+				cardstate.delo=104
+		  -->
+		<specific property="workflowMove.toState" value="delo" async="true" priority="0">
+			<specific property="card.template" value="jbr.rassm">
+				<!-- boruroev: логика продвижения документа по ЖЦ перенесена 
+						в CheckDocumentExecutedProcessor
+-->
+				<!-- post-process class="VisaTrigger">
+					<parameter name="processorBean" value="syncExamProcessor"/>
+					<parameter name="configBean" value="examConfig"/>
+				</post-process-->
+				<!-- BR4J00024093 Перевод поручений из статусов "Черновик", "проект согласован" и "согласование" в "Отменен"-->
+				<post-process class="DoArchiveDependentChangeState"  runOrder="1000">
+					<parameter name="parentAttr" value="jbr.exam.parent" />
+					<parameter name="linkAttr" value="backLink:jbr.resolutions" />
+					<parameter name="affectedStates" value="draft,agreement,jbr.task.taskAgreed" />
+					<parameter name="targetState" value="poruchcancelled" />
+					<parameter name="ifEmpty" value="nothing" />
+				</post-process>
+				<post-process class="CheckDocumentExecutedProcessor"  runOrder="1005">
+					<parameter name="documentLinkAttr" value="jbr.exam.parent"/>
+				</post-process>
+			</specific>
+		</specific>
+
+		<!-- Переходе РКК "Рассмотрение" "В дело(руководитель)" wfm:477837 -->
+        <specific property="workflowMove.toState" value="jbr.exam.archive.boss">
+        	<!--Echirkov BR4J00024093 
+        	Процессоры DoArchiveDependentChangeState, CheckDocumentExecutedProcessor перенесены в общий блок  "toState=delo"-->
+        </specific>
+
+        <!-- Обработка для шаблона Рассмотрение: приход из статуса "Обработка помощником"
+					в статус "Исполнение"
+		  -->
+        <specific property="workflowMove.id" value="jbr.exam.execute.assistant">
+        	<validator package="com.aplana.dbmi.jbr.processors" class="CheckResolutionExists" runOrder="5">
+				<parameter name="empty_message" value="Для того чтобы документ был отправлен на исполнение, необходимо наличие хотя бы одного поручения в статусе Черновик, Исполнение или Исполнен, подписантом которого должен являться текущий рассматривающий."/>
+				</validator>
+				<post-process class="VisaTrigger" runOrder="1000">
+					<parameter name="processorBean" value="syncExamProcessor"/>
+					<parameter name="configBean" value="examConfig"/>
+				</post-process>
+				<!-- Перевод резолюций (поручений) в состояние "Исполнение" -->
+				<post-process class="DoExamDependentChangeState" runOrder="1005">
+					<parameter name="linkAttr" value="backLink:jbr.resolutions" />
+					<parameter name="affectedStates" value="jbr.commission.draft" />
+					<parameter name="targetState" value="jbr.commission.executing" />
+					<parameter name="parentAttr" value="jbr.exam.parent" />
+				</post-process>
+				<!-- BR4J00020911: При переводе помошником Рассмотрения из стасуса "Рассмотрение" на "Исполнение" 
+				подставлять помошника в поле "Отправил на исполнение -->
+            <post-process package="com.aplana.dbmi.jbr.processors" class="CallOriginsProcessor" runOrder="1010">
+			    		<parameter name="backLinkAttrId" value="jbr.exam.parent@jbr.resolutions"/>
+			    		<parameter name="processorClassName"
+			        	    value="com.aplana.dbmi.jbr.processors.SetCurrentPersonTo"/>
+			    		<parameter name="personAttribute" value="jbr.report.sent.execute"/>
+			    		<parameter name="eqAttrInLinkCard" value="user:jbr.resolution.FioSign"/>
+			    		<parameter name="eqAttrInCurCard" value="user:jbr.exam.person"/>		    
+					</post-process>
+				</specific>
+        
+        <!-- Обработка для шаблона Рассмотрение: приход из статуса "Рассмотрение"
+					в статус "Исполнение"
+		  -->
+        <specific property="workflowMove.id" value="jbr.exam.execute">
+        	<validator package="com.aplana.dbmi.jbr.processors" class="CheckResolutionExists" runOrder="5">
+				<parameter name="empty_message" value="Для того чтобы документ был отправлен на исполнение, необходимо наличие хотя бы одного поручения в статусе Черновик, Исполнение или Исполнен, подписантом которого должен являться текущий рассматривающий."/>
+			</validator>
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+			<!-- Перевод резолюций (поручений) в состояние "Исполнение" -->
+			<post-process class="DoExamDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="jbr.resolutions" />
+				<parameter name="affectedStates" value="jbr.commission.draft" />
+				<parameter name="targetState" value="jbr.commission.executing" />
+				<parameter name="parentAttr" value="jbr.exam.parent" />
+			</post-process>
+			</specific>
+        
+        <!-- Обработка для шаблона Рассмотрение: приход из статуса "Отправлен на исполнение руководителем"
+					в статус "Исполнение"
+		  -->
+        <specific property="workflowMove.id" value="jbr.exam.execute.boss.assistant">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+			<!-- Перевод резолюций (поручений) в состояние "Исполнение" -->
+			<post-process class="DoExamDependentChangeState" runOrder="1005">
+				<parameter name="linkAttr" value="jbr.resolutions" />
+				<parameter name="affectedStates" value="jbr.commission.draft" />
+				<parameter name="targetState" value="jbr.commission.executing" />
+				<parameter name="parentAttr" value="jbr.exam.parent" />
+			</post-process>
+		</specific>
+
+		<!-- Обработка для шаблона Рассмотрение: приход в статус "Пропущен"
+					cardstate.skipped=66185
+		  -->
+		<specific property="workflowMove.toState" value="skipped">
+			<specific property="card.template" value="jbr.rassm">
+				<!-- boruroev: логика продвижения документа по ЖЦ перенесена 
+						в CheckDocumentExecutedProcessor-->
+				<!-- post-process class="VisaTrigger">
+					<parameter name="processorBean" value="syncExamProcessor"/>
+					<parameter name="configBean" value="examConfig"/>
+				</post-process-->
+				<post-process class="CheckDocumentExecutedProcessor" runOrder="1000">
+					<parameter name="documentLinkAttr" value="jbr.exam.parent"/>
+				</post-process>
+			</specific>
+		</specific>
+
+<!-- Обработка помощником по переходам (сейчас на конечном состоянии): 
+		<specific property="workflowMove.id" value="jbr.exam.execute.boss.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.archive.boss.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.skip.boss.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.execute.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.archive.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.exam.skip.assistant">
+			<post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+-->
+
+		<!-- Настройки для ОРД (764) и НПА (1226) -->
+		<specific property="workflowMove.id" value="jbr.ord.preparation.agreement">
+			<pre-process class="ValidateVisasListProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.start_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="true"/>
+			</post-process>				
+			<post-process class="DocumentTrigger" runOrder="1010">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<!-- Переход "На рассмотрении у руководителя" - "Согласование" -->
+		<specific property="workflowMove.id" value="jbr.ord.manager.approving">
+			<pre-process class="ValidateVisasListProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.start_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="true"/>
+			</post-process>				
+			<post-process class="DocumentTrigger" runOrder="1010">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.ord.agreement.sign">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.fact_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>	
+		</specific>
+		<specific property="workflowMove.id" value="jbr.ord.agreement.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.draft" />
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.ord.cancal_negotiation_from_negotiation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.rejected" />
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.ord.sign.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.sign.set" />
+				<parameter name="affectedStates" value="jbr.sign.waiting,jbr.sign.assistent" />
+				<parameter name="targetState" value="jbr.sign.draft" />
+			</post-process>
+		</specific>
+
+		
+		<!-- Настройки для Внутренних (784) -->		
+
+		<specific property="workflowMove.id" value="jbr.interndoc.preparation.agreement">
+			<pre-process class="ValidateVisasListProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.start_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="true"/>
+			</post-process>				
+			<post-process class="DocumentTrigger" runOrder="1010">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.interndoc.agreement.sign">
+			<post-process class="DocumentOnStartSignTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.fact_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>	
+		</specific>
+
+			<!--  ("Внутренний документ"/784, wf=273860) переход "Отправить адресату"/273959 
+				из "Зарегистрирован"/101 в "Рассмотрение"/102
+				workflowmove.jbr.interndoc.registration.consideration=273959
+			  -->
+		<specific property="workflowMove.id" value="jbr.interndoc.registration.consideration">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.interndoc.sign.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.sign.set" />
+				<parameter name="affectedStates" value="jbr.sign.waiting,jbr.sign.assistent" />
+				<parameter name="targetState" value="jbr.sign.draft" />
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.interndoc.agreement.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.draft" />
+			</post-process>
+		</specific>		
+		
+		<specific property="workflowMove.id" value="jbr.interndoc.agreement.cancel">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.rejected" />
+			</post-process>
+		</specific>
+
+		<!-- Настройки для Исходящего (Новые) (364) -->
+		<specific property="workflowMove.id" value="jbr.outcoming.preparation.agreement">
+			<pre-process class="ValidateVisasListProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.start_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="true"/>
+			</post-process>		
+			<post-process class="DocumentTrigger" runOrder="1010">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.sign">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.fact_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>				
+		</specific>
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.sign.set" />
+				<parameter name="affectedStates" value="jbr.sign.waiting,jbr.sign.assistent" />
+				<parameter name="targetState" value="jbr.sign.draft" />
+			</post-process>
+		</specific>	
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.preparation">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.draft" />
+			</post-process>
+		</specific>	
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.cancel">
+			<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+				<parameter name="linkAttr" value="jbr.visa.set" />
+				<parameter name="affectedStates" value="jbr.visa.waiting,jbr.visa.assistent,jbr.visa.waitEnclosed,jbr.visa.assigned" />
+				<parameter name="targetState" value="jbr.visa.rejected" />
+			</post-process>
+		</specific>
+		
+		<!-- Настройки для Поручения (324) -->
+		<specific property="workflowMove.id" value="jbr.task.preparation.agreement">
+			<pre-process class="ValidateVisasListProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.start_negotiation_date"/>
+				<parameter name="updateIfNullOnly" value="true"/>
+			</post-process>				
+			<post-process class="DocumentTrigger" runOrder="1010">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		
+		<!-- Обновление даты подписания для исходящего при переходе "Подписание" - "Подписан директором департамента" -->
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.filling-in-file-index">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.outcoming.signdate"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>				
+		</specific>
+		
+		<!-- Обновление даты подписания для исходящего при переходе "Подписание" - "Регистрация" -->
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.signed">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncSignProcessor"/>
+				<parameter name="configBean" value="signConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.outcoming.signdate"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>				
+		</specific>
+		
+		<!-- Настройки для Входящего (Нового) (224), используются также 
+		для обращений граждан и для информационных запросов-->
+		<specific property="workflowMove.id" value="jbr.incoming.registration.consideration">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExamProcessor"/>
+				<parameter name="configBean" value="examConfig"/>
+			</post-process>
+			<post-process class="PlainTrigger" runOrder="1005">
+				<parameter name="processorBean" value="syncCancelTaskVisaProcessor"/>
+			</post-process>
+		</specific>
+
+		<!-- Поручения / Резолюции - исполнение отчетов -->
+		<specific property="workflowMove.id" value="jbr.commission.execute">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="configBean" value="acquaintConfig"/>
+			</post-process>
+			<post-process class="DocumentTrigger" runOrder="1005">
+				<parameter name="configBean" value="execConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.commission.execute1" async="true" policy="IterationPolicy">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="configBean" value="acquaintConfig"/>
+			</post-process>
+			<post-process class="DocumentTrigger" runOrder="1005">
+				<parameter name="configBean" value="execConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.commission.execute2">
+			<post-process class="DocumentTrigger" runOrder="1000">
+				<parameter name="configBean" value="execConfig"/>
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.report.int.execute">
+			<pre-process class="AddTextToReportHistoryProcessor" runOrder="1000"/>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="XSLTCopyTextAttribute" runOrder="1005">
+				<parameter name="attrFrom" value="html:jbr.report.text" />
+				<parameter name="attrTo" value="text:jbr.report.hidden.text" />
+				<parameter name="xsltLocation"
+					value="dbmi/xslt/ExtractLastReportFragment.xslt" />
+			</post-process>			
+			<post-process package="com.aplana.dbmi.jbr.processors" class="ClearCardAttributePostProcessorEx" runOrder="1010">
+				<parameter name="attrId" value="text:jbr.report.currentText" />
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1015">
+				<parameter name="dateAttributeId" value="jbr.report.done.date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>	
+			<specific property="flag:autoApproveNonControlReports" value="true">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="JumpStatePostProcessor" runOrder="1000">
+					<parameter name="dest_wfm" value="jbr.report.int.approve"/>
+					<parameter name="link_attr_fromParent" value="backLink:jbr.reports"/>
+					<parameter name="parent_attr_test" value="jbr.oncontrol=jbr.commission.control.no" />
+				</post-process>
+			</specific>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.report.execute.after_assistant">
+			<pre-process class="AddTextToReportHistoryProcessor" runOrder="1000" />
+			<post-process package="com.aplana.dbmi.jbr.processors" class="XSLTCopyTextAttribute" runOrder="1005">
+				<parameter name="attrFrom" value="html:jbr.report.text" />
+				<parameter name="attrTo" value="text:jbr.report.hidden.text" />
+				<parameter name="xsltLocation"
+					value="dbmi/xslt/ExtractLastReportFragment.xslt" />
+			</post-process>			
+			<post-process package="com.aplana.dbmi.jbr.processors" class="ClearCardAttributePostProcessorEx" runOrder="1010">
+				<parameter name="attrId" value="text:jbr.report.currentText" />
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1015">
+				<parameter name="dateAttributeId" value="jbr.report.done.date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>	
+			<specific property="flag:autoApproveNonControlReports" value="true">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="JumpStatePostProcessor" runOrder="1000">
+					<parameter name="dest_wfm" value="jbr.report.int.approve"/>
+					<parameter name="link_attr_fromParent" value="backLink:jbr.reports"/>
+					<parameter name="parent_attr_test" value="jbr.oncontrol=jbr.commission.control.no" />
+				</post-process>
+			</specific>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.report.int.approve">
+			<post-process class="CheckResolutionExecutedProcessor" runOrder="1000">
+				<parameter name="resolutionLinkAttr" value="link:jbr.report.int.parent"/>
+			</post-process>
+			<!-- post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncExecProcessor"/>
+				<parameter name="configBean" value="execConfig"/>
+			</post-process-->
+		</specific>
+		<specific property="workflowMove.id" value="jbr.report.ext.execute">
+			<pre-process class="AddTextToReportHistoryProcessor" runOrder="1000" />
+			<post-process package="com.aplana.dbmi.jbr.processors" class="XSLTCopyTextAttribute" runOrder="900">
+				<parameter name="attrFrom" value="html:jbr.report.text" />
+				<parameter name="attrTo" value="text:jbr.report.hidden.text" />
+				<parameter name="xsltLocation"
+					value="dbmi/xslt/ExtractLastReportFragment.xslt" />
+			</post-process>			
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncExecProcessor"/>
+				<parameter name="configBean" value="execConfig"/>
+			</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors" class="RefreshDateAttribute" runOrder="1005">
+				<parameter name="dateAttributeId" value="jbr.report.done.date"/>
+				<parameter name="updateIfNullOnly" value="false"/>
+			</post-process>	
+		</specific>
+
+		<!-- Документы - исполнение поручений -->
+		<specific property="workflowMove.id" value="jbr.commission.finished">
+			<post-process class="CheckDocumentExecutedProcessor" runOrder="1000">
+				<parameter name="documentLinkAttr" value="link:jbr.main.doc"/>
+				<parameter name="documentExceptTemplate" value="jbr.ord"/>
+			</post-process>
+			<!-- post-process class="VisaTrigger">
+				<parameter name="processorBean" value="syncDocExecProcessor"/>
+				<parameter name="configBean" value="docExecConfig"/>
+			</post-process-->
+		</specific>
+		<!--Перевод поручения из состояния "Исполнение" в состояние "Отменено"-->
+		<specific property="workflowMove.id" value="jbr.commission.cancel.execution">
+			<post-process class="CheckDocumentExecutedProcessor" runOrder="1000">
+				<parameter name="documentLinkAttr" value="jbr.resolutions"/>
+				<parameter name="documentExceptTemplate" value="jbr.ord"/>
+			</post-process>
+		</specific>
+		<!--Перевод поручения из состояния "Черновик" в состояние "В корзину"-->
+		<specific property="workflowMove.id" value="jbr.commission.drop">
+			<post-process class="CheckDocumentExecutedProcessor" runOrder="1000">
+				<parameter name="documentLinkAttr" value="jbr.resolutions"/>
+				<parameter name="documentExceptTemplate" value="jbr.ord"/>
+			</post-process>
+		</specific>
+		
+		<specific property="workflowMove.toState" value="poruchcancelled">
+			<specific property="card.template" value="jbr.resolution" load="true">
+				<post-process package="com.aplana.dbmi.jbr.processors" class="DoDependentChangeState" runOrder="1000">
+					<parameter name="affectedStates" value="draft,agreement,jbr.visa.assistent,jbr.visa.assigned" />
+					<parameter name="linkAttr" value="backLink:jbr.visa.res" />
+					<parameter name="targetState" value="poruchcancelled" />
+				</post-process>
+			</specific>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.taskVisa.visa.assign">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		
+		<specific property="workflowMove.id" value="jbr.taskVisa.expectation">
+			<post-process class="VisaTrigger" runOrder="1000">
+				<parameter name="processorBean" value="syncVisaProcessor"/>
+				<parameter name="configBean" value="visaConfig"/>
+			</post-process>
+		</specific>
+		
+	</action>
+	
+	<!--  Действие для пересчета дат согласования -->
+	<action package="com.aplana.dbmi.module.docflow" type="CalcNegotiationDate">
+		<query package="com.aplana.dbmi.module.docflow" class="DoCalcNegotiationDate">
+			<parameter name="waitForNegotiationStates" value="jbr.visa.draft, jbr.visa.waiting, jbr.visa.assigned, jbr.visa.assistent, jbr.visa.boss.agreed"/>
+			<parameter name="passNegotiationStates" value="jbr.visa.agreed, jbr.visa.disagreed, jbr.visa.boss.agreed, jbr.visa.cancelled"/>
+		</query>		
+	</action>
+	<!-- Процессоры для вызова действия пересчета дат согласования -->
+	<object type="Card">
+		<store>
+			<specific property="template" value="jbr.ord" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+				<!-- Для документа в статусе согласование запускаем асинхронный обработчик виз, на случай если добавился новый согласующий-->
+				<!-- specific property="state" value="agreement">
+					<post-process class="DocumentTrigger">
+						<parameter name="processorBean" value="syncVisaProcessor"/>
+						<parameter name="configBean" value="visaConfig"/>
+					</post-process>				
+				</specific-->				
+			</specific>
+			<specific property="template" value="jbr.npa" async="true" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+				<!-- Для документа в статусе согласование запускаем асинхронный обработчик виз, на случай если добавился новый согласующий-->
+				<!-- Закоментарил Ларин М. 15.01.2010 Данный постпроцессор вызывает большое кол-во зацикливаний и коллизий, да и к тому же от "горячей замены согласующих отказались"-->
+				<!-- specific property="state" value="agreement">
+					<post-process class="DocumentTrigger">
+						<parameter name="processorBean" value="syncVisaProcessor"/>
+						<parameter name="configBean" value="visaConfig"/>
+					</post-process>				
+				</specific-->
+			</specific>
+			<specific property="template" value="jbr.interndoc" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+				<!-- Для документа в статусе согласование запускаем асинхронный обработчик виз, на случай если добавился новый согласующий-->
+				<!-- specific property="state" value="agreement">
+					<post-process class="DocumentTrigger">
+						<parameter name="processorBean" value="syncVisaProcessor"/>
+						<parameter name="configBean" value="visaConfig"/>
+					</post-process>				
+				</specific-->				
+			</specific>
+			<specific property="template" value="jbr.outcoming" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+				<!-- Для документа в статусе согласование запускаем асинхронный обработчик виз, на случай если добавился новый согласующий-->
+				<!-- specific property="state" value="agreement">
+					<post-process class="DocumentTrigger">
+						<parameter name="processorBean" value="syncVisaProcessor"/>
+						<parameter name="configBean" value="visaConfig"/>
+					</post-process>				
+				</specific-->				
+			</specific>
+			<specific property="template" value="jbr.infreq.answer" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+			</specific>
+			<specific property="template" value="jbr.incomingpeople.answer" policy="IterationPolicy">
+				<post-process class="CalcNegotiationDateProcessor" runOrder="1000"/>
+			</specific>
+			<specific property="template" value="jbr.visa">
+				<post-process class="CalcDocumentNegotiationDateProcessor" runOrder="1000">
+					<parameter name="updatePlanDate" value="false" />
+				</post-process>
+				<post-process class="CalcEnclosedNegotiationDateProcessor" runOrder="1005"/>
+			</specific>
+		</store>
+	</object>	
+	<!-- Получить список идентификаторов Person которые имеют определенную должность и определенное подразделение-->
+	<action package="com.aplana.dbmi.module.docflow" type="GetPositionPersons">
+		<query package="com.aplana.dbmi.module.docflow">DoGetPositionPersons</query>
+	</action>
+	<action package="com.aplana.dbmi.module.docflow"  type="GenerateVisaFromRout">
+		<query package="com.aplana.dbmi.module.docflow">DoGenerateVisaFromRout</query>
+	</action>
+	<!-- Пост-процесс для автоматического заполнения полей Разработчик, Исполнитель, Куратор в карточке НПА-->
+	
+	<action type="CreateCard">
+		<specific property="template" value="jbr.npa">
+				<post-process class="FillCuratorDeveloperExecutorPostProcessor" runOrder="1000">
+					<parameter name="isFirstSet" value="true"/>
+				</post-process>
+		</specific>
+		<specific property="template" value="jbr.ord">
+				<post-process class="FillCuratorDeveloperExecutorPostProcessor" runOrder="1000">
+					<parameter name="isFirstSet" value="true"/>
+				</post-process>
+		</specific>
+		<!-- Автоматическое заполнение поля Исполнитель для внутреннего документа-->
+		<specific property="template" value="jbr.interndoc">
+				<post-process class="FillExecutorPostProcessor" runOrder="1000"/>
+		</specific>
+		<!-- Автоматическое заполнение поля Исполнитель для исходящего документа-->
+		<specific property="template" value="jbr.outcoming">
+				<post-process class="FillExecutorPostProcessor" runOrder="1000"/>
+		</specific>
+	</action>
+	<action package="com.aplana.dbmi.module.docflow" type="GetPersonCurator">
+		<query package="com.aplana.dbmi.module.docflow">DoGetPersonCurator</query>
+	</action>
+</queries>

@@ -1,0 +1,1748 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<bean id="freemarkerConfig" class="com.aplana.dbmi.module.notif.FreemarkerConfig">
+		<property name="templateLoader">
+			<bean class="com.aplana.dbmi.module.notif.ConfigTemplateLoader"/>
+		</property>
+		<property name="objectWrapper">
+			<bean class="freemarker.template.DefaultObjectWrapper"/>
+		</property>
+	</bean>
+	
+	<bean id="readonlyDatabase" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="originDatabaseTarget"/>
+		<property name="proxyInterfaces">
+			<value>com.aplana.dbmi.service.impl.Database</value>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRES_NEW,ISOLATION_DEFAULT,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="templateUtil" class="com.aplana.dbmi.module.notif.TemplateUtil"/>
+	
+	<bean id="subjects" class="com.aplana.dbmi.util.StringsManager">
+		<property name="bundleName" value="dbmi/mail/notification"/>
+	</bean>
+	
+	<bean id="messages" class="com.aplana.dbmi.util.StringsManager">
+		<property name="bundleName" value="dbmi/notification"/>
+	</bean>
+	
+	<bean id="stdChecker" class="com.aplana.dbmi.module.notif.PersonFlagChecker" scope="prototype"/>
+	
+	<bean name="baseMailNotification" class="com.aplana.dbmi.module.mail.MailNotification" abstract="true">
+		<property name="strings" ref="subjects"/>
+		<property name="configuration" ref="freemarkerConfig"/>
+		<property name="mailer" ref="mailer"/>
+	</bean>
+	
+	<bean name="baseOnlineNotification" class="com.aplana.dbmi.module.notif.service.OnlineNotification" abstract="true">
+		<property name="manager" ref="onlineNotificationManager"/>
+		<property name="configuration" ref="freemarkerConfig"/>
+	</bean>
+	
+	<bean name="ifMailEnabled" class="com.aplana.dbmi.module.notif.ConditionalDevice" abstract="true">
+		<property name="checkField" value="notification.events"/>
+	</bean>
+	
+	<bean name="ifOnlineEnabled" class="com.aplana.dbmi.module.notif.ConditionalDevice" abstract="true">
+		<property name="checkField" value="popup.events"/>
+	</bean>
+	
+	<bean name="ifMailEnabledForComission" class="com.aplana.dbmi.module.notif.ComissionConditionalDevice" abstract="true"/>
+	<bean name="ifOnlineEnabledForComission" class="com.aplana.dbmi.module.notif.ComissionConditionalDevice" abstract="true"/>
+	
+	<bean name="baseNotifier" abstract="true">
+		<!-- <property name="strings" value="dbmi/mail/notification"/>
+		<property name="configuration" ref="freemarkerConfig"/>
+		<property name="mailer" ref="mailer"/> -->
+	</bean>
+	
+	<bean id="deloDistributionSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.distributionItem.method=jbr.distributionItem.method.delo"/>
+	</bean>
+
+	<bean id="emailDistributionSelector" class="com.aplana.dbmi.service.impl.ConditionSelector">
+		<constructor-arg ><ref bean="attributeSelectorFactory"/></constructor-arg>
+		<constructor-arg value=".card@list:jbr.distributionItem.method=jbr.distributionItem.method.email"/>
+	</bean>
+	
+	<!-- Periodic delivery Message Managers was here -->
+	
+	<!-- ВСЕ БИНЫ ПОЛУЧАТЕЛЕЙ ДОЛЖНЫ БЫТЬ В ЭТОМ БЛОКЕ. НЕ РАСКИДЫВАТЬ ПО ВСЕМУ ФАЙЛУ -->
+	<!-- Исполнитель поручения и его помощники -->
+	<bean id="groupExecutorCommission" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.AssignmentExecutor"/>
+			</bean>
+		</property>
+	</bean>
+	<!-- Исполнитель поручения и его помощники -->
+	<bean id="groupExecutorCommissionOnly" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.AssignmentExecutor"/>
+	</bean>
+	<!-- Соисполнители поручения и их помощники -->
+	<bean id="groupCoExecutorCommission" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.CoExecutor"/>
+			</bean>
+		</property>
+	</bean>
+	<!-- Исполнитель документа и его помощники -->
+	<bean id="groupExecutorDocument" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.document.executor"/>
+			</bean>
+		</property>
+	</bean>
+	<!-- Исполнители всех поручений в статусе "Исполнение" -->
+	<bean id="groupAllComissionsExecutors" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardTreeRecipients">
+				<property name="rootAttr" value="jbr.resolutions"/>
+				<property name="linkAttr" value="jbr.linkedResolutions"/>
+				<property name="personAttr" value="jbr.AssignmentExecutor"/>
+				<property name="filter">
+					<bean class="com.aplana.dbmi.module.notif.CardStateFilter">
+						<property name="suitableState" value="execution"/>
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<!-- Исполнитель документа -->
+	<bean id="groupExecutorOnly" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.document.executor"/>
+	</bean>
+
+	<!-- Ответственный за ДОУ в департаменте из списка департаментов зоны ДОУ документа -->
+	<bean id="groupResponsibleDow" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.zoneDOW:jbr.zoneDOW.DepList:jbr.department.resp_dow"/>
+	</bean>
+	
+	<!-- Ответственный за ДОУ в департаменте из списка департаментов зоны ДОУ документа -->
+	<bean id="groupResponsibleDowSpecial" class="com.aplana.dbmi.module.notif.ResponsibleDowSpecialRecipients"/>
+	
+	<!-- Регистраторы входящих документов (статическая роль) -->
+	<bean id="groupRegistrarsIncome" class="com.aplana.dbmi.module.notif.RoleRecipients">
+		<property name="role" value="registrar"/>
+		<property name="personFlag" value="notification.event.registration.income"/>
+	</bean>
+	<!-- Старшие регистраторы входящих документов (статическая роль) -->
+	<bean id="groupSeniorRegistrars" class="com.aplana.dbmi.module.notif.RoleRecipients">
+		<property name="role" value="seniorregistrar"/>
+		<property name="personFlag" value="notification.event.registration.income"/>
+	</bean>
+	<!-- Регистраторы ОГ (статическая роль) -->
+	<bean id="groupRegistrarsOG" class="com.aplana.dbmi.module.notif.RoleRecipients">
+		<property name="role" value="registrar"/>
+		<property name="personFlag" value="notification.event.registration.og"/>
+	</bean>
+	<!-- Регистратор документа -->
+	<bean id="groupRegistrar" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.outgoing.registrar"/>
+	</bean>
+	
+	<!-- Регистраторы ОГ (статическая роль) -->
+	<bean id="groupRegistrarsJBR_OG" class="com.aplana.dbmi.module.notif.RoleRecipients">
+		<property name="role" value="registrar.og"/>
+	</bean>
+	<!-- Регистраторы ОГ (статическая роль) -->
+	<bean id="groupRegistrarsOGHead" class="com.aplana.dbmi.module.notif.RoleRecipients">
+		<property name="role" value="registrar.og.head"/>
+	</bean>
+	
+	
+	<!-- Автор документа -->
+	<bean id="groupAuthor" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="AUTHOR"/>
+	</bean>
+	<!-- Контролёр документа -->
+	<bean id="groupInspectorIncoming" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.incoming.inspector"/>
+	</bean>
+	<!-- Контролёр поручения -->
+	<bean id="groupInspectorCommission" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.commission.inspector"/>
+	</bean>
+	<!-- Куратор документа -->
+	<bean id="groupSupervisor" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.AssignmentExecutor:jbr.person.dept:jbr.department.curator"/>
+	</bean>
+	<!-- Рассматривающий -->
+	<bean id="groupExaminer" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.exam.person"/>
+	</bean>
+	<!-- Согласующий -->
+	<bean id="groupNegotiator" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.visa.person"/>
+	</bean>
+	<!-- Подписывающий -->
+	<bean id="groupSigner" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.sign.person"/>
+	</bean>
+	<!-- Подписант поручения -->
+	<bean id="groupResolutionSigner" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.resolution.FioSign"/>
+	</bean>
+	<!-- Ознакамливающийся -->
+	<bean id="groupAcquainted" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.information.person"/>
+	</bean>
+	<!-- Все согласующие документ -->
+	<bean id="groupHiddenVisa" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.hidden.visa"/>
+			</bean>
+		</property>
+	</bean>
+	<!-- Все подписывающие документ -->
+	<bean id="groupHiddenSigners" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.hidden.signers"/>
+			</bean>
+		</property>
+	</bean>
+	<!-- Исполнитель в отчете об исполнении -->
+	<bean id="groupReportExecutor" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.report.int.executor"/>
+	</bean>
+	
+	<!-- Помощники исполнителя -->
+	<bean id="groupReportExecutorAssistents" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.report.int.executor"/>
+			</bean>
+		</property>
+		<property name="includeSource" value="false"/>
+	</bean>
+
+	<!-- Помощники Рассматривающего -->
+	<bean id="groupExaminerAssistents" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.exam.person"/>
+			</bean>
+		</property>
+		<property name="includeSource" value="false"/>
+	</bean>
+
+	<!-- Помощники Рассматривающего -->
+	<bean id="groupAcquaintedAssistents" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.information.person"/>
+			</bean>
+		</property>
+		<property name="includeSource" value="false"/>
+	</bean>
+	
+	<!-- Помощники Подписанта -->
+	<bean id="groupSignerAssistents" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.sign.person"/>
+			</bean>
+		</property>
+		<property name="includeSource" value="false"/>
+	</bean>
+
+	<!-- Помощники Согласующих -->
+	<bean id="groupNegotiatorAssistents" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.visa.person"/>
+			</bean>
+		</property>
+		<property name="includeSource" value="false"/>
+	</bean>
+	
+	<!-- Утверждающие отчет (+помощники) -->
+	<bean id="groupResApproverAndAssistent" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.report.int.dynamic_role.approver.hidden"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Рассматривающий и помощник запроса на смену рассматривающего -->
+	<bean id="groupRassmAndAssInChangeRassm" class="com.aplana.dbmi.module.notif.AssistantRecipients">
+		<property name="sourceGroup">
+			<bean class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+				<property name="attribute" value="jbr.request.cons:jbr.exam.person"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Рассматривающие всех рассмотрений (путь из смены рассматривающего) -->
+	<bean id="groupAllRassmFromChangeRassmMainDoc" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.maindoc.request:jbr.examby:jbr.exam.person"/>
+		<property name="ignoredStates" value="draft,trash,poruchcancelled"/>
+	</bean>
+	
+	<!-- Исполнители рассмотрений (путь из смены рассматривающего) -->
+	<bean id="groupAllExecutorsFromChangeRassmMainDoc" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.maindoc.request:jbr.allResolutions:jbr.reports:jbr.report.int.executor"/>
+		<property name="ignoredStates" value="draft,trash,poruchcancelled"/>
+	</bean>
+	<!-- Рассматривающий с измененным сроком рассмотрения -->
+	<bean id="groupConsWithChangedDeadline" class="com.aplana.dbmi.module.notif.ChangeConsiderationDeadlineRecipientGroup"/>
+	
+	<!-- Куратор документа -->
+	<bean id="changeRassmRegOg" class="com.aplana.dbmi.module.notif.CardAttrRecipients">
+		<property name="attribute" value="jbr.maindoc.request:jbr.incoming.registrar"/>
+	</bean>
+	
+	<bean id="OutRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.out"/>
+	</bean>
+	<bean id="OutRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.out.head"/>
+	</bean>
+	<bean id="InRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.income"/>
+	</bean>
+	<bean id="InRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.income.head"/>
+	</bean>
+	<bean id="IntRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.internal"/>
+	</bean>
+	<bean id="IntRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.internal.head"/>
+	</bean>
+	<bean id="OrdRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.ord"/>
+	</bean>
+	<bean id="OrdRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.ord.head"/>
+	</bean>
+	<bean id="NpaRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.npa"/>
+	</bean>
+	<bean id="NpaRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrat.npa.head"/>
+	</bean>
+	<bean id="OgRegDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrar.og"/>
+	</bean>
+	<bean id="OgRegHeadDowRecipients" class="com.aplana.dbmi.module.notif.ZoneDowRoleRecipients">
+		<property name="role" value="registrar.og.head"/>
+	</bean>
+	
+	
+	<!-- END RECIPIENTS GROUP -->
+
+	<!-- Periodic notifications -->
+	<bean name="subscriptionNotifier" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<bean class="com.aplana.dbmi.module.notif.SubscriptionRecipients"/>
+			</list>
+		</property>
+		<property name="subjectKey" value="mail.subscription.subject"/>
+		<property name="templateName" value="notification-mail.ftl"/>
+	</bean>
+
+	<bean name="distributionNotifier" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<bean class="com.aplana.dbmi.module.notif.DistributionRecipients"/>
+			</list>
+		</property>
+		<property name="subjectKey" value="mail.distribution.subject"/>
+		<property name="templateName" value="notification-mail.ftl"/>
+	</bean>
+	
+	<!-- MAIL NOTIFICATIONS -->
+	
+	<!-- Входящий - изменён срок исполнения - (со)исполнители поручений -->
+	<bean id="notifyIncomingTermChanged" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAllComissionsExecutors"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.document.changed.deadline"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.document.deadline"/>
+							<property name="templateName" value="incoming-deadline.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- ОГ - изменён срок исполнения - (со)исполнители поручений -->
+	<bean id="notifyRequestTermChanged" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAllComissionsExecutors"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.document.changed.deadline"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.document.deadline"/>
+							<property name="templateName" value="og-deadline.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Внутренний - изменён срок исполнения - (со)исполнители поручений -->
+	<bean id="notifyInternalTermChanged" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAllComissionsExecutors"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.document.changed.deadline"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">		
+							<property name="subjectKey" value="subject.document.deadline"/>
+							<property name="templateName" value="internal-deadline.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- НПА - изменён срок исполнения - (со)исполнители поручений -->
+	<bean id="notifyNPATermChanged" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAllComissionsExecutors"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.document.changed.deadline"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.document.deadline"/>
+							<property name="templateName" value="npa-deadline.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - изменён срок исполнения - исполнитель -->
+	<bean id="notifyCommissionTermChanged" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.changed.term.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.changed.term.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.termchanged"/>
+							<property name="templateName" value="commission-term-changed.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- •	Проект документа возвращен на доработку -->
+	<bean id="notifyOutgoingDisagree" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.outgoing.disagree"/>
+							<property name="templateName" value="outgoing-disagree.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentNotSigned.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий - согласовано - исполнитель -->
+	<bean id="notifyOutgoingAgree" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorDocument"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.approved"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.outgoing.agree"/>
+							<property name="templateName" value="outgoing-agree.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий - отклонено - исполнитель -->
+	<bean id="notifyOutgoingNotSigned" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.outgoing.reject"/>
+							<property name="templateName" value="outgoing-reject.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentNotSigned.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий - подписано - исполнитель -->
+	<bean id="notifyOutgoingSigned" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorDocument"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.signed"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.outgoing.signed.executor"/>
+							<property name="templateName" value="outgoing-signed-executor.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий - регистрация - Ответственные зоны доу из департаментов зоны ДОУ -->
+	<bean id="notifyOutgoingToRegister" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="OutRegDowRecipients"/>
+				<ref bean="OutRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.registration.outgoing"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.outgoing.signed.registrar"/>
+							<property name="templateName" value="outgoing-signed-registrar.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="outcome.internal,npa,ord"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Входящий - готов к списанию в дело - автор, контролер -->
+	<bean id="notifyIncomingFinished" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<bean class="com.aplana.dbmi.module.notif.CardAttrSelectorRecipients">
+					<property name="attribute" value="jbr.incoming.oncontrol"/>
+					<property name="groups">
+						<map>
+							<entry key="jbr.incoming.control.yes" value-ref="groupInspectorIncoming"/>
+							<entry key="jbr.incoming.control.no" value-ref="groupAuthor"/>
+						</map>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.finished"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.incoming.finished"/>
+							<property name="templateName" value="incoming-finished.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Входящий - поступил на регистрацию - регистраторы, старшие регистраторы -->
+	<bean id="notifyIncomingReady" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupRegistrarsIncome"/>
+				<ref bean="groupSeniorRegistrars"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.registration.income"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.incoming.ready"/>
+							<property name="templateName" value="incoming-ready.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- ОГ - поступил на регистрацию - регистраторы ОГ, старшие регистраторы -->
+	<bean id="notifyRequestReady" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupRegistrarsOG"/>
+				<ref bean="groupSeniorRegistrars"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.registration.og"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.og.ready"/>
+							<property name="templateName" value="og-ready.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Внутренний - поступил на регистрацию - ответственный за ДОУ -->
+	<bean id="notifyInternalRegister" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="IntRegDowRecipients"/>
+				<ref bean="IntRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.registration.internal"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.internal.ready"/>
+							<property name="templateName" value="internal-ready.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="outcome.internal,npa,ord"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- НПА - не согласовано - исполнитель -->
+	<bean id="notifyNPADisagree" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.npa.disagree"/>
+							<property name="templateName" value="npa-disagree.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentNotSigned.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- НПА - согласовано - исполнитель -->
+	<bean id="notifyNPAAgree" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorDocument"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.approved"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.npa.agree"/>
+							<property name="templateName" value="npa-agree.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- НПА - не подписано - исполнитель -->
+	<bean id="notifyNPAReject" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.npa.reject"/>
+							<property name="templateName" value="npa-reject.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentNotSigned.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- НПА - подписано - исполнитель -->
+	<bean id="notifyNPASigned" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorDocument"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.signed"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.npa.signed.executor"/>
+							<property name="templateName" value="npa-signed-executor.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- НПА - подписано - регистратор -->
+	<bean id="notifyNPAToRegister" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="NpaRegDowRecipients"/>
+				<ref bean="NpaRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.registration.npa"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.npa.signed.registrar"/>
+							<property name="templateName" value="npa-signed-registrar.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="outcome.internal,npa,ord"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- НПА - подписано - регистратор -->
+	<bean id="notifyORDToRegister" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="OrdRegDowRecipients"/>
+				<ref bean="OrdRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="outcome.internal,npa,ord"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - исполнение - исполнитель -->
+	<bean id="notifyCommissionExecute" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.assigned.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.assigned.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.execute"/>
+							<property name="templateName" value="commission-execute.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - исполнено - автор, контролер -->
+	<bean id="notifyCommissionFinished" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAuthor"/>
+				<ref bean="groupInspectorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.done.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.done.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.finished"/>
+							<property name="templateName" value="commission-finished.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - отменено - исполнитель, контролер -->
+	<bean id="notifyCommissionCanceled" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+				<ref bean="groupInspectorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.cancelled.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.cancelled.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.canceled"/>
+							<property name="templateName" value="commission-canceled.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - закрыто - исполнитель -->
+	<bean id="notifyCommissionClosed" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.cancelled.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.cancelled.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.closed"/>
+							<property name="templateName" value="commission-closed.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - отклонено - исполнитель -->
+	<bean id="notifyCommissionRejected" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.rejected.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.rejected.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.rejected"/>
+							<property name="templateName" value="commission-rejected.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение - утверждено - исполнитель -->
+	<bean id="notifyCommissionConfirm" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommission"/>
+				<ref bean="groupCoExecutorCommission"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="notification.event.commission.approved.ctl"/>
+							<property name="nonControlledFlag" value="notification.event.commission.approved.nonctl"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">	
+							<property name="subjectKey" value="subject.commission.confirm"/>
+							<property name="templateName" value="commission-confirm.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Рассмотрение - рассмотрение - рассматривающий -->
+	<bean id="notifyExamine" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExaminer"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.consideration"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.examine"/>
+							<property name="templateName" value="examine.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.exam"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/examSend.ftl"/>
+							<property name="groupId" value="4"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Согласование - согласование - согласующий -->
+	<bean id="notifyVisa" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupNegotiator"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.approval"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.visa"/>
+							<property name="templateName" value="visa.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.visa"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/visaSend.ftl"/>
+							<property name="groupId" value="2"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Подпись - подписание - подписант -->
+	<bean id="notifySign" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupSigner"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.signing"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.sign"/>
+							<property name="templateName" value="sign.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.sign"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/signSend.ftl"/>
+							<property name="groupId" value="1"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Ознакомление - ознакомление - кому ознакомиться -->
+	<bean id="notifyAcquaint" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAcquainted"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.acquaintance"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.acquaint"/>
+							<property name="templateName" value="acquaint.ftl"/>
+						</bean>
+					</property>
+				</bean>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.acq"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/acqSend.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий, внутренний - отмена согласования - согласующие -->
+	<bean id="notifyVisaCancel" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupHiddenVisa"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.approval.cancelled"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.doc.cancel"/>
+							<property name="templateName" value="cancel_doc.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Исходящий, внутренний - отмена подписания - подписывающие -->
+	<bean id="notifySignCancel" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupHiddenSigners"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifMailEnabled">
+					<property name="checkFlag" value="notification.event.approval.cancelled"/>
+					<property name="targetDevice">
+						<bean parent="baseMailNotification">
+							<property name="subjectKey" value="subject.doc.cancel"/>
+							<property name="templateName" value="cancel_doc.ftl"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+<!--
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	ONLINE NOTIFICATIONS
+	ONLINE NOTIFICATIONS  
+	ONLINE NOTIFICATIONS  
+	ONLINE NOTIFICATIONS  
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-->
+
+	<!--Поручение поступило на исполнение -->
+	<bean id="notifyReportSend" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupReportExecutor"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="exec.report.on.execution.control"/>
+							<property name="nonControlledFlag" value="exec.report.on.execution.not.control"/>
+							<property name="eventAttribute" value="popup.events"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/reportSend.ftl"/>
+							<property name="groupId" value="3"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+		<!-- 'Пришло новое поручение от помощника' (на рассмотрение) -->
+	<bean id="notifyExecReportSendToHead" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupReportExecutorAssistents"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="exec.report.on.execution.control"/>
+							<property name="nonControlledFlag" value="exec.report.on.execution.not.control"/>
+							<property name="eventAttribute" value="popup.events"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/reportSend.ftl"/>
+							<property name="groupId" value="3"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 'Документ пришел на рассмотрение руководителю'-->
+	<bean id="notifyExamSendToHead" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExaminerAssistents"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.exam"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/examSend.ftl"/>
+							<property name="groupId" value="4"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Ознакомление - Обработка помощником - кому ознакомиться (помощники)-->
+	<bean id="notifyAcquaintHead" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAcquaintedAssistents"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.acq"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/acqSend.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 'Документ пришел на подпись руководителю' -->
+	<bean id="notifySignHead" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupSignerAssistents"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.sign"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/signSend.ftl"/>
+							<property name="groupId" value="1"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 'Документ пришел на согласование руководителю' -->
+	<bean id="notifyVisaHead" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupNegotiatorAssistents"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.visa"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/visaSend.ftl"/>
+							<property name="groupId" value="2"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Документ - не подписано - исполнитель -->
+	<bean id="notifyDocumentRevision" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentNotSigned.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+    <!-- Документ - не согласовано -->
+    <bean id="notifyDocumentRevisionAgreement" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+        <property name="recipients">
+            <list>
+                <ref bean="groupExecutorOnly"/>
+            </list>
+        </property>
+        <property name="devices">
+            <list>
+                <bean parent="ifOnlineEnabled">
+                    <property name="checkFlag" value="document.project.rejected"/>
+                    <property name="targetDevice">
+                        <bean parent="baseOnlineNotification">
+                            <property name="templateName" value="onlineNotif/documentNotAgreed.ftl"/>
+                            <property name="groupId" value="5"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+	
+	<!-- Входящий - Поступивший из ВС - Ответственные за ДОУ -->
+	<bean id="notifyIncomingMedo" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="InRegDowRecipients"/>
+				<ref bean="InRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="incoming.og"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ОГ - Поступивший из ВС - Ответственные за ДОУ -->
+	<bean id="notifyOgMedo" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="OgRegDowRecipients"/>
+				<ref bean="OgRegHeadDowRecipients"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="incoming.og"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentOnRegistration.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Документ - отклонен - исполнитель-->
+	<bean id="notifyDocumentRejected" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="document.project.rejected"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/documentRejected.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Независимое поручение	Подписание	Подписант -->
+	<bean id="notifyIndepResSign" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupResolutionSigner"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="doc.on.sign"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/signIndepResSend.ftl"/>
+							<property name="groupId" value="1"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Поручение	Отменен	Исполнитель	 -->
+	<bean id="notifyCommisionCancel" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupExecutorCommissionOnly"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="res.canceled.control"/>
+							<property name="nonControlledFlag" value="res.canceled.not.comtrol"/>
+							<property name="eventAttribute" value="popup.events"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/resClose.ftl"/>
+							<property name="groupId" value="3"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- Отчет об исполнении (исполнитель)	Отправлен	Исполнитель
+	Если отчет отправлен исполнителю на доработку
+	 -->
+	<bean id="notifyReportSendOnRework" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupReportExecutor"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="exec.report.revision.control"/>
+							<property name="nonControlledFlag" value="exec.report.revision.not.control"/>
+							<property name="eventAttribute" value="popup.events"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/reportSendRework.ftl"/>
+							<property name="groupId" value="3"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Отчёт об исполнении Исполнен	Утверждающие/Помощники -->
+	<bean id="notifyExecReportDone" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupResApproverAndAssistent"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>	
+				<bean parent="ifOnlineEnabledForComission">
+					<property name="checker">
+						<bean class="com.aplana.dbmi.module.notif.PersonFlagsForCommissionChecker">
+							<property name="controlledFlag" value="res.to.approve.control"/>
+							<property name="nonControlledFlag" value="res.to.approve.not.control"/>
+							<property name="eventAttribute" value="popup.events"/>
+						</bean>
+					</property>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/reportDone.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Запрос на изменение рассматривающего - На рассмотрении - Регистратор ОГ, Старший регистратор ОГ (ВСЕ)  -->
+	<bean id="notifyChangeRassmOnRegistration" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="changeRassmRegOg"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="changing.considering"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/change_rassm_registrator.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Запрос на изменение рассматривающего - Рассматривающий/помощники - Отклонен  -->
+	<bean id="notifyChangeRassmRejected" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupRassmAndAssInChangeRassm"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="changing.considering"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/change_rassm_rejected.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Запрос на изменение рассматривающего - Рассматривающий/помощники - Обработан  -->
+	<bean id="notifyChangeRassmApproved" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupRassmAndAssInChangeRassm"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="changing.considering"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/change_rassm_approved.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Запрос на изменение ответственного рассматривающего - Все рассматривающие и исполнители/соисполнители - Обработан  -->
+	<bean id="notifyChangeMainRassmApprovedAllRassmAndAllExecutors" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupAllRassmFromChangeRassmMainDoc"/>
+				<ref bean="groupAllExecutorsFromChangeRassmMainDoc"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="changing.considering"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/change_main_rassm_approved.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Запрос на изменение ответственного рассматривающего - Новые рассматривающие/Рассматривающий - Обработан(Изменен срок)  -->
+	<bean id="notifyConsWithChangedDeadline" class="com.aplana.dbmi.module.notif.NotificationBean" parent="baseNotifier" lazy-init="true">
+		<property name="recipients">
+			<list>
+				<ref bean="groupConsWithChangedDeadline"/>
+			</list>
+		</property>
+		<property name="devices">
+			<list>
+				<bean parent="ifOnlineEnabled">
+					<property name="checkFlag" value="changing.considering"/>
+					<property name="targetDevice">
+						<bean parent="baseOnlineNotification">
+							<property name="templateName" value="onlineNotif/change_rassm_approved_new_deadline.ftl"/>
+							<property name="groupId" value="5"/>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- ================ Сервис онлайн-уведомлений =============== -->
+	<bean id="onlineNotificationManager" class="com.aplana.dbmi.module.notif.service.MessageManager">
+		<property name="database" ref="asyncDatabaseTarget"/>
+		<property name="queryFactory" ref="queryFactory"/>
+	</bean>
+	
+	<bean name="onlineMessage" class="com.aplana.dbmi.module.notif.service.OnlineNotification" abstract="true">
+		<property name="manager" ref="onlineNotificationManager"/>
+		<property name="sender">
+			<bean class="com.aplana.dbmi.model.Person">
+				<property name="id" value="0"/>
+			</bean>
+		</property>
+	</bean>
+</beans>

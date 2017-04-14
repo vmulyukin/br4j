@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<actions>
+	<action>
+		<title>Удалить поручение</title>
+		<id>DeleteTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="toState">trash</parameter>
+			</parameters>
+		</handler>
+	</action>	
+	<action>
+		<title>Изменить поручение</title>
+		<id>ChangeTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeCardAction"/>
+	</action>
+	<action>
+		<title>Отменить поручение</title>
+		<id>CancelTask</id>
+		<objType>WSOTask</objType>
+		<handler name="ChangeCardAction"/>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="toState">poruchcancelled</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Исполнить</title>
+		<id>ExecuteTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>				
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="toState">report.accepted</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetReportValueAction">
+			<parameters>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="affectedStates">report.accepted</parameter>				
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+			</parameters>			
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="affectedStates">report.accepted</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="toState">done</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Исполнить</title>
+		<id>ExecuteTaskReport</id>
+		<objType>WSOMTaskReport</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+				<parameter name="toState">report.accepted</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetReportValueAction">
+			<parameters>
+				<parameter name="createObject">true</parameter>
+			</parameters>						
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="affectedStates">report.accepted</parameter>
+				<parameter name="toState">done</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Создать и исполнить поручение по документу, поступившему на ознакомление</title>
+		<id>ExecuteTaskOnDocInform</id>
+		<objType>WSOMTask</objType>
+		<handler name="CreateAndChangeStateAction">
+			<parameters>
+				<parameter name="toState">execution</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetArmFlagAction">
+			<parameters>
+				<parameter name="affectedStates">jbr.report.inprogress,jbr.commission.executed</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="objectType">com.aplana.ireferent.types.TaskReportInternal</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Выдать поручение</title>
+		<id>AssignTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+				<parameter name="toState">report.accepted</parameter>
+			</parameters>
+		</handler>
+		<handler name="CreateAndChangeStateAction">
+			<parameters>
+				<parameter name="toState">execution</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetArmFlagAction">
+			<parameters>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="affectedStates">jbr.report.inprogress,jbr.commission.executed</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="objectType">com.aplana.ireferent.types.TaskReportInternal</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Поручение на исполнение</title>
+		<id>ExecuteTaskDraft</id>
+		<objType>WSOMDocument</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="link">jbr.allResolutions</parameter>
+				<parameter name="toState">execution</parameter>
+				<parameter name="affectedStates">draft</parameter>
+				<parameter name="filterByUser">jbr.resolution.FioSign</parameter>
+			</parameters>
+		</handler>
+		<when name="ConditionTaskDraftParent">
+			<parameters>
+				<parameter name="link">jbr.commission.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+			</parameters>
+		<handler name="ChangeStateReportsFromParentTaskAction">			<parameters>
+				<parameter name="link">jbr.commission.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+			</parameters>
+			<handler name="ChangeStateReportsFromParentTaskAction">
+				<parameters>
+					<parameter name="optional">true</parameter>
+				<parameter name="link">jbr.reports</parameter>
+					<parameter name="filterByUser">jbr.report.int.executor</parameter>
+					<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+					<parameter name="toState">report.accepted</parameter>
+				</parameters>
+			</handler>
+			<handler name="SetArmFlagFromParentTaskAction">
+				<parameters>
+					<parameter name="affectedStates">report.accepted</parameter>
+					<parameter name="link">jbr.commission.reports</parameter>
+					<parameter name="filterByUser">jbr.report.int.executor</parameter>
+					<parameter name="objectType">com.aplana.ireferent.types.TaskReportInternal</parameter>
+				</parameters>
+			</handler>
+		</when>
+		<when name="ConditionBase">
+			<parameters>
+				<parameter name="affectedStates">acquaintance</parameter>
+				<parameter name="link">jbr.inform.list</parameter>
+				<parameter name="filterByUser">jbr.information.person</parameter>
+			</parameters>
+			<handler name="ChangeStateAction">
+				<parameters>
+					<parameter name="workflowMove">jbr.acquaint</parameter>
+					<parameter name="affectedStates">acquaintance</parameter>
+					<parameter name="link">jbr.inform.list</parameter>
+					<parameter name="filterByUser">jbr.information.person</parameter>
+				</parameters>
+			</handler>
+		</when>
+	</action>
+	<action>
+		<title>Выдать графическое поручение</title>
+		<id>AssignGraphicalTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+				<parameter name="toState">report.accepted</parameter>
+			</parameters>
+		</handler>
+		<handler name="CreateAndChangeStateAction">
+			<parameters>
+				<parameter name="createCardAction">CreateCardByModifiedObject</parameter>
+				<parameter name="extensionId">resolutionFiles</parameter>
+				<parameter name="linkType">graphical</parameter>
+				<parameter name="toState">execution</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetArmFlagAction">
+			<parameters>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="affectedStates">jbr.report.inprogress,jbr.commission.executed</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="objectType">com.aplana.ireferent.types.TaskReportInternal</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Выдать аудио поручение</title>
+		<id>AssignAudioTask</id>
+		<objType>WSOMTask</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="affectedStates">jbr.envelope.sent,consideration</parameter>
+				<parameter name="toState">report.accepted</parameter>
+			</parameters>
+		</handler>
+		<handler name="CreateAndChangeStateAction">
+			<parameters>
+				<parameter name="createCardAction">CreateCardByModifiedObject</parameter>
+				<parameter name="extensionId">resolutionFiles</parameter>
+				<parameter name="linkType">audio</parameter>
+				<parameter name="toState">execution</parameter>
+			</parameters>
+		</handler>
+		<handler name="SetArmFlagAction">
+			<parameters>
+				<parameter name="idSource">parent.id</parameter>
+				<parameter name="affectedStates">jbr.report.inprogress,jbr.commission.executed</parameter>
+				<parameter name="link">jbr.reports</parameter>
+				<parameter name="filterByUser">jbr.report.int.executor</parameter>
+				<parameter name="objectType">com.aplana.ireferent.types.TaskReportInternal</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Утвердить</title>
+		<id>ApproveTaskReport</id>
+		<objType>WSOMTaskReport</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.report.int.approve</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Вернуть на доработку</title>
+		<id>DeclineTaskReport</id>
+		<objType>WSOMTaskReport</objType>
+		<handler name="SetDeclineReasonAction">
+			<parameters>
+				<parameter name="createObject">true</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.report.int.decline</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Изменить документ</title>
+		<id>ChangeDocument</id>
+		<objType>WSOMDocument</objType>
+		<handler name="ChangeCardAction"/>
+	</action>
+	<action>
+		<title>На исполнение</title>
+		<id>ExamExecute</id>
+		<objType>WSOMDocument</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.exam.execute</parameter>
+				<parameter name="affectedStates">jbr.exam.waiting</parameter>
+				<parameter name="link">jbr.examby</parameter>
+				<parameter name="filterByUser">jbr.exam.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Не требует исполнения</title>
+		<id>ExamArchive</id>
+		<objType>WSOMDocument</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="optional">true</parameter>
+				<parameter name="link">jbr.resolutions</parameter>
+				<parameter name="toState">trash</parameter>
+				<parameter name="filterByUser">jbr.exam.person</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.exam.archive</parameter>
+				<parameter name="affectedStates">jbr.exam.waiting</parameter>
+				<parameter name="link">jbr.examby</parameter>
+				<parameter name="filterByUser">jbr.exam.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Согласен</title>
+		<id>VisaAgree</id>
+		<objType>WSOMDocument</objType>
+		<handler name="SetReviewSolutionAction">
+			<parameters>
+				<parameter name="objectType">com.aplana.ireferent.types.WSOApprovalReview</parameter>
+				<parameter name="link">jbr.visa.set</parameter>
+				<parameter name="affectedStates">jbr.visa.waiting</parameter>				
+				<parameter name="filterByUser">jbr.visa.person</parameter>
+				<parameter name="defaultValue">Согласен</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.visa.agree.from_boss</parameter>
+				<parameter name="affectedStates">jbr.visa.waiting</parameter>
+				<parameter name="link">jbr.visa.set</parameter>
+				<parameter name="filterByUser">jbr.visa.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Не согласен</title>
+		<id>VisaDisagree</id>
+		<objType>WSOMDocument</objType>
+		<handler name="SetReviewSolutionAction">
+			<parameters>
+				<parameter name="objectType">com.aplana.ireferent.types.WSOApprovalReview</parameter>
+				<parameter name="link">jbr.visa.set</parameter>
+				<parameter name="affectedStates">jbr.visa.waiting</parameter>				
+				<parameter name="filterByUser">jbr.visa.person</parameter>
+				<parameter name="solutionMandatory">true</parameter>
+				<parameter name="defaultValue">Не согласен</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<!-- <parameter name="workflowMove">jbr.visa.disagree</parameter> -->
+				<parameter name="toState">rejected</parameter>
+				<parameter name="affectedStates">jbr.visa.waiting</parameter>
+				<parameter name="link">jbr.visa.set</parameter>
+				<parameter name="filterByUser">jbr.visa.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+        <title>На доработку</title>
+        <id>VisaFinalize</id>
+        <objType>WSOMDocument</objType>
+        <handler name="SetReviewSolutionAction">
+            <parameters>
+                <parameter name="objectType">com.aplana.ireferent.types.WSOApprovalReview</parameter>
+                <parameter name="link">jbr.visa.set</parameter>
+                <parameter name="affectedStates">jbr.visa.waiting</parameter>               
+                <parameter name="filterByUser">jbr.visa.person</parameter>
+                <parameter name="solutionMandatory">true</parameter>
+                <parameter name="defaultValue">На доработку</parameter>
+            </parameters>
+        </handler>
+        <handler name="ChangeStateAction">
+            <parameters>
+                <!-- <parameter name="workflowMove">jbr.visa.disagree</parameter> -->
+                <parameter name="toState">draft</parameter>
+                <parameter name="affectedStates">jbr.visa.waiting</parameter>
+                <parameter name="link">jbr.visa.set</parameter>
+                <parameter name="filterByUser">jbr.visa.person</parameter>
+            </parameters>
+        </handler>
+    </action>
+	<action>
+		<title>Подписать</title>
+		<id>Sign</id>
+		<objType>WSOMDocument</objType>
+		<handler name="SetReviewSolutionAction">
+			<parameters>
+				<parameter name="objectType">com.aplana.ireferent.types.SignReview</parameter>
+				<parameter name="link">jbr.sign.set</parameter>
+				<parameter name="affectedStates">jbr.sign.waiting</parameter>				
+				<parameter name="filterByUser">jbr.sign.person</parameter>
+				<parameter name="defaultValue">Подписать</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.sign.sign</parameter>
+				<parameter name="affectedStates">jbr.sign.waiting</parameter>
+				<parameter name="link">jbr.sign.set</parameter>
+				<parameter name="filterByUser">jbr.sign.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Отклонить</title>
+		<id>SignReject</id>
+		<objType>WSOMDocument</objType>
+		<handler name="SetReviewSolutionAction">
+			<parameters>
+				<parameter name="objectType">com.aplana.ireferent.types.SignReview</parameter>
+				<parameter name="link">jbr.sign.set</parameter>
+				<parameter name="affectedStates">jbr.sign.waiting</parameter>				
+				<parameter name="filterByUser">jbr.sign.person</parameter>
+				<parameter name="solutionMandatory">true</parameter>
+				<parameter name="defaultValue">Отклонить</parameter>
+			</parameters>
+		</handler>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.sign.reject.boss</parameter>
+				<parameter name="affectedStates">jbr.sign.waiting</parameter>
+				<parameter name="link">jbr.sign.set</parameter>
+				<parameter name="filterByUser">jbr.sign.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+        <title>На доработку</title>
+        <id>SignFinalize</id>
+        <objType>WSOMDocument</objType>
+        <handler name="SetReviewSolutionAction">
+            <parameters>
+                <parameter name="objectType">com.aplana.ireferent.types.SignReview</parameter>
+                <parameter name="link">jbr.sign.set</parameter>
+                <parameter name="affectedStates">jbr.sign.waiting</parameter>               
+                <parameter name="filterByUser">jbr.sign.person</parameter>
+                <parameter name="solutionMandatory">true</parameter>
+                <parameter name="defaultValue">На доработку</parameter>
+            </parameters>
+        </handler>
+        <handler name="ChangeStateAction">
+            <parameters>
+                <parameter name="workflowMove">jbr.sign.return.for.revision</parameter>
+                <parameter name="affectedStates">jbr.sign.waiting</parameter>
+                <parameter name="link">jbr.sign.set</parameter>
+                <parameter name="filterByUser">jbr.sign.person</parameter>
+            </parameters>
+        </handler>
+    </action>
+	<action>
+		<title>Ознакомиться</title>
+		<id>Informed</id>
+		<objType>WSOMDocument</objType>
+		<handler name="ChangeStateAction">
+			<parameters>
+				<parameter name="workflowMove">jbr.acquaint</parameter>
+				<parameter name="affectedStates">acquaintance</parameter>
+				<parameter name="link">jbr.inform.list</parameter>
+				<parameter name="filterByUser">jbr.information.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>В избранное</title>
+		<id>InFavorites</id>
+		<objType>WSObject</objType>
+		<handler name="CreateLinkCardAction">
+			<parameters>
+				<parameter name="objectType">com.aplana.ireferent.types.Favorites</parameter>
+				<parameter name="setUser">true</parameter>
+				<parameter name="chkOnExist">true</parameter>
+				<parameter name="chkOnState">jbr.reservationRequest.published</parameter>
+				<parameter name="chkOnLink">jbr.boss.favorite.document</parameter>
+				<parameter name="chkOnUser">jbr.boss.favorite.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+	<action>
+		<title>Удалить из избранного</title>
+		<id>OutFavorites</id>
+		<objType>WSObject</objType>
+		<handler name="ChangeLinkStateAction">
+			<parameters>
+				<parameter name="toState">doublet</parameter>
+				<parameter name="findLinkedOnState">jbr.reservationRequest.published</parameter>
+				<parameter name="findLinkedOnLink">jbr.boss.favorite.document</parameter>
+				<parameter name="findLinkedOnUser">jbr.boss.favorite.person</parameter>
+			</parameters>
+		</handler>
+	</action>
+</actions>

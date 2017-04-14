@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries process-package="com.aplana.dbmi.module.notif" selector-package="com.aplana.dbmi.module.notif.selector">
+	<object type="Card">
+		<store>
+			<specific property="state" value="execution">
+				<!-- Входящий -->
+				<specific property="template" value="jbr.incoming">
+					<specific class="DocumentTermChangedSelector">
+						<post-process class="CardNotification" runOrder="5">
+							<parameter name="beanName" value="notifyIncomingTermChanged"/>									
+						</post-process>
+					</specific>
+				</specific>
+				<!-- ОГ -->
+				<specific property="template" value="jbr.citizenrequest">
+					<specific class="DocumentTermChangedSelector">
+						<post-process class="CardNotification" runOrder="5">
+							<parameter name="beanName" value="notifyRequestTermChanged"/>										
+						</post-process>
+					</specific>
+				</specific>
+				<!-- Внутренний -->
+				<specific property="template" value="jbr.interndoc">
+					<specific class="DocumentTermChangedSelector">
+						<post-process class="CardNotification" runOrder="5">
+							<parameter name="beanName" value="notifyInternalTermChanged"/>									
+						</post-process>
+					</specific>
+				</specific>
+				<!-- НПА -->
+				<specific property="template" value="jbr.npa" async="true" policy="IterationPolicy">
+					<specific class="DocumentTermChangedSelector">
+						<post-process class="CardNotification" runOrder="5">
+							<parameter name="beanName" value="notifyNPATermChanged"/>									
+						</post-process>
+					</specific>
+				</specific>
+				<!-- Поручение -->
+				<specific property="template" value="jbr.resolution">
+					<specific class="CommissionTermChangedSelector">
+						<post-process class="CardNotification" runOrder="5">
+							<parameter name="beanName" value="notifyCommissionTermChanged"/>									
+						</post-process>
+					</specific>
+				</specific>
+			</specific>
+		</store>
+	</object>
+	
+	<action type="ChangeState">
+		<pre-process class="CleanIrrelevantMessages" runOrder="1">
+		</pre-process>
+
+        <specific property="workflowMove.id" value="jbr.cc_request.to.consideration">
+            <pre-process class="CleanIrrelevantMessages" runOrder="2">
+                <parameter name="linkAttr" value="jbr.request.cons"/>
+                <parameter name="conditions" value="list:jbr.request.type=jbr.considerator.change,jbr.considerator.remove"/>
+            </pre-process>
+        </specific>
+
+		<!-- Исходящий - не согласовано - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.preparation">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyDocumentRevisionAgreement"/>
+			</post-process>
+		</specific>
+		<!-- Исходящий - согласовано - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.sign">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyOutgoingAgree"/>									
+			</post-process>
+		</specific>
+		<!-- Исходящий - Не подписано - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.preparation">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyDocumentRevision"/>
+			</post-process>
+		</specific>
+		<!-- Исходящий - подписано - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.signed" runOrder="5">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyOutgoingSigned"/>										
+			</post-process>
+		</specific>
+		
+		<!-- Входящий - готов к списанию в дело - автор, контролер -->
+		<specific property="workflowMove.id" value="jbr.incoming.execution.ready_for_delo">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyIncomingFinished"/>								
+			</post-process>
+		</specific>
+
+		<specific property="workflowMove.id" value="jbr.incoming.registration.ready">
+		<!-- Входящий - поступил на регистрацию - регистраторы, старшие регистраторы -->
+			<specific property="card.template" value="jbr.incoming" load="true">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyIncomingReady"/>							
+				</post-process>
+			</specific>
+		
+		<!-- ОГ - поступил на регистрацию - регистраторы, старшие регистраторы -->
+			<specific property="card.template" value="jbr.citizenrequest" load="true">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyRequestReady"/>									
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- Внутренний не согласован - Исполнитель -->
+		<specific property="workflowMove.id" value="jbr.interndoc.agreement.preparation">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyDocumentRevisionAgreement"/>
+			</post-process>
+		</specific>
+		
+		<!-- Внутренний не подписан - Исполнитель -->
+		<specific property="workflowMove.id" value="jbr.interndoc.sign.preparation">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyDocumentRevision"/>
+			</post-process>
+		</specific>
+		
+		<specific property="card.template" value="jbr.npa">
+			<!-- НПА - не согласовано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.agreement.preparation">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyDocumentRevisionAgreement"/>
+				</post-process>
+			</specific>
+			<!-- НПА - согласовано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.agreement.sign">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyNPAAgree"/>								
+				</post-process>
+			</specific>
+			<!-- НПА - не подписано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.sign.preparation">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyDocumentRevision"/>
+				</post-process>
+			</specific>
+			<!-- НПА - подписано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.sign.before-registration">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyNPASigned"/>
+				</post-process>
+			</specific>
+		</specific>
+		
+		<specific property="card.template" value="jbr.ord">
+			<!-- ОРД - не согласовано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.agreement.preparation">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyDocumentRevisionAgreement"/>
+				</post-process>
+			</specific>
+			<!-- ОРД - не подписано - исполнитель -->
+			<specific property="workflowMove.id" value="jbr.ord.sign.preparation">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyDocumentRevision"/>
+				</post-process>
+			</specific>
+		</specific>
+		<!-- Поручение - исполнение - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.commission.execute1" async="true" policy="IterationPolicy">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionExecute"/>									
+			</post-process>
+		</specific>
+		<!-- Поручение - исполнено - автор, контролер -->
+		<specific property="workflowMove.id" value="jbr.commission.finished">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionFinished"/>									
+			</post-process>
+		</specific>
+		<!-- Поручение - отменено (из Исполнение) - исполнитель, контролер -->
+		<specific property="workflowMove.id" value="jbr.commission.cancel.execution">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionCanceled"/>									
+			</post-process>
+		</specific>
+		<!-- Поручение - закрыто - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.commission.close">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionClosed"/>							
+			</post-process>
+		</specific>
+		<specific property="workflowMove.id" value="jbr.commission.close.draft">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionClosed"/>									
+			</post-process>
+		</specific>
+		<!-- Поручение - отклонено - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.commission.reject">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionRejected"/>									
+			</post-process>
+		</specific>
+		<!-- Поручение - утверждено - исполнитель -->
+		<specific property="workflowMove.id" value="jbr.commission.confirm">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommissionConfirm"/>									
+			</post-process>
+		</specific>
+		
+		<!-- Рассмотрение - рассмотрение - рассматривающий -->
+		<specific property="workflowMove.toState" value="consideration">
+			<specific property="card.template" value="jbr.rassm">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyExamine"/>
+					<parameter name="assistantBeanName" value="notifyExamSendToHead"/>
+				</post-process>
+			</specific>
+		</specific>
+		<!-- Согласование - согласование - согласующий -->
+		<specific property="workflowMove.toState" value="agreement">
+			<specific property="card.template" value="jbr.visa">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyVisa"/>									
+					<parameter name="assistantBeanName" value="notifyVisaHead"/>									
+				</post-process>
+			</specific>
+		</specific>
+		<!-- Подпись - подписание - подписант -->
+		<specific property="workflowMove.toState" value="sign">
+			<specific property="card.template" value="jbr.sign">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifySign"/>							
+					<parameter name="assistantBeanName" value="notifySignHead"/>							
+				</post-process>
+			</specific>
+		</specific>
+
+		<!-- Исходящий согласование -> отменить -->
+		<specific property="workflowMove.id" value="jbr.outcoming.agreement.cancel">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyVisaCancel"/>									
+			</post-process>
+		</specific>
+
+		<!-- Исходящий подписание -> отменить -->
+		<specific property="workflowMove.id" value="jbr.outcoming.sign.cancel">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifySignCancel"/>									
+			</post-process>
+		</specific>
+
+		<!-- Внутренний согласование -> отменить -->
+		<specific property="workflowMove.id" value="jbr.interndoc.agreement.cancel">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyVisaCancel"/>									
+			</post-process>
+		</specific>
+
+		<!-- Внутренний подписание -> отменить -->
+		<specific property="workflowMove.id" value="jbr.interndoc.sign.cancel">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifySignCancel"/>									
+			</post-process>
+		</specific>	
+
+		<!-- 'Пришло новое поручение на исполнение' -->
+		<specific property="workflowMove.toState" value="sent">
+			<specific property="card.template" value="jbr.report.internal">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyReportSend"/>
+					<parameter name="condition" value="html:jbr.report.text=NULL"/>
+				</post-process>
+			</specific>
+		</specific>
+
+		<!-- 'Пришло новое поручение от помощника' (на рассмотрение руководителю) -->
+		<specific property="workflowMove.toState" value="consideration">
+			<specific property="card.template" value="jbr.report.internal">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyReportSend"/>
+					<parameter name="condition" value="html:jbr.report.text=NULL"/>
+				</post-process>
+			</specific>
+		</specific>
+
+		<!-- 'Пришло новое поручение для руководителя' -->
+		<specific property="workflowMove.toState" value="boss.assistant">
+			<specific property="card.template" value="jbr.report.internal">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyExecReportSendToHead"/>
+					<parameter name="condition" value="html:jbr.report.text=NULL"/>
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- 'Документ пришел на рассмотрение руководителю' -->
+		<specific property="workflowMove.toState" value="boss.assistant">
+			<specific property="card.template" value="jbr.rassm">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyExamSendToHead"/>
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- 'Документ пришел на ознакомление' -->
+		<specific property="workflowMove.toState" value="acquaintance">
+			<specific property="card.template" value="jbr.inform">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyAcquaint"/>
+					<parameter name="assistantBeanName" value="notifyAcquaintHead"/>
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- 'Документ пришел на ознакомление руководителю' -->
+		<specific property="workflowMove.toState" value="boss.assistant">
+			<specific property="card.template" value="jbr.inform">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyAcquaintHead"/>
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- 'Документ пришел на подпись руководителю' -->
+		<specific property="workflowMove.toState" value="boss.assistant">
+			<specific property="card.template" value="jbr.sign">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifySignHead"/>							
+				</post-process>
+			</specific>
+		</specific>
+		
+		<!-- 'Документ пришел на согласование руководителю' -->
+		<specific property="workflowMove.toState" value="boss.assistant">
+			<specific property="card.template" value="jbr.visa">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyVisaHead"/>							
+				</post-process>
+			</specific>
+		</specific>
+		
+		<specific property="workflowMove.toState" value="before-registration">
+		<!-- Исходящий - подписано - регистратор -->
+			<specific property="card.template" value="jbr.outcoming">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyOutgoingToRegister"/>									
+				</post-process>
+			</specific>
+			<!-- Внутренний - поступил на регистрацию - ответственный за ДОУ -->
+			<specific property="card.template" value="jbr.interndoc">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyInternalRegister"/>									
+				</post-process>
+			</specific>
+			<!-- НПА - подписано - регистратор -->
+			<specific property="card.template" value="jbr.npa">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyNPAToRegister"/>									
+				</post-process>
+			</specific>
+			<!-- ОРД - подписано - регистратор -->
+			<specific property="card.template" value="jbr.ord">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyORDToRegister"/>									
+				</post-process>
+			</specific>
+		</specific>
+		
+		<specific property="workflowMove.toState" value="inmedo">
+			<specific property="card.template" value="jbr.incoming">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyIncomingMedo"/>									
+				</post-process>
+			</specific>
+			<specific property="card.template" value="jbr.incomingpeople">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyOgMedo"/>									
+				</post-process>
+			</specific>
+		</specific>
+		
+		<specific property="workflowMove.toState" value="rejected">
+		<!-- Исходящий - отклонен - исполнитель-->
+			<specific property="card.template" value="jbr.outcoming">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyDocumentRejected"/>									
+				</post-process>
+			</specific>
+			<!-- Внутренний - отклонен - исполнитель -->
+			<specific property="card.template" value="jbr.interndoc">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyDocumentRejected"/>									
+				</post-process>
+			</specific>
+			<!-- НПА - отклонен - исполнитель -->
+			<specific property="card.template" value="jbr.npa">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyDocumentRejected"/>									
+				</post-process>
+			</specific>
+			<!-- ОРД - отклонен - исполнитель -->
+			<specific property="card.template" value="jbr.ord">
+				<post-process class="CardNotification" runOrder="10">
+					<parameter name="beanName" value="notifyDocumentRejected"/>									
+				</post-process>
+			</specific>
+		</specific>
+
+		<!-- Независимое поручение	Подписание	Подписант -->
+		<specific property="workflowMove.id" value="jbr.independent.resolution.draft.sign" async="true">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyIndepResSign"/>									
+			</post-process>
+		</specific>
+		
+		<!-- Поручение	Отменен	Исполнитель -->
+		 <specific property="workflowMove.id" value="jbr.commission.cancel.execution">
+		 	<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyCommisionCancel"/>									
+			</post-process>
+		</specific>
+
+		<!-- Поручение возвращено в работу. -->
+		<specific property="workflowMove.toState" value="sent">
+			<specific property="card.template" value="jbr.report.internal">
+				<specific class="ExecutorReportSelector">
+					<post-process class="CardNotification" runOrder="5">
+						<parameter name="beanName" value="notifyReportSendOnRework"/>
+						<parameter name="condition" value="html:jbr.report.text#NULL"/>
+					</post-process>
+				</specific>
+			</specific>
+		</specific>
+		
+		<!-- Отчёт об исполнении Исполнен	Утверждающие -->
+		<specific property="workflowMove.toState" value="done">
+			<specific property="card.template" value="jbr.report.internal">
+					<post-process class="CardNotification" runOrder="5">
+						<parameter name="beanName" value="notifyExecReportDone"/>
+					</post-process>
+			</specific>
+		</specific>
+		
+<!-- Запрос на изменение рассматривающего - На рассмотрении - Регистратор ОГ, Старший регистратор ОГ (ВСЕ)  -->
+		 <specific property="workflowMove.id" value="jbr.cc_request.to.consideration">
+		 	<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyChangeRassmOnRegistration"/>									
+			</post-process>
+		</specific>
+		
+	<!-- Запрос на изменение рассматривающего - Рассматривающий/помощники - Отклонен  -->
+		 <specific property="workflowMove.id" value="jbr.cc_request.reject">
+		 	<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyChangeRassmRejected"/>									
+			</post-process>
+		</specific>
+		
+	<!-- Запрос на изменение рассматривающего - Рассматривающий/помощники - Обработан  -->
+		 <specific property="workflowMove.id" value="jbr.cc_request.process">
+		 	<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyChangeRassmApproved"/>									
+			</post-process>
+			<specific class="MainConsiderationSelector">
+				<post-process class="CardNotification" runOrder="5">
+					<parameter name="beanName" value="notifyChangeMainRassmApprovedAllRassmAndAllExecutors"/>									
+				</post-process>
+			</specific>
+		</specific>
+		
+	<!-- Запрос на изменение рассматривающего - Рассматривающий/помощники - Обработан  -->
+		 <specific property="workflowMove.id" value="jbr.cc_request.process">
+			<post-process class="CardNotification" runOrder="5">
+				<parameter name="beanName" value="notifyConsWithChangedDeadline"/>									
+			</post-process>
+		</specific>
+	</action>
+	
+	<object type="Message">
+		<list-all>
+			<query package="com.aplana.dbmi.module.notif.service">ListMessages</query>
+		</list-all>
+		<store>
+			<query package="com.aplana.dbmi.module.notif.service">SaveMessage</query>
+		</store>
+	</object>
+	<action type="MarkMessageRead">
+		<query package="com.aplana.dbmi.module.notif.service">DoMarkMessageRead</query>
+	</action>
+	<action type="GetResponsibleDowRecipients">
+		<query package="com.aplana.dbmi.module.notif.service">DoGetResponsibleDowRecipients</query>
+	</action>
+	<action type="NotifPersonFlagGroupChecker">
+		<query package="com.aplana.dbmi.module.notif.service">DoNotifPersonFlagGroupChecker</query>
+	</action>
+</queries>

@@ -1,0 +1,84 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+
+		<tr>
+			<td colspan="4">
+<% 
+		final PersonAttribute inspector = 
+			(PersonAttribute)card.getAttributeById(ObjectId.predefined(PersonAttribute.class, "jbr.incoming.inspector"));
+
+		ObjectId VALUE_SUPERVISED = 
+			ObjectId.predefined(ReferenceValue.class, "jbr.incoming.control.yes");
+		ListAttribute supervised;
+		if (card.getTemplate().equals(ObjectId.predefined(Template.class, "jbr.resolution"))){
+			supervised = 
+				(ListAttribute)card.getAttributeById(ObjectId.predefined(ListAttribute.class, "jbr.oncontrol"));
+			VALUE_SUPERVISED = 
+				ObjectId.predefined(ReferenceValue.class, "jbr.commission.control.yes");		
+		}else{		
+			supervised = 
+				(ListAttribute)card.getAttributeById(ObjectId.predefined(ListAttribute.class, "jbr.incoming.oncontrol"));
+			VALUE_SUPERVISED = 
+				ObjectId.predefined(ReferenceValue.class, "jbr.incoming.control.yes");		
+		}
+		if ((supervised != null && supervised.getValue() != null && 
+			VALUE_SUPERVISED.equals(supervised.getValue().getId())) ||
+			(inspector != null && !inspector.isEmpty())){
+%>		
+				<div class="cardFeatures">
+					<fmt:message key="card.feature.control"/>
+				</div>
+<%		} %>
+<%
+		//Отображаем если есть срочность из атрибутов документа, есди этого атрибута нет, то срочность из документа основания
+		final ListAttribute urgency = 
+			(ListAttribute)card.getAttributeById(
+					ObjectId.predefined(ListAttribute.class, "jbr.urgencyLevel"));
+		if (urgency != null && urgency.getValue() != null){
+%>
+				<div class="cardFeatures">
+					<%= urgency.getValue().getValue() %>
+				</div>
+<%		} else {
+			final ListAttribute urgencyParentDoc = 
+				(ListAttribute)card.getAttributeById(
+					ObjectId.predefined(ListAttribute.class, "jbr.category.howfast"));
+			if (urgencyParentDoc != null && urgencyParentDoc.getValue() != null){
+%>
+					<div class="cardFeatures">
+						<%= urgencyParentDoc.getValue().getValue() %>
+					</div>
+<%		
+			}
+		}
+%>			
+			
+			</td>
+		</tr>
+
+
+
+
+
+
+
+
+
+

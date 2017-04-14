@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?eclipse.ant.import?>
+<project basedir="." default="compile" name="mmsc">
+	<target name="clean">
+		<delete dir="${dir.target}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${dir.target.classes}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<echo message="Compiling mmsc classes"/>
+		
+		<javac debug="true" debuglevel="${debuglevel}" 
+			destdir="${dir.target.classes}"
+			source="${source}" 
+			target="${target}"
+			encoding="${encoding}">
+			<src path="${dir.src.main.java}"/>
+		</javac>
+		
+		<copy todir="${dir.target.classes}">
+			<fileset dir="${dir.src.main.resources}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+	</target>
+</project>

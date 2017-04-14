@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<exampleMapping destTemplateId="jbr.incoming">
+	<!-- Сведения о документе -->
+	<attribute type="text" srcId="JBR_INFD_SHORTDESC" destId="JBR_INFD_SHORTDESC"/><!--Сведения о документе.Краткое содержание-->
+	<attribute type="list" srcId="JBR_INFD_FROM" destId="JBR_INFD_FROM"/><!--Сведения о документе.От кого-->
+	<attribute type="link" srcId="JBR_INFD_SENDER" destId="JBR_INFD_SENDER"  mode="copyLink"/><!--Сведения о документе.Отправитель-->
+	<attribute type="user" srcId="JBR_INFD_RECEIVER" destId="JBR_INFD_RECEIVER"/><!--Сведения о документе.Получатель-->
+	<attribute type="link" srcId="JBR_INFD_TYPEDOC" destId="JBR_INFD_TYPEDOC" mode="copyLink"/><!--Сведения о документе.Вид документа-->
+	<attribute type="list" srcId="JBR_INFD_SUBJECTS" destId="JBR_INFD_SUBJECTS"/><!--Сведения о документе.Тематика-->
+	<attribute type="link" srcId="JBR_INFD_SIGN_EXT" destId="JBR_INFD_SIGN_EXT" mode="copyLink"/> <!-- Сведения о документе. Должность, ФИО лица, подписавшего документ -->
+	<attribute type="link" srcId="JBR_EXT_EXECUTOR_HID" destId="JBR_EXT_EXECUTOR_HID" mode="copyLink"/> <!-- Сведения о документе. Исполнитель внешний -->
+	<attribute type="list" srcId="ADMIN_281785" destId="ADMIN_281785"/><!--Сведения о документе.ДСП-->
+
+	<!-- Вложения -->
+	<attribute type="link" srcId="DOCLINKS" destId="DOCLINKS"  mode="copyCard"/><!--Вложения.Вложения-->
+
+	<!-- Регистрационные данные -->
+	<attribute type="string" srcId="JBR_REGD_NUMOUT" destId="JBR_REGD_NUMOUT"/><!--Регистрационные данные.Номер исходящего-->
+	<attribute type="date" srcId="JBR_REGD_DATEOUT" destId="JBR_REGD_DATEOUT"/><!--Регистрационные данные.Дата исходящего-->
+	<attribute type="link" srcId="JBR_REGD_REGJOURN" destId="JBR_REGD_REGJOURN"  mode="copyLink"/><!--Регистрационные данные.Журнал регистрации-->
+	<attribute type="string" srcId="JBR_REGD_REGNUM" destId="JBR_REGD_REGNUM"/><!--Регистрационные данные.Регистрационный номер-->
+	<attribute type="date" srcId="JBR_REGD_DATEREG" destId="JBR_REGD_DATEREG"/><!--Регистрационные данные.Дата регистрации-->
+	<attribute type="link" srcId="JBR_REGD_INDEX" destId="JBR_REGD_INDEX"  mode="copyLink"/><!--Регистрационные данные.Индекс номенклатуры-->
+	<attribute type="list" srcId="ADMIN_290575" destId="ADMIN_290575" /> <!-- Регистрационные данные. Категория срочности -->
+	<attribute type="list" srcId="JBR_CHK_REPEAT" destId="JBR_CHK_REPEAT" /> <!-- Регистрационные данные. Проверять на повторность -->
+	<!-- attribute type="user" srcId="JBR_REGD_REGISTRAR" destId="JBR_REGD_REGISTRAR" /--> <!-- Регистрационные данные. Регистратор -->
+	<attribute type="link" srcId="JBR_REG_LAST_REG" destId="JBR_REG_LAST_REG"  mode="copyLink"/> <!-- Регистрационные данные. Предыдущие регистрации -->
+
+	<!-- Оригинал -->
+	<attribute type="number" srcId="JBR_ORIG_QUANTCOPY" destId="JBR_ORIG_QUANTCOPY"/><!--Оригинал.Количество экземпляров-->
+	<attribute type="number" srcId="JBR_ORIG_QUANTPAP" destId="JBR_ORIG_QUANTPAP"/><!--Оригинал.Количество листов-->
+	<attribute type="list" srcId="ADMIN_47150" destId="ADMIN_47150"/><!--Оригинал.Приложения-->
+	<attribute type="number" srcId="JBR_ORIG_QUANTPAPAT" destId="JBR_ORIG_QUANTPAPAT"/><!--Оригинал.Количество листов приложений-->
+	<attribute type="text" srcId="JBR_ORIG_COMMENT" destId="JBR_ORIG_COMMENT"/><!--Оригинал.Примечание-->
+	<attribute type="list" srcId="ADMIN_118450" destId="ADMIN_118450"/><!--Оригинал.Способ доставки-->
+	<attribute type="number" srcId="ADMIN_220409" destId="ADMIN_220409"/> <!--Оригинал.Количество приложений-->
+
+	<!-- Рассмотрение -->
+	<attribute type="link" srcId="JBR_IMPL_ACQUAINT" destId="JBR_IMPL_ACQUAINT" mode="copyCard"/><!--Рассмотрение.Рассмотрение-->
+
+	<!-- Исполнение -->
+	<attribute type="date" srcId="JBR_IMPL_DEADLINE" destId="JBR_IMPL_DEADLINE"/><!--Исполнение.Срок исполнения-->
+	<attribute type="text" srcId="JBR_IMPL_INRES" destId="JBR_IMPL_INRES"/><!--Исполнение.Входящая резолюция-->
+	<attribute type="list" srcId="JBR_IMPL_ONCONT" destId="JBR_IMPL_ONCONT"/><!--Исполнение.На контроле-->
+	<attribute type="list" srcId="JBR_IMPL_TYPECONT" destId="JBR_IMPL_TYPECONT"/><!--Исполнение.Тип контроля-->
+	<attribute type="user" srcId="JBR_IMPL_INSPECTOR" destId="JBR_IMPL_INSPECTOR"/><!--Исполнение.Контролёр-->
+
+	<!-- Резолюции -->
+	<attribute type="backLink" srcId="JBR_IMPL_RESOLUT" destId="JBR_IMPL_RESOLUT" mode="copyCard"/><!--РЕЗОЛЮЦИИ.Резолюции-->
+
+	<!-- Список ознакомления -->	
+	<attribute type="date" srcId="JBR_INFORM_DATA" destId="JBR_INFORM_DATA"/><!--Список ознакомления.Срок ознакомления-->
+	<attribute type="link" srcId="JBR_INFORM_LIST" destId="JBR_INFORM_LIST" mode="copyCard"/><!--Список ознакомления.Список ознакомления-->
+	<attribute type="text" srcId="ADMIN_221249" destId="ADMIN_221249" /> <!-- Список ознакомления. Комментарии -->
+	
+	<!-- Общие характеристики -->
+	<attribute type="date" srcId="JBR_DATE_ON_EXECUTE" destId="JBR_DATE_ON_EXECUTE"/><!--Общие характеристики.Дата отправки на исполнение-->
+	<attribute type="string" srcId="NAME" destId="NAME"/><!--Общие характеристики.Название-->
+</exampleMapping>

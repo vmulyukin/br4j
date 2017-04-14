@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PresidentRF" pageWidth="1015" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="985" leftMargin="20" rightMargin="10" topMargin="15" bottomMargin="15">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="57"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Отчет в Администрацию Президента РФ"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="times_normal" isDefault="true" fontName="Times New Roman" fontSize="11"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\bsirazetdinov\\workspace\\FSIN\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchWith" class="java.lang.String"/>
+	<parameter name="quarter" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="endYear" class="java.lang.String">
+		<defaultValueExpression><![CDATA[(("4".equals($P{quarter}) && (com.aplana.dbmi.util.DateUtils.getMonth()/3+1) == 4)
+    ? new String(String.valueOf(Long.parseLong(new java.text.SimpleDateFormat("yyyy").format(new java.util.Date()))+1))
+    : new java.text.SimpleDateFormat("yyyy").format(new java.util.Date())
+)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="beginYear" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new java.text.SimpleDateFormat("yyyy").format(new java.util.Date())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="beginMonth" class="java.lang.String">
+		<defaultValueExpression><![CDATA["4".equals($P{quarter})
+    ? "10"
+    : "3".equals($P{quarter})
+        ? "07"
+        : "2".equals($P{quarter})
+            ? "04"
+            : "01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endMonth" class="java.lang.String">
+		<defaultValueExpression><![CDATA["4".equals($P{quarter})
+    ? "01"
+    : "3".equals($P{quarter})
+        ? "10"
+        : "2".equals($P{quarter})
+            ? "07"
+            : "04"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="beginDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[($P{searchWith}.equals("kitQuarter") ?
+    (new java.text.SimpleDateFormat("dd.MM.yyyy").parse("01."+$P{beginMonth}+"."+$P{beginYear})) :
+    $P{from_date})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[( $P{searchWith}.equals( "kitQuarter" ) ?
+    new Date((new java.text.SimpleDateFormat("dd.MM.yyyy").parse("01."+$P{endMonth}+"."+$P{endYear})).getTime()-1000 * 60 * 60 * 24):
+    $P{to_date}
+)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select
+    c.card_id as card_id,
+    av_date_doc.date_value + interval '$P!{tz_hour} hour' as date_doc,
+    av_number.string_value as number_doc,
+    av_created.date_value + interval '$P!{tz_hour} hour' as created,
+    av_reg_date.date_value + interval '$P!{tz_hour} hour' as reg_date,
+    case when (
+               c.status_id in (101,102,103)
+              )
+        then 1
+        else null
+    end as on_cons
+    from card c
+    left join attribute_value av_date_doc on c.card_id = av_date_doc.card_id and av_date_doc.attribute_code = 'JBR_REGD_DATEOUT'
+    join attribute_value av_source on c.card_id = av_source.card_id and av_source.attribute_code = 'ADMIN_281718'
+    left join attribute_value av_number on c.card_id = av_number.card_id and av_number.attribute_code = 'JBR_REGD_NUMOUT'
+    left join attribute_value av_created on c.card_id = av_created.card_id and av_created.attribute_code = 'CREATED'
+    left join attribute_value av_reg_date on c.card_id = av_reg_date.card_id and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+    where c.template_id = 864
+    and c.status_id not in (303990,1,302,301)
+    and (date_trunc('day', av_date_doc.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_date_doc.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate} and $P{searchWith} = 'kitQuarter'
+	or
+    date_trunc('day', av_reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate}
+    and date_trunc('day', av_reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{beginDate} and $P{searchWith} = 'kitPeriod'
+)
+    and av_source.value_id = 3387
+    order by date_doc, number_doc]]>
+	</queryString>
+	<field name="card_id" class="java.lang.Long"/>
+	<field name="date_doc" class="java.util.Date"/>
+	<field name="number_doc" class="java.lang.String"/>
+	<field name="created" class="java.util.Date"/>
+	<field name="reg_date" class="java.util.Date"/>
+	<field name="on_cons" class="java.lang.Long"/>
+	<variable name="count_que" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_org" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_date" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_supported" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_remedy" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_explained" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_not_sup" class="java.lang.Long" calculation="Sum"/>
+	<variable name="count_cons" class="java.lang.Long" calculation="Count">
+		<variableExpression><![CDATA[$F{on_cons}]]></variableExpression>
+	</variable>
+	<variable name="count_reply_date" class="java.lang.Long" calculation="Sum"/>
+	<title>
+		<band height="267" splitType="Stretch">
+			<staticText>
+				<reportElement x="132" y="67" width="55" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата документа по обращению]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="132" width="55" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата поступления в орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="242" y="132" width="55" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата регистрации в органе]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="67" width="110" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Поступление документа по обращению в орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="67" width="125" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Код вопроса, содержащегося в обращении, в соответствии с типовым общероссийским тематическим классификатором обращений граждан, организаций и общественных объединений]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="67" width="195" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Направлено в иной орган, в компетенцию которого входит решение содержащегося
+в обращении вопроса]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="547" y="132" width="70" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата направления вопроса, содержащегося в обращении, в иной орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="132" width="125" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Наименование иного органа (из перечня государственных органов и органов местного самоуправления), в который  направлен вопрос, содержащийся в обращении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="925" y="67" width="60" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Находится на рассмотрении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="617" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«поддержано»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="682" y="132" width="50" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[в том числе «меры приняты»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="732" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«разъяснено»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="797" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«не поддержано»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="617" y="67" width="308" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Рассмотрено с направлением ответа автору обращения по существу содержащегося в обращении вопроса]]></text>
+			</staticText>
+			<line>
+				<reportElement mode="Transparent" x="0" y="67" width="132" height="200"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="67" width="132" height="100" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph rightIndent="2" spacingBefore="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Обращения, поступившие\nв Управление Президента\nРоссийской Федерации\n по работе с обращениями\nграждан и организаций или\nприемные Президента\nРоссийской Федерации,\nнаправленные\nв данный орган"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="167" width="132" height="100" isPrintWhenDetailOverflows="true"/>
+				<box bottomPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Исходящий\nномер документа\nУправления Президента\nРоссийской Федерации\nпо работе с обращениями\nграждан и организаций\nили приемной Президента\nРоссийской Федерации\nпо обращению"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" x="95" y="30" width="732" height="37" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $P{searchWith}.equals("kitQuarter") ? (
+    "за " +
+    (
+        "4".equals($P{quarter})
+            ? "IV"
+            : "3".equals($P{quarter})
+                ? "III"
+                : "2".equals($P{quarter})
+                    ? "II"
+                    : "I"
+    ) +
+    " квартал " +
+    $P{beginYear} +
+    " года "
+    ) : (
+"с " + new java.text.SimpleDateFormat("dd.MM.yyyy").format($P{beginDate}) + " г. по " + new java.text.SimpleDateFormat("dd.MM.yyyy").format($P{endDate})  + " г."
+    )
+)
++" \n(дата заполнения формы отчета " +
+new java.text.SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date()) +
+")"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="95" y="0" width="732" height="30" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Информация о результатах рассмотрения обращений граждан, организаций и общественных объединений, адресованных Президенту Российской Федерации, и принятых по ним мерах"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="862" y="132" width="63" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Дата ответа]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="297" y="0" width="628" height="20" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="tz_hour">
+					<subreportParameterExpression><![CDATA[$P{tz_hour}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="card_id">
+					<subreportParameterExpression><![CDATA[$F{card_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="count_que" toVariable="count_que" calculation="Sum"/>
+				<returnValue subreportVariable="count_org" toVariable="count_org" calculation="Sum"/>
+				<returnValue subreportVariable="count_date" toVariable="count_date" calculation="Sum"/>
+				<returnValue subreportVariable="count_supported" toVariable="count_supported" calculation="Sum"/>
+				<returnValue subreportVariable="count_remedy" toVariable="count_remedy" calculation="Sum"/>
+				<returnValue subreportVariable="count_explained" toVariable="count_explained" calculation="Sum"/>
+				<returnValue subreportVariable="count_not_sup" toVariable="count_not_sup" calculation="Sum"/>
+				<returnValue subreportVariable="count_reply_date" toVariable="count_reply_date" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{path} + "PresidentRF_sub1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="132" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{number_doc} != null
+    ? $F{number_doc}
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="132" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_doc} != null
+    ? new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{date_doc})
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="187" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{created} != null
+    ? new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{created})
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="242" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_date} != null
+    ? new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{reg_date})
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="925" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{on_cons} != null
+    ? "Да"
+    : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="60" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="30" y="0" width="102" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Количество обращений"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="30" y="20" width="102" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Количество вопросов, содержащихся в обращениях"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="30" height="60" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Итого"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="132" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="187" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="242" y="0" width="55" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="187" y="20" width="55" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="242" y="20" width="55" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="132" y="20" width="55" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="297" y="0" width="125" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="422" y="0" width="125" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="547" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="617" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="682" y="0" width="50" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="732" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="797" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="925" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="925" y="20" width="60" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_cons}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="422" y="20" width="125" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_org} != null
+    ? $V{count_org}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="682" y="20" width="50" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_remedy} != null
+    ? $V{count_remedy}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="732" y="20" width="65" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_explained} != null
+    ? $V{count_explained}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="547" y="20" width="70" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_date} != null
+    ? $V{count_date}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="617" y="20" width="65" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_supported} != null
+    ? $V{count_supported}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="297" y="20" width="125" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_que} != null
+    ? $V{count_que}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="797" y="20" width="65" height="40" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_not_sup} != null
+    ? $V{count_not_sup}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="862" y="20" width="63" height="40"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count_reply_date} != null
+    ? $V{count_reply_date}
+    : 0]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="862" y="0" width="63" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+	<noData>
+		<band height="268">
+			<staticText>
+				<reportElement x="132" y="67" width="55" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата документа по обращению]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="132" width="55" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата поступления в орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="242" y="132" width="55" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата регистрации в органе]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="67" width="110" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Поступление документа по обращению в орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="67" width="125" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Код вопроса, содержащегося в обращении, в соответствии с типовым общероссийским тематическим классификатором обращений граждан, организаций и общественных объединений]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="67" width="195" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Направлено в иной орган, в компетенцию которого входит решение содержащегося
+в обращении вопроса]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="547" y="132" width="70" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Дата направления вопроса, содержащегося в обращении, в иной орган]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="132" width="125" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Наименование иного органа (из перечня государственных органов и органов местного самоуправления), в который  направлен вопрос, содержащийся в обращении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="925" y="67" width="60" height="200"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Находится на рассмотрении]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="617" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«поддержано»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="682" y="132" width="50" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[в том числе «меры приняты»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="732" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«разъяснено»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="797" y="132" width="65" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[«не поддержано»]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="617" y="67" width="308" height="65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="1" rightIndent="1"/>
+				</textElement>
+				<text><![CDATA[Рассмотрено с направлением ответа автору обращения по существу содержащегося в обращении вопроса]]></text>
+			</staticText>
+			<line>
+				<reportElement mode="Transparent" x="0" y="67" width="132" height="200"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="67" width="132" height="100" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph rightIndent="2" spacingBefore="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Обращения, поступившие\nв Управление Президента\nРоссийской Федерации\n по работе с обращениями\nграждан и организаций или\nприемные Президента\nРоссийской Федерации,\nнаправленные\nв данный орган"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="167" width="132" height="100" isPrintWhenDetailOverflows="true"/>
+				<box bottomPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Исходящий\nномер документа\nУправления Президента\nРоссийской Федерации\nпо работе с обращениями\nграждан и организаций\nили приемной Президента\nРоссийской Федерации\nпо обращению"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" x="95" y="30" width="732" height="37" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" isItalic="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $P{searchWith}.equals("kitQuarter") ? (
+    "за " +
+    (
+        "4".equals($P{quarter})
+            ? "IV"
+            : "3".equals($P{quarter})
+                ? "III"
+                : "2".equals($P{quarter})
+                    ? "II"
+                    : "I"
+    ) +
+    " квартал " +
+    $P{beginYear} +
+    " года "
+    ) : (
+"с " + new java.text.SimpleDateFormat("dd.MM.yyyy").format($P{beginDate}) + " г. по " + new java.text.SimpleDateFormat("dd.MM.yyyy").format($P{endDate})  + " г."
+    )
+)
++" \n(дата заполнения формы отчета " +
+new java.text.SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date()) +
+")"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="95" y="0" width="732" height="30" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Информация о результатах рассмотрения обращений граждан, организаций и общественных объединений, адресованных Президенту Российской Федерации, и принятых по ним мерах"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="862" y="132" width="63" height="135"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Дата ответа]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

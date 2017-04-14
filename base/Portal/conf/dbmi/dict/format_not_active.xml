@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="true">
+	<name lang="ru">Неактивные форматы</name>
+	<name lang="en">Not active formats</name>
+	<template>jbr.formatNum</template>
+	<status>doublet</status>
+	<status>poruchcancelled</status>
+	
+	<!-- Название -->
+	<column id="NAME" sort="asc" width="90"/>
+
+	<!-- Нумератор -->
+	<column id="JBR_NFPR_NUMER" labelAttrId="NAME" width="90" isParentName="true"/>
+
+	<!-- Дата создания -->
+	<column id="CREATED" width="20"/>
+
+	<!-- Дата изменения -->
+	<column id="CHANGED" width="20"/>
+
+	<!-- Статус -->
+	<column id="_STATE" width="50"/>
+</search>

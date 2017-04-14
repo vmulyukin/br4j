@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<?eclipse.ant.import?>
+<project basedir="." default="war" name="User Portlet">
+
+	<property name="dir.src" value="src" />
+	<target name="clean">
+		<delete dir="${dir.build}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${dir.classes}" />
+		
+		<path id="jrc.classpath">
+			<fileset dir="${SharedLib.location}">
+	        	<include name="jasperreports-4.1.2.jar"/>
+				<include name="jasperreports-fonts-4.1.2.jar"/>
+				<include name="commons-digester-1.7.jar"/>
+				<include name="spring.jar"/>
+				<include name="commons-beanutils-1.7.0.jar"/>
+				<include name="commons-logging-1.1.1.jar"/>
+				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-io-1.4.jar"/>
+	      	</fileset>								
+			<pathelement path="${Model.location}/build/classes"/>
+			<pathelement path="${dir.classes}"/>
+			<pathelement path="${DocFlowModule.location}/build/classes"/>
+		</path>
+    	    	
+		<taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask">
+			<classpath refid="jrc.classpath" />
+		</taskdef>    	
+		
+	</target>
+
+	<target name="compile" depends="init">
+		<javac 
+			debug="true" 
+			fork="true" 
+			debuglevel="${debuglevel}" 
+			destdir="${dir.classes}" 
+			source="${source}" 
+			target="${target}" 
+			encoding="${encoding}" 
+			nowarn="${nowarn}">
+			
+			<src path="${dir.src}" />
+			<classpath refid="classpath" />
+
+			<classpath>
+				<pathelement location="${Model.location}/${dir.build}/${Model.name}" />
+				<pathelement location="${Platform.location}/${dir.build}/${Platform.name}" />
+				<pathelement location="${AccessComponent.location}/${dir.build}/${AccessComponent.name}" />
+				<pathelement location="${ControlsComponent.location}/${dir.build}/${ControlsComponent.name}" />
+				<pathelement location="${CommonUtils.location}/${dir.build}/${CommonUtils.name}" />
+				<pathelement location="${TableComponent.location}/${dir.build}/${TableComponent.name}" />
+				<pathelement location="${Numerator.location}/${dir.build}/${Numerator.name}" />
+				<pathelement location="${DigitalSignature.location}/${dir.build}/${SharedCryptoModule.name}"/>
+				<pathelement location="${DocFlowModule.location}/${dir.build}/${DocFlowModule.name}"/>
+				<pathelement location="${JBRModule.location}/${dir.build}/${JBRModule.name}"/>
+				<pathelement location="${ARMSupportActions.location}/${dir.build}/${ARMSupportActions.name}"/>    						
+				<pathelement location="${CommonUtils.location}/${dir.build}/${CommonUtils.name}"/>
+				<pathelement location="${PortalUtils.location}/${dir.build}/${PortalUtils.name}"/>
+				<pathelement location="${OWriterModule.location}/${dir.build}/${OWriterModule.name}"/>
+			</classpath>
+		</javac>
+		<copy todir="${dir.classes}">
+			<fileset dir="${dir.src}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<antcall target="buildReport" inheritrefs="true"/>
+	</target>
+
+	<target name="buildReport">	     		
+		<delete dir="WebContent/jasper" includes="*.jasper"/>
+		<jrc destdir="WebContent/jasper">
+			<src>
+				<fileset dir="WebContent/jasper/src">
+					<include name="*.jrxml"/>
+				</fileset>
+			</src>
+			<classpath refid="jrc.classpath"/>
+		</jrc>
+	</target>	
+	
+	<target name="war" depends="compile">
+		<copy file="${TagLibrary.location}/${dir.build}//${TagLibrary.name}" todir="WebContent/WEB-INF/lib" overwrite="yes" />
+	    <jar destfile="${dir.build}/${JasperReportModule.name}">
+	        <fileset dir="${dir.classes}" includes="com/aplana/dbmi/jasperreports/**"/>
+		</jar>
+		<war destfile="${dir.build}/${UserPortlets.name}" webxml="WebContent/WEB-INF/web.xml">
+			<classes dir="${dir.classes}" />
+			<zipfileset dir="WebContent">
+				<exclude name="**/web.xml" />
+			</zipfileset>
+			<fileset file="${dir.build}/*.jar" />
+			<fileset file="${SharedLib.location}/jna.jar" />
+			<fileset file="${SharedLib.location}/bcpkix-jdk15on-147.jar" />
+			<fileset file="${SharedLib.location}/bcprov-ext-jdk15on-147.jar" />
+			<fileset file="${SharedLib.location}/commons-lang-2.6.jar" />
+			<manifest>
+				<attribute name="Class-path" value="${CryptoModule.name} ${ARMResolutions.name} ${scanner-applet.name}" />
+			</manifest>
+		</war>
+	    <jar destfile="${dir.build}/${JasperReportModule.name}">
+	        <fileset dir="${dir.classes}" includes="com/aplana/dbmi/jasperreports/**"/>
+	    </jar>
+	</target>
+</project>

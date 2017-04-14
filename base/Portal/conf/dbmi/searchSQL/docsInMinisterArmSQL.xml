@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- (2) Документы в АРМе министра на рассмотрении --
+SELECT cardID
+FROM 
+ (
+  SELECT DISTINCT cardID, coalesce(urgencyId, 2000000000)
+  FROM
+    (
+        SELECT c.card_id as cardID, av.date_value, av_u.value_id as urgencyId
+        FROM Card c
+
+            -- помошники ознакамливающегося, или (со)исполнителя...
+            -- "Ознакомление"(524): "Кому ознакомиться"/U ('JBR_FOR_INFORMATION')
+            -- "Отчет об исполнении"(1044): "Исполнитель"/U ('ADMIN_702335')
+            -- "Ознакомление с поручением" (1144): "Кому ознакомиться"/U ('ADMIN_726874')
+            INNER JOIN attribute_value avUser 
+                ON (    avUser.card_id = c.card_id 
+                        and avUser.attribute_code in ('JBR_FOR_INFORMATION', 'ADMIN_726874', 'ADMIN_702335')
+                    )
+            INNER JOIN attribute_value av_m 
+                    on av_m.number_value = avUser.number_value
+                    and av_m.attribute_code = 'JBR_ARM_MANAGER'
+            INNER JOIN attribute_value av_a
+                    on  av_a.card_id = av_m.card_id
+                    and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+                    and av_a.number_value in (%CURRENTUSERS%)
+            JOIN card arm_c ON arm_c.card_id = av_a.card_id
+            LEFT OUTER JOIN attribute_value av
+                ON  (av.card_id = c.card_id and av.attribute_code='JBR_RASSM_TODATE')
+
+            -- "срочность"
+            LEFT JOIN attribute_value av_u
+                on  (av_u.card_id = c.card_id)
+                and (av_u.attribute_code = 'JBR_HOWFAST')
+        WHERE arm_c.status_id NOT IN (34145, 6) AND
+            (
+                (-- "Отчет об исполнении"(1044) (для отв. исполнителя)
+                    --    статус: "Рассмотрение (руководителем)" (102)
+                    (c.template_id=1044) and (c.status_id in (102))
+
+                    -- "Отчет об исполнении"(1044): "Исполнитель"/U ('ADMIN_702335')
+                    and (avUser.attribute_code in ('ADMIN_702335') )
+                )
+
+                or (-- Шаблон=Ознакомление (524)
+                    -- статус="Ознакомление " (67 424)
+                    (c.template_id=524) and (c.status_id in (67424))
+
+                    -- 524  Ознакомление: 'JBR_FOR_INFORMATION' = "Кому ознакомиться"/U  
+                    and (avUser.attribute_code = 'JBR_FOR_INFORMATION') 
+                )
+
+                or (-- Шаблон="Ознакомление с поручением" (1144)
+                    -- статус="Ознакомление " (67 424)
+                    (c.template_id=1144) and (c.status_id in (67424))
+
+                    -- (1144): "Кому ознакомиться"/U ('ADMIN_726874')
+                    and (avUser.attribute_code = 'ADMIN_726874')
+                )
+
+                ---- or (-- Шаблон=Входящие/ОГ/ИЗ, состояние="Рассмотрение"
+                ----    (c.template_id in (224, 864, 865)) and (c.status_id =102)
+                ----    -- исполнитель=текущий пользователь 
+                ----    and (avUser.attribute_code ='JBR_INFD_EXECUTOR') 
+                ----    and avUser.number_value in (%CURRENTUSERS%)
+                ----    -- "время выполнения"
+                ----    --and (av.attribute_code ='JBR_TCON_TERM')
+                ---- )
+            )
+
+        UNION SELECT c.card_id as cardID, av.date_value, av_u.value_id as urgencyId
+        FROM Card c
+
+            -- помошники рассматривающего
+            -- "Рассмотрение"(504): "Рассматривающий"/U ('JBR_RASSM_PERSON')
+            INNER JOIN attribute_value avUser 
+                ON (    avUser.card_id = c.card_id 
+                                and avUser.attribute_code in ('JBR_RASSM_PERSON')
+                                and avUser.number_value in (
+                                    SELECT p_av.number_value
+                                    FROM attribute_value p_av
+                                    JOIN person p_p ON (p_p.card_id = p_av.card_id)
+                                    WHERE 
+                                        p_p.person_id IN ( %CURRENTUSERS% )
+                                    AND
+                                        p_av.attribute_code = 'JBR_ASSISTANT_FOR'
+                                )
+                    )
+            LEFT OUTER JOIN attribute_value av
+                ON  (av.card_id = c.card_id and av.attribute_code='JBR_RASSM_TODATE')
+
+            -- "срочность"
+            LEFT JOIN attribute_value av_u
+                on  (av_u.card_id = c.card_id)
+                and (av_u.attribute_code = 'JBR_HOWFAST')
+        WHERE 
+            (
+                (-- Шаблон=Рассмотрение (504), 
+                --  -- статус=Рассмотрение (102)
+                    (c.template_id=504) and (c.status_id =102)
+                    
+                    and not exists (select 1 from card c_req_rasm
+									join attribute_value av_req on c_req_rasm.card_id = av_req.number_value
+										and av_req.attribute_code = 'JBR_REQUEST_CONS'
+									join card c_req on c_req.card_id = av_req.card_id
+									join attribute_value av_req_type on av_req_type.card_id = av_req.card_id
+										and av_req_type.attribute_code = 'JBR_REQUEST_TYPE'
+									where c_req_rasm.card_id = c.card_id 
+									and c_req.template_id = 967
+									and c_req.status_id = 102
+									and av_req_type.value_id in (1125,1128)
+									)
+
+                --  -- "Рассматривающий"(U) ('JBR_RASSM_PERSON')
+                --  and (avUser.attribute_code = 'JBR_RASSM_PERSON')  
+
+                --  -- "время выполнения" -- and (av.attribute_code = 'JBR_RASSM_TODATE')
+                )
+            )
+
+        -- "Отчет об исполнении"(1044) (для соисполнителя)
+        --    статус: "Рассмотрение руководителем" (102)
+        --    статус: "Принят" (702 239)
+        -- -- "Отчет об исполнении"(1044): "Исполнитель"/U ('ADMIN_702335')
+        UNION SELECT c_otchet.card_id as cardID, av.date_value, av_u.value_id as urgencyId
+        FROM Card c_otchet
+
+              	--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+				JOIN attribute_value avParent ON c_otchet.card_id = avParent.card_id
+							and avParent.attribute_code in ('ADMIN_702311')
+
+                -- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+                -- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXECUTOR')
+                -- "Поручение" (324): "Соисполнители"/U ('ADMIN_255974')
+                JOIN attribute_value avUser on
+                        avUser.card_id=avParent.number_value
+                    and avUser.attribute_code in 
+                        ('JBR_INFD_EXEC_LINK', 'JBR_INFD_EXECUTOR', 'ADMIN_255974')
+
+                -- только , если испольнитель указан в конкретном отчете
+                -- (1044) "Отчет об исполнении": 'ADMIN_702512'="Зам. Испонителя"/U
+                -- (1044) "Отчет об исполнении": 'ADMIN_702335'="Исполнитель"/U
+                -- (1044) "Отчет об исполнении": 'ADMIN_702513'="Контролер"/U
+                JOIN attribute_value avOtchetExec on
+                         avOtchetExec.card_id=c_otchet.card_id
+                    -- and  avOtchetExec.attribute_code = 'ADMIN_702335'
+                    and  avOtchetExec.attribute_code in ('ADMIN_702335' /*, 'ADMIN_702512','ADMIN_702513'*/)
+                    and  avOtchetExec.number_value=avUser.number_value
+
+                INNER JOIN attribute_value av_m 
+                        on av_m.number_value = avUser.number_value
+                        and av_m.attribute_code = 'JBR_ARM_MANAGER'
+                INNER JOIN attribute_value av_a
+                        on  av_a.card_id = av_m.card_id
+                        and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+                        and av_a.number_value in (%CURRENTUSERS%)
+                JOIN card arm_c ON arm_c.card_id = av_a.card_id
+
+                LEFT OUTER JOIN attribute_value av
+                        on av.card_id = c_otchet.card_id 
+                        and (av.attribute_code = 'CREATED')
+
+                -- "срочность"
+                LEFT JOIN attribute_value av_u
+                    on  (av_u.card_id = c_otchet.card_id)
+                    and (av_u.attribute_code = 'JBR_HOWFAST')
+
+        WHERE arm_c.status_id NOT IN (34145, 6) AND (
+            (c_otchet.template_id=1044) and (c_otchet.status_id in (102))
+
+        ) -- /WHERE
+
+--      ORDER by 2 DESC -- av.date_value
+
+
+        UNION
+        SELECT cReg1.card_id as cardID , av10.date_value, av_u10.value_id as urgencyId-----av_u1.value_id as urgencyId
+        FROM Card cReg1 
+            LEFT JOIN attribute_value av10
+                ON (av10.card_id = cReg1.card_id)   
+                AND (av10.attribute_code = 'CREATED')   
+            LEFT JOIN attribute_value av_u10
+                ON (av_u10.card_id = cReg1.card_id)
+                AND (av_u10.attribute_code = 'JBR_HOWFAST')
+            INNER JOIN attribute_value avUser10 
+                ON (    avUser10.card_id = cReg1.card_id 
+                        AND avUser10.number_value in ( 
+                            SELECT av_man.number_value 
+                            FROM attribute_value av_as
+                            JOIN attribute_value av_man ON (av_man.card_id = av_as.card_id AND av_man.attribute_code = 'JBR_ARM_MANAGER')
+                            JOIN card arm_c ON arm_c.card_id = av_as.card_id
+                            WHERE av_as.attribute_code = 'JBR_ARM_ASSISTANT' 
+                            AND av_as.number_value IN (%CURRENTUSERS%)
+                            AND arm_c.status_id NOT IN (34145, 6)
+                        ) ) 
+        WHERE (
+                -- Шаблон ОРД или НПА
+                cReg1.template_id IN (1226, 764) 
+                -- статус "Регистрация"
+                AND cReg1.status_id in (10000120) 
+                and (avUser10.attribute_code in ('JBR_HIDDEN_CHIEF'))
+        )   
+
+    ) AS b              
+    ORDER BY 2 ASC, 1
+ ) AS a
+ -- ORDER by 1 DESC
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

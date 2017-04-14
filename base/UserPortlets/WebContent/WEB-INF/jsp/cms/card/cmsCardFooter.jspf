@@ -1,0 +1,120 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+
+<%@ page import="com.aplana.dbmi.card.CardPortlet" %>
+
+<jsp:include page="../../html/CardPageFunctions.jsp"/>
+<c:if test="<%= renderRequest.getParameter(CardPortlet.NEED_CLOSE_CONFIRMATION) != null || 
+				renderRequest.getParameter(CardPortlet.NEED_CLOSE_CARD_CONFIRMATION) != null%>">
+<%-- пользователь нажал закрыть, но в карточке есть несохраненные изменения
+    поэтому страница редактирования перезагружается и пользователю показывается диалог
+    требующий подтверждения закрытия --%>
+    <c:set var="confirmationDialogId"><portlet:namespace/>_confirmationDialog</c:set>
+    <div id="${confirmationDialogId}" dojoType="dijit.Dialog" title="<fmt:message key="edit.close.confirmation.title"/>" style="width: 320px; height: 96px">
+        <div style="text-align: left;"><fmt:message key="edit.close.confirmation.message"/></div>
+        <div style="float:right; clear: both;">
+            <button dojoType="dijit.form.Button" type="button">
+                <fmt:message key="edit.close.confirmation.yes"/>
+                <script type="dojo/method" event="onClick" args="evt">
+                    submitForm('<%= CardPortlet.SAVE_AND_CLOSE_EDIT_MODE_ACTION %>');
+                </script>
+            </button>
+            <button dojoType="dijit.form.Button" type="button">
+                <fmt:message key="edit.close.confirmation.no"/>
+                <script type="dojo/method" event="onClick" args="evt">
+                    submitForm('<%= CardPortlet.CLOSE_EDIT_MODE_ANYWAY_ACTION %>');
+                </script>
+            </button>
+            <button dojoType="dijit.form.Button" type="button">
+                <fmt:message key="edit.close.confirmation.cancel"/>
+                <script type="dojo/method" event="onClick" args="evt">
+                    dijit.byId('${confirmationDialogId}').hide();
+                </script>
+            </button>
+        </div>
+    </div>
+    <script type="text/javascript" language="javascript">
+        dojo.require('dijit.Dialog');
+        dojo.addOnLoad(function() {
+            dbmiHideLoadingSplash();
+            dijit.byId('${confirmationDialogId}').show();
+        });
+    </script>
+</c:if>
+
+<% 	//Разблокируем открытые на редактирование карточки при выходе пользователя
+	//карточек открытых на редактировании может быть несколько, собирем их айди через запятую
+	String lockedCardId = "";
+	int cnt = 0;
+	List<CardPortletCardInfo> listCards = sessionBean.getAllOpenedActiveCards();
+	if (!listCards.isEmpty()) {
+		cnt = listCards.size();
+		for (CardPortletCardInfo info : listCards) {
+			lockedCardId += info.getCard().getId().getId().toString() + ",";
+		}
+		//обрезаем последнюю запятую
+		lockedCardId = lockedCardId.substring(0, lockedCardId.length()-1);
+	}
+%>
+
+<script type="text/javascript">
+	dojo.require('dijit.Dialog');
+	var intercepted_href = '';
+	window.onbeforeunload = function(evt) {
+		var isInternalRequest = getUrlVars(intercepted_href)["<%= CardPortlet.INTERNAL_REQUEST_FLAG_FIELD %>"];
+		if (document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value == "" && !trustedAction && "true" != isInternalRequest && <%= !lockedCardId.isEmpty() %>) {
+			return "<fmt:message key="edit.warning.browser.away"><fmt:param value="<%= cardId %>"/></fmt:message>";
+		}
+	}
+	window.onunload = function(e) {
+		var isInternalRequest = getUrlVars(intercepted_href)["<%= CardPortlet.INTERNAL_REQUEST_FLAG_FIELD %>"];
+		intercepted_href = "";
+		if (document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value == "" && !trustedAction && "true" != isInternalRequest) {
+			var result = dojo.xhrGet({
+				url: '<%=request.getContextPath()%>/UnlockCard?id=<%=lockedCardId.split(",")[0]%>',
+				sync: true,
+				preventCache: true,
+				//timeout: 5000,
+				load: function() {
+					console.log('Unlocked successfully');
+					window.location.pathname = '/portal/signout/'
+				}
+			});
+		}
+	}
+	//вырезаем из ссылки значение переданного параметра
+	function getUrlVars(href) {
+		   var vars = {};
+		   var parts = href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		       vars[key] = value;
+		   });
+		   return vars;
+	}
+	//перехват ссылки при сортировке, результат записывается в глобальную переменную intercepted_href
+	(function() {
+		var refs=dojo.query("th.sortable a");
+		for (var i=0, L=refs.length; i<L; i++) {
+		    refs[i].onclick=function() {
+		    	intercepted_href = this.href; //this.href - адрес ссылки
+		    }
+		}
+		 
+		})()
+</script>

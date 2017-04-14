@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/bcel.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/quartz.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/quartz-all.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/Install/jboss-portal-2.6.8.GA/server/default/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/dsn.jar"/>
+	<classpathentry kind="lib" path="lib/imap.jar"/>
+	<classpathentry kind="lib" path="lib/mailapi.jar"/>
+	<classpathentry kind="lib" path="lib/pop3.jar"/>
+	<classpathentry kind="lib" path="lib/smtp.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/ini4j-0.5.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/spring.jar" sourcepath="C:/Java/spring-framework-2.0.2/src"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/commons-lang-2.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Platform"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

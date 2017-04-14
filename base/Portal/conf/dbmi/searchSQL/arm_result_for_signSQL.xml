@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- Отчеты на утверждение в "Личный кабинет"
+SELECT cardID
+FROM 
+ (
+  SELECT DISTINCT cardID, coalesce(urgencyId, 2000000000)
+  FROM
+		(
+		-- "отчет об исполнении" для исполнителя
+		SELECT c.card_id as cardID, av.date_value, av_u.value_id as urgencyId
+		FROM Card c
+
+			-- (1044) "Отчет об исполнении": "Дата утверждения"/D ('ADMIN_713534')
+			LEFT OUTER JOIN attribute_value av
+				ON	(av.card_id = c.card_id and (av.attribute_code = 'ADMIN_713534'))
+
+			-- "срочность"
+			LEFT JOIN attribute_value av_u
+				on	(av_u.card_id = c.card_id)
+				and (av_u.attribute_code = 'JBR_HOWFAST')
+
+			LEFT JOIN attribute_value avUser ON (
+					avUser.card_id = c.card_id
+
+					-- "Контролер"/U ('ADMIN_702513')
+					-- (?)"Автор поручения"/U ('ADMIN_702334')
+					-- 'JBR_RPT_DR_APPROVER'/U/"Утверждающий скрытый"
+					and avUser.attribute_code in ('JBR_RPT_DR_APPROVER')
+				)
+				
+			--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+			left join attribute_value avRes ON c.card_id = avRes.card_id
+							and avRes.attribute_code in ('ADMIN_702311')
+				
+			-- 'JBR_INFD_SGNEX_LINK' Должность, фамилия и инициалы лица, подписавшего резолюцию из поручения - используем вместо 'JBR_RPT_DR_SIGNER'/U/"Подписант скрытый"
+			left join attribute_value avUserRes on 
+							avUserRes.card_id=avRes.number_value and
+							avUserRes.attribute_code in ('JBR_INFD_SGNEX_LINK') --Должность, фамилия и инициалы лица, подписавшего резолюцию из поручения
+			WHERE 
+			(
+				-- "Отчет об исполнении"(1044) (для отв. исполнителя)
+				--    статус: "исполнен" (206)
+				(c.template_id=1044) and (c.status_id in (206))
+
+				-- текущий пользователь ...
+				and (avUser.number_value in (%CURRENTUSERS%) or avUserRes.avUser.number_value in (%CURRENTUSERS%))
+
+			) -- WHERE
+
+		-- "Отчет об исполнении"(1044) (для соисполнителя)
+		--    статус: "исполнен" (206)
+		--  используетя документ-основание по B-ссылке 
+		-- -- "Отчет об исполнении"(1044): "Исполнитель"/U ('ADMIN_702335')
+		-- 324 "Поручение": "Ответственный редактор"/U ('EDITOR')
+		UNION SELECT c_otchet.card_id as cardID, av.date_value, av_u.value_id as urgencyId
+		FROM Card c_otchet
+
+				-- (1044) "Отчет об исполнении": "Дата утверждения"/D ('ADMIN_713534')
+				LEFT OUTER JOIN attribute_value av
+					ON	(av.card_id = c_otchet.card_id and (av.attribute_code = 'ADMIN_713534'))
+
+				--   -> (ссылка на "Родительское поручение"='ADMIN_702311'(C))
+				JOIN attribute_value avParent ON c.card_id = avParent.card_id
+						and avParent.attribute_code in ('ADMIN_702311')
+
+				-- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXEC_LINK')
+				-- "Поручение" (324): "Исполнитель"/U ('JBR_INFD_EXECUTOR')
+				-- "Поручение" (324): "Соисполнители"/U ('ADMIN_255974')
+				-- "Поручение" (324): "Контролер"/U ('JBR_TCON_INSPECTOR')
+				JOIN attribute_value avUser on
+						avUser.card_id=avParent.number_value
+					and avUser.attribute_code in ( 'JBR_INFD_EXEC_LINK',
+							'JBR_INFD_EXECUTOR', 'ADMIN_255974')
+
+				-- только, если исполнитель указан в конкретном отчете
+				-- здесь требуется "Утверждающий"/'JBR_RPT_DR_APPROVER'
+				-- "Контролер"/U ('ADMIN_702513')
+				JOIN attribute_value avOtchetExec on
+						 avOtchetExec.card_id=c_otchet.card_id
+					and  avOtchetExec.attribute_code = 'JBR_RPT_DR_APPROVER'
+					and  avOtchetExec.number_value=avUser.number_value
+
+				-- "срочность"
+				LEFT JOIN attribute_value av_u
+					on	(av_u.card_id = c_otchet.card_id)
+					and (av_u.attribute_code = 'JBR_HOWFAST')
+
+		WHERE (
+			(c_otchet.template_id=1044) and (c_otchet.status_id in (206))
+
+			-- текущий пользователь = отв Исполнитель ...
+			and avUser.number_value in (%CURRENTUSERS%)
+
+		) -- /WHERE
+
+--		ORDER by 2 DESC -- av.date_value
+
+ 	) AS b				
+	ORDER BY 2 ASC, 1
+ ) AS a
+--	ORDER by 1 DESC
+
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

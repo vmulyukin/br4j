@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="conf"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.2">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.utility;#system#"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/SharedLib/spring.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Kernel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Model"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBoss Portal 2.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JBRModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Portal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Platform"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Platform-JBoss"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/CardExchange"/>
+	<classpathentry kind="lib" path="/SharedLib/iText-2.1.7.jar"/>
+	<classpathentry kind="lib" path="/SharedLib/jasperreports-4.1.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

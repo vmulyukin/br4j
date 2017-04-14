@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ArchiDBNpa" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+	<property name="ireport.zoom" value="1.3310000000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="table_header"/>
+	<style name="table" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_full_line" style="dejavu">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\EclipseJ2ee\\pr-indigo-new_principle-22-05-13\\project\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="current_user" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new Long(1020)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+        av_dret.date_value + interval '$P!{tz_hour} hour' as dret,
+	av_ddoc.date_value + interval '$P!{tz_hour} hour' as ddoc,
+	av_nout.string_value as ndoc,
+    vl.value_rus as howfast,
+    av_stopctrl.date_value + interval '$P!{tz_hour} hour' stopctrl,
+    av_inf.string_value as receiver_name,
+    av_rec_job.string_value as receiver_job,
+	av_exec_job.string_value as exec_job,
+	av_exec_sname_nm.string_value as exec_name,
+    av_inf_sign.string_value as signer_name,
+	av_dreg.date_value + interval '$P!{tz_hour} hour' as dreg,
+	av_inum.string_value ninc,
+	av_dln.date_value + interval '$P!{tz_hour} hour' deadl,
+    av_created.date_value + interval '$P!{tz_hour} hour' created,
+	vl_tdoc.string_value as tdoc,
+	av_desc.string_value descr,
+	av_ntom.number_value as ntom,
+    av_nstel.string_value as nstel,
+    av_comment.string_value as comments,
+    array_to_string(array(select distinct
+                          av_ext_res.number_value
+                          from card cc
+                          -- Внешние резолюции
+                          join
+                              attribute_value av_ext_res on (av_ext_res.card_id = cc.card_id and av_ext_res.attribute_code = 'JBR_EXT_RESOL')
+                          where cc.card_id = c.card_id), ',') as ext_res,
+    vl_control.value_id as control_id,
+    vl_control.value_rus as control,
+    vl_type_control.value_rus as control_type,
+    av_person.string_value || ', ' || coalesce (av_person_d.string_value, '') as arch_sender
+    ,av_pers_ret_sn.string_value || ', '|| coalesce (av_pers_ret_d.string_value, '') as doc_ret_pers
+
+from
+	card c
+left outer join -- Дата возврата в основную БД
+	attribute_value av_dret on (av_dret.card_id = c.card_id and av_dret.attribute_code = 'JBR_DOC_RET')
+left outer join -- Дата документа
+	attribute_value av_ddoc on (av_ddoc.card_id = c.card_id and av_ddoc.attribute_code = 'JBR_REGD_DATEOUT')
+left outer join -- Категория срочности
+	attribute_value av_howfast on (av_howfast.card_id = c.card_id and av_howfast.attribute_code = 'JBR_HOWFAST')
+        left outer join values_list vl on vl.value_id=av_howfast.value_id
+left outer join -- Адресат
+	attribute_value av_receiver on (av_receiver.card_id = c.card_id and av_receiver.attribute_code = 'JBR_INFD_RECEIVER')
+        left outer join attribute_value av_inf on (av_inf.card_id=(select card_id from person where person_id=av_receiver.number_value limit 1) and  av_inf.attribute_code='NAME')
+            left outer join -- Должность адресата
+                    attribute_value av_rec_job on (av_rec_job.card_id = (select card_id from person where person_id=av_receiver.number_value limit 1)  and av_rec_job.attribute_code = 'JBR_PERS_POSITION')
+
+left outer join -- Хар-ка ссылющиеся на Исполнителя
+	attribute_value av_exec on (av_exec.card_id = c.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR')
+        left outer join -- Должность исполнителя
+            attribute_value av_exec_job on (av_exec_job.card_id = (select card_id from person where person_id=av_exec.number_value limit 1) and av_exec_job.attribute_code = 'JBR_PERS_POSITION')
+left outer join -- Фамилия исполнителя
+	attribute_value av_exec_sname_nm on (av_exec_sname_nm.card_id =(select card_id from person where person_id=av_exec.number_value limit 1)  and av_exec_sname_nm.attribute_code = 'JBR_PERS_SNAME_NM')
+
+left outer join -- Отправитель
+	attribute_value av_sign on (av_sign.card_id = c.card_id and av_sign.attribute_code = 'JBR_INFD_SIGNATORY')
+        left outer join attribute_value av_inf_sign on (av_inf_sign.card_id=(select card_id from person where person_id=av_sign.number_value limit 1) and  av_inf_sign.attribute_code='NAME')
+left outer join -- Дата снятия документа с контроля
+	attribute_value av_stopctrl on (av_stopctrl.card_id = c.card_id and av_stopctrl.attribute_code = 'ADMIN_220912')
+left outer join -- Номер документа - Номер исходящего
+	attribute_value av_nout on (av_nout.card_id = c.card_id and av_nout.attribute_code = 'JBR_REGD_NUMOUT')
+left outer join -- Дата поступления - Дата регистрации
+	attribute_value av_dreg on (av_dreg.card_id = c.card_id and av_dreg.attribute_code = 'JBR_REGD_DATEREG')
+left outer join -- Входящий номер - Регистрационный номер
+	attribute_value av_inum on (av_inum.card_id = c.card_id and av_inum.attribute_code = 'JBR_REGD_REGNUM')
+left outer join -- Срок исполнения или предоставления ответа
+	attribute_value av_dln on (av_dln.card_id = c.card_id and av_dln.attribute_code = 'JBR_IMPL_DEADLINE')
+-- Дата создания
+left outer join
+	attribute_value av_created on (av_created.card_id = c.card_id and av_created.attribute_code = 'CREATED')
+-- Вид документа
+	left outer join attribute_value av_tdoc on (av_tdoc.card_id = c.card_id and av_tdoc.attribute_code = 'JBR_INFD_TYPEDOC')
+	left outer join -- Выбраное значение из справочника Вид документа
+		--values_list vl_tdoc on (vl_tdoc.ref_code = 'ADMIN_26945' and vl_tdoc.value_id = av_tdoc.value_id)
+		attribute_value vl_tdoc ON (vl_tdoc.card_id = av_tdoc.number_value AND vl_tdoc.attribute_code = 'NAME')
+left outer join -- Краткое содержание
+	attribute_value av_desc on (av_desc.card_id = c.card_id and av_desc.attribute_code = 'JBR_INFD_SHORTDESC')
+-- Номер тома
+left outer join
+	attribute_value av_ntom on (av_ntom.card_id = c.card_id and av_ntom.attribute_code = 'ADMIN_222281')
+-- Стеллаж
+left outer join
+	attribute_value av_nstel on (av_nstel.card_id = c.card_id and av_nstel.attribute_code = 'ADMIN_222282')
+-- Комментарий
+left outer join
+	attribute_value av_comment on (av_comment.card_id = c.card_id and av_comment.attribute_code = 'ADMIN_222283')
+--На контроле
+left outer join
+	attribute_value av_control on (av_control.card_id = c.card_id and av_control.attribute_code = 'JBR_IMPL_ONCONT')
+left outer join -- да/нет
+		values_list vl_control on (vl_control.value_id = av_control.value_id)
+
+--Тип контроля
+left outer join
+	attribute_value av_type_control on (av_type_control.card_id = c.card_id and av_type_control.attribute_code = 'JBR_IMPL_TYPECONT')
+left outer join -- выбираем "тип контроля" из справочника
+		values_list vl_type_control on (vl_type_control.value_id = av_type_control.value_id)
+--списавший в архив
+left join person p on p.person_id = $P{current_user}
+left join attribute_value av_person on p.card_id = av_person.card_id and av_person.attribute_code = 'JBR_PERS_SNAME_NM'
+left join attribute_value av_person_d on p.card_id = av_person_d.card_id and av_person_d.attribute_code = 'JBR_PERS_POSITION'
+
+--вернувший из архива
+left join attribute_value av_pers_ret on av_pers_ret.card_id = c.card_id and av_pers_ret.attribute_code = 'JBR_DOC_RET_PERS'
+left join person p_ret on p_ret.person_id = av_pers_ret.number_value
+left join attribute_value av_pers_ret_sn on p_ret.card_id = av_pers_ret_sn.card_id and av_pers_ret_sn.attribute_code = 'JBR_PERS_SNAME_NM'
+left join attribute_value av_pers_ret_d on p_ret.card_id = av_pers_ret_d.card_id and av_pers_ret_d.attribute_code = 'JBR_PERS_POSITION'
+
+where c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="dret" class="java.sql.Timestamp"/>
+	<field name="ddoc" class="java.sql.Timestamp"/>
+	<field name="ndoc" class="java.lang.String"/>
+	<field name="howfast" class="java.lang.String"/>
+	<field name="stopctrl" class="java.sql.Timestamp"/>
+	<field name="receiver_name" class="java.lang.String"/>
+	<field name="receiver_job" class="java.lang.String"/>
+	<field name="exec_job" class="java.lang.String"/>
+	<field name="exec_name" class="java.lang.String"/>
+	<field name="signer_name" class="java.lang.Object"/>
+	<field name="dreg" class="java.sql.Timestamp"/>
+	<field name="ninc" class="java.lang.String"/>
+	<field name="deadl" class="java.sql.Timestamp"/>
+	<field name="created" class="java.sql.Timestamp"/>
+	<field name="tdoc" class="java.lang.String"/>
+	<field name="descr" class="java.lang.String"/>
+	<field name="ntom" class="java.math.BigDecimal"/>
+	<field name="nstel" class="java.lang.String"/>
+	<field name="comments" class="java.lang.String"/>
+	<field name="ext_res" class="java.lang.String"/>
+	<field name="control_id" class="java.lang.Long"/>
+	<field name="control" class="java.lang.String"/>
+	<field name="control_type" class="java.lang.String"/>
+	<field name="arch_sender" class="java.lang.String"/>
+	<field name="doc_ret_pers" class="java.lang.String"/>
+	<title>
+		<band height="75">
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[РЕГИСТРАЦИОННО-КОНТРОЛЬНАЯ КАРТОЧКА]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="15" width="555" height="30">
+					<printWhenExpression><![CDATA[$F{dret}!=null && !$F{dret}.equals( "null" )]]></printWhenExpression>
+				</reportElement>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="180" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Перенесено в рабочую базу]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="table" positionType="Float" mode="Opaque" x="180" y="0" width="160" height="30" forecolor="#000000" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd.MM.yyyy").format($F{dret})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="table" positionType="Float" mode="Opaque" x="340" y="0" width="215" height="30" forecolor="#000000" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{doc_ret_pers} != null ? $F{doc_ret_pers} : "не определен")]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="45" width="555" height="30"/>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="180" height="30"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Перенесено в оперативный архив]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="table" positionType="Float" mode="Opaque" x="180" y="0" width="160" height="30" forecolor="#000000" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd.MM.yyyy").format(new Date())]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="table" positionType="Float" mode="Opaque" x="340" y="0" width="215" height="30" forecolor="#000000" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{arch_sender} != null ? $F{arch_sender} : "не определен")]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="600" splitType="Immediate">
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="230" width="555" height="50"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Электронное согласование документа]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"conform_arch.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="40" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"visaInfo_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="560" width="555" height="40" isPrintInFirstWholeBand="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Проверка ЭП]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[(new com.aplana.dbmi.jasperreports.CardDSInfoReport()).getData($P{card_id})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{path}+"eSign_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="520" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Хранение документа]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10" isPrintInFirstWholeBand="true"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"storedDoc_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="400" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Рассылка]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"delivery_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="360" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Ознакомление]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"acquaintance_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="480" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"paperorig_arch.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Бумажный оригинал]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="320" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Резолюции и исполнение]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="level">
+						<subreportParameterExpression><![CDATA[new Long(7)]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"resolution_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="180" width="555" height="50"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="20"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="DejaVu Sans" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{descr} != null ? $F{descr} : "")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Краткое содержание]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="440" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Связанные документы]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"relatedDocs_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement style="dejavu_bold" positionType="Float" x="0" y="280" width="555" height="40"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Электронное подписание документа]]></text>
+				</staticText>
+				<subreport>
+					<reportElement style="dejavu" positionType="Float" x="0" y="30" width="555" height="10"/>
+					<subreportParameter name="card_id">
+						<subreportParameterExpression><![CDATA[$P{card_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"signInfo_arch.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="455" y="60" width="100" height="30" isPrintInFirstWholeBand="true" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Дата и  № документа]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="60" width="455" height="30" isPrintInFirstWholeBand="true" backcolor="#CCFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Вид документа]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table" x="0" y="90" width="555" height="30"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToBandHeight" x="455" y="0" width="100" height="30"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{dreg} != null ?  (new SimpleDateFormat("dd.MM.yyyy")).format($F{dreg})+"\n" : "")  + ($F{ninc} != null ? $F{ninc}: "")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table_full_line" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="455" height="30"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{tdoc} != null ? $F{tdoc}: "")]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement style="table" x="0" y="120" width="555" height="60"/>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="0" y="0" width="278" height="30" isPrintInFirstWholeBand="true" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Исполнитель]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="table_header" positionType="Float" mode="Opaque" x="278" y="0" width="277" height="30" isPrintInFirstWholeBand="true" backcolor="#CCFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<text><![CDATA[Подписант]]></text>
+				</staticText>
+				<frame>
+					<reportElement x="0" y="30" width="555" height="30"/>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="table" positionType="Float" x="0" y="0" width="278" height="30"/>
+						<box>
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[($F{exec_job} != null ? $F{exec_job} + " - "  : " ")+
+    ($F{exec_name} != null ? $F{exec_name} : "")]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="table" positionType="Float" x="278" y="0" width="277" height="30"/>
+						<box>
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[($F{signer_name}!=null?$F{signer_name}:"")]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement style="table" x="0" y="0" width="555" height="60"/>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" x="227" y="0" width="142" height="20" forecolor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{howfast} != null ? $F{howfast}  : "")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" x="424" y="0" width="131" height="20" forecolor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{deadl} != null && new Long(1432).equals($F{control_id}) ? "срок: " + (new SimpleDateFormat("dd.MM.yyyy")).format($F{deadl}) : "")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="dejavu" positionType="Float" x="0" y="0" width="203" height="20" forecolor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($F{control_id} != null && $F{control_id} == 1432)?($F{control_type}!=null?$F{control_type}:"Контроль"):"")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dejavu" positionType="Float" x="282" y="40" width="273" height="20" forecolor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{stopctrl} != null ? "Дата снятия с контроля: " + (new SimpleDateFormat("dd.MM.yyyy")).format($F{stopctrl}) : "" )]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportByDepartments_statistics" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="s_times" isDefault="true" fontName="Times New Roman" fontSize="10" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="s_times_bold" isDefault="true" fontName="Times New Roman" fontSize="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="s_table" style="s_times">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="s_table_bold" style="s_times_bold">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="prefixSQL" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[with doc_dep (doc_id, dep_id) as (
+$P!{prefixSQL}
+),
+static_date1 (dep, is_doc,
+is_cont, is_cont_exec_term, is_cont_exec_overterm, is_cont_work_term, is_cont_work_overterm,
+is_nocont, is_nocont_exec, is_nocont_work) as (
+	select
+		av_dep_name.string_value as dep,
+		case when av_cont.value_id in (1432,1433)  then 1 else 0 end as is_doc,
+		case when av_cont.value_id = 1432 then 1 else 0 end as is_cont,
+		case when av_cont.value_id = 1432 and exists (select 1 from card cr where cr.card_id = dd.doc_id and av_doffcont.date_value is not null and av_doffcont.date_value <= av_deadline.date_value) then 1 else 0 end as is_cont_exec_term,
+		case when av_cont.value_id = 1432 and exists (select 1 from card cr where cr.card_id = dd.doc_id and av_doffcont.date_value is not null and av_doffcont.date_value > av_deadline.date_value) then 1 else 0 end as is_cont_exec_overterm,
+		case when av_cont.value_id = 1432 and exists (select 1 from card cr where cr.card_id = dd.doc_id and av_doffcont.date_value is null and (av_deadline.date_value + interval '6 hour') >= current_date) then 1 else 0 end as is_cont_work_term,
+		case when av_cont.value_id = 1432 and exists (select 1 from card cr where cr.card_id = dd.doc_id and av_doffcont.date_value is null and (av_deadline.date_value + interval '6 hour') < current_date) then 1 else 0 end as is_cont_work_overterm,
+		case when av_cont.value_id = 1433 then 1 else 0 end as is_nocont,
+		case when av_cont.value_id = 1433 and exists (select 1 from card cr where cr.card_id = dd.doc_id and cr.status_id not in (103)) then 1 else 0 end as is_nocont_exec,
+		case when av_cont.value_id = 1433 and exists (select 1 from card cr where cr.card_id = dd.doc_id and cr.status_id in (103)) then 1 else 0 end as is_nocont_work
+	from doc_dep dd
+	left join attribute_value av_cont on av_cont.card_id = dd.doc_id and av_cont.attribute_code = 'JBR_IMPL_ONCONT'
+	left join attribute_value av_doffcont on av_doffcont.card_id = dd.doc_id and av_doffcont.attribute_code = 'ADMIN_220912'
+	left join attribute_value av_deadline on av_deadline.card_id = dd.doc_id and av_deadline.attribute_code = 'JBR_IMPL_DEADLINE'
+	left join attribute_value av_dep_name on av_dep_name.card_id = dd.dep_id and av_dep_name.attribute_code = 'NAME'
+),
+sum_date1 (dep, doc,
+cont, cont_exec_term, cont_exec_overterm, cont_work_term, cont_work_overterm,
+nocont, nocont_exec, nocont_work) as (
+	select
+	sd.dep, sum(sd.is_doc) as doc,
+	sum(sd.is_cont) as cont, sum(sd.is_cont_exec_term) as cont_exec_term, sum(sd.is_cont_exec_overterm) as cont_exec_overterm,
+	sum(sd.is_cont_work_term) as cont_work_term, sum(sd.is_cont_work_overterm) as cont_work_overterm,
+	sum(sd.is_nocont) as nocont, sum(sd.is_nocont_exec) as nocont_exec, sum(sd.is_nocont_work) as nocont_work
+	from static_date1 sd
+	group by sd.dep
+	order by sd.dep
+)
+select *, case when sd.doc::float > 0 then (((sd.cont_exec_term + sd.cont_exec_overterm + sd.nocont_exec)*100)/sd.doc::float)::float else 0 end as res
+from sum_date1 sd]]>
+	</queryString>
+	<field name="dep" class="java.lang.String"/>
+	<field name="doc" class="java.lang.Long"/>
+	<field name="cont" class="java.lang.Long"/>
+	<field name="cont_exec_term" class="java.lang.Long"/>
+	<field name="cont_exec_overterm" class="java.lang.Long"/>
+	<field name="cont_work_term" class="java.lang.Long"/>
+	<field name="cont_work_overterm" class="java.lang.Long"/>
+	<field name="nocont" class="java.lang.Long"/>
+	<field name="nocont_exec" class="java.lang.Long"/>
+	<field name="nocont_work" class="java.lang.Long"/>
+	<field name="res" class="java.lang.Long"/>
+	<variable name="doc" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{doc}]]></variableExpression>
+	</variable>
+	<variable name="cont" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{cont}]]></variableExpression>
+	</variable>
+	<variable name="cont_exec_term" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{cont_exec_term}]]></variableExpression>
+	</variable>
+	<variable name="cont_exec_overterm" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{cont_exec_overterm}]]></variableExpression>
+	</variable>
+	<variable name="cont_work_term" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{cont_work_term}]]></variableExpression>
+	</variable>
+	<variable name="cont_work_overterm" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{cont_work_overterm}]]></variableExpression>
+	</variable>
+	<variable name="nocont" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{nocont}]]></variableExpression>
+	</variable>
+	<variable name="nocont_exec" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{nocont_exec}]]></variableExpression>
+	</variable>
+	<variable name="nocont_work" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{nocont_work}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement style="s_table_bold" x="0" y="0" width="224" height="80"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Наименование]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="731" y="0" width="71" height="80"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнит.
+дисциплина,
+%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="224" y="0" width="507" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Поступило документов]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="224" y="20" width="63" height="60"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Общее
+количество]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="287" y="20" width="304" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Контрольные]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="591" y="20" width="140" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Неконтрольные]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="287" y="40" width="36" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="323" y="40" width="64" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнено
+в срок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="387" y="40" width="68" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнено с
+опозданием]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="455" y="40" width="75" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[В работе
+срок не истек]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="530" y="40" width="61" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[В работе
+срок истек]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="591" y="40" width="32" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Всего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="623" y="40" width="60" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Исполнено]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="s_table_bold" x="683" y="40" width="48" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[В работе]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="224" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{dep} != null ? $F{dep} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="224" y="0" width="63" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{doc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="287" y="0" width="36" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cont}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="323" y="0" width="64" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cont_exec_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="387" y="0" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cont_exec_overterm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="455" y="0" width="75" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cont_work_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="530" y="0" width="61" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cont_work_overterm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="591" y="0" width="32" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nocont}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="623" y="0" width="60" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nocont_exec}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="683" y="0" width="48" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nocont_work}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="731" y="0" width="71" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{res}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<staticText>
+				<reportElement style="s_table_bold" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="224" height="20"/>
+				<textElement/>
+				<text><![CDATA[Итого:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="224" y="0" width="63" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{doc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="287" y="0" width="36" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{cont}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="323" y="0" width="64" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{cont_exec_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="387" y="0" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{cont_exec_overterm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="455" y="0" width="75" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{cont_work_term}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="530" y="0" width="61" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{cont_work_overterm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="591" y="0" width="32" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{nocont}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="623" y="0" width="60" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{nocont_exec}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="683" y="0" width="48" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{nocont_work}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="s_table" positionType="Float" stretchType="RelativeToBandHeight" x="731" y="0" width="71" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($V{doc} > 0 ? (new DecimalFormat("##0.00")).format((($V{cont_exec_term}+$V{cont_exec_overterm}+$V{nocont_exec})*100)/$V{doc}) : 0)]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

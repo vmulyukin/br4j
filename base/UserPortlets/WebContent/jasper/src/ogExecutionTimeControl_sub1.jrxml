@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ogExecutionTimeControl_sub1" pageWidth="320" pageHeight="565" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="320" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="def" isDefault="true" hAlign="Center" vAlign="Bottom" fontName="Times New Roman" fontSize="14" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="Single"/>
+	</style>
+	<style name="table" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251">
+		<paragraph lineSpacing="1_1_2"/>
+	</style>
+	<parameter name="cardID" class="java.math.BigDecimal"/>
+	<parameter name="tz_hour" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH RECURSIVE search_up(cycle_id, cycle_number, cycle_base) AS (
+    select cast(c.card_id::bigint as numeric),1, c.card_id from card c
+    where c.status_id in (4,7) and c.template_id = 484
+    UNION ALL
+    SELECT v.number_value, su.cycle_number+1, su.cycle_base
+    FROM attribute_value v, search_up su
+    WHERE v.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    AND v.card_id = su.cycle_id
+    and exists (select 1 from attribute_value
+		where attribute_code = 'JBR_DEPT_PARENT_LINK'
+		and card_id = v.number_value)),
+departments as (select (max(ARRAY[cycle_number, cycle_id, cycle_base]))[3] as curDep,
+			(max(ARRAY[cycle_number, cycle_id, cycle_base]))[2] as depLvl2
+		from search_up
+		group by cycle_base)
+select
+(dept_short_name.string_value || '(' || av_pers_sname.string_value || ' ' || av_pers_name.string_value || ' ' || av_pers_mname.string_value || ')' || ' ' || coalesce(otv.otv,'')) as rassmotritel,
+av_rassm_todate.date_value + interval '$P!{tz_hour} hour' as planDate,
+av_reg_date.date_value + interval '$P!{tz_hour} hour' as factDate,
+extract (DAY FROM (av_reg_date.date_value - av_rassm_todate.date_value))::NUMERIC as overDate,
+av_reg_num.string_value as regNumber,
+otv.otv as otv
+from card c
+join attribute_value av_rassm on c.card_id = av_rassm.card_id and  av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+join card c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+join attribute_value responce_consider on av_rassm.number_value = responce_consider.card_id and responce_consider.attribute_code = 'JBR_RESPONS_CONSIDER'
+join attribute_value av_rassm_todate on av_rassm.number_value = av_rassm_todate.card_id and  av_rassm_todate.attribute_code = 'JBR_RASSM_TODATE'
+
+join attribute_value av_rassm_person on av_rassm.number_value = av_rassm_person.card_id and  av_rassm_person.attribute_code = 'JBR_RASSM_PERSON'
+join person rassm_person on av_rassm_person.number_value = rassm_person.person_id
+join attribute_value av_pers_sname on av_pers_sname.card_id = rassm_person.card_id and av_pers_sname.attribute_code = 'JBR_PERS_SNAME'
+join attribute_value av_pers_name on av_pers_name.card_id = rassm_person.card_id and av_pers_name.attribute_code = 'JBR_PERS_NAME'
+join attribute_value av_pers_mname on av_pers_mname.card_id = rassm_person.card_id and av_pers_mname.attribute_code = 'JBR_PERS_MNAME'
+
+join attribute_value av_dept on av_dept.card_id = rassm_person.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+left join departments d on d.curDep =  av_dept.number_value
+left join attribute_value dept_short_name on d.depLvl2 = dept_short_name.card_id and dept_short_name.attribute_code = 'JBR_DEPT_SHORTNAME'
+
+left join (select '(отв.)'::text as otv) as otv on responce_consider.value_id = 1449
+
+left join (select av_rassm.number_value as rasm, (max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat from card c
+	join attribute_value av_relat on av_relat.number_value = c.card_id and av_relat.attribute_code = 'JBR_DOCL_RELATDOC'
+	join card relat_doc on relat_doc.card_id = av_relat.card_id
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	join attribute_value av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+	join attribute_value av_rmain on av_rmain.card_id = av_rassm.number_value and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER'
+	join attribute_value av_rassm_p on av_rassm_p.card_id = av_rassm.number_value and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+	join attribute_value av_res1 on av_res1.number_value = c.card_id and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join attribute_value av_res_signer on av_res1.card_id = av_res_signer.card_id and av_res_signer.attribute_code = 'JBR_INFD_SGNEX_LINK' and av_res_signer.number_value = av_rassm_p.number_value
+	join attribute_value av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id in(1,103,206)
+	join attribute_value av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974') and av_res_exec.number_value = av_exec.number_value
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+where
+not exists (select 1 from attribute_value av join card c on av.card_id = c.card_id and c.status_id in (103,206) where av.number_value = c_all_res.card_id and av.attribute_code='JBR_RIMP_PARASSIG')
+and functionbacklink(av_res1.card_id, 'JBR_RIMP_PARASSIG', '') = functionbacklink(c_all_res.card_id, 'JBR_RIMP_PARASSIG', '')
+and ((av_relat.template_id = 364 and av_rmain.value_id = 1449) or (av_relat.template_id = 784 and av_rmain.value_id = 1450))
+and ((relat_doc.template_id = 364 and relat_doc.status_id in (101, 104) and av_relat.value_id = 1502) or (relat_doc.template_id = 784 and relat_doc.status_id in (101, 102, 103, 206, 104, 48909) and av_relat.value_id != 1502))
+and c.card_id = $P{cardID} and c.status_id != 104
+group by av_rassm.number_value) as sub on av_rassm.number_value = sub.rasm
+left join attribute_value av_reg_date on av_reg_date.card_id = sub.relat and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+left join attribute_value av_reg_num on sub.relat = av_reg_num.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+where c.card_id = $P{cardID} and c.status_id != 104
+
+UNION ALL
+
+select
+(dept_short_name.string_value || '(' || av_pers_sname.string_value || ' ' || av_pers_name.string_value || ' ' || av_pers_mname.string_value || ')' || ' ' || coalesce(otv.otv,'')) as rassmotritel,
+av_rassm_todate.date_value + interval '$P!{tz_hour} hour' as planDate,
+av_reg_date.date_value + interval '$P!{tz_hour} hour' as factDate,
+extract (DAY FROM (av_reg_date.date_value - av_rassm_todate.date_value))::NUMERIC as overDate,
+av_reg_num.string_value as regNumber,
+otv.otv as otv
+from card c
+join attribute_value_archive av_rassm on c.card_id = av_rassm.card_id and  av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+join card_archive c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+join attribute_value_archive responce_consider on av_rassm.number_value = responce_consider.card_id and responce_consider.attribute_code = 'JBR_RESPONS_CONSIDER'
+join attribute_value_archive av_rassm_todate on av_rassm.number_value = av_rassm_todate.card_id and  av_rassm_todate.attribute_code = 'JBR_RASSM_TODATE'
+
+join attribute_value_archive av_rassm_person on av_rassm.number_value = av_rassm_person.card_id and  av_rassm_person.attribute_code = 'JBR_RASSM_PERSON'
+join person rassm_person on av_rassm_person.number_value = rassm_person.person_id
+join attribute_value av_pers_sname on av_pers_sname.card_id = rassm_person.card_id and av_pers_sname.attribute_code = 'JBR_PERS_SNAME'
+join attribute_value av_pers_name on av_pers_name.card_id = rassm_person.card_id and av_pers_name.attribute_code = 'JBR_PERS_NAME'
+join attribute_value av_pers_mname on av_pers_mname.card_id = rassm_person.card_id and av_pers_mname.attribute_code = 'JBR_PERS_MNAME'
+
+join attribute_value av_dept on av_dept.card_id = rassm_person.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+left join departments d on d.curDep =  av_dept.number_value
+left join attribute_value dept_short_name on d.depLvl2 = dept_short_name.card_id and dept_short_name.attribute_code = 'JBR_DEPT_SHORTNAME'
+
+left join (select '(отв.)'::text as otv) as otv on responce_consider.value_id = 1449
+
+left join (select av_rassm.number_value as rasm, (max(ARRAY[(EXTRACT(EPOCH  FROM av_rel_reg_date.date_value)), av_relat.card_id]))[2] as relat from card c
+	join attribute_value av_relat on av_relat.number_value = c.card_id and av_relat.attribute_code = 'JBR_DOCL_RELATDOC'
+	join card relat_doc on relat_doc.card_id = av_relat.card_id
+	join attribute_value av_exec on av_exec.card_id = av_relat.card_id and av_exec.attribute_code = 'JBR_INFD_EXECUTOR'
+	join attribute_value_archive av_rassm on c.card_id = av_rassm.card_id and av_rassm.attribute_code = 'JBR_IMPL_ACQUAINT'
+    join card_archive c_r on c_r.card_id = av_rassm.number_value and c_r.status_id != 34145
+	join attribute_value_archive av_rmain on av_rmain.card_id = av_rassm.number_value and av_rmain.attribute_code = 'JBR_RESPONS_CONSIDER'
+	join attribute_value_archive av_rassm_p on av_rassm_p.card_id = av_rassm.number_value and av_rassm_p.attribute_code = 'JBR_RASSM_PERSON'
+	join attribute_value_archive av_res1 on av_res1.number_value = c.card_id and av_res1.attribute_code = 'JBR_DOCB_BYDOC'
+	join attribute_value_archive av_res_signer on av_res1.card_id = av_res_signer.card_id and av_res_signer.attribute_code = 'JBR_INFD_SGNEX_LINK' and av_res_signer.number_value = av_rassm_p.number_value
+	join attribute_value_archive av_all_res on av_all_res.number_value = c.card_id and av_all_res.attribute_code = 'JBR_MAINDOC'
+	join card_archive c_all_res on av_all_res.card_id = c_all_res.card_id and c_all_res.status_id in(1,103,206)
+	join attribute_value_archive av_res_exec on c_all_res.card_id = av_res_exec.card_id and av_res_exec.attribute_code in ('JBR_INFD_EXEC_LINK','ADMIN_255974') and av_res_exec.number_value = av_exec.number_value
+	join attribute_value av_rel_reg_date on av_relat.card_id = av_rel_reg_date.card_id and av_rel_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+where
+not exists (select 1 from attribute_value_archive av join card_archive c on av.card_id = c.card_id and c.status_id in (103,206)	where av.number_value = c_all_res.card_id and av.attribute_code='JBR_RIMP_PARASSIG')
+and functionbacklink_archive(av_res1.card_id, 'JBR_RIMP_PARASSIG', '') = functionbacklink_archive(c_all_res.card_id, 'JBR_RIMP_PARASSIG', '')
+and ((av_relat.template_id = 364 and av_rmain.value_id = 1449) or (av_relat.template_id = 784 and av_rmain.value_id = 1450))
+and ((relat_doc.template_id = 364 and relat_doc.status_id in (101, 104) and av_relat.value_id = 1502) or (relat_doc.template_id = 784 and relat_doc.status_id in (101, 102, 103, 206, 104, 48909) and av_relat.value_id != 1502))
+and c.card_id = $P{cardID} and c.status_id = 104
+group by av_rassm.number_value) as sub on av_rassm.number_value = sub.rasm
+left join attribute_value av_reg_date on av_reg_date.card_id = sub.relat and av_reg_date.attribute_code = 'JBR_REGD_DATEREG'
+left join attribute_value av_reg_num on sub.relat = av_reg_num.card_id and av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+where c.card_id = $P{cardID} and c.status_id = 104
+
+order by otv asc]]>
+	</queryString>
+	<field name="rassmotritel" class="java.lang.String"/>
+	<field name="plandate" class="java.sql.Timestamp"/>
+	<field name="factdate" class="java.sql.Timestamp"/>
+	<field name="overdate" class="java.lang.Integer"/>
+	<field name="regnumber" class="java.lang.String"/>
+	<field name="otv" class="java.lang.String"/>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="85" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rassmotritel}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="85" y="0" width="56" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{plandate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{plandate}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="141" y="0" width="62" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{factdate}==null?"":(new SimpleDateFormat("dd.MM.yyyy")).format($F{factdate}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="203" y="0" width="58" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdate} <= 0 ? "":$F{overdate}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="261" y="0" width="59" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{regnumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

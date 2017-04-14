@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- Личный кабинет: "На доработку":
+SELECT DISTINCT cardID
+FROM
+	(
+		SELECT DISTINCT c.card_id as cardID, coalesce(av_u.value_id, 2000000000), av.date_value 
+		FROM Card c
+
+			-- "время выполнения"
+			LEFT JOIN attribute_value av
+				ON	(av.card_id = c.card_id
+				AND av.attribute_code in ('CREATED', 'JBR_IMPL_DEADLINE'))
+
+			-- "срочность"
+			LEFT JOIN attribute_value av_u
+				on	(av_u.card_id = c.card_id)
+				and (av_u.attribute_code = 'JBR_HOWFAST')
+
+			INNER JOIN attribute_value avUser 
+				ON (	avUser.card_id = c.card_id
+						and avUser.attribute_code in ('JBR_INFD_EXECUTOR', 'ADMIN_702335')
+						AND avUser.number_value in (%CURRENTUSERS%) )
+
+		WHERE (
+				-- 'JBR_INFD_EXECUTOR'  "Исполнитель"/U	
+				( 	-- Шаблоны:
+					--   "Входящий" (224) 
+					--   "Исходящий" (364) 
+					--   "Внутренний" (784) 
+					--   "Обращения граждан (ОГ)" (864)
+					--   "ОРД" (764)
+					--   "Исходящий на информационный запрос" (775) 
+					--   "Исходящий на обращения граждан" (777) 
+					--   "НПА (1226)"
+					-- состояние=Подготовка(106)
+					--
+					-- Для Шаблона "Информационный запрос (ИЗ)" (865) 
+					-- состояние="Черновик"(1)
+					(c.template_id in (364, 784, 764, 775, 777, 224, 864, 865, 1226)) 
+					and (c.status_id in (106, 1, 556656))
+
+					-- Исполнитель = текущий пользователь 
+					-- 864	Обращения граждан: 'JBR_IMPL_INSPECTOR'="Контролер по документу/U
+					-- 865	Информационный запрос:	'JBR_IMPL_INSPECTOR'
+					and (avUser.attribute_code in ('JBR_INFD_EXECUTOR', 'JBR_IMPL_INSPECTOR', 'ADMIN_702335')) 
+
+					-- "время выполнения" and (av.attribute_code = )
+
+					-- только в случае повторных попаданий в этот статус (ноль=самый первый раз)
+					and ( 
+					exists(
+						select avRepeat.number_value
+						from attribute_value avRepeat 
+						where
+								avRepeat.card_id = c.card_id 
+							and avRepeat.attribute_code in ( 'JBR_RPT_000000106', 'JBR_RPT_000000001') 
+							and avRepeat.number_value <> 0
+					) -- and exists
+					or exists (
+							select 1 
+							from card_version cv
+							where 
+								cv.card_id = c.card_id
+								and cv.status_id = 206
+						)
+				)
+			)
+
+			or
+
+			(
+				(c.template_id in (1044)) 
+					and (c.status_id in (102, 556656))
+					
+					and (avUser.attribute_code in ('ADMIN_702335')) 
+
+					-- "время выполнения" and (av.attribute_code = )
+
+					-- только в случае повторных попаданий в этот статус
+					and exists (
+							select 1 
+							from card_version cv
+							where 
+								cv.card_id = c.card_id
+								and cv.status_id = 206
+						)
+				
+			)
+		) -- WHERE
+
+	ORDER BY 2 ASC, 3 
+ ) AS a
+--	ORDER by 1 DESC
+			]]>
+		</sql>
+
+		<!--
+		<parameters>
+			<param name="userId" dispaly-name="User id" type="integer" />
+		</parameters>
+		-->
+
+	</query>
+
+	<!--
+		<query lang="ru">
+			<sql> ... "PERSON_LOGIN" LIKE '%'||?||'%' ... </sql>
+			<parameters>
+				<param name="start_date" dispaly-name="Начало периода" type="calendar" />
+				...
+			</parameters>
+		</query>
+	-->
+
+</searchQuery>

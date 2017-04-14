@@ -1,0 +1,76 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>БДМИ/СУСС - Обработчики действий</title>
+</head>
+<body>
+<h1>Обработчики действий</h1>
+
+<hr>
+<a name="TemplateGeneratedCardsAddHandler"></a>
+<h2>Добавление карточек, сгенерированных по шаблону (TemplateGeneratedCardsAddHandler)</h2>
+
+<p>Открывает на редактирование карточку-шаблон. Вместо сохранения карточки-шаблона создаёт на её основе группу целевых карточек
+и добавляет их ID в родительский атрибут.</p>
+
+<p>Процесс создания карточек следующий:</p>
+<ul>
+<li>Настраиваются процедуры отображения (классы, реализующие интерфейс MappingProcedure). 
+Настройки для процедур передаются обработчику в параметрах mapping</li>
+<li>Создаётся пустая целевая карточка</li>
+<li>В карточка-шаблоне и целевой карточке ищутся блоки с одинаковыми id. Информация в найденных блоках 
+копируется из карточки-шаблона в целевую карточку. (Блок общих характеристик не копируется)</li>
+<li>Далее в цикле:<ul>
+	<li>По очереди происходит применение к карточке всех процедур отображения, указанных в конфигурационном файле.</li>
+	<li>Если все процедуры выполняются успешно, карточка сохраняется в базу</li>
+	<li>ID карточки запоминается для добавления в атрибут родительской карточки, цикл запускается заново.
+	Таким образом одна и та же карточка сохраняется с различными значениями атрибутов, заданных процедурами отображения.</li>
+	<li>Цикл завершается когда у одной из процедур отображения закончатся данные.</li></ul></li>
+</ul>
+<p><i>Параметры обработчика:</i></p>
+<dt>template</dt>
+<dd>Шаблон карточки-шаблона</dd>
+<dt>target_template</dt>
+<dd>Шаблон целевых карточек</dd>
+<dt>mapping_package</dt>
+<dd>Пакет по умолчанию в котором расположены классы процедур отображения. Если он указан, можно в значении параметра mapping 
+не задавать имена классов полностью, а использовать короткое имя.</dd>
+<dt>mapping</dt>
+<dd>Процедура отображения. задаётся в следующем формате: <br/>
+<tt><font color="gray">&lt;полное или краткое имя класса&gt;</font>(<font color="gray">&lt;список аргументов процедуры через запятую&gt;</font>)-&gt;(<font color="gray">&lt;список изменяемых атрибутов через запятую&gt;</font>)</tt><br/>
+Пробелов после запятых в списках быть не должно.<br/>
+Аргументы передаются процедуре отображения на этапе настройки, изменяемые атрибуты пердаются процедуре в процессе её применения.</br>
+Скорее всего, в большинстве случаев в качестве аргументов будут передаваться атрибуты карточки-шаблона в том же формате что и 
+изменяемые атрибуты целевых карточек<br/>
+Атрибуты передаются в строках вида <tt><font color="gray">&lt;алиас типа атрибута&gt;</font>:<font color="gray">&lt;код атрибута из objectids.properties&gt;</font></tt><br/>
+</dd>
+<p><i>Обработка ошибок:</i></p>
+Пользовательские ошибки выбрасываются в виде MappingUserException в качестве сообщения в котором передаётся код ошибки.
+Для каждой пользовательской ошибки в конфигурационном файле должно быть определено сообщение с таким же кодом. 
+Это сообщение будет выведено пользователю.
+С каждой ошибкой может передаваться набор параметров, которые могут быть подставлены в сообщение вместо конструкций 
+вида <tt><font color="gray">{n}</font></tt>, где n=0,1,2...<br/>
+Коды MappingException и их параметры должны быть описаны в javadoc к классу процедуры отображения.<br/>
+Ошибки конфигурационного файла и базы данных выбрасываются в виде исключения MappingSystemException. <br/>
+Если было выброшено непроверяемое исключение, скорее всего это свидетельствует об ошибке в коде процедуры отображения.
+</body>
+</html>

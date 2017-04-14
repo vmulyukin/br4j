@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="arm_ext_order_sent_on_controlSQL.xml">
+	<name lang="ru">Поручения на внешних исполнителей</name>
+	<name lang="en">External orders</name>
+	
+	<column	id="jbr.report.ext.document" labelAttrId="jbr.incoming.oncontrol" isParentName="false" width="5">
+		<icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column>
+	<column id="ADMIN_702602" labelAttrId="jbr.category.howfast" width="5">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column>
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+
+	<!-- Срок из Поручения-->
+	<column  id="jbr.report.ext.parent" labelAttrId="jbr.resolutionTerm" isParentName="false" sortAttrId="jbr.resolutionTerm" sort="asc" width="10" textLength="40" link="true"/>
+	<!-- Регистрационный номер из ДО-->
+	<column id="jbr.report.ext.document" labelAttrId="regnumber"  width="40" sortAttrId="jbr.report.ext.document->regnumberdigital"/>
+	<!-- Текст резолюции  -->
+	<column id="jbr.report.ext.parent" labelAttrId="jbr.resolutionText" width="60" link="true" columnTitleRu="Текст резолюции" columnTitleEn="Resolution text"/>	
+	<!-- Исполнитель -->
+	<column id="jbr.report.ext.parent" labelAttrId="jbr.AssignmentExecutor" 
+										sortAttrId="jbr.report.ext.parent->jbr.AssignmentExecutor->jbr.person.fullName" width="80" isParentName="false"/>	
+	<!-- Внешний исполнитель -->
+	<column id="jbr.report.ext.parent" labelAttrId="jbr.ExtExecutor->name" 
+									    sortAttrId="jbr.report.ext.parent->jbr.ExtExecutor->name" width="80"  isParentName="false" columnTitleRu="Внешний исполнитель" columnTitleEn="External executor"/>	
+	<!-- Подписант -->
+	<column id="jbr.report.ext.parent" labelAttrId="jbr.resolution.FioSign" 
+									    sortAttrId="jbr.report.ext.parent->jbr.resolution.FioSign->jbr.person.fullName" isParentName="false" width="80" columnTitleRu="Подписант" columnTitleEn="Signer"/>	
+	<!-- Дата подписания -->
+	<column id="jbr.report.ext.parent" labelAttrId="jbr.resolution.SignDate" isParentName="false" width="40" />
+</search>

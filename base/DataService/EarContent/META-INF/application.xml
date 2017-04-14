@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<application id="Application_ID" version="1.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+	<display-name>DataService</display-name>
+	
+	<module id="AccessComponent_1_0">
+		<java>DBMI-AccessComponent.jar</java>
+	</module>
+	<module id="ARMSupportActions">
+		<java>ARMSupportActions.jar</java>
+	</module>
+	<module id="CardArchiveModule_0_1">
+		<java>CardArchiveModule.jar</java>
+	</module>
+	<module id="CardExchange_1_0">
+		<java>CardExchange.jar</java>
+	</module>
+	<module id="CardExchangeModule_1_0">
+		<java>CardExchangeModule.jar</java>
+	</module>
+	<module id="Controls_1_0">
+		<java>DBMI-Controls.jar</java>
+	</module>
+	<module id="DistributionManagerModule_0_1">
+		<java>DistributionManager.jar</java>
+	</module>
+	<module id="DistrManagerModule_0_1">
+		<java>DistributionManager.jar</java>
+	</module>
+		<module id="Direct_SQL_1_0">
+		<java>DirectSQLModule.jar</java>
+	</module>
+	<module id="Document_Flow_1_0">
+		<java>DocFlowModule.jar</java>
+	</module>
+	<module id="JasperReportFonts_1_0">
+		<java>JasperReportFonts.jar</java>
+	</module>
+	<module id="JasperReportModule_1_0">
+		<java>JasperReportModule.jar</java>
+	</module>
+	<module id="Mailer_1_0">
+		<java>MailModule.jar</java>
+	</module>
+	<module id="MEDO_1_0">
+		<java>MEDO.jar</java>
+	</module>
+	<module id="Model_1_0">
+		<java>DBMI-Model.jar</java>
+	</module>
+	<module id="Platform_1_0">
+		<java>DBMI-Platform.jar</java>
+	</module>
+	<module id="SharedCryptoModule_1_0">
+		<java>SharedCryptoModule.jar</java>
+	</module>
+	<module id="TableComponent_1_0">
+		<java>DBMI-TableComponent.jar</java>
+	</module>
+	<module id="CommonUtils_1_0">
+		<java>DBMI-CommonUtils.jar</java>
+	</module>
+	<module id="PortalUtils_1_0">
+		<java>DBMI-PortalUtils.jar</java>
+	</module>
+	<module id="Tags_1_0">
+		<java>DBMI-Tags.jar</java>
+	</module>
+	<module id="Transport_1_0">
+		<java>Transport.jar</java>
+	</module>
+	<module id="OWriterModule_1_0">
+		<java>OWriterModule.jar</java>
+	</module>	
+
+	<module id="Notification_1_0">
+		<ejb>NotificationModule.jar</ejb>
+	</module>
+	<module id="EjbModule_1246277162378">
+		<ejb>UserSyncModule.jar</ejb>
+	</module>
+	<module id="BossReferent_1_0">
+		<ejb>JBRModule.jar</ejb>
+	</module>
+	<module id="EjbModule_1256922270796">
+		<ejb>Kernel.jar</ejb>
+	</module>
+	<module id="Numerator_1_0">
+		<java>Numerator.jar</java>
+	</module>
+	<module id="SolrModule_1_0">
+		<ejb>SolrModule.jar</ejb>
+	</module>
+	<module id="MaterialSyncModule_1_0">
+		<ejb>MaterialSyncModule.jar</ejb>
+	</module>
+	<module id="AutoUnlockModule_1_0">
+		<ejb>AutoUnlockModule.jar</ejb>
+	</module>
+	<module id="ChangeAttributeModule_1_0">
+		<ejb>ChangeAttributeModule.jar</ejb>
+	</module>
+	<module id="TasksModule_1_0">
+		<ejb>TasksModule.jar</ejb>
+	</module>
+	<module id="MEDOGateModule_1_0">
+		<ejb>MEDOGate.jar</ejb>
+	</module>
+	<module id="DMSIModule">
+		<ejb>DMSI.jar</ejb>
+	</module>
+        <module id="SOZExchangeModule_1_0">
+		<ejb>SOZAdapter.jar</ejb>
+	</module>
+	<module id="Replication_1_0">
+		<ejb>Replication.jar</ejb>
+	</module>
+	<module id="GostStatisticClient_1_0">
+		<ejb>GostStatisticClient.jar</ejb>
+	</module>
+
+
+	<module>
+		<web>
+			<web-uri>DBMI-UserPortlets.war</web-uri>
+			<context-root>DBMI-UserPortlets</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-LinksPortlet.war</web-uri>
+			<context-root>DBMI-LinksPortlet</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-Login.war</web-uri>
+			<context-root>DBMI-Login</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-Portal.war</web-uri>
+			<context-root>DBMI-Portal</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-TaskControl.war</web-uri>
+			<context-root>DBMI-TaskControl</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>CardImportService.war</web-uri>
+			<context-root>CardImportService</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-SubscriptionBuilder.war</web-uri>
+			<context-root>DBMI-SubscriptionBuilder</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-TemplateBuilder.war</web-uri>
+			<context-root>DBMI-TemplateBuilder</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-UniversalPortlet.war</web-uri>
+			<context-root>DBMI-UniversalPortlet</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-UserManagement.war</web-uri>
+			<context-root>DBMI-UserManagement</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>DBMI-WorkflowBuilder.war</web-uri>
+			<context-root>DBMI-WorkflowBuilder</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>GostStatisticService.war</web-uri>
+			<context-root>GostStatisticService</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>IReferentServices.war</web-uri>
+			<context-root>IReferentServices</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>SOZExchangeServices.war</web-uri>
+			<context-root>SOZExchangeServices</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>solr.war</web-uri>
+			<context-root>solr</context-root>
+		</web>
+	</module>
+</application>

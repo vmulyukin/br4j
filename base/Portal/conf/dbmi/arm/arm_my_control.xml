@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="arm_my_controlSQL.xml">
+	<name lang="ru">У меня на контроле</name>
+	<name lang="en">У меня на контроле</name>
+
+	<!--  "Поручение" = 324 -->
+	<template>324</template>
+
+	<!-- "Независимое поручение" = 1255 -->
+	<template>1255</template>
+
+	<!--  "Отчет внешних исполнителей" = 1064 -->
+	<template>1064</template>
+
+	<!--  "Входящий" = 224 -->
+	<template>224</template>
+
+	<!--  "ОГ" = 864 -->
+	<template>864</template>
+
+	<!--  "ИЗ" = 865 -->
+	<template>865</template>
+
+	<!-- "Внутренние" = 784 -->
+	<template>784</template>
+
+	<!-- "НПА" = 1226 -->
+	<template>1226</template>
+
+	<!-- "ОРД" = 764 -->
+	<template>764</template>
+	
+	<column	id="jbr.incoming.oncontrol:jbr.oncontrol">
+		<icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+		<icon value="1449" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1450" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column>
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+	<column id="jbr.boss.urgency">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column>
+	<column id="jbr.relatdocs">
+		<default_icon image="boundDoc" tooltipRu="Есть связанные документы" tooltipEn="There are related documents"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет связанных документов" tooltipEn="No related documents"/>
+	</column>	
+	<column id="jbr.doclinks.references">
+		<default_icon image="boundDoc" tooltipRu="Есть ссылки на документ" tooltipEn="Exists links to this document"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет ссылок на документ" tooltipEn="No links to this document"/>
+	</column>
+
+	<!-- Срок  -->
+	<column id="jbr.resolutionTerm:jbr.incoming.deadline" width="40"/>
+	<!-- Регистрационный номер -->
+	<column id="jbr.report.ext.document:regnumber:jbr.main.doc" labelAttrId="regnumber" width="40"  link="true"
+		sortAttrId="jbr.report.ext.document->regnumberdigital;regnumberdigital;jbr.main.doc->regnumberdigital"/>
+	<!-- Дата регистрации -->
+	<column id="regdate:jbr.report.ext.document:jbr.rimp.bydoc:jbr.main.doc" labelAttrId="regdate" width="40"
+		sortAttrId="jbr.report.ext.document->regdate;regdate;jbr.main.doc->regdate" sort="asc"/>
+	<column id="name" width="120" columnTitleRu="Название" link="true"/>
+	<!-- Отправитель (для Входящих и ОГ) -->
+	<column id="jbr.incoming.sender" labelAttrId="name" isParentName="true"  width="50"/>
+	<column id="_TEMPLATE" width="50" />
+	<column id="_STATE" width="50" />
+</search>

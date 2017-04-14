@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<AccessConfig xmlns="http://www.btlab.ru/btlabdmtools/xsd/DynamicAccess" Partial="true">
+    <Template xmlns="" name="Тема вопроса" template_id="850">
+        <Permission Status="4" Rule="Участник документооборота">
+            <Operations>
+                <Operation permHash="a9b6b338cddd98fecff95bd5515eb75b"
+                    OperationType="write" Action="remove"/>
+            </Operations>
+            <WfMoves>
+                <WfMove permHash="acb99c9ec7cf19d4cfc68b9618f407dd"
+                    name="no_name_workflow-77610->Дубликат"
+                    wfm_id="77610" Action="remove"/>
+                <WfMove permHash="5f55722f1db61a3373530969e3fdd8ae"
+                    name="Отменить-77611->Отменен" wfm_id="77611" Action="remove"/>
+            </WfMoves>
+        </Permission>
+        <Rules>
+            <Rule name="NO_RULE" ruleHash="64387921751d6866c97fb1f7b32ae58d"/>
+            <Rule name="Администратор" ruleHash="b50909aa275f96ecc04b8a51cd78817d">
+                <RuleRole name="Администратор"
+                    ruleHash="b50909aa275f96ecc04b8a51cd78817d" roleCode="A"/>
+            </Rule>
+            <Rule name="Участник документооборота" ruleHash="0bf94a2f9275a0c022a7c7a3fcb81e8c">
+                <RuleRole name="Участник документооборота"
+                    ruleHash="0bf94a2f9275a0c022a7c7a3fcb81e8c" roleCode="JBR_C"/>
+            </Rule>
+        </Rules>
+        <Status name="NO_STATUS" status_id="NO_STATUS"/>
+        <Status name="Дубликат" status_id="6"/>
+        <Status name="Опубликовано" status_id="4"/>
+        <Status name="Отменен" status_id="34145"/>
+        <WFMoveType name="no_name_workflow-77610" wfm_id="77610"
+            wfm_from="Опубликовано" wfm_to="Дубликат"
+            wfm_from_status="4" wfm_to_status="6"/>
+        <WFMoveType name="Отменить-77611" wfm_id="77611"
+            wfm_from="Опубликовано" wfm_to="Отменен" wfm_from_status="4" wfm_to_status="34145"/>
+    </Template>
+</AccessConfig>

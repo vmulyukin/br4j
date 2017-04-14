@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<searchQuery>
+
+	<query>
+		<sql>
+			<![CDATA[
+-- (1) Карточки поступившие министру на согласование --
+SELECT cardID
+FROM
+	(
+		SELECT c.card_id as cardID, coalesce(av_u.value_id, 2000000000) as avuValId 
+		FROM Card c
+			LEFT OUTER JOIN attribute_value av
+				ON	av.card_id = c.card_id 
+				and (av.attribute_code in ('JBR_VISA_TODATE'))
+
+			-- "срочность"
+			LEFT JOIN attribute_value av_u
+				on	(av_u.card_id = c.card_id)
+				and (av_u.attribute_code = 'JBR_HOWFAST')
+
+			-- помошники визирующего
+			INNER JOIN attribute_value avUser
+				ON (	avUser.card_id = c.card_id
+						and ( 
+							(
+								avUser.attribute_code in ('JBR_VISA_RESPONSIBLE')
+								and exists (
+									-- помошники для персоны из avUser.number_value
+									select 1 
+									from attribute_value av_m join attribute_value av_a
+										JOIN card arm_c ON arm_c.card_id = av_a.card_id
+											on av_a.card_id = av_m.card_id
+									where	av_m.attribute_code = 'JBR_ARM_MANAGER'
+											and av_m.number_value = avUser.number_value
+											and av_a.attribute_code = 'JBR_ARM_ASSISTANT'
+											and av_a.number_value in (%CURRENTUSERS%)
+											and arm_c.status_id not in (34145, 6)
+								) -- exists
+							) 
+
+							-- (348) "Визирование": 'ADMIN_833056'="Помощник согласующего - скрытый"/U
+							or (
+								avUser.attribute_code in ('JBR_VISA_RESPONSIBLE')
+								and avUser.number_value in (
+			                                 SELECT av.number_value
+			                                 FROM person p
+			                                 JOIN attribute_value av ON (p.card_id = av.card_id AND av.attribute_code = 'JBR_ASSISTANT_FOR')
+			                                 WHERE p.person_id IN (%CURRENTUSERS%) 
+                                ) -- IN
+							) -- or 
+						) -- and
+					)
+		WHERE 
+			(
+				(-- Шаблон=Визирование (348), состояние="Обработка помощником" (73 992)
+				-- и документ НЕ БЫЛ возвращен руководителем БЕЗ согласования
+					(c.template_id=348) and (c.status_id in (73992)) and not exists(
+							select wfm.from_status_id from card c1
+							join attribute_value a on a.card_id = c.card_id and attribute_code = 'JBR_VISA_SOLUTION' and a.long_binary_value is not null and a.long_binary_value != ''
+							join workflow_move wfm on wfm.name_rus = xmlserialize(content (xpath(cast('//part[last()]/@action' as varchar), cast(convert_from(a.long_binary_value, 'UTF8') as xml)))[1] as varchar(100))
+							where c1.card_id = c.card_id and wfm.wfm_id = 15000008
+					)
+					-- "Согласующий" ('JBR_VISA_RESPONSIBLE')
+					-- and (avUser.attribute_code ='JBR_VISA_RESPONSIBLE') 
+					-- "время выполнения" and (av.attribute_code ='JBR_VISA_TODATE')
+				)
+				OR
+				(
+					-- Шаблон=Визирование (348), статус="Дополнительное согласование" (6833780)
+					(c.template_id=348) and (c.status_id in (6833780)) 
+				
+				)
+				OR
+				(
+					-- Шаблон=Согласование проекта поручения (2344), статус="Обработка помощником" (73992)
+					(c.template_id=2344) and (c.status_id in (73992))
+				)
+
+			)
+		GROUP BY cardID, avuValId 
+		ORDER by 2 ASC, min(av.date_value) DESC
+	) AS a				
+--	ORDER by 1 DESC
+			]]>
+		</sql>
+
+	</query>
+</searchQuery>

@@ -1,0 +1,789 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.io.*;
+import org.tmatesoft.svn.core.wc.*;
+import groovy.io.FileType;
+import java.text.*;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelExec;
+import ru.asd.GreetingTask;
+
+defaultTasks 'archive'
+
+buildscript {
+    apply from: 'dependencies.gradle', to: buildscript
+}
+
+apply from: 'functions.gradle'
+apply from: 'logging.gradle'
+apply from: 'validate.gradle'
+apply from: 'jmx.gradle'
+apply plugin: 'ssh'
+
+copy {
+    from("${workspaceBase}/Portal/deploy") {
+        include 'jboss-build.example.properties'
+    }
+    into "${workspaceBase}/Portal/deploy"
+    rename('jboss-build.example.properties', 'jboss-build.properties')
+}
+
+//import ant
+ant.basedir = "${workspaceBase}/Portal/deploy"
+ant.properties['JBossDir'] = System.env.JBossDir ? "${System.env.JBossDir}" : JBossDir
+ant.properties['ArchivePackage.location'] = "$workspaceBuild"
+ant.properties['Archive.dir'] = "$workspaceArch"
+ant.properties['Archive.name'] = "${releaseCode}"
+ant.properties['config.location'] = file("${workspaceConf}/default").exists() ? "${workspaceConf}/default" : "${workspaceConf}/${configuration}"
+
+//подгружаем настройки подписи, если задан конфиг где они лежат
+if (project.hasProperty('signProps') && file(signProps).exists()) {
+    def props = new Properties()
+    file(signProps).withInputStream { 
+      stream -> props.load(stream) 
+    }
+    def config = new ConfigSlurper().parse(props)
+
+    ant.properties['AppletsSignature.keystore.password'] = config.AppletsSignature.keystore.password
+    ant.properties['AppletsSignature.key.alias']         = config.AppletsSignature.key.alias
+    ant.properties['AppletsSignature.key.password']      = config.AppletsSignature.key.password
+    ant.properties['AppletsSignature.keystore.location'] = config.AppletsSignature.keystore.location
+} else {
+    println """
+      !===============================================================================================!
+      ! Файл с параметрами для подписи не задан или не существует. Используются стандартные параметры !
+      !===============================================================================================!
+    """
+}
+
+/*============================================================*/
+ant.importBuild ("${workspaceBase}/Portal/deploy/jboss-build.xml") /* uncomment if gradle > 2.2 version  { antTargetName ->
+    println "importing '${antTargetName}'"
+    antTargetName
+}*/
+/*============================================================*/
+
+/*===========================================================
+  Несколько инит-действий над исходниками перед сборкой
+  =========================================================*/
+def JBR_VERSION = getShortVersion()
+def buildInfo = file("${workspaceBase}/Portal/conf/dbmi/build-info.properties")
+def jbrArchiveName = ant.properties['Archive.name']
+def jbrArchiveExt  = 'tar.gz'
+
+buildInfo.delete()
+buildInfo << "build.number=${JBR_VERSION} (${releaseCode})\n"
+buildInfo << "build.date=${new Date()}"
+
+def toolConfig = file("${workspaceBase}/DynamicAccessRule/src/org/aplana/br4j/dynamicaccess/config/config.properties")
+toolConfig.delete()
+toolConfig << "app.version=${JBR_VERSION} (${releaseCode})"
+
+//поддержка старых версий сборок, где конфиг medo не переименован в svn, поэтому переименовываем здесь
+def medoOptionsPath = "${workspaceBase}/Portal/conf/dbmi/medo"
+def medoOptionsFile = file("${medoOptionsPath}/options.properties")
+if (medoOptionsFile.exists()) {
+    medoOptionsFile.renameTo("${medoOptionsPath}/options.excluded.properties")
+}
+/*===========================================================*/
+
+task cleanOldReadme << {
+    ant.delete (includeEmptyDirs: 'true', failonerror: 'false') {
+        fileset(dir: file("${workspaceBuild}/${readmeBuildDirectory}")) 
+    }
+}
+
+task cleanOldSQL << {
+    ant.delete (includeEmptyDirs: 'true', failonerror: 'false') { 
+        fileset(dir: file("${workspaceBuild}/${databaseBuildDirectory}"), excludes: 'data/**') 
+    }
+}
+
+task cleanOldUpdates << {
+    ant.delete (includeEmptyDirs: 'true', failonerror: 'false') { 
+        fileset(dir: file("${workspaceBuild}/${updatesBuildDirectory}")) 
+    }
+}
+
+task cleanOldDbDump << {
+    ant.delete (includeEmptyDirs: 'true', failonerror: 'false') { 
+        fileset(dir: file("${workspaceBuild}/${dumpBuildDirectory}")) 
+    }
+}
+
+task buildReadmeOnly(dependsOn: [cleanOldReadme]) << {
+    println "Собираем Readme"
+
+    //общие параметры для сбора Readme
+    Map params = [
+        scanFilesExtensions: ".txt",
+        destDir: "${readmeBuildDirectory}",
+        destFile: "readme", 
+        type: "txt"
+    ]
+
+    //собираем из основного проекта
+    params.projectUrl = "${readmeProjectName}"
+    Map result1 = getFileListFromSVN(params)
+
+    //собираем из конфигурации
+    params.projectUrl = "../configurations/default/${readmeProjectName}"
+    Map result2 = getFileListFromSVN(params)
+
+    //обрабатываем полученные мапы файлов (мерджим ихб обновляем параметры)
+    params = processResults(params, [result1, result2])
+
+    //выкачиваем файлы в сборный скрипт
+    getFilesFromSVN(params)
+
+    println "===================================="
+    println "| Readme готовы ( режим ${patchNum ? 'patch' : 'build'} ) |"
+    println "===================================="
+}
+
+task buildSQLScriptOnly(dependsOn: [cleanOldSQL]) << {
+    println "Собираем сборный SQL скрипт"
+
+    //общие параметры для сбора SQL
+    Map params = [
+        scanFilesExtensions: ".sql",
+        destDir: "${databaseBuildDirectory}",
+        destFile: "migrate", 
+        type: "sql"
+    ]
+
+    //собираем из основного проекта
+    params.projectUrl = "${databaseProjectName}"
+    Map result1 = getFileListFromSVN(params)
+
+    //собираем из конфигурации
+    params.projectUrl = "../configurations/default/${databaseProjectName}"
+    Map result2 = getFileListFromSVN(params)
+
+    //обрабатываем полученные мапы файлов (мерджим ихб обновляем параметры)
+    params = processResults(params, [result1, result2])
+
+    //выкачиваем файлы в сборный скрипт
+    getFilesFromSVN(params)
+    
+    println "===================================="
+    println "| SQL скрипт готов ( режим ${patchNum ? 'patch' : 'build'} ) |"
+    println "===================================="
+}
+
+task buildUpdatesOnly(dependsOn: [cleanOldUpdates, buildSQLScriptOnly]) << {
+    println "Собираем пакеты обновлений"
+
+    //подготовка iuh фикс. скриптов и заготовок паспортов
+    def preparedVars    = prepareIuhPackages()
+    def passportPath    = preparedVars.passportPath
+    List specialFolders = preparedVars.specialFolders
+    List specialFiles   = preparedVars.specialFiles
+
+    //общие параметры для сбора пакетов
+    Map params = [
+        ignore: specialFiles,
+        fixedFolders: specialFolders,
+        scanFilesExtensions: ".groovy .sh",
+        destDir: "${updatesBuildDirectory}",
+        passportFile: "${passportPath}",
+        type: "groovy"
+    ]
+
+    //копируем сборный migrate скрипт в спец. пакет
+    copy {
+        from    "${workspaceBuild}/${databaseBuildDirectory}"
+        include "*/**"
+        into    "${workspaceBuild}/${updatesBuildDirectory}/${migrateGroovyDir}/data"
+    }
+
+    //собираем из основного проекта
+    params.projectUrl = "${updatesProjectName}"
+    Map result1 = getFileListFromSVN(params)
+
+    //собираем из конфигурации
+    params.projectUrl = "../configurations/default/${updatesProjectName}"
+    Map result2 = getFileListFromSVN(params)
+
+    //обрабатываем полученные мапы файлов (мерджим их, обновляем параметры)
+    params = processResults(params, [result1, result2])
+
+    //выкачиваем файлы в сборный скрипт
+    getFilesFromSVN(params)
+    
+    println "===================================================="
+    println "| Сборка пакетов обновлений готова ( режим ${patchNum ? 'patch' : 'build'} ) |"
+    println "===================================================="
+}
+
+task buildDbDumpOnly(dependsOn: [cleanOldDbDump]) << {
+    println "==Забираем дамп БД из ${dumpProjectName}=="
+
+    copy {
+        from "${workspaceSrc}/base/${dumpProjectName}"
+        into "${workspaceBuild}/${dumpBuildDirectory}"
+    }
+    
+    println "==============================================="
+    println "| Загрузка дампа БД завершена ( режим ${patchNum ? 'patch' : 'build'} ) |"
+    println "==============================================="
+}
+
+task buildReadme(dependsOn: [buildReadmeOnly, build]) << {
+    println 'Сборка инструкций завершена'
+}
+
+task buildSQLScript(dependsOn: [buildSQLScriptOnly, build]) << {
+    println 'Сборка SQL скрипта завершена'
+}
+
+task buildUpdates(dependsOn: [buildUpdatesOnly, build]) << {
+    println 'Сборка пакетов обновлений завершена'
+}
+
+task buildDbDump(dependsOn: [buildDbDumpOnly, build]) << {
+    println 'Загрузка дампа БД из SVN завершена'
+}
+
+task buildDataFomSVN(dependsOn: [buildReadme, buildSQLScript, buildUpdates, buildDbDump]) << {
+    println 'Сборка данных из SVN завершена'
+}
+
+task gatherCommitInfo << {
+    println '\n Собираем сводный список изменений'
+    def result  = resolveUrls(projectUrl: "")
+    if (!result) {
+        println '!!! Нечего собирать. Выход. !!!'
+        return
+    }
+    def repoUrl = result.repoUrl
+    def from    = result.from
+    def to      = result.to
+    def between = result.between
+
+    def fromUrl = SVNURL.parseURIEncoded(from)
+    def toUrl   = SVNURL.parseURIEncoded(to)
+    def revFrom = getUrlRevision(fromUrl)
+    def revTo   = getUrlRevision(toUrl)
+
+    println "от $from\t($revFrom)"
+    println "до $to\t($revTo)"
+
+    def commitInfos = file("${workspaceBuild}/change_list.txt")
+    commitInfos.parentFile.mkdirs()
+    commitInfos.delete()
+    commitInfos << "Commits info\n"
+    commitInfos << "${between}\n\n"
+
+    int count = 0
+    def trunkRevs = []
+    int releaseFromRev
+    int releaseToRev
+    println "\n Получаем лог ревизий ветки тэга релиза ($fromUrl)"
+    logClient.doLog(fromUrl, null, 
+                    SVNRevision.UNDEFINED,  
+                    SVNRevision.HEAD,
+                    SVNRevision.create(0),
+                    false, false, true, 5, null, 
+                    { logEntry ->
+                        if (logEntry.revision > 0) {
+                            print "\t ${logEntry.revision} (${logEntry.date})"
+                            if (++count == 3) {
+                                println ' - ревизия в trunk, с которой создали релиз'
+                                releaseFromRev = logEntry.revision
+                            } else {
+                                println ''
+                            }
+                        }
+                    } as ISVNLogEntryHandler
+    )
+    //если собирается сборка (патч не задали)
+    if (buildNum && !patchNum) {
+        count = 0
+        println "\n Получаем лог ревизий ветки тэга релиза ($toUrl)"
+        logClient.doLog(toUrl, null, 
+                        SVNRevision.UNDEFINED, 
+                        SVNRevision.HEAD, 
+                        SVNRevision.create(0),
+                        false, false, true, 5, null, 
+                        { logEntry ->
+                            if (logEntry.revision > 0) {
+                                print "\t ${logEntry.revision} (${logEntry.date})"
+                                if (++count == 3) {
+                                    println ' - ревизия в trunk, с которой создали релиз'
+                                    releaseToRev = logEntry.revision
+                                } else {
+                                    println ''
+                                }
+                            }
+                        } as ISVNLogEntryHandler
+        )
+        
+        println " Ревизии для сбора сообщений коммитов - от $releaseFromRev до $releaseToRev"
+    } 
+    //если собираем патч
+    else if (buildNum && patchNum) {
+        count = 0
+        def exclude = []
+        println "\n Получаем лог ревизий ветки тэга патча (исключаемые ревизии) ($toUrl)"
+        logClient.doLog(toUrl, null, 
+                        SVNRevision.UNDEFINED, 
+                        SVNRevision.HEAD, 
+                        SVNRevision.create(releaseFromRev),
+                        false, false, false, -1, null, 
+                        { logEntry ->
+                            print "\t ${logEntry.revision} (${logEntry.date})"
+                            if (++count == 2) {
+                                println ' - ревизия в release, с которой создали патч'
+                                releaseToRev = logEntry.revision
+                            } else {
+                                println ''
+                            }
+                            exclude << logEntry.revision
+                        } as ISVNLogEntryHandler
+        )
+
+        println '\n Получаем лог ревизий ветки тэга патча все (докуда)'
+        logClient.doLog(toUrl, null, 
+                        SVNRevision.UNDEFINED, 
+                        SVNRevision.create(releaseFromRev),
+                        SVNRevision.HEAD, 
+                        false, false, true, -1, null, 
+                        { logEntry ->
+                            println "\t ${logEntry.revision} (${logEntry.date})"
+                            if (logEntry.revision > 0 && !exclude.contains(logEntry.revision))
+                                trunkRevs << logEntry.revision
+                        } as ISVNLogEntryHandler
+        )
+
+        println " Итоговые ревизии для сбора сообщений коммитов, вошедших в патч '$patchNum' : $trunkRevs"
+    } else {
+        println " Неверный режим для сбора сообщений коммитов: не заданы ни номер сборки, ни номер патча"
+    }
+
+    def processedRevisions = [:] as TreeMap
+
+    //собираем в коллекцию все коммиты из trunk/base
+    logClient.doLog(trunkBaseSvnUrl, null, 
+                    SVNRevision.UNDEFINED, 
+                    SVNRevision.create(patchNum ? trunkRevs.min() : releaseFromRev+1),
+                    SVNRevision.create(releaseToRev),
+                    false, false, false, -1, null,
+                    { logEntry ->
+                        if (!patchNum || trunkRevs.contains(logEntry.revision)) {
+                            if (!processedRevisions[logEntry.revision]) {
+                                def msgBuilder = "\tRevision ${logEntry.revision} (${logEntry.date})\n${logEntry.message}\n-----------------\n\n"
+                                processedRevisions[logEntry.revision] = msgBuilder
+                            }
+                        }
+                    } as ISVNLogEntryHandler
+    )
+
+    //собираем все коммиты из текущей конфигурации
+    logClient.doLog(trunkConfSvnUrl, null, 
+                    SVNRevision.UNDEFINED, 
+                    SVNRevision.create(patchNum ? trunkRevs.min() : releaseFromRev+1),
+                    SVNRevision.create(releaseToRev),
+                    false, false, false, -1, null,
+                    { logEntry ->
+                        if (!patchNum || trunkRevs.contains(logEntry.revision)) {
+                            if (!processedRevisions[logEntry.revision]) {
+                                def msgBuilder = "\tRevision ${logEntry.revision} (${logEntry.date})\n${logEntry.message}\n-----------------\n\n"
+                                processedRevisions[logEntry.revision] = msgBuilder
+                            }
+                        }
+                    } as ISVNLogEntryHandler
+    )
+
+    //собарнные коммиты (уже сортированные по ревизии) пишем в файл
+    processedRevisions.each {
+        commitInfos << it.value
+    }
+}
+
+task createPassport << {
+    def passport = file("${workspaceBuild}/${passportFile}")
+    def lastRev = getUrlRevision(buildUrl)
+    passport.delete()
+    passport << "build id: $releaseCode\n"
+    passport << "version: $JBR_VERSION\n"
+    DateFormat formatter = new SimpleDateFormat("EEE HH:mm:ss Z dd-MM-yyyy")
+    passport << "date: ${formatter.format(new Date())}\n"
+    passport << "os: ${System.getProperty('os.name')} ${System.getProperty('os.version')} ${System.getProperty('os.arch')}\n"
+    passport << "ip: ${getIpAddress()}\n"
+    passport << "jvm: ${System.getProperty('java.vm.name')} ${System.getProperty('java.version')}\n"
+    passport << "user: ${env.BUILD_USER ?: System.getProperty('user.name')}\n"
+    passport << "svn url: $buildUrl (rev $lastRev)\n"
+
+    passport << "ancestors: "
+    //если заказали патч, то достаем активные патчи (на что можно накатывать данный патч)
+    if (patchNum) {
+        println "\n Вычисляем предка для заказанного патча..."
+        println "   -> текущий патч '${patchNum}' - ревизия создания '${lastRev}'"
+        def tagList = getSvnList(tagReleaseSvnUrl)
+        
+        SVNRepository svnRepoRelease = clientManager.createRepository(tagReleaseSvnUrl, false)
+        SVNPropertyValue prop = svnRepoRelease.getRevisionPropertyValue(lastRev, br4jAncestorProp)
+        def prevNode = patchNum
+        while (prop) {
+            def parentForPatch = SVNPropertyValue.getPropertyAsString(prop)
+            passport << parentForPatch
+            def calcNextParent = tagList.find {a,b -> a == parentForPatch }
+            println "   -> предок для '${prevNode}' - '${calcNextParent.key}' - ревизия создания '${calcNextParent.value}'"
+            prevNode = calcNextParent.key
+            prop = svnRepoRelease.getRevisionPropertyValue(calcNextParent.value, br4jAncestorProp)
+            if (prop) {
+                passport << " <- "
+            }
+        }
+    } else {
+        //заказали сборку, тогда указываем на какие релизы и какие сборки можно накатывать эту сборку
+        def prevRelease = releases.findAll { it < releaseName }.max()
+        if (prevRelease) {
+            if (buildNum == 'r01') {
+                passport << "Все сборки прошлого релиза '${prevRelease}'"
+            } else {
+                passport << "Все сборки прошлого релиза '${prevRelease}' и предыдущие сборки (до '${buildNum}') текущего релиза '${releaseName}'"
+            }
+        } else {
+            if (buildNum == 'r01') {
+                passport << "empty (initial install)"
+            } else {
+                passport << "Предыдущие сборки (до ${buildNum}) текущего релиза '${releaseName}'"
+            }
+        }
+    }
+}
+
+task buildIuh(dependsOn: buildDynamicAccessRuleTool, type: GradleBuild) {
+    def iuhGradleFile = "${workspaceSrc}/iuh/build.gradle"
+
+    doFirst {
+        if (!file(iuhGradleFile).exists()) {
+            println "==Нет проекта Iuh. Пропускаем его сборку.=="
+            throw new StopExecutionException()
+        }
+		println '==Копируем утилиту прав в папку lib для Iuh.=='
+        copy {
+            from "${workspaceBuild}/tool/DynamicAccessRule"
+            include "*.jar"
+            into "${workspaceSrc}/${iuhProjectName}/lib"
+        }
+        println '==Копирование утилиты завершено.==\n'
+        println '==Начинается сборка IUH.==\n'
+    }
+
+    buildFile = iuhGradleFile
+    tasks = ['makeArtifact']
+    startParameter.setProjectProperties(['iuhArtifactDir': "${workspaceBuild}/${iuhBuildDirectory}"])
+
+    doLast {
+        println '==Сборка IUH завершена.=='
+    }
+}
+
+task buildPacket(dependsOn: [buildIuh, cleanBuild, build, buildDataFomSVN, gatherCommitInfo, createPassport]) << {
+	println 'Сборка пакета приложения завершена'
+}
+
+task printSkippedFiles << {
+    println "\n\n == Пропущенные файлы при выборке из SVN =="
+    def skippedLogDir = file("${logsDir}/skipped")
+    if (skippedLogDir.exists()) {
+        skippedLogDir.listFiles().eachWithIndex { logFile, index ->
+            println "[${index}] ${logFile.name}"
+            println "================\n"
+            println logFile.text
+            println "================\n"
+        }
+    }
+    println "== Конец списка пропущенных файлов =="
+}
+
+task copyForArchive(type: Copy, dependsOn: [buildPacket, cleanBuild]) {
+    destinationDir  = file(workspaceArch)
+
+    doFirst {
+        file(workspaceArch).deleteDir()
+        copy {
+            from files(ant.references['sharedLibFiles'].list())
+            into "${workspaceArch}/${appDir}/lib"
+        }
+        copy {
+            from "${ant.properties['SharedLib.location']}/solr"
+            include '**/*'
+            exclude 'solr.war'
+            into "${workspaceArch}/${appDir}/solr"
+        }
+        copy {
+            from "."
+            include 'readme.txt'
+            into "${workspaceArch}"
+        }
+    }
+    from ("$workspaceBuild") {
+        include ant.properties['DataService.name']
+        into "${appDir}/deploy"
+    }
+    from ("$workspaceBuild/CryptoServer") {
+        include "*.war"
+        into "${appDir}/CryptoServer"
+    }
+    from ("$workspaceBuild/TransportAgent") {
+        include "**/*"
+        into "${appDir}/TransportAgent"
+    }
+    from ("$workspaceBuild/${ant.properties['Services.location']}") {
+        into "${appDir}/deploy/${ant.properties['Services.location']}"
+    }
+    from ("$workspaceBase/Portal/deploy/jboss-web.deployer") {
+        into "${appDir}/deploy/jboss-web.deployer"
+    }
+    from ("$workspaceBase/Portal/deploy") {
+        include "*mail-service.xml.example"
+        include "*ds.xml.example"
+        into "${appDir}/deploy"
+    }
+    from ("$workspaceBuild") {
+        include "conf/**"
+        into "${appDir}"
+    }
+    from ("${workspaceBuild}/${readmeBuildDirectory}") {
+        include "*/**"
+        into "${readmePackageDirectory}"
+    }
+    from ("$workspaceBuild") {
+        include "${changeListFile}"
+    }
+    from ("${workspaceBuild}/tool") {
+        include "*/**"
+        into "${aclDir}"
+    }
+	from ("${workspaceBuild}/${iuhBuildDirectory}") {
+        include "*/**"
+        into "${iuhArtifactDirectory}"
+    }
+    //support old migrate.sql script location in 'db_update' folder
+    //support start
+    from ("${workspaceBuild}/${databaseBuildDirectory}") {
+        include "*/**"
+        into "${databaseBuildDirectory}"
+    }
+    //support end
+    from ("${workspaceBuild}/${updatesBuildDirectory}") {
+        include "*/**"
+        into "${updatesPackageDirectory}"
+    }
+    from ("${workspaceBuild}/${dumpBuildDirectory}") {
+        include "*/**"
+        into "${dumpPackageDirectory}"
+    }
+    from ("${workspaceBuild}/${installBuildDirectory}") {
+        include "*/**"
+        into "${installPackageDirectory}"
+    }
+    from ("$workspaceBuild") {
+        include "${passportFile}"
+    }
+    from ("${ant.properties['Portal.location']}" ) {
+        include "README.txt"
+        into "${appDir}"
+    }
+
+    doLast {
+        def md5File = file("${workspaceArch}/checksums.md5")
+        file(workspaceArch).eachFileRecurse(FileType.FILES) { f ->
+            md5File << md5(f) << '  ' << relativize(workspaceArch, f) << '\n'
+        }
+        println 'md5 для всех файлов посчитан'
+    }
+}
+
+task archive(type: Tar, dependsOn: [copyForArchive]) {
+    destinationDir = file(workspaceArch)
+    baseName       = jbrArchiveName
+    extension      = jbrArchiveExt
+    compression    = Compression.GZIP
+    from    workspaceArch
+    exclude "${jbrArchiveName}.${jbrArchiveExt}"
+
+    doLast {
+        println "Создание артефакта ${jbrArchiveName} успешно завершено"
+
+        ant.delete (includeEmptyDirs: 'true', failonerror: 'false') {
+            fileset(dir: file("$workspaceArch"), excludes: "${jbrArchiveName}.${jbrArchiveExt}") 
+        }
+
+        def md5File = file("$workspaceArch/checksum_archive.md5")
+        file(workspaceArch).eachFileRecurse(FileType.FILES) { f ->
+            md5File << md5(f) << '  ' << relativize(workspaceArch, f) << '\n'
+        }
+        println 'md5 для артефакта посчитан'
+    }
+}
+
+task deploy(overwrite: true, dependsOn: [archive]) << {
+    ssh {
+        pty = true
+        knownHosts = allowAnyHosts
+    }
+
+    remoteHosts.eachWithIndex { r, i ->
+        def connected = false
+        if (r.vpnUp && Boolean.valueOf(needVpnUp)) {
+            println "Поднимаем VPN для ${r.remoteHost}"
+            def proc = "${r.vpnUp}".execute()
+            proc.out.write("${userPass}\n".bytes)
+            proc.out.flush()
+            proc.waitForProcessOutput(System.out, System.out)
+            if (proc.exitValue() != 0) {
+                throw new RuntimeException('Не удалось поднять VPN')
+            }
+            connected = true
+        }
+        try {
+            sshexec {
+                remotes.create("webServer${i}") {
+                    host = r.remoteHost
+                    user = r.remoteUser
+                    if (r.keyfile) {
+                        identity = file("${r.keyfile}")
+                    }
+                    if (r.remotePass) {
+                        password = r.remotePass
+                    }
+                }
+                session(remotes["webServer${i}"]) {
+                    println "\nwebServer${i} - ${r.remoteHost} - ${r.remoteJBossDir}"
+
+                    execute "mkdir -p ${r.remoteJBossDir}/Scripts"
+                    println "Выгружаем артефакт '${jbrArchiveName}.${jbrArchiveExt}' ..."
+                    put "$workspaceArch/${jbrArchiveName}.${jbrArchiveExt}", "${r.remoteJBossDir}/Scripts"
+                    println "Выгружаем файл деплоя '${r.deployScript}' ..."
+                    put "${r.deployScript}", "${r.remoteJBossDir}/Scripts"
+                    
+                    if(JBossShutdown(r.remoteHost, r.jndiPort as Integer, r.checkTimeout as Integer)) {
+                        executeSudo r.stopCmd
+                    }
+                    
+                    execute "/bin/bash ${r.remoteJBossDir}/Scripts/${r.deployScript} ${jbrArchiveName}.${jbrArchiveExt} ${r.remoteJBossDir}"
+                    execute "rm -frv ${r.remoteJBossDir}/Scripts/${r.deployScript}"
+                    
+                    if(JBossStart(r.remoteHost, r.jndiPort as Integer, r.startTimeout as Integer, r.checkTimeout as Integer)) {
+                        executeSudo r.startCmd
+                    }
+                    JBossWait(r.remoteHost, r.jndiPort as Integer, r.startTimeout as Integer)
+
+                    def moduleNamesToCheck = checkModules.split(',').collect { it.trim() }
+                    JBossCheckDeploy(r.remoteHost, r.jndiPort as Integer, r.startTimeout as Integer, moduleNamesToCheck)
+
+                    execute "echo 'Деплой на сервер ${r.remoteHost} завершен.'"
+                }
+            }
+        } finally {
+            if (connected && Boolean.valueOf(needVpnDown)) {
+                println "Finalizing... Закрываем VPN"
+                def proc = "${r.vpnDown}".execute()
+                proc.waitForProcessOutput(System.out, System.out)
+            }
+        }
+    }
+}
+
+task uploadToSftp(dependsOn: [archive]) << {
+    if (!sftpUser || !sftpHost) {
+        println "\n Не указан sftp или пользователь для sftp. Пропускаем..."
+        return
+    }
+    if (!sftpPort) {
+        sftpPort = 21
+    }
+
+    //upload to sftp
+    def config = new Properties()
+    config.put("StrictHostKeyChecking", "no")
+
+    println "\n Заливаем артефакт на sftp: ${sftpHost}:${sftpPort}:${sftpPath}"
+    JSch jsch = new JSch()
+    Session sess = jsch.getSession(sftpUser, sftpHost, sftpPort as Integer)
+    sess.with {
+        setConfig config
+        setPassword sftpPass
+        connect()
+
+        Channel chan = openChannel("sftp")
+        chan.connect()
+        ChannelSftp sftp = (ChannelSftp) chan
+
+        def partialPath = sftpPath
+        def leafPath = "${releaseName}/${buildNum}/${patchNum ?: 'release'}"
+        leafPath.split('/').each { folder ->
+            if (folder) {
+                partialPath += "/${folder}"
+                try {
+                    println "  Переходим в каталог '${partialPath}'"
+                    sftp.cd partialPath
+                } catch (com.jcraft.jsch.SftpException e) {
+                    println "    Каталога не существует. Создаем '${folder}'..."
+                    sftp.mkdir partialPath
+                }
+            }
+        }
+        println "\n  Загружаем файлы:"
+        file(workspaceArch).eachFileRecurse(FileType.FILES) { f ->
+            println "  -> Загружаем ${f.name} ..."
+            f.withInputStream { istream -> 
+                sftp.put(istream, "${partialPath}/${f.name}")
+            }
+        }
+        println "Загрузка на sftp завершена."
+
+        chan.disconnect()
+        disconnect()
+    }
+}
+
+buildReadmeOnly.    mustRunAfter build
+buildSQLScriptOnly. mustRunAfter build
+buildUpdatesOnly.   mustRunAfter build
+buildDbDumpOnly.    mustRunAfter build
+buildReadme.        mustRunAfter build
+buildSQLScript.     mustRunAfter build
+buildUpdates.       mustRunAfter build
+buildDbDump.        mustRunAfter build
+buildDataFomSVN.    mustRunAfter build
+gatherCommitInfo.   mustRunAfter build
+createPassport.     mustRunAfter build
+archiveAll.         dependsOn    buildPacket
+build.              mustRunAfter cleanBuild
+buildDataFomSVN.    finalizedBy  printSkippedFiles
+archive.            finalizedBy  uploadToSftp
+
+/**
+* Наработка для рефакторинга через кастомныую реализацию задач.
+* Лучше бы вынести лоигку сборки всяких sql и groovy в такие задачи,
+* оформить через параметры различающуюся логику, или реализовать
+* полиморфными методами в классе задачи.
+* Исходники должны лежать в ./buildSrc/src/main/groovy/...
+*/
+task test(type: GreetingTask) {
+    greeting = 'string from task test'
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!--  
+	<search byAttr="true"/>
+
+	// статус "Исполнение" (103): cardstate.execution=103
+	<status>execution</status>
+
+	<attribute id="JBR_INDATES_EXEC_DAT" type="date">
+		<value var="current"/>
+	</attribute>
+
+	<attribute id="AUTHOR" type="user">
+		<value var="current"/>
+	</attribute>
+ -->
+
+<search byAttr="false" specialSQL="arm_ext_execSQL.xml">
+
+	<name lang="ru">Внешнее исполнение Входящих и Внутренних</name>
+	<name lang="en">External processing of Incoming and Internal</name>
+
+	<!--  Входящий = 224 = jbr.incoming -->
+	<template>jbr.incoming</template>
+
+	<!--  Внутренний = 784 = jbr.interndoc -->
+	<template>jbr.interndoc</template>
+
+	<!--  ОРД = 764 = jbr.ord -->
+	<template>jbr.ord</template>
+	
+	<!-- template.jbr.npa=1226 НПА -->
+	<template>jbr.npa</template>	
+
+	<!--  ОГ = 864 = jbr.incomingpeople -->
+	<template>jbr.incomingpeople</template>
+
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column> 
+
+	<!-- Категория срочности -->
+	<column id="JBR_HOWFAST" width="30" sort="asc" listValueOrder="byOrderInLevel"/>
+
+	<!-- Imcoming date -->
+	<column id="JBR_INCOMEDATE" width="14" sort="asc" />
+
+
+	<!-- Дата отправки на исполнение (есть только в шаблоне 224): 
+			dateattribute.jbr.incomingDates.executionDate=JBR_INDATES_EXEC_DAT
+	  -->
+	<column id="JBR_INDATES_EXEC_DAT" width="12" sort="desc" />
+
+	<!-- "Внешний исполнитель": 
+		cardlinkattribute.jbr.hidden.external.executor=EXEC_EXT_HID
+	   -->
+	<column id="jbr.hidden.external.executor" width="100" sort="asc"
+		link="true" 
+		labelAttrId="NAME" 
+		/>
+
+	<column id="JBR_REGD_REGNUM" width="11" sortAttrId="regnumberdigital"/>
+	<column id="NAME" width="120" />
+	<column id="_TEMPLATE" width="40" />
+
+	<!-- Срок -->
+	<column id="JBR_IMPL_DEADLINE" width="15" columnTitleRu="Срок исполнения"/>
+
+	<!-- column id="DESCR" width="30" / -->
+
+	<column id="_STATE" width="50" />
+</search>

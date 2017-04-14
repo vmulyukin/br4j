@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workAnalysisOnDocsCorrDocsCount" pageWidth="758" pageHeight="555" orientation="Landscape" columnWidth="758" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<parameter name="docTypeId" class="java.lang.Long"/>
+	<parameter name="corrname" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+COALESCE((Select
+count(c.card_id)
+from
+card c
+join attribute_value av_doc_sender on (av_doc_sender.card_id=c.card_id and av_doc_sender.attribute_code='JBR_INFD_SENDER')
+join attribute_value av_doc_reg_date on (av_doc_reg_date.card_id=c.card_id and av_doc_reg_date.attribute_code='JBR_REGD_DATEREG')
+where c.template_id=224 and c.status_id not in (303990) and
+av_doc_reg_date.date_value >= date_trunc('day', $P{fromDate}::timestamp)
+and av_doc_reg_date.date_value < date_trunc('day', $P{toDate}::timestamp) + INTERVAL '1 DAY' and
+av_doc_sender.number_value=$P{docTypeId}
+group by av_doc_sender.number_value
+order by av_doc_sender.number_value),0) as q1
+,
+COALESCE((Select
+count(c.card_id)
+from
+card c
+join attribute_value av_doc_sender on (av_doc_sender.card_id=c.card_id and av_doc_sender.attribute_code='JBR_INFD_SENDER')
+join attribute_value av_doc_reg_date on (av_doc_reg_date.card_id=c.card_id and av_doc_reg_date.attribute_code='JBR_REGD_DATEREG')
+join attribute_value av_doc_on_control on (av_doc_on_control.card_id = c.card_id and av_doc_on_control.attribute_code='JBR_IMPL_ONCONT')
+where c.template_id=224 and c.status_id not in (303990) and
+av_doc_on_control.value_id = 1432 and
+av_doc_reg_date.date_value >= date_trunc('day', $P{fromDate}::timestamp)
+and av_doc_reg_date.date_value < date_trunc('day', $P{toDate}::timestamp) + INTERVAL '1 DAY' and
+av_doc_sender.number_value=$P{docTypeId}
+group by av_doc_sender.number_value
+order by av_doc_sender.number_value),0) as q2
+,
+COALESCE((Select
+count(c.card_id)
+from
+card c
+join attribute_value av_doc_sender on (av_doc_sender.card_id=c.card_id and av_doc_sender.attribute_code='JBR_INFD_SENDER')
+join attribute_value av_doc_reg_date on (av_doc_reg_date.card_id=c.card_id and av_doc_reg_date.attribute_code='JBR_REGD_DATEREG')
+join attribute_value av_doc_on_control on (av_doc_on_control.card_id = c.card_id and av_doc_on_control.attribute_code='JBR_IMPL_ONCONT')
+join attribute_value av_docdeadline on (av_docdeadline.card_id=c.card_id and av_docdeadline.attribute_code='JBR_IMPL_DEADLINE')
+where c.template_id=224 and c.status_id not in (303990) and
+av_doc_on_control.value_id = 1432 and
+av_doc_reg_date.date_value >= date_trunc('day', $P{fromDate}::timestamp)
+and av_doc_reg_date.date_value < date_trunc('day', $P{toDate}::timestamp) + INTERVAL '1 DAY' and
+av_doc_sender.number_value=$P{docTypeId} and
+av_docdeadline.date_value is not null and
+not exists  (select 1 from card cc
+             left join attribute_value av_res on (av_res.number_value = cc.card_id and av_res.attribute_code = 'JBR_DOCB_BYDOC')
+             left join card c_res on c_res.card_id = av_res.card_id
+             left join attribute_value av_res_dl on (av_res_dl.card_id = av_res.card_id and av_res_dl.attribute_code='JBR_INFD_DT_DONE')
+             where cc.card_id = c.card_id and
+                (
+                    av_res.card_id is null
+                    or
+                        (
+                            av_res.card_id is not null
+                            and
+                            c_res.status_id not in (1,107,34145,303990,10001050)
+                        )
+                )
+                and
+                (
+                    av_res_dl.date_value is null
+                    or
+                    av_res_dl.date_value > av_docdeadline.date_value
+                )
+            )
+and exists (select 1 from card cc
+             left join attribute_value av_res on (av_res.number_value = cc.card_id and av_res.attribute_code = 'JBR_DOCB_BYDOC')
+             left join card c_res on c_res.card_id = av_res.card_id
+             where cc.card_id = c.card_id and c_res.status_id not in (1,107,34145,303990,10001050)
+            )
+group by av_doc_sender.number_value
+order by av_doc_sender.number_value),0) as q3
+,
+COALESCE((Select
+count(c.card_id)
+from
+card c
+join attribute_value av_doc_sender on (av_doc_sender.card_id=c.card_id and av_doc_sender.attribute_code='JBR_INFD_SENDER')
+join attribute_value av_doc_reg_date on (av_doc_reg_date.card_id=c.card_id and av_doc_reg_date.attribute_code='JBR_REGD_DATEREG')
+join attribute_value av_doc_on_control on (av_doc_on_control.card_id = c.card_id and av_doc_on_control.attribute_code='JBR_IMPL_ONCONT')
+join attribute_value av_docdeadline on (av_docdeadline.card_id=c.card_id and av_docdeadline.attribute_code='JBR_IMPL_DEADLINE')
+where c.template_id=224 and c.status_id not in (303990) and
+av_doc_on_control.value_id = 1432 and
+av_doc_reg_date.date_value >= date_trunc('day', $P{fromDate}::timestamp)
+and av_doc_reg_date.date_value < date_trunc('day', $P{toDate}::timestamp) + INTERVAL '1 DAY' and
+av_doc_sender.number_value=$P{docTypeId} and
+av_docdeadline.date_value is not null and
+not exists  (select 1 from card cc
+             left join attribute_value av_res on (av_res.number_value = cc.card_id and av_res.attribute_code = 'JBR_DOCB_BYDOC')
+             left join card c_res on c_res.card_id = av_res.card_id
+             left join attribute_value av_res_dl on (av_res_dl.card_id = av_res.card_id and av_res_dl.attribute_code='JBR_INFD_DT_DONE')
+             where cc.card_id = c.card_id and
+                (
+                    av_res.card_id is null
+                    or
+                        (
+                            av_res.card_id is not null
+                            and
+                            c_res.status_id not in (1,107,34145,303990,10001050)
+                        )
+                )
+                and
+                (
+                    av_res_dl.date_value is null
+                    or
+                    av_res_dl.date_value <= av_docdeadline.date_value
+                )
+            )
+and exists (select 1 from card cc
+             left join attribute_value av_res on (av_res.number_value = cc.card_id and av_res.attribute_code = 'JBR_DOCB_BYDOC')
+             left join card c_res on c_res.card_id = av_res.card_id
+             where cc.card_id = c.card_id and c_res.status_id not in (1,107,34145,303990,10001050)
+            )
+group by av_doc_sender.number_value
+order by av_doc_sender.number_value),0) as q4
+,
+COALESCE((Select
+count(c.card_id)
+from
+card c
+join attribute_value av_doc_sender on (av_doc_sender.card_id=c.card_id and av_doc_sender.attribute_code='JBR_INFD_SENDER')
+join attribute_value av_doc_reg_date on (av_doc_reg_date.card_id=c.card_id and av_doc_reg_date.attribute_code='JBR_REGD_DATEREG')
+join attribute_value av_doc_on_control on (av_doc_on_control.card_id = c.card_id and av_doc_on_control.attribute_code='JBR_IMPL_ONCONT')
+join attribute_value av_docdeadline on (av_docdeadline.card_id=c.card_id and av_docdeadline.attribute_code='JBR_IMPL_DEADLINE')
+where c.template_id=224 and c.status_id not in (303990) and
+av_doc_on_control.value_id = 1432 and
+av_doc_reg_date.date_value >= date_trunc('day', $P{fromDate}::timestamp)
+and av_doc_reg_date.date_value < date_trunc('day', $P{toDate}::timestamp) + INTERVAL '1 DAY' and
+av_doc_sender.number_value=$P{docTypeId} and
+av_docdeadline.date_value is not null
+and exists  (select 1 from card cc
+             left join attribute_value av_res on (av_res.number_value = cc.card_id and av_res.attribute_code = 'JBR_DOCB_BYDOC')
+             left join card c_res on c_res.card_id = av_res.card_id
+             left join attribute_value av_res_dl on (av_res_dl.card_id = av_res.card_id and av_res_dl.attribute_code='JBR_INFD_DT_DONE')
+             where cc.card_id = c.card_id and c_res.status_id not in (1,107,34145,303990,10001050)
+             and av_res_dl is null
+            )
+group by av_doc_sender.number_value
+order by av_doc_sender.number_value),0) as q5]]>
+	</queryString>
+	<field name="q1" class="java.lang.Float"/>
+	<field name="q2" class="java.lang.Float"/>
+	<field name="q3" class="java.lang.Float"/>
+	<field name="q4" class="java.lang.Float"/>
+	<field name="q5" class="java.lang.Float"/>
+	<variable name="q1" class="java.lang.Float">
+		<variableExpression><![CDATA[$F{q1}]]></variableExpression>
+	</variable>
+	<variable name="q2" class="java.lang.Float">
+		<variableExpression><![CDATA[$F{q2}]]></variableExpression>
+	</variable>
+	<variable name="q3" class="java.lang.Float">
+		<variableExpression><![CDATA[$F{q3}]]></variableExpression>
+	</variable>
+	<variable name="q4" class="java.lang.Float">
+		<variableExpression><![CDATA[$F{q4}]]></variableExpression>
+	</variable>
+	<variable name="q5" class="java.lang.Float">
+		<variableExpression><![CDATA[$F{q5}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="758" height="20"/>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="158" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="258" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="358" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q3}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="458" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="658" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q2}==0?"0":Math.round(($F{q3}+$F{q4})/$F{q2}*100)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="558" y="0" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{q5}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+					<reportElement key="" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="158" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{corrname}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,413 @@
+/**
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to you under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+#!/usr/bin/env gradle  
+
+//как запускать (с редиректом в файл)
+//gradle buildSQLScript 2>&1 | tee build.log
+//gradle buildSQLScript > >(tee build_stdout.log) 2> >(tee build_stderr.log >&2)
+
+import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.io.*;
+import org.tmatesoft.svn.core.wc.*;
+
+defaultTasks 'archive'
+
+buildscript {
+    apply from: 'dependencies.gradle', to: buildscript
+}
+
+apply from: 'functions.gradle'
+file(logsDir).deleteDir()
+apply from: 'logging.gradle'
+apply from: 'validate.gradle'
+
+task createReleaseOrPatch(dependsOn: [cleanSrc, cleanBuild]) << {
+    SVNRepository svnRepoRelease = clientManager.createRepository(releaseSvnUrl, false)
+    boolean releaseExists      = false
+    boolean releaseBuildExists = false
+    boolean patchExists        = false
+    boolean isNewRelease       = false
+
+    //проверяем можно ли создать указанную сборку для релиза
+    int n = Integer.parseInt(buildNum-'r')
+    if (releases.any { it == releaseName}) {
+        println " Релиз '${releaseName}' уже существует"
+        def builds = getSvnList(releaseSvnUrl, -1, 'r').keySet().sort()
+        if (builds.size() == 0) {
+            print " В данном релизе нет ни одной сборки. "
+            if (n == 1) {
+                println " Создается r01."
+            }
+            if (n > 1) {
+                println " Невозможно создать ${buildNum}. Задайте сборку r01."
+                throw new IllegalArgumentException("Неверный номер сборки релиза")
+            }
+        } else {
+            println " Существующие сборки этого релиза: $builds"
+            def buildsNums = builds.collect { Integer.parseInt(it-'r') }
+            if (n in buildsNums) {
+                println " Сборка ${buildNum} уже существует."
+                releaseBuildExists = true
+            }
+            if (n-1 == buildsNums.max()) {
+                println " Новая сборка будет создана: ${buildNum}"
+            }
+            if (n > buildsNums.max() + 1) {
+                println " Неверный номер сборки ${buildNum}."
+                println " Должен быть номер следующий за $builds"
+                throw new IllegalArgumentException("Неверный номер сборки релиза")
+            }
+        }
+        releaseExists = true
+    } else {
+        if (n>1) {
+            println "Релиз '${releaseName}' не существует, а уже запрошена сборка ${buildNum}"
+            println "Единственный верный вариант сборки для нового релиза - r01"
+            throw new IllegalArgumentException("Неверный номер сборки релиза. Должен быть - r01")
+        }
+        println "Релиз '${releaseName}' не существует и сейчас будет создан с номером сборки r01"
+        if (releases) {
+            def tmpUrl = SVNURL.parseURIEncoded("${releaseUrl}/${releases.max()}")
+            def prevVersion = getShortVersion(tmpUrl)
+            println "Prev App Version = $prevVersion"
+            if (prevVersion) {
+                ext.br4jAppVersion = String.format(Locale.ENGLISH, "%.1f", (prevVersion as Double) + 0.1)
+            }
+            println "New  App Version = $br4jAppVersion"
+        }
+        isNewRelease = true
+    }
+
+    //указан номер патча во входных параметрах (нужно собрать патч)
+    //проверяем можно ли создать указанный патч для данного релиза и указанной сборки
+    if (patchNum != null) {
+        if (!releaseExists || !releaseBuildExists) {
+            def msg = "Релиз '${releaseName}[${buildNum}]' еще не существует и патч '${patchNum}' не может быть создан"
+            println msg
+            throw new IllegalStateException(msg)
+        } else {
+            def p = Integer.parseInt(patchNum-'p')
+            def patches = getSvnList(tagReleaseSvnUrl, -1, 'p').keySet().sort()
+            if (patches.size() == 0) {
+                print " В данной сборке нет ни одного патча. "
+                if (p == 1) {
+                    println " Создается p01."
+                }
+                if (p > 1) {
+                    println " Невозможно создать ${patchNum}. Задайте патч p01."
+                    throw new IllegalArgumentException("Неверный номер патча")
+                }
+            } else {
+                println " Существующие патчи этой сборки: $patches"
+                def patchNums = patches.collect { Integer.parseInt(it-'p') }
+                if (p in patchNums) {
+                    println " Патч ${patchNum} уже существует."
+                    patchExists = true
+                }
+                if (p-1 == patchNums.max()) {
+                    println " Новый патч будет создан: ${patchNum}"
+                }
+                if (p > patchNums.max() + 1) {
+                    println " Указан неверный номер патча ${patchNum}."
+                    println " Должен быть номер следующий за $patches"
+                    throw new IllegalArgumentException("Неверный номер патча")
+                }
+            }
+        }
+    }
+
+    ext.needCheckout = true
+    
+    //заданные ревизии приводим в верхний регистр и убираем все лишние пробелы
+    def revs = revisions.toUpperCase().replaceAll(' ','')
+    //HEAD заменяем на реальную последнюю ревизию транка, т.к. слово HEAD нельзя передавать для параметра -c команды svn merge
+    revs = revs.replaceAll('HEAD', "${getUrlRevision(trunkSvnUrl)}")
+    //форматируем разделитель ревизий из ':' в '-'
+    revs = revs.replaceAll(':', '-');
+    println "Заданы ревизии: ${revs}"
+
+    //создаем новый релиз (или сборку)
+    if (!releaseBuildExists && buildNum) {
+        if (!revs || !(revs ==~ /^\d+$/)) { //regexp - ревизия задана в виде одного положительного числа и никаких символов больше
+            //содержит что-то левое в номере ревизии или вообще просто не задан
+            throw new IllegalArgumentException("Неверно указана ревизия для создания сборки релиза (должна быть указана только одна ревизия): ${revs}")
+        }
+
+        boolean isMove = false
+        boolean makeParents = true
+        boolean failWhenDstExists = true
+
+        def copySources = []
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.parse(revs), trunkBaseSvnUrl)
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.parse(revs), trunkTestSvnUrl)
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.parse(revs), trunkScriptsSvnUrl)
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.parse(revs), trunkIuhSvnUrl)
+        copyClient.doCopy(copySources as SVNCopySource[],releaseBuildSvnUrl, isMove, makeParents, false/*avoid error*/,"Creating release (base, tests, scripts) - ${releaseName}", null)
+
+        copySources.clear()
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.parse(revs), trunkConfSvnUrl)
+        copyClient.doCopy(copySources as SVNCopySource[],releaseBuildConfSvnUrl, isMove, makeParents, failWhenDstExists,"Creating release (conf) - ${releaseName}", null)
+
+        //проставляем версию в свойствах релиза
+        if (isNewRelease) {
+            //выкачиваем релизы (не рекурсивно, нужны только папки релизов)
+            exec {
+                executable "svn"
+                args "co"
+                args "--username", "$svnLogin"
+                args "--password", "$svnPass"
+                args "--non-interactive"
+                args "--depth=immediates"
+                args "$releaseUrl"
+                args "${workspaceRls}"
+            }
+
+            //проставляем свойство с номером релиза
+            exec {
+                executable "svn"
+                args "propset"
+                args "$br4jVersionProp"
+                args "$br4jAppVersion"
+                args "${workspaceRls}/${releaseName}"
+            }
+
+            //коммитим измененное свойство
+            def msg = "Added property ${br4jVersionProp}=${br4jAppVersion} to ${releaseName} node"
+            exec {
+                workingDir "${workspaceRls}"
+                executable "svn"
+                args "commit"
+                args "--username", "$svnLogin"
+                args "--password", "$svnPass"
+                args "--non-interactive"
+                args "-m", "$msg"
+            }
+        }
+
+        copySources.clear()
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.HEAD, releaseBuildSvnUrl)
+        copyClient.doCopy(copySources as SVNCopySource[],tagReleaseBuildSvnUrl, isMove, makeParents, failWhenDstExists,"Creating tag for release - ${releaseName}", null)
+        
+        println "==================${'='*buildNum.size()}============"
+        println "| Создание сборки ${buildNum} завершено |"
+        println "==================${'='*buildNum.size()}============"
+    } else if (releaseBuildExists && !patchExists && patchNum) {
+        if (!revs) {
+            //должны быть указаны ревизии для мерджа
+            throw new IllegalArgumentException("Неверный список ревизий для мерджа: ${revs}")
+        } else {
+            //проверяем чтобы ревизии были задано верно (например: 14, 17, 21-25, 30, 31-HEAD)
+            if (revs.split(',').every {
+                def range = it.split('-').collect { e -> 
+                    try {
+                        return Integer.parseInt(e)
+                    } catch (Exception ex) {
+                        println ex
+                    }
+                }
+                return  range.size() < 3 &&
+                        range.every { it > 0 } &&
+                        range[0] <= range[-1]
+            } == false) {
+                throw new IllegalArgumentException("Неверно заданы ревизии для создания патча: ${revs}")
+            }
+        }
+
+        //merge в релиз и делаем тэг патча
+        println "Создаем директорию для исходников: ${workspaceSrc}"
+        file(workspaceSrc).mkdirs()
+
+        //выкачиваем релиз, куда будем мерджить новые изменения
+        println "Выкачиваем проект из ${releaseBuildSvnUrl}"
+        def logFile = file("${logsDir}/checkout_for_merge.log")
+        logFile.parentFile.mkdirs()
+        logFile.delete()
+        def fos = new FileOutputStream(logFile)
+        exec {
+            executable "svn"
+            args "co"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive"
+            args "$releaseBuildSvnUrl"
+            args "$workspaceSrc"
+            standardOutput = fos
+        }
+
+        def revList = []
+        revs.split(",").sort().each { r ->
+            def splitted = r.split('-')
+            if (splitted.size() == 1) {
+                revList << "-c" << "$r"
+            } else {
+                revList << "-r" << "${Integer.parseInt(splitted[0])-1}:${splitted[1]}"
+            }
+        }
+
+        //merge base
+        println "Мерджим исходники. Ревизии ${revs} из '${trunkBaseSvnUrl}' в локальный воркспейс '${workspaceBase}'"
+        exec {
+            executable "svn"
+            args "merge"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive", "--force"
+            args revList
+            args "$trunkBaseSvnUrl"
+            args "$workspaceBase"
+        }
+
+        //merge conf
+        def existedConfDir = "${workspaceConf}/default"
+        if (!file(existedConfDir).exists()) {
+            existedConfDir = "${workspaceConf}/${configuration}"
+        }
+        println "Мерджим конфигурации. Ревизии ${revs} из '${trunkConfSvnUrl}' в локальный воркспейс '${existedConfDir}'"
+        exec {
+            executable "svn"
+            args "merge"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive", "--force"
+            args revList
+            args "$trunkConfSvnUrl"
+            args "$existedConfDir"
+        }
+
+        //merge tests
+        println "Мерджим тесты. Ревизии ${revs} из '${trunkTestSvnUrl}' в локальный воркспейс '${workspaceTest}'"
+        exec {
+            executable "svn"
+            args "merge"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive", "--force"
+            args revList
+            args "$trunkTestSvnUrl"
+            args "$workspaceTest"
+        }
+
+        //merge iuh
+        if (file(workspaceIuh).exists()) {
+            println "Мерджим IuH. Ревизии ${revs} из '${trunkIuhSvnUrl}' в локальный воркспейс '${workspaceIuh}'"
+            exec {
+                executable "svn"
+                args "merge"
+                args "--username", "$svnLogin"
+                args "--password", "$svnPass"
+                args "--non-interactive", "--force"
+                args revList
+                args "$trunkIuhSvnUrl"
+                args "$workspaceIuh"
+            }
+        } else {
+            println "Проекта IuH нет. Пропускаем мердж."
+        }
+        
+
+        //merge gradle build scripts
+        println "Мерджим сборочные Gradle скрипты. Ревизии ${revs} из '${trunkScriptsSvnUrl}' в локальный воркспейс '${workspaceGrdl}'"
+        exec {
+            executable "svn"
+            args "merge"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive", "--force"
+            args revList
+            args "$trunkScriptsSvnUrl"
+            args "$workspaceGrdl"
+        }
+
+        //commit
+        println "Коммитим релиз ${releaseBuildSvnUrl}"
+        def msg = "Merged from trunk for ${releaseName}, build ${buildNum}, patch ${patchNum}.\nRevisions: ${revs}"
+        exec {
+            workingDir "$workspaceSrc"
+            executable "svn"
+            args "commit"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive"
+            args "-m", "$msg"
+        }
+
+        //make tag
+        println "Создаем тэг для патча ${patchNum}"
+        if (patchAncestor == 'prev') {
+            def patches = getSvnList(tagReleaseSvnUrl, -1, 'p').keySet().sort()
+            if (patches.size() ==0) {
+                patchAncestor = 'release'
+            } else {
+                patchAncestor = patches.last()
+            }
+        }
+        def copySources = []
+        copySources << new SVNCopySource(SVNRevision.UNDEFINED, SVNRevision.HEAD, releaseBuildSvnUrl)
+        SVNProperties props = SVNProperties.wrap([(br4jAncestorProp):patchAncestor])
+        SVNCommitInfo info = copyClient.doCopy(copySources as SVNCopySource[], tagPatchSvnUrl, false, true, true, "Creating tag for patch - ${patchNum}", props)
+        println "commit info = $info"
+        ext.needCheckout = false
+
+        println "=================${'='*patchNum.size()}============${'='*buildNum.size()}============"
+        println "| Создание патча ${patchNum} для сборки ${buildNum} завершено |"
+        println "=================${'='*patchNum.size()}============${'='*buildNum.size()}============"
+    } else {
+        println '=================================='
+        println '| Ничего не надо создавать в SVN |'
+        println '=================================='
+    }
+}
+
+task prepareBuild(dependsOn: createReleaseOrPatch) << {
+    println '==Подготавливаем рабочую директорию=='
+
+    def logFile, fos, proc
+    if (createReleaseOrPatch.needCheckout) {
+        println 'Выкачиваем запрошенный релиз/сборку/патч'
+        println "\tоткуда: $buildUrl"
+        println "\t  куда: $workspaceSrc"
+        logFile = file("${logsDir}/checkout_project.log")
+        logFile.parentFile.mkdirs()
+        logFile.delete()
+        fos = new FileOutputStream(logFile)
+        exec {
+            executable "svn"
+            args "co"
+            args "--username", "$svnLogin"
+            args "--password", "$svnPass"
+            args "--non-interactive"
+            args "$buildUrl"
+            args "$workspaceSrc"
+            standardOutput = fos
+        }
+    }
+}
+
+task buildPacket(dependsOn: prepareBuild, type: GradleBuild) {
+    buildFile = 'jboss-build.gradle'
+    tasks = ['buildPacket']
+}
+
+task archive(dependsOn: prepareBuild, type: GradleBuild) {
+    buildFile = 'jboss-build.gradle'
+    tasks = ['archive']
+}
+
+task deploy(dependsOn: prepareBuild, type: GradleBuild) {
+    buildFile = 'jboss-build.gradle'
+    tasks = ['deploy']
+}

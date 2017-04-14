@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<universal-portlet>
+     <query>
+         <sql>
+			SELECT a.action_code, a.action_name_eng as name, COUNT(l.action_code) as actions
+			FROM action_log l
+			JOIN action a ON l.action_code=a.action_code
+            WHERE l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			GROUP BY a.action_code, a.action_name_eng
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Start date" type="calendar" />
+             <param name="dateEnd" dispaly-name="End date" type="calendar" />
+         </parameters>
+     </query>
+     <query lang="ru">
+         <sql>
+			SELECT a.action_code, a.action_name_rus as name, COUNT(l.action_code) as actions
+			FROM action_log l
+			JOIN action a ON l.action_code=a.action_code
+            WHERE l.log_date BETWEEN (to_timestamp(COALESCE(:dateStart, 0)) at time zone 'UTC')
+                and (COALESCE(to_timestamp(:dateEnd),CURRENT_TIMESTAMP) at time zone 'UTC')
+			GROUP BY a.action_code, a.action_name_rus
+         </sql>
+         <parameters>
+             <param name="dateStart" dispaly-name="Дата начала" type="calendar" />
+             <param name="dateEnd" dispaly-name="Дата окончания" type="calendar" />
+         </parameters>
+     </query>
+     <table title="User actions statistics grouped by action" pagesize="20">
+	     <column-description name="NAME" display-name="Action" is-sortable="true"/>
+	     <column-description name="ACTIONS" display-name="Count" is-sortable="true"/>
+     </table>
+     <table lang="ru" title="Статистика действий пользователей с группировкой по действию" pagesize="20">
+	     <column-description name="NAME" display-name="Действие" is-sortable="true"/>
+	     <column-description name="ACTIONS" display-name="Количество" is-sortable="true"/>
+     </table>
+</universal-portlet>

@@ -1,0 +1,3184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<attributes package="com.aplana.dbmi.card">
+	<select property="type">
+		<case value="X">
+			<filter class="MultipleStateSearchItemAttributeEditor"/>
+			<select property="id">
+				<case value="search.status.pcabinet">
+					<filter class="MultipleStateSearchItemAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/MultipleStateSearchItemCheckBoxEdit.jsp</parameter>
+					</filter>
+				</case>
+				
+				<case value="search.template.pcabinet">
+					<filter class="MultipleStateSearchItemAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/MultipleStateSearchItemCheckBoxEdit.jsp</parameter>
+					</filter>
+				</case>				
+			
+				<case value="search.status.ws">
+					<filter class="MultipleStateSearchItemAttributeEditor"/>
+				</case>
+			</select>					
+		</case>
+		<case value="S">
+			<editor class="StringAttributeEditor"/>
+			<select property="id">
+				<!-- case value="jbr.uzdo.cert">
+					<editor class="CertAttributeEditor"/>
+					<viewer class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/CertView.jsp</parameter>
+					</viewer>
+				</case-->
+				<case value="MATERIAL_NAME">
+					<editor class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/StringView.jsp</parameter>
+					</editor>
+				</case>				
+				<case value="JBR_REGD_REGNUM">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_NUMR_NAME">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_REGD_NUMOUT">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_NUMBER">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_POINT">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_ORD_TYPE">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_CONFID">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_EXEC">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_COEXEC">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_AUTH">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="JBR_DMSI_ER_CTRLMARK">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.certificate.cert">
+					<editor class="CertAttributeEditor"/>
+					<viewer class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/CertView.jsp</parameter>
+					</viewer>
+				</case>
+				<case value="medo.registration.refuse.reason">
+					<editor class="RegistrationRefuseAttributeEditor">
+						<parameter name="config">attrEditors/decline_registration_comment.xml</parameter>
+						<parameter name="notEditableMethods">1592</parameter>
+					</editor>
+				</case>
+				<case value="jbr.person.lastName">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.person.firstName">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.person.middleName">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.person.contactInfo">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.person.email">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.organization.shortName">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.organization">
+					    	<filter class="SearchStringCheckedAttributeEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="name">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.delo">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.zoneDOW.name">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.lastName">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.firstName">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.middleName">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.phone">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.email">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.position">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.import.dictionary">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+				<case value="jbr.person.position">
+			    	<filter class="SearchStringCheckedAttributeEditor"/>
+				</case>
+			</select>
+			<filter class="StringAttributeEditor"/>
+		</case>
+		<case value="I">
+			<editor class="IntegerAttributeEditor"/>
+			<filter class="IntegerSearchAttributeEditor"/>
+			<select property="id">
+				<case value="FILESIZE">
+					<viewer class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/FileSizeView.jsp</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.projectNumber">
+					<editor class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/IntegerView.jsp</parameter>
+					</editor>
+				</case>	
+				<case value="regnumberdigital">
+					<filter class="SearchIntegerCheckedAttributeEditor" />
+				</case>	
+				<case value="jbr.reqAuthorApartment">
+					<viewer class="JspAttributeViewer">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/IntegerViewNoZero.jsp</parameter>
+					</viewer>
+				</case>							
+			</select>
+		</case>
+		<case value="T">
+			<editor class="TextAttributeEditor"/>
+			<filter class="TextAttributeEditor"/>
+			<select property="id">
+				<case value="jbr.reqAuthorAddress">
+					<filter class="SearchStringCheckedAttributeEditor" />
+				</case>
+				<case value="jbr.original.commentOnApp">
+					<filter class="SearchStringCheckedAttributeEditor" />
+				</case>
+				<case value="jbr.courseExecution">
+					<editor class="TextActionsAttributeEditor">
+						<parameter name="actionsConfig">attrActions/course_execution.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.externalResolution.text">
+					<filter class="SearchTextAttributeCheckedEditor" />
+				</case>
+				<case value="jbr.cov.letter">
+					<filter class="SearchStringCheckedAttributeEditor" />
+				</case>
+				<case value="jbr.additInfo">
+					<filter class="SearchStringCheckedAttributeEditor"/>
+					<viewer class="TextAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/TextViewer.jsp</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.reasonForPostponement">
+					<filter class="SearchStringCheckedAttributeEditor" />
+					<viewer class="TextAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/TextViewer.jsp</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.resolutionText">
+					<editor class="TextWithTemplatesAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/TextWithTemplates.jsp</parameter>
+						<parameter name="config">attrActions/resolution_text.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.massResolutionText">
+					<editor class="TextWithTemplatesAttributeEditor">
+						<parameter name="jsp">/WEB-INF/jsp/html/attr/TextWithTemplates.jsp</parameter>
+						<parameter name="config">attrActions/resolution_text.xml</parameter>
+					</editor>
+				</case>
+			</select>
+		</case>
+		<case value="W">
+			<!-- editor class="TextAttributeEditor"/-->
+			<filter class="IsExistSearchAttributeEditor"/>
+			<editor class="HtmlAttributeEditor"/>
+			<select property="id">
+				<case value="jbr.uzdo.signature">
+					<editor class="SignatureAttributeEditor"/>
+					<viewer class="SignatureAttributeEditor"/>
+				</case>			
+				<case value="jbr.report.text">
+					<editor class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/ReportSchema.xsd</parameter>
+						<parameter name="columns">Дата; Текст отчёта</parameter>
+					</editor>
+					<viewer class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/ReportSchema.xsd</parameter>
+						<parameter name="columns">Дата; Текст отчёта</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.visa.decision">
+					<!--editor class="XSLTRepeatableReportAttributeEditor">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="counterAttrId">jbr.visa.visa.round</parameter>
+						<parameter name="factUserAttrId">jbr.visa.actual_consent</parameter>
+						<parameter name="columns">Номер итерации; Дата; Фактический согласующий; Текст решения</parameter>
+					</editor-->
+					<editor class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="columns">Номер итерации; Дата; Действие; Фактический согласующий; Текст решения</parameter>
+					</editor>
+					<viewer class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="columns">Номер итерации; Дата; Действие; Фактический согласующий; Текст решения</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.sign.comment">
+					<!--editor class="XSLTRepeatableReportAttributeEditor">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="counterAttrId">jbr.sign.sign.round</parameter>
+						<parameter name="factUserAttrId">jbr.sign.actual_signer</parameter>
+						<parameter name="columns">Номер итерации; Дата; Фактический подписант; Текст решения</parameter>
+					</editor-->
+					<editor class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="columns">Номер итерации; Дата; Действие; Фактический подписант; Текст решения</parameter>
+					</editor>
+					<viewer class="XSLTReportAttributeViewer">
+						<parameter name="xsltLocation">/WEB-INF/xslt/ShowRepeatableReportTable.xslt</parameter>
+						<parameter name="schemaLocation">/WEB-INF/xslt/RepeatableReportSchema.xsd</parameter>
+						<parameter name="columns">Номер итерации; Дата; Действие; Фактический подписант; Текст решения</parameter>
+					</viewer>
+				</case>
+			</select>
+			<select property="blockId">
+				<case value="CMSVIEW">
+					<editor class="TextAttributeEditor"/>
+				</case>
+				<case value="CMSLIST">
+					<editor class="TextAttributeEditor"/>
+				</case>
+				<case value="CMSCONT">
+					<editor class="TextAttributeEditor"/>
+				</case>
+				<case value="CMSHIER">
+					<editor class="TextAttributeEditor"/>
+				</case>
+				<case value="CMSPGVIEW">
+					<editor class="TextAttributeEditor"/>
+				</case>
+			</select>
+		</case>
+		<case value="A">
+			<editor class="SecurityAttributeEditor"/>
+		</case>
+		<case value="D">
+			<editor class="DateTimeAttributeEditor"/>
+			<select property="id">
+				<!-- case value="jbr.resolutionTerm">
+					<editor class="DateTimeAttributeEditor">
+						<extraJavascript class="extra.DateTimeDisabler">
+							<parameter name="relatedAttrId">jbr.oncontrol</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1449</parameter>
+						</extraJavascript>
+					</editor>
+				</case-->
+				<case value="jbr.resolutionTerm">
+					<editor class="DateTimeAttributeEditor">
+						<parameter name="day_time_default">23:59</parameter>
+						<parameter name="datePattern">yyyy-MM-dd'T'HH:mm</parameter>
+					</editor>
+				</case>
+				<case value="jbr.resolutionTermPreliminary">
+					<editor class="DateTimeAttributeEditor">
+						<extraJavascript class="extra.DateTimeDisabler">
+							<parameter name="relatedAttrId">jbr.oncontrol</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1449</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="jbr.request.change">
+					<editor class="DateTimeAttributeEditor">
+						<extraJavascript class="extra.DateTimeDisabler">
+							<parameter name="relatedAttrId">jbr.request.type</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1129</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+			</select>
+			<filter class="DateTimeAttributeEditor"/>
+		</case>
+		<case value="R">
+			<filter class="DatePeriodDojoAttributeEditor">
+				<parameter name="toDateInclusive">true</parameter>
+			</filter>
+			<select property="id">
+					<case value="JBR_REGD_DATEREG">
+						<select property="page" scope="session">
+							<case value="EXTENDED_SEARCH_PAGE">
+								<filter class="DatePeriodDojoAttributeEditor">
+									<parameter name="toDateInclusive">true</parameter>
+								</filter>
+							</case>
+						</select>
+						<select property="page" scope="session">
+							<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+								<filter class="DatePeriodDojoAttributeEditor">
+									<parameter name="toDateInclusive">true</parameter>
+								</filter>
+							</case>
+						</select>
+					</case>
+					<case value="CREATED">
+						<select property="page" scope="session">
+							<case value="EXTENDED_SEARCH_PAGE">
+								<filter class="SearchYearDatePeriodChoiceEditor">
+									<parameter name="toDateInclusive">true</parameter>
+								</filter>
+							</case>
+						</select>
+						<select property="page" scope="session">
+							<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+								<filter class="DatePeriodDojoAttributeEditor">
+									<parameter name="toDateInclusive">true</parameter>
+								</filter>
+							</case>
+						</select>
+					</case>
+			</select>
+				
+		</case>
+		
+		<case value="L">
+			<editor class="ListAttributeEditor"/>
+			<select property="id">
+				<case value="jbr.solution">
+					<editor class="ListAttributeEditor">
+						<extraJavascript class="extra.ListDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6555</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="jbr.address.format">
+					<filter class="MultiSelectListSearchEditor"/>
+				</case>
+				<case value="jbr.appeal.category">
+					<filter class="MultiSelectListSearchEditor"/>
+				</case>
+				<case value="jbr.inbound.typecontrol">
+					<filter class="MultiSelectListSearchEditor"/>
+				</case>
+				<case value="jbr.decision.result">
+					<editor class="ListAttributeEditor">
+						<extraJavascript class="extra.ListDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6555</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="jbr.redirect">
+					<editor class="ListAttributeEditor">
+						<extraJavascript class="extra.ListDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6556</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="JBR_VISA_BACK">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.income.repeatChkEnable">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.income.npa">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.responsibility.consider">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="ADMIN_40402">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">vertically</parameter>
+					</editor>
+				</case>
+				<case value="JBR_WKPO_ACTION">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.from">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.oncontrol">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+					<filter class="RadioButtonSearchEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</filter>					
+				</case>
+				<case value="jbr.govservice">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+					<filter class="RadioButtonSearchEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</filter>					
+				</case>
+				<case value="jbr.oncontrol">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+					<filter class="RadioButtonSearchEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</filter>
+					
+				</case>
+				<case value="jbr.arm.resolutionOnControl">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+					<filter class="RadioButtonSearchEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</filter>
+				</case>
+				<case value="jbr.outcoming.whom">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.dsp">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+					<filter class="ExtRadioButtonSearchEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</filter>
+				</case>
+				
+				<case value="IS_PRIME">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+
+				<case value="jbr.arm.hide">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbt.send.reneg">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.verify.ds">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.type.delivery">
+					<editor class="ListAttributeEditor">
+						<parameter name="notVisibleValues">jbr.deliveryItem.method.delo,jbr.deliveryItem.method.gost,jbr.deliveryItem.method.medo</parameter>
+					</editor>
+					<filter class="MultiSelectListSearchEditor"/>
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.incoming">
+					    	<filter class="ListSearchEditor"/>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.measures.taken">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+						<extraJavascript class="extra.RadioButtonDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6555</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="jbr.acc_decision">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.decision_out">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+						<extraJavascript class="extra.RadioButtonDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6555</parameter>
+						</extraJavascript>
+					</editor>
+				</case>
+				<case value="jbr.organization.isExternal">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+				<case value="jbr.zoneDOW.recalculate">
+					<editor class="RadioButtonAttributeEditor">
+						<parameter name="orientation">horizontally</parameter>
+					</editor>
+				</case>
+			</select>
+			<filter class="ListSearchEditor"/>
+		</case>
+		<case value="H">
+			<editor class="AjaxTreeAttributeEditor"/>
+			<select property="id">
+				<case value="jbr.reg.doctype">
+					<editor class="MultiSelectAttributeEditor"/>
+					
+					<filter class="MultiSelectSearchEditor"/>
+				</case>
+				<case value="jbr.SourceType">
+				    <editor class="AjaxTreeAttributeEditor">
+				        <parameter name="collapsedByDefault">false</parameter>
+				    </editor>
+				    <filter class="AjaxTreeAttributeEditor">
+				    	<parameter name="collapsedByDefault">true</parameter>
+				    </filter>
+				</case>
+				<case value="jbr.taken.decision">
+					<editor class="AjaxTreeAttributeEditor">
+				        <parameter name="collapsedByDefault">false</parameter>
+				    </editor>
+				</case>
+				<case value="jbr.QueryExemptions">
+				    <editor class="AjaxTreeAttributeEditor">
+				        <parameter name="collapsedByDefault">true</parameter>
+				    </editor>
+				    <filter class="MultiSelectSearchEditor"/>
+				</case>
+				<case value="_STATE_SEARCH">
+                    <filter class="AjaxTreeStateSearchEditor"/>
+                    <select property="page" scope="session">
+                        <case value="EXTENDED_SEARCH_PAGE">
+                            <filter class="AjaxTreeStateSearchEditor">
+                                <parameter name="checkAll">true</parameter>
+                                <parameter name="uncheckedStates">303990</parameter>
+                            </filter>
+                        </case>
+                    </select>
+				</case>
+				<case value="_TEMPLATE_SEARCH">
+					<filter class="AjaxTreeTemplateSearchEditor"/>
+				</case>	
+				<case value="notification.events">
+					<viewer class="AjaxTreeAttributeViewer"/>
+				</case>
+				<case value="popup.events">
+					<viewer class="AjaxTreeAttributeViewer"/>
+				</case>			
+			</select>
+		</case>
+		<case value="U">
+			<select property="id">
+				<case value="jbr.personInernal.assistantFor">
+					<filter class="AjaxPersonSearchEditor">
+                        <parameter name="config">picker/personPicker-2.xml</parameter>
+                    </filter>
+				</case>
+				<case value="jbr.incoming.addressee">
+					<editor class="AjaxPersonAttributeEditor">
+						<parameter name="config">picker/personPickerWithLists.xml</parameter>
+					</editor>
+					<filter class="AjaxPersonSearchEditor">
+                        <parameter name="config">picker/search/personPickerWithLists.xml</parameter>
+                    </filter>
+                    <select property="page" scope="session">
+						<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+							<filter class="AjaxPersonSearchEditor">
+                        		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                    		</filter>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.visa.person">
+					<editor class="AjaxPersonAttributeEditor">
+						<parameter name="config">picker/personPicker.xml</parameter>
+						<parameter name="multiValued">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.CoExecutor">
+					<editor class="AjaxPersonAttributeEditor">
+						<parameter name="config">picker/personPickerWithLists.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.commission.inspector">
+					<editor class="AjaxPersonAttributeEditor">
+						<extraJavascript class="extra.CardLinkPickerDisabler">
+							<parameter name="relatedAttrId">jbr.oncontrol</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1449</parameter>
+						</extraJavascript>
+						<parameter name="config">picker/personPicker.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.inform.persons">
+					<viewer class="PersonAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/person_internal.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+						<parameter name="actionsConfig">attrActions/inform.multicard_2.xml</parameter>
+					</viewer>
+					<editor class="AjaxPersonAttributeEditor">
+						<parameter name="config">picker/personPickerWithListsInfo.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.outcoming.signatory">
+					<select property="page" scope="session">
+						<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+							<filter class="AjaxPersonSearchEditor">
+                        		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                    		</filter>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.hidden.orderExecutors">
+					<select property="page" scope="session">
+						<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+							<filter class="AjaxPersonSearchEditor">
+                        		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                    		</filter>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.AssignmentExecutor">
+						<filter class="AjaxPersonSearchEditor">
+                       		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                       		<parameter name="showExtraAttrsFlag">true</parameter>
+                       		<parameter name="checkExtraAttrsFlag">true</parameter>
+                       		<parameter name="extraAttrsTitleCode">search.show.flag.ExtraVariants.CoExecutors</parameter>
+                       		<parameter name="extraAttrsCheckedTitle">search.show.flag.ExtraVariants.checked.CoExecutors</parameter>
+                       		<parameter name="extraAttrsUncheckedTitle">search.show.flag.ExtraVariants.unchecked.CoExecutors</parameter>
+                            <parameter name="multiValued">true</parameter>
+                   		</filter>
+				</case>
+				<case value="jbr.MassExecutors">
+						<filter class="AjaxPersonSearchEditor">
+                       		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                       		<parameter name="multiValued">true</parameter>
+                   		</filter>
+				</case>
+				<case value="jbr.massResolution.FioSign">
+						<filter class="AjaxPersonSearchEditor">
+                       		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                   		</filter>
+				</case>
+				<case value="jbr.incoming.inspector">
+					<editor class="AjaxPersonAttributeEditor">
+						<extraJavascript class="extra.CardLinkPickerDisabler">
+							<parameter name="relatedAttrId">jbr.incoming.oncontrol</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1432</parameter>
+						</extraJavascript>
+						<parameter name="config">picker/personPicker.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.document.executor">
+					<filter class="AjaxPersonSearchEditor">
+                    	<parameter name="config">picker/personPicker.xml</parameter>
+                       	<parameter name="multiValued">false</parameter>	                    
+                   	</filter>
+                   	<select property="page" scope="session">
+						<case value="WORKSTATION_EXTENDED_SEARCH_PAGE">
+							<filter class="AjaxPersonSearchEditor">
+                        		<parameter name="config">picker/searchPersonPicker.xml</parameter>
+                    		</filter>
+						</case>
+						<case>
+							<select property="activeCard.template" scope="session">
+		                   		<case value="jbr.ord">
+		                   			<editor class="AjaxPersonAttributeEditor">
+										<parameter name="config">picker/personPicker.xml</parameter>
+										<parameter name="multiValued">false</parameter>
+									</editor>
+								</case>
+								<case value="jbr.interndoc">
+		              				<editor class="AjaxPersonAttributeEditor">
+										<parameter name="config">picker/personPicker.xml</parameter>
+										<parameter name="multiValued">false</parameter>
+									</editor>
+								</case>	
+								<case value="jbr.outcoming">
+		               				<editor class="AjaxPersonAttributeEditor">
+										<parameter name="config">picker/personPicker.xml</parameter>
+										<parameter name="multiValued">false</parameter>
+									</editor>
+								</case>	
+								<case value="jbr.npa">
+		                 			<editor class="AjaxPersonAttributeEditor">
+										<parameter name="config">picker/personPicker.xml</parameter>
+										<parameter name="multiValued">false</parameter>
+									</editor>
+								</case>	
+							</select>
+						</case>
+					</select>				                   		
+				</case>
+			</select>
+			<editor class="AjaxPersonAttributeEditor">
+				<parameter name="config">picker/personPicker.xml</parameter>
+			</editor>
+			
+			<filter class="AjaxPersonSearchEditor">
+            	<parameter name="config">picker/personPicker.xml</parameter>
+            </filter>
+			<viewer class="PersonAttributeConfigurableViewer">
+				<parameter name="config">attrEditors/person_internal.xml</parameter>
+				<parameter name="showEmpty">false</parameter>
+			</viewer>
+			<!--
+
+			<editor class="PersonAttributeEditor"/>
+			<viewer class="PersonAttributeViewer"/>
+			-->
+		</case>
+		<case value="C">
+			<editor class="CardLinkExAttributeEditor">
+				<parameter name="change">true</parameter>
+				<parameter name="create">false</parameter>
+			</editor>
+			<!--  <viewer class="JspAttributeViewer"> -->
+			<viewer class="CardLinkAttributeViewer">
+				<parameter name="fullRendering">true</parameter>
+			</viewer>
+			<filter class="CardLinkPickerSearchEditor"/>
+			
+			<select property="id">
+				<case value="jbr.outcoming.receiver.single">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/organization_actl_view.xml</parameter>
+		            </viewer>
+		            <editor class="CardLinkExAttributeEditor">
+						<parameter name="config">attrEditors/organization_actl_view.xml</parameter>
+					</editor>
+                    <filter class="CardLinkPickerSearchEditor">
+                        <parameter name="config">picker/search-incoming-sender.xml</parameter>
+                        <parameter name="multiValued">false</parameter>
+                    </filter>
+				</case>
+				<case value="jbr.person.pos">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/person_position_edit.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/person_position.xml</parameter>
+					</filter>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/name_view.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.reg.doctype">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/typedocPicker.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/typedocPicker.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_TYPE_ORIG_VALUE->NAME,NAME,doublet;
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+				</case>
+				<case value="jbr.lastRegistrations">
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.incoming">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/lastRegistrationsPicker_income.xml</parameter>
+								<parameter name="inline">false</parameter>
+								<parameter name="multiValued">false</parameter>
+							</filter>
+						</case>
+					    <case value="jbr.incomingpeople">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/lastRegistrationsPicker_og.xml</parameter>
+								<parameter name="inline">false</parameter>
+								<parameter name="multiValued">false</parameter>
+							</filter>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.organization.superOrganization">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/organizations.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search-incoming-sender.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.replication.orgRecipient">
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+					<editor class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</editor>
+				</case>
+				<case value="jbr.replication.orgSender">
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+					<editor class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</editor>
+				</case>
+				<case value="jbr.department.chief">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="jbr.department.parentDepartment">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="numerator">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/numerators.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/numerators.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="numeratorformat">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/formats.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/formats.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="jbr.journal.department">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="boss.resolutiontemplates">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/ARMResolut.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/ARMResolut.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="jbr.negotiationlist.documentType">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/typedocPicker.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/typedocPicker.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_TYPE_ORIG_VALUE->NAME,NAME,doublet;
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+				</case>
+			<!-- Journal of registration -->
+				<case value="regjournal">
+					<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/all-journals.xml</parameter>
+								<parameter name="inline">true</parameter>
+					</filter>
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.incoming">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/incoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.outcoming">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/outcoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.citizenrequest">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/citizenrequests-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.infreq">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/infreq-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.ord">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/ord-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.npa">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/ord-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.interndoc">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/interndoc-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case>
+					     <select property="activeCard.template" scope="session">
+					     <case value="jbr.incomingExample">
+					        <editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/incoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+					        </editor>
+						</case>	
+						<case value="jbr.outcomingExample">
+					        <editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/incoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+					        </editor>
+						</case>    
+						<case value="jbr.incoming">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/incoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.outcoming">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/outcoming-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.citizenrequest">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/citizenrequests-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.infreq">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/infreq-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.ord">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/ord-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.npa">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/ord-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+						<case value="jbr.interndoc">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/interndoc-journal.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</editor>
+						</case>
+					</select>
+						</case>
+					</select>						 
+					
+					<viewer class="InlineCardLinkAttributeViewer">
+					   <parameter name="labelAttr">string:NAME</parameter>
+					</viewer>					
+				</case>
+			<!-- Come From List -->	
+				<case value="jbr.ComeFromOrg">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/ComeFrom-organization.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet;
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>					
+					
+				</case>	
+			<!-- END Come From List  -->
+			
+				<case value="jbr.paper.store">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.paper_storage</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+
+				<case value="namelist.index">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/index_paper_store.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+				        <viewer class="InlineCardLinkAttributeViewer">
+							<parameter name="labelAttr">string:NAME</parameter>
+				        </viewer>					
+				</case>
+				<case value="jbr.SourceOfCome">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.RefSourceComeFrom</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="change">true</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/sourceOfCome.xml</parameter>
+					</filter>	
+				</case>
+			
+			<!-- Author Type -->	
+				<case value="jbr.AuthType"> 
+				
+					<select property="searchPageTemplate" scope="session">
+						<case value="jbr.citizenrequest">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/Author-Type-Citizen.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case value="jbr.informationrequest">
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/Author-Type-Informational.xml</parameter>
+								<parameter name="inline">true</parameter>
+							</filter>
+						</case>
+						<case>
+							<select property="activeCard.template" scope="session">
+								<case value="jbr.citizenrequest">
+									<editor class="CardLinkPickerAttributeEditor">
+										<parameter name="config">picker/Author-Type-Citizen.xml</parameter>
+										<parameter name="inline">true</parameter>
+									</editor>
+								</case>
+								<case value="jbr.informationrequest">
+									<editor class="CardLinkPickerAttributeEditor">
+										<parameter name="config">picker/Author-Type-Informational.xml</parameter>
+										<parameter name="inline">true</parameter>
+									</editor>
+								</case>
+							</select>
+						</case>
+					</select>
+				
+				 
+					
+					
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="isLinked">false</parameter>
+					</viewer>					
+				</case>
+			<!-- END Author Type -->
+				<case value="jbr.RefThemes3.parentRegion">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/ThemeOfQuery-Informational.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.ThemeOfQuery_Question">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/reftheme3.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.RefThemes2.parentRegion">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/refsection.xml</parameter>
+					</editor>
+				</case>
+			<!-- Theme Of Query for Citizen Request and Information Request -->	
+				<case value="jbr.SectionOfTheme">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/refsection.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.Theme3">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/reftheme3.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.ThemeOfQuery"> 
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.informationrequest">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/ThemeOfQuery-Citizen.xml</parameter>
+							</editor>
+						</case>
+						<case value="jbr.citizenrequest">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/ThemeOfQuery-Informational.xml</parameter>
+							</editor>
+						</case>
+					</select>
+					<filter class="CardLinkPickerSearchEditor">
+							<parameter name="config">picker/ThemeOfQuery-Citizen.xml</parameter>
+					</filter>
+					
+				</case>
+			<!-- END Theme Of Query for Citizen Request and Information Request -->	
+			
+			<!-- Question Of Query for Citizen Request and Information Request -->	
+				<case value="jbr.QuestionOfQuery"> 
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.citizenrequest">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/QuestionOfQuery-Citizen.xml</parameter>
+							</editor>
+							<viewer class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/Questions.xml</parameter>
+							</viewer>
+							<!-- editor class="CardLinkExAttributeEditor">
+								<parameter name="template">jbr.RefQuestionOfAddress</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="change">true</parameter>
+								<parameter name="create">false</parameter>
+							</editor-->
+						</case>
+						<case value="jbr.informationrequest">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/QuestionOfQuery-Informational.xml</parameter>
+							</editor>
+						</case>
+					</select>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/QuestionOfQuery-Citizen.xml</parameter>
+					</filter>
+
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/QuestionOfQuery.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.question.result">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/QuestionOfQuery-Citizen.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/Questions.xml</parameter>
+					</viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/QuestionOfQuery-Citizen.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.redirection.og.question"> 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/QuestionOfQuery-Citizen.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/Questions.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.treatment.recipient"> 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/incoming-sender.xml</parameter>
+						<extraJavascript class="extra.CardLinkPickerDisabler">
+							<parameter name="relatedAttrId">jbr.acc_decision</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">6556</parameter>
+						</extraJavascript>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet; 
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+				</case>
+				<case value="jbr.ReqAuthor">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefAddressee.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/RefAddressee.xml</parameter>
+						<parameter name="multiValued">true</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>					
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/requestAuthor.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				
+				<case value="jbr.previousReqAuthor">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/previousRequestAuthor.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+
+			<!-- END Question Of Query for Citizen Request and Information Request -->		
+			<!-- External Signatory for incoming documents -->	
+				<case value="jbr.signext"> 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search/external-person.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>					
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+					<select property="page" scope="session">
+						<case value="EXTENDED_SEARCH_PAGE">
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/external-person.xml</parameter>
+								<parameter name="inline">false</parameter>
+							</editor>
+							<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/search/external-person.xml</parameter>
+								<parameter name="inline">false</parameter>
+							</filter>	
+						</case>
+					</select>		
+				</case>
+			<!-- END External Signatory for incoming documents -->
+			<!-- OG Addressee-->
+				<case value="jbr.OgAddressee">
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>					 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person-withoutOrg.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/person_internal.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+			<!-- END OG Addressee -->
+			<!-- Information about document (OG), references:regions,countrys,city -->			
+				<case value="jbr.InfAboutDocOkrug">
+                    <editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefOkrug.xml</parameter>
+                        <parameter name="inline">true</parameter>
+                    </editor>
+                    <viewer class="InlineCardLinkAttributeViewer">
+                        <parameter name="labelAttr">string:NAME</parameter>
+                        <parameter name="isLinked">false</parameter>
+                    </viewer>                   
+                </case>
+                <case value="jbr.InfAboutDocRegion">
+                    <editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefRegion.xml</parameter>
+                        <parameter name="inline">true</parameter>
+                    </editor>
+                    <viewer class="InlineCardLinkAttributeViewer">
+                        <parameter name="labelAttr">string:NAME</parameter>
+                        <parameter name="isLinked">false</parameter>
+                    </viewer>
+                    <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/RefRegion.xml</parameter>
+						<parameter name="multiValued">true</parameter>
+					</filter>                   
+                </case>
+                <case value="jbr.InfAboutDocDistrict">
+                    <editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefDistrict.xml</parameter>
+                        <parameter name="inline">true</parameter>
+                    </editor>
+                    <viewer class="InlineCardLinkAttributeViewer">
+                        <parameter name="labelAttr">string:NAME</parameter>
+                        <parameter name="isLinked">false</parameter>
+                    </viewer>
+                    <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/RefDistrict.xml</parameter>
+						<parameter name="multiValued">true</parameter>
+					</filter>
+                </case>
+                <case value="jbr.InfAboutDocCountry">
+                    <editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefCountry.xml</parameter>
+                        <parameter name="inline">true</parameter>
+                    </editor>
+                    <viewer class="InlineCardLinkAttributeViewer">
+                        <parameter name="labelAttr">string:NAME</parameter>
+                        <parameter name="isLinked">false</parameter>
+                    </viewer>                   
+                </case>
+                <case value="jbr.InfAboutDocCity">
+                    <editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefCity.xml</parameter>
+                        <parameter name="inline">true</parameter>
+                    </editor>
+                    <viewer class="InlineCardLinkAttributeViewer">
+                        <parameter name="labelAttr">string:NAME</parameter>
+                        <parameter name="isLinked">false</parameter>
+                    </viewer>                   
+                </case> 
+                 <case value="jbr.InfAboutDocCityDistrict">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/RefCityDistrict.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/filter/RefCityDistrictFilter.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.refOrganization.City">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/RefCity.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>					
+				</case>	
+			<!-- END Information about document (OG), references:regions,countrys,city -->
+
+				<case value="jbr.person.certificates">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.certificate</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/person_certificate.xml</parameter>
+					</editor>
+				</case>						
+				<case value="jbr.ResultOfConsuder">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.RefResultOfConsuder</parameter>
+						<parameter name="config">attrEditors/consider_result.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/consider_result.xml</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.distributionItem.recipient">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/mailing-receiver.xml</parameter>
+					</editor>
+					<!-- BR4J00015658
+					По согласованию с аналитиками и внедренцами BR4J00015658 режим просмотра идентичен режиму редактирования.
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		             -->
+				</case>
+				<case value="jbr.distributionItem.template.recipient">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/outcoming-org.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.inform.template.person">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/personPickerWithLists.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.visa.ext.template.externalPerson">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/external-person.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+				</case>
+			<!--	<case value="JBR_INFORM_LIST">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/Informlist.xml</parameter>
+						<parameter name="cardOpenPage">524</parameter>						
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/Informlist.xml</parameter>
+					</viewer>
+				</case>
+			-->
+
+				<case value="jbr.Distribution.CreateList">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/distributions_unserved.xml</parameter>
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/distributions_unserved.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.Distribution.DistributionList">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/distributions.xml</parameter>
+					</editor>
+					<viewer class="DistributionHierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/distributions.xml</parameter>
+					</viewer>
+				</case>
+				<!-- <case value="jbr.inform.list">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.inform_incoming</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/acquaintance.edit.xml</parameter>
+					</editor>
+				</case> -->
+				<case value="jbr.inform.list">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.inform</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/inform.multicard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.acquant">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.examination</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/exam.multicard.xml</parameter>
+						<parameter name="config">attrEditors/rassm_og.xml</parameter>
+					</editor>
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.citizenrequest">
+				            <viewer class="CardLinkAttributeConfigurableViewer">
+				                <parameter name="config">attrEditors/rassm_og.xml</parameter>
+				            </viewer>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.doc.reservationRequests">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.reservationRequest</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/reservation_request.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.visa.set">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/linkedVisaHierarchy.xml</parameter>
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/linkedVisaHierarchy.xml</parameter>
+						<!-- parameter name="configGraph">graph/relResolut.xml</parameter-->
+					</viewer>
+				    <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+					</filter>
+					
+					<!-- editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.visa</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/visa.multicard.xml</parameter>
+					</editor-->
+				</case>
+				<case value="jbr.visa.enclosedSet">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.visa</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/visa.multicard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.visa.ext.set">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.visa.ext</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="actionsConfig">attrActions/visa.ext.multicard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.sign.set">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.sign</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="actionsConfig">attrActions/sign.multicard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.files">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.visa">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="edit">true</parameter>
+								<!--parameter name="change">true</parameter-->
+								<parameter name="actionsConfig">attrActions/visa.files.edit.xml</parameter>
+								<parameter name="create">false</parameter>
+							</editor>
+						</case>
+						<case value="jbr.sign">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="edit">true</parameter>
+								<!--parameter name="change">true</parameter-->
+								<parameter name="actionsConfig">attrActions/sign.files.edit.xml</parameter>
+								<parameter name="create">false</parameter>
+							</editor>
+						</case>
+						<case value="jbr.import">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="edit">true</parameter>
+								<!--parameter name="change">true</parameter-->
+								<parameter name="actionsConfig">attrActions/files.edit.xml</parameter>
+								<parameter name="create">false</parameter>
+								<parameter name="hideChildrenWhenDSP">true</parameter>
+								<parameter name="multiValued">false</parameter>
+							</editor>
+						</case>
+						<case value="jbr.group.resolution">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="edit">true</parameter>
+								<!--parameter name="change">true</parameter-->
+								<parameter name="actionsConfig">attrActions/files.edit.gr.res.xml</parameter>
+								<parameter name="create">false</parameter>
+								<parameter name="hideChildrenWhenDSP">true</parameter>
+								<parameter name="multiValued">false</parameter>
+							</editor>
+						</case>
+						<case value="jbr.massResolution">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="edit">true</parameter>
+								<!--parameter name="change">true</parameter-->
+								<parameter name="actionsConfig">attrActions/files.edit.mass.res.xml</parameter>
+								<parameter name="create">false</parameter>
+								<parameter name="hideChildrenWhenDSP">true</parameter>
+								<parameter name="multiValued">false</parameter>
+							</editor>
+						</case>
+					</select>
+				
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">true</parameter>
+						<!--parameter name="change">true</parameter-->
+						<parameter name="actionsConfig">attrActions/files.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="hideChildrenWhenDSP">true</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="hideChildrenWhenDSP">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.info.files">
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">false</parameter>
+						<parameter name="actionsConfig">attrActions/info.files.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="hideChildren">true</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="hideChildren">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.accomp.files">
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">true</parameter>
+						<!--parameter name="change">true</parameter-->
+						<parameter name="actionsConfig">attrActions/files.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.visa.attachments">
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">true</parameter>
+						<!--parameter name="change">true</parameter-->
+						<parameter name="actionsConfig">attrActions/visa.files.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.sign.attachments">
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">true</parameter>
+						<!--parameter name="change">true</parameter-->
+						<parameter name="actionsConfig">attrActions/sign.files.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.paperaction">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.paperaction</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.sender">
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search-incoming-sender.xml</parameter>
+						<parameter name="multiValued">true</parameter>
+					</filter>
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/incoming-sender.xml</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet; 
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+					<select property="searchPageTemplate" scope="session">
+					    <case value="jbr.incoming">
+					    	<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/search-incoming-sender.xml</parameter>
+								<parameter name="multiValued">false</parameter>
+							</filter>
+							<editor class="CardLinkPickerAttributeEditor">
+								<parameter name="config">picker/incoming-sender.xml</parameter>
+							</editor>
+							<viewer class="InlineCardLinkAttributeViewer">
+								<parameter name="labelAttr">string:NAME</parameter>
+								<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet; 
+																_STATE,_TEMPLATE,doublet</parameter> 
+							</viewer>
+					    </case>
+					</select>
+				</case>
+				<case value="jbr.replication.baseDocLink">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		            <editor class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </editor>
+				</case>
+				<case value="jbr.replication.localDocLink">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		            <editor class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </editor>
+				</case>
+				<case value="jbr.replication.replicatedDocLink">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		            <editor class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/replicatedCard.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </editor>
+				</case>
+				<case value="jbr.replication.replicatedLocalDocLink">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/replicationCard.xml</parameter>
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/replicationCard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.sender.actual">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/incoming-sender.xml</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet; 
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+				</case>
+				<case value="jbr.outcoming.citizenAppealAddressee">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefAddressee.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/requestAuthor.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		            <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/RefAddresseeSearch.xml</parameter>
+					</filter>	
+				</case>
+				<!--  Внешняя организация "Получатель исходящего"-->
+				<case value="jbr.outcoming.receiver">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/outcoming-org.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search-outcoming-receiver.xml</parameter>
+					</filter>					
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/OrganizationPersWithSendType.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<!--  Внешняя персона "Получатель исходящего"-->
+				<case value="jbr.outcoming.receiver.user">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person-addressor.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search/external-person-addressor.xml</parameter>
+					</filter>	
+					<select property="page" scope="session">
+							<case value="EXTENDED_SEARCH_PAGE">
+								<editor class="CardLinkPickerAttributeEditor">
+									<parameter name="config">picker/external-person-addressor.xml</parameter>
+									<parameter name="inline">false</parameter>
+								</editor>
+								<filter class="CardLinkPickerSearchEditor">
+									<parameter name="config">picker/search/external-person-addressor.xml</parameter>
+									<parameter name="inline">false</parameter>
+								</filter>	
+							</case>
+					</select>				
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>				
+				<case value="jbr.outcoming.executor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/outcoming-receiver.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/OrganizationPers.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.doc.fromDepartment">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+				    </viewer>
+				    <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/department.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+<!--				<case value="jbr.AssignmentExecutor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+				    </viewer>	
+				</case> -->
+				<!-- 
+				<case value="jbr.resolution.FioSign">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+				    </viewer>	
+				</case> -->
+								
+			<!--	
+				<case value="jbr.Fyi">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/personPickerWithLists.xml</parameter>
+					</editor>
+				</case>
+		    -->
+<!--				<case value="jbr.CoExecutor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+					</editor>
+				</case> -->
+				<case value="jbr.ExtExecutor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.ExtCoExecutor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="index">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/index-with-deps.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+			        <viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+			        </viewer>					
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/index-with-deps.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</filter>
+				</case>
+				<case value="JBR_REGD_INDEXES">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/index.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+			        <viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+			        </viewer>					
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/index.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="JBR_WKPO_WHERE">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/paperaction.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.foiv">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/foiv.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/foiv.xml</parameter>
+					</filter>					
+				</case>				
+				<!-- <case value="ADMIN_34573">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">445</parameter>
+						<parameter name="change">true</parameter>
+					</editor>
+				</case> -->
+				<case value="jbr.department.Organization">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/department-organization.xml</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet; 
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/department-organization.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="jbr.OtherSign"> 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/external-person.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>		
+				<case value="jbr.resolution.FyiReport"> 
+					<viewer class="CardLinkAttributeViewer">
+						<parameter name="showTitle">True</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+				</case>	
+				<case value="jbr.report.attachments">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.group.report.int">
+							<editor class="FilesAndCommentsAttributeEditor">
+								<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+								<parameter name="template">jbr.file</parameter>
+								<parameter name="remove">true</parameter>
+								<parameter name="actionsConfig">attrActions/groupReportFiles.edit.xml</parameter>
+								<parameter name="create">false</parameter>
+							</editor>
+						</case>
+					</select>
+					<editor class="FilesAndCommentsAttributeEditor">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="template">jbr.file</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="edit">true</parameter>
+						<!--parameter name="change">true</parameter-->
+						<parameter name="actionsConfig">attrActions/reportFiles.edit.xml</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+					<viewer class="FilesAndCommentsAttributeViewer">
+						<parameter name="fileLinkAttribute">string:jbr.materialName</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<!-- Этапы сохраненного маршрута согласования -->
+				<case value="jbr.negotiationStages">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.negotiationlist.stage</parameter>
+						<parameter name="remove">true</parameter>
+						<parameter name="change">false</parameter>
+						<parameter name="config">attrEditors/negotationStages-editor.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="template">jbr.negotiationlist.stage</parameter>
+						<parameter name="config">attrEditors/negotiationStages-viewer.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>				
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/search-appeal-author.xml</parameter>
+					</filter>
+					
+				</case>
+				<!-- Выбор типового маршрута согласования -->
+ 				<case value="jbr.saveNegotiationList">
+					<editor package="com.aplana.dbmi.card.negotiation" class="NegotiationListChooser"/>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/CommonRouteOfNegotiation.xml</parameter>
+					</viewer>
+					<editor package="com.aplana.dbmi.card.negotiation" class="NegotiationListChooser">
+					</editor>
+ 				</case>			
+				<case value="jbr.original.source"> 
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/importing-resources.xml</parameter>
+<!-- 						<parameter name="inline">true</parameter>  -->
+					</editor>
+				</case>
+			<!-- Reference Index, field=medo.foiv.department -->	
+				<case value="medo.foiv.department">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/index-department.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+
+				<case value="medo.foiv.director">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+
+				<case value="medo.foiv.subDirector">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person-medo.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+
+				<case value="medo.foiv.executor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person-medo.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+				<case value="medo.doc.signAnsw">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.medo_og.initReqObject">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.medo_og.requestAuthor</parameter>
+						<parameter name="change">true</parameter>
+						<parameter name="create">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_AUTH_ORIG_VALUE->NAME,NAME,doublet;
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>
+				</case>
+				<case value="jbr.medo_og.reqAuthor">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/reqAuthor.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/requestAuthor.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.medo_og.jbrReqOrg">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/reqOrganization.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/OrganizationPers.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.state_service.serviceKind">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/serviceKind.xml</parameter>
+						<parameter name="inline">true</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+				</case>
+
+				<case value="jbr.extResolutions">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">true</parameter>
+						<parameter name="template">jbr.externalResolution</parameter>
+					</editor>
+				</case>
+				<case value="jbr.dmsi.sender">				
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/incoming-sender.xml</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+						<parameter name="replaceAttrs">	JBR_DORG_ORIG_ORG->NAME,NAME,doublet;
+														_STATE,_TEMPLATE,doublet</parameter> 
+					</viewer>					
+				</case>
+				
+				<case value="jbr.externalPerson.originalValue">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefExtPerson.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+				<case value="jbr.requestAuthor.originalValue">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefReqAuthor.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+                    <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/requestAuthor.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.typeOfDoc.originalValue">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefTypeOfDoc.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+				<case value="jbr.refQuestionOfAddress.originalValue">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.RefSection">
+					<editor class="CardLinkPickerAttributeEditor">
+		                        <parameter name="config">picker/RefSectionOrig.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+						<case value="jbr.RefThemes2">
+							<editor class="CardLinkPickerAttributeEditor">
+		                        <parameter name="config">picker/RefThemes2Orig.xml</parameter>
+		                        <parameter name="inline">false</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.RefThemes3">
+							<editor class="CardLinkPickerAttributeEditor">
+		                        <parameter name="config">picker/RefThemes3Orig.xml</parameter>
+		                        <parameter name="inline">false</parameter>
+		                    </editor>
+						</case>
+	                </select>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/og-classifier_element.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>					
+				</case>
+				<case value="jbr.RefQuestion4.parentRegion">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefQuestionOfAddress.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+				<case value="jbr.organization.originalOrganization">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefOrganization.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+				<case value="jbr.ado.docbase">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/report_ado_docbase.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.refSubQuestionOfAddress.originalValue">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefSubQuestionOfAddress.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/RefSubQuestionOfAddress.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.originalQuestionValue">
+					<editor class="CardLinkPickerAttributeEditor">
+                        <parameter name="config">picker/RefQuestionOfAddress.xml</parameter>
+                        <parameter name="inline">false</parameter>
+                    </editor>
+				</case>
+				<case value="jbr.distributionList.recipinets">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/outcoming-receiver.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/outcoming-receiver.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.person.organization">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/person-organisation.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/person-organisation.xml</parameter>
+					</filter>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/person-organisation.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+		            <select property="searchPageTemplate" scope="session">
+					    <case value="jbr.internalPerson">
+					    	<filter class="CardLinkPickerSearchEditor">
+								<parameter name="config">picker/person-organization-2.xml</parameter>
+							</filter>
+					    </case>
+					</select>
+				</case>
+						<case value="extsearch.executionByPersonFromDepartment">
+							<filter class="CardLinkPickerWithExtraVariantsSearchEditor">
+		                        <parameter name="config">picker/departmentRecursive.xml</parameter>
+		                        <parameter name="multiValued">true</parameter>
+		                        <parameter name="showExtraAttrsFlag">true</parameter>
+		                   		<parameter name="checkExtraAttrsFlag">true</parameter>
+		                   		<parameter name="extraVariantsOnTop">true</parameter>
+		                   		<parameter name="showInactiveFlag">false</parameter>
+		                   		<parameter name="scrollHeight">360</parameter>
+		                   		<parameter name="extraAttrsTitleCode">search.show.flag.executionByPersonFromDepartmentSearchAttribute</parameter>
+		                   		<parameter name="extraAttrsCheckedTitle">search.show.flag.executionByPersonFromDepartmentSearchAttribute</parameter>
+		                   		<parameter name="extraAttrsUncheckedTitle">search.show.flag.executionByPersonFromDepartmentSearchAttribute.unchecked</parameter>
+		                    </filter>
+						</case>
+						<case value="extsearch.executedByPersonFromDepartment">
+							<filter class="CardLinkPickerSearchEditor">
+		                        <parameter name="config">picker/departmentRecursive.xml</parameter>
+		                        <parameter name="multiValued">true</parameter>
+		                        <parameter name="scrollHeight">360</parameter>
+		                    </filter>
+						</case>	
+				<case value="jbr.personInternal.department">
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/person-department.xml</parameter>
+					</filter>
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/person-department-2.xml</parameter>
+						<extraJavascript class="extra.CardLinkPickerDisabler">
+							<parameter name="relatedAttrId">jbr.incoming.organization</parameter>
+							<parameter name="relatedAttrClass">CardLinkAttribute</parameter>
+							<parameter name="toDisableValues">null</parameter>
+						</extraJavascript>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/person-department-2.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.person.blank">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/person-blank.xml</parameter>
+					</editor>
+		            <viewer class="CardLinkAttributeConfigurableViewer">
+		                <parameter name="config">attrEditors/person-blank.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.person.resolutiontemplates">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/ARMResolut.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+					<viewer class="InlineCardLinkAttributeViewer">
+						<parameter name="labelAttr">string:NAME</parameter>
+					</viewer>
+
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/ARMResolut.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</filter>
+				</case>
+				<case value="jbr.zoneDOW.DepList">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/activeDepartmentsWithoutZones.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/activeDepartmentsWithoutZones.xml</parameter>
+					</filter>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/activeDepartmentsWithoutZones.xml</parameter>
+						<parameter name="showEmpty">true</parameter>
+					</viewer>
+				</case>
+				
+				<case value="jbr.zoneDOW">
+					<!-- (BR4J00035097) По согласованию с Лебедевой, редактируемость оставляем, видимость настраиваем с помощью прав доступа на атрибуты на месте силами внедренцев. -->
+					<!-- select property="activeCard.template" scope="session">
+						<case value="jbr.incoming">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.outcoming">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.interndoc">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.ord">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.npa">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+						<case value="jbr.citizenrequest">
+							<editor class="CardLinkAttributeConfigurableViewer">
+								<parameter name="config">attrEditors/activeZones.xml</parameter>
+								<parameter name="showEmpty">true</parameter>
+		                    </editor>
+						</case>
+					</select-->
+					<!--
+						В рамках задачи BR4J00039017 атрибут необходимо открыть для редактирования,
+						поэтому возвращаем ему нормальный editor, но на будущее, если вдруг возникнет
+						задача открыть этот атрибут для простых пользователей для чтения возникнет проблема, 
+						потому-что readonly = 1 для этого атрибута поставить нельзя (т.к. он автоматически
+						меняется в пре фазе от	имени пользователя при смене департамента, поэтму у него
+						должно быть право на запись этого атрибута)
+					-->
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/activeZones.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/activeZones.xml</parameter>
+						<parameter name="showEmpty">true</parameter>
+					</viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/activeZones.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.zoneDOWAccess">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/activeZones.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/activeZones.xml</parameter>
+						<parameter name="showEmpty">true</parameter>
+					</viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/activeZones.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.zonesDOW">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/activeZones.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/activeZones.xml</parameter>
+						<parameter name="showEmpty">true</parameter>
+					</viewer>
+				</case>				
+				<case value="jbr.redirected.requests"> 
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.redirection.og</parameter>
+						<parameter name="change">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.question.theme">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/question-theme.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/question-theme.xml</parameter>
+						<parameter name="showEmpty">true</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.question.thematic.OG">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/question-thematicOG.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/question-thematicOG.xml</parameter>
+					</filter>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/question-thematicOG.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.result.questions">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/question-thematicOG.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/question-thematicOG.xml</parameter>
+					</filter>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/question-thematicOG.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.distributionItem.recipient.user">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/external-person.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.settings.card">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="template">jbr.user.settings</parameter>
+						<parameter name="create">true</parameter>
+					</editor>
+				</case>
+				<case value="jbr.main.doc">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.resolution">
+							<viewer class="HierarchicalCardLinkAttributeViewer">
+								<parameter name="config">hierarchy/mainDocFilesHierarchy.xml</parameter>
+							</viewer>
+						</case>
+					</select>
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.maindoc.request">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.rimp.bydoc">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.resolution">
+							<viewer class="HierarchicalCardLinkAttributeViewer">
+								<parameter name="config">hierarchy/mainDocFilesHierarchy.xml</parameter>
+							</viewer>
+						</case>
+					</select>
+				</case>
+				<case value="jbr.report.int.parent">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.report.ext.parent">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.taskVisa.task">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.rimp.byrimp">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.previous.appeals">
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/nextAppeals.xml</parameter>
+					</filter>
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/nextAppeals.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.next.appeals">
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/nextAppeals.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.doc.list">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.report.cards">
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="change">false</parameter>
+						<parameter name="create">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.report.ext.executor">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/external-executor.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+					<editor class="CardLinkExAttributeEditor">
+						<parameter name="config">attrEditors/external-executor.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.owner.regjournal">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/regJournals.xml</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/regJournals.xml</parameter>
+					</filter>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/regJournals.xml</parameter>
+					</viewer>
+				</case>				
+				<case value="jbr.gost.ack.parentDoc">
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="template">jbr.gost.ack</parameter>
+		                <parameter name="config">attrEditors/name_view.xml</parameter>
+		                <parameter name="showEmpty">false</parameter>
+		            </viewer>
+				</case>
+				<case value="jbr.person.actualCertificate">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/actualCertificate.xml</parameter>
+						<parameter name="inline">false</parameter>
+					</editor>
+				</case>
+				<case value="jbr.RefCity.parentRegion">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/refCity_parentRegion.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/refCity_parentRegion.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.RefDistrict.parentRegion">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/refDistrict_parentRegion.xml</parameter>
+					</editor>
+					<viewer class="CardLinkAttributeConfigurableViewer">
+						<parameter name="config">attrEditors/refDistrict_parentRegion.xml</parameter>
+					</viewer>
+				</case>
+			</select>
+		</case>
+		<case value="B">
+			<viewer class="BackLinkAttributeEditor">
+				<parameter name="create">false</parameter>
+				<parameter name="remove">false</parameter>
+				<parameter name="config">attrEditors/defaultBackLink.xml</parameter>
+			</viewer>
+			<select property="id">
+				<case value="jbr.link.on.this.doc">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/doclinks_references.xml</parameter>
+						<parameter name="configGraph">graph/graphBackLinkDoc.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.link.with.report">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/doclinks_references.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.next.appeals">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/next_og.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.exam.parent">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/doc_osn.xml</parameter>
+					</viewer>
+				</case>
+                <case value="jbr.info.parent">
+	               	<viewer class="BackLinkAttributeEditor">
+		                <parameter name="create">false</parameter>
+		                <parameter name="remove">false</parameter>
+		                <parameter name="config">attrEditors/doc_osn.xml</parameter> 	
+	               	</viewer>
+                </case>
+				<case value="jbr.incoming.incomeNotification">
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="actionsConfig">attrActions/incomeNotification.xml</parameter>
+						<parameter name="config">attrEditors/incomeNotifications.xml</parameter>
+					</editor>
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="actionsConfig">attrActions/incomeNotification.xml</parameter>
+						<parameter name="config">attrEditors/incomeNotifications.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.request.to.change.consid">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="actionsConfig">attrActions/requestToChange.xml</parameter>
+						<parameter name="config">attrEditors/requestToChange.xml</parameter>
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="actionsConfig">attrActions/requestToChange.xml</parameter>
+						<parameter name="config">attrEditors/requestToChange.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.incoming.notification">
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/notifications.xml</parameter>
+					</editor>
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/notifications.xml</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+				</case>
+				<case value="ADMIN_34575">
+					<select property="currentMode" scope="session">
+						<case value="MI_CARD_VIEW_MODE">
+							<viewer class="BackLinkAttributeEditor">
+								<parameter name="template">445</parameter>
+								<parameter name="remove">false</parameter>
+							</viewer>
+						</case>
+						<case value="MI_CARD_EDIT_MODE">
+							<viewer class="BackLinkAttributeEditor">
+								<parameter name="template">445</parameter>
+							</viewer>
+						</case>
+					</select>
+				</case>
+				<!--case value="jbr.rimp.bydoc">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="showTitle">false</parameter>
+						<parameter name="showEmpty">false</parameter>
+						<parameter name="config">attrEditors/bydoc.xml</parameter>
+					</viewer>
+				</case-->
+				<case value="jbr.visa.parent">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/docb_bydoc.xml</parameter>
+					</viewer>
+				</case>
+				<!--case value="jbr.report.int.parent">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/report_int_parent.xml</parameter>
+					</viewer>
+				</case-->
+				<case value="jbr.sign.parent">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/sign_parent.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.organization.OrganizationPerson">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="template">jbr.externalPerson</parameter>
+						<parameter name="create">true</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/OrganizationPersBacklink.xml</parameter>
+						<!--parameter name="showTitle">true</parameter-->
+						<!--parameter name="showEmpty">true</parameter-->
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="template">jbr.externalPerson</parameter>
+						<parameter name="create">true</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="showTitle">true</parameter>
+						<parameter name="showEmpty">true</parameter>
+						<parameter name="config">attrEditors/OrganizationPersBacklink.xml</parameter>
+					</editor>
+				</case>
+				<case value="ImportedDocument.document">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">true</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="templatesForSelect">jbr.incoming,jbr.citizenrequest</parameter>
+						<parameter name="copyToNewCard_1">link:jbr.files->link:jbr.files</parameter>
+						<parameter name="copyToNewCard_2">list:jbr.dmsi.deliveryType->list:jbr.deliveryItem.method</parameter>
+						<parameter name="copyToNewCard_3">link:jbr.dmsi.sender->link:jbr.incoming.sender</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.externalResolution.parentDocument">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/doc_osn.xml</parameter>
+					</viewer>
+				</case>		
+				<case value="jbr.question.thematic">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/question-thematic.xml</parameter>
+					</viewer>
+				</case>		
+				<case value="jbr.resolutions">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/linkedMassResolutionsHierarchy.xml</parameter>
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/incomingResolutionsHierarchy.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.replication.replDocLink">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/replicationCard.xml</parameter>
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/replicationCard.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.linkedResolutions">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/linkedResolutionsHierarchy.xml</parameter>
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/linkedResolutionsHierarchyReadOnly.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.reports">
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/reports.xml</parameter>
+					</editor>
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/reports.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.resolution.ExtReport">
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/reports.xml</parameter>
+					</editor>
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/reports.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.visa.res">
+					<editor class="HierarchicalCardLinkAttributeEditor">
+						<parameter name="config">hierarchy/linkedVisaOfResolutHierarchy.xml</parameter>
+					</editor>
+					<viewer class="HierarchicalCardLinkAttributeViewer">
+						<parameter name="config">hierarchy/linkedVisaOfResolutHierarchy.xml</parameter>
+					</viewer>
+				    <filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+					</filter>
+				</case>
+				<case value="jbr.organization.subordinateOrganizations">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/sub-organizations.xml</parameter>
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/sub-organizations.xml</parameter>
+					</editor>
+				</case>
+				<case value="jbr.replication.replicState">
+					<viewer class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/childReplicCards.xml</parameter>
+					</viewer>
+					<editor class="BackLinkAttributeEditor">
+						<parameter name="create">false</parameter>
+						<parameter name="remove">false</parameter>
+						<parameter name="config">attrEditors/childReplicCards.xml</parameter>
+					</editor>
+				</case>
+			</select>
+		</case>
+		<case value="M">
+			<editor class="MaterialAttributeEditor"/>
+			<viewer class="MaterialAttributeViewer">
+				<!--parameter name="remove">true</parameter-->
+			</viewer>
+			<select property="id">
+				<case value="MATERIAL">
+					<editor class="MaterialAttributeEditor">
+						<parameter name="linkEnabled">false</parameter>
+					</editor>				
+				</case>
+			</select>
+		</case>
+		<case value="E">
+			<viewer class="TypedCardLinkAttributeViewer">
+				<parameter name="fullRendering">true</parameter>
+			</viewer>
+			<editor class="TypedCardLinkAttributeViewer">
+				<parameter name="fullRendering">true</parameter>
+			</editor>
+			<select property="id">
+				<case value="jbr.exam.template.person">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="typeCaption">Порядок рассмотрения</parameter>
+					</editor>
+				</case>
+				<case value="jbr.sign.template.person">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/internal-person.xml</parameter>
+						<parameter name="typeCaption">Порядок подписания</parameter>
+					</editor>
+				</case>
+				<case value="jbr.visa.template.person">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/personPickerWithLists.xml</parameter>
+						<parameter name="typeCaption">Порядок согласования</parameter>
+					</editor>
+				</case>
+				<case value="jbr.attachRes">
+					<viewer class="TypedCardLinkAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="showTitle">false</parameter>
+						<parameter name="showEmpty">false</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.report.result">
+					<select property="activeCard.template" scope="session">
+						<case value="jbr.group.report.int">
+							<editor class="DocumentPickerAttributeEditor">
+								<parameter name="config">picker/reportResultRelatDocs.xml</parameter>
+								<parameter name="visibleInputElements">Year, DocType, filterLine, filterId, filterRegNum, filterProjectNumber</parameter>
+								<parameter name="yearStart">2008</parameter>
+								<parameter name="yearEnd">+1</parameter><!-- current year +1...supports format +N/-N -->
+							</editor>
+						</case>
+					</select>
+					<editor class="DocumentPickerAttributeEditor">
+						<parameter name="config">picker/reportResultRelatDocs.xml</parameter>
+						<parameter name="visibleInputElements">Scope, Year, DocType, filterLine, filterId, filterRegNum, filterProjectNumber</parameter>
+						<parameter name="yearStart">2008</parameter>
+						<parameter name="yearEnd">+1</parameter><!-- current year +1...supports format +N/-N -->
+					</editor>
+					<viewer class="TypedCardLinkAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="showTitle">true</parameter>
+						<parameter name="config">picker/report-result.xml</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.relatdocs.request">
+					<editor class="ResponseTransmittedAttributeEditor">
+						<parameter name="config">picker/relatDocsRequest.xml</parameter>
+					</editor>
+				</case>
+
+				<case value="jbr.visa.ext.template.externalPerson">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+						<parameter name="typeCaption">Порядок согласования</parameter>
+					</editor>
+					<filter class="CardLinkPickerSearchEditor">
+						<parameter name="config">picker/external-person-no-hierarchy.xml</parameter>
+					</filter>
+				</case>
+			</select>
+			<!-- <viewer class="JspAttributeViewer">
+				<parameter name="jsp">/WEB-INF/jsp/html/attr/TypedLinksView.jsp</parameter>
+				<parameter name="fullRendering">true</parameter>
+			</viewer>
+			<editor class="JspAttributeViewer">
+				<! - -? ??? ??? ?????????? ????????? ??? ????? ???? ??????????????,
+				 ??????? ???? ????? ?????? viewer ?????????????? - - >
+				<parameter name="jsp">/WEB-INF/jsp/html/attr/TypedLinksView.jsp</parameter>
+				<parameter name="fullRendering">true</parameter>
+			</editor> -->
+		</case>
+		<case value="F">
+			<viewer class="DatedTypedCardLinkAttributeViewer">
+				<parameter name="fullRendering">true</parameter>
+			</viewer>
+			<editor class="DatedTypedCardLinkAttributeViewer">
+				<parameter name="fullRendering">true</parameter>
+			</editor>
+			<select property="id">
+				<case value="jbr.og.addressee.list">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/ogAddresseeList.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</editor>
+					<viewer class="DatedTypedCardLinkAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="config">attrEditors/personPickerAddresseeListView.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.request.new">
+					<editor class="CardLinkPickerAttributeEditor">
+						<extraJavascript class="extra.CardLinkPickerDisabler">
+							<parameter name="relatedAttrId">jbr.request.type</parameter>
+							<parameter name="relatedAttrClass">ListAttribute</parameter>
+							<parameter name="toEnableValues">1125,1126,1127</parameter>
+						</extraJavascript>
+						<parameter name="config">picker/personPickerAddresseeList.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</editor>
+					<viewer class="DatedTypedCardLinkAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="config">attrEditors/newConsiderators.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</viewer>
+				</case>
+				<case value="jbr.request.prev">
+					<editor class="CardLinkPickerAttributeEditor">
+						<parameter name="config">picker/personPickerAddresseeList.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</editor>
+					<viewer class="DatedTypedCardLinkAttributeViewer">
+						<parameter name="fullRendering">true</parameter>
+						<parameter name="config">attrEditors/previousConsiderators.xml</parameter>
+						<parameter name="typeCaption">Ответственный</parameter>
+						<parameter name="dateCaption">Срок</parameter>
+					</viewer>
+				</case>
+			</select>
+		</case>
+		<case value="Y">
+			<editor class="CardHistoryAttributeViewer"/>
+			<viewer class="CardHistoryAttributeViewer"/>
+			<select property="id">
+				<case value="JBR_VISA_HISTORY">
+					<editor class="VisaHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.visa.set</parameter>
+						<parameter name="attributes">user:jbr.visa.person -> user, number:jbr.visa.order -> order</parameter>
+						<parameter name="records">html:jbr.visa.decision -> round, date,  fact-user, plan-user, decision, action, order</parameter>
+						<parameter name="columns">round: Номер итерации, order: Порядковый номер согласования, action: Действие, fact-user: Фактический согласующий, plan-user: Согласующий, date: Дата, decision: Решение</parameter>
+						<parameter name="types">date: date</parameter>
+						<parameter name="sort">date</parameter>
+						<parameter name="orderSort">desc</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</editor>
+					<viewer class="VisaHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.visa.set</parameter>
+						<parameter name="attributes">user:jbr.visa.person -> user, number:jbr.visa.order -> order</parameter>
+						<parameter name="records">html:jbr.visa.decision -> round, date,  fact-user, plan-user, decision, action, order</parameter>
+						<parameter name="columns">round: Номер итерации, order: Порядковый номер согласования, action: Действие, fact-user: Фактический согласующий, plan-user: Согласующий, date: Дата, decision: Решение</parameter>
+						<parameter name="types">date: date</parameter>
+						<parameter name="sort">date</parameter>
+						<parameter name="orderSort">desc</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="JBR_SIGN_HISTORY">
+					<editor class="CardHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.sign.set</parameter>
+						<parameter name="attributes">user:jbr.sign.person -> user, number:jbr.sign.order -> order</parameter>
+						<parameter name="records">html:jbr.sign.comment -> round, date, fact-user, plan-user, decision, action, order</parameter>
+						<parameter name="columns">round: Номер итерации, order: Порядковый номер подписания, fact-user: Фактический подписант, plan-user: Подписант, date: Дата, decision: Решение, action: Действие</parameter>
+						<parameter name="types">date: date</parameter>
+						<parameter name="sort">date</parameter>
+						<parameter name="orderSort">desc</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</editor>
+					<viewer class="CardHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.sign.set</parameter>
+						<parameter name="attributes">user:jbr.sign.person -> user, number:jbr.sign.order -> order</parameter>
+						<parameter name="records">html:jbr.sign.comment -> round, date, fact-user, plan-user, decision, action, order</parameter>
+						<parameter name="columns">round: Номер итерации, order: Порядковый номер подписания, fact-user: Фактический подписант, plan-user: Подписант, date: Дата, decision: Решение, action: Действие</parameter>
+						<parameter name="types">date: date</parameter>
+						<parameter name="sort">date</parameter>
+						<parameter name="orderSort">desc</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="JBR_OG_CONS_HISTORY">
+					<editor class="RequestToChangeHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.request.to.change.consid</parameter>
+						<parameter name="records">html:jbr.reqres.hist -> req-type, created, old-rassm, new-rassm, old-date, new-date, old-resp, new-resp, req-date</parameter>
+						<parameter name="columns">req-type: Тип запроса, created: Дата создания, old-rassm: Рассматривающий, new-rassm: Новый рассматривающий, old-date: Срок (до), new-date: Срок (после), old-resp: Ответственный (до), new-resp: Ответственный (после), req-date: Дата обработки</parameter>
+						<parameter name="types">created: date, old-date: date, new-date: date, req-date: date</parameter>
+						<parameter name="sort">created</parameter>
+						<parameter name="orderSort">asc</parameter>
+						<parameter name="showTime">false</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</editor>
+					<viewer class="RequestToChangeHistoryRecordAttributeViewer">
+						<parameter name="link">jbr.request.to.change.consid</parameter>
+						<parameter name="records">html:jbr.reqres.hist -> req-type, created, old-rassm, new-rassm, old-date, new-date, old-resp, new-resp, req-date</parameter>
+						<parameter name="columns">req-type: Тип запроса, created: Дата создания, old-rassm: Рассматривающий, new-rassm: Новый рассматривающий, old-date: Срок (до), new-date: Срок (после), old-resp: Ответственный (до), new-resp: Ответственный (после), req-date: Дата обработки</parameter>
+						<parameter name="types">created: date, old-date: date, new-date: date, req-date: date</parameter>
+						<parameter name="sort">created</parameter>
+						<parameter name="orderSort">asc</parameter>
+						<parameter name="showTime">false</parameter>
+						<parameter name="fullRendering">true</parameter>
+					</viewer>
+				</case>
+				<case value="JBR_DS_HISTORY">
+					<editor class="CardDSHistoryAttributeViewer"/>
+					<viewer class="CardDSHistoryAttributeViewer"/>
+				</case>
+				<case value="JBR_HIST_ERROR">
+					<editor class="CardEventHistoryAttributeViewer">
+						<parameter name="filterEvent">WARNING;ERROR</parameter>
+					</editor>
+					<viewer class="CardEventHistoryAttributeViewer">
+						<parameter name="filterEvent">WARNING;ERROR</parameter>
+					</viewer>
+				</case>
+			</select>
+		</case>
+		<case value="Z">
+			<editor class="PortalUserLoginAttributeEditor"/>
+			<viewer class="PortalUserLoginAttributeViewer">
+				<parameter name="actionsConfig">attrActions/password_change.xml</parameter>
+			</viewer>
+		</case>
+		<case value="V">
+			<editor class="UserRolesAndGroupsAttributeEditor"/>
+			<viewer class="UserRolesAndGroupsAttributeViewer"/>
+		</case>
+	</select>
+</attributes>

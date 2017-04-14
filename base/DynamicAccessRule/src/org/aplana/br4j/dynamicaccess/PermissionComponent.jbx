@@ -1,0 +1,28 @@
+[PropertyInfo]
+btAddAction,javax.swing.JButton,false,false, , ,false,<default>
+btAddXPermissions,javax.swing.JButton,false,false, , ,false,<default>
+btDeleteXPermissions,javax.swing.JButton,false,false, , ,false,<default>
+btRemoveAction,javax.swing.JButton,false,false, , ,false,<default>
+cmbPermissions,javax.swing.JComboBox,false,false, , ,false,<default>
+JScrollPane1,javax.swing.JScrollPane,false,false, , ,false,<default>
+JScrollPane2,javax.swing.JScrollPane,false,false, , ,false,<default>
+JScrollPane3,javax.swing.JScrollPane,false,false, , ,false,<default>
+JScrollPane4,javax.swing.JScrollPane,false,false, , ,false,<default>
+label1,javax.swing.JLabel,false,false, , ,false,<default>
+listAllAttribute,javax.swing.JList,false,false, , ,false,<default>
+listAllWfMoves,javax.swing.JList,false,false, , ,false,<default>
+listAttribute,javax.swing.JList,false,false, , ,false,<default>
+listWfMoves,javax.swing.JList,false,false, , ,false,<default>
+m_attributepermissiontype,org.aplana.br4j.dynamicaccess.xmldef.AttributePermissionType,false,false, , ,false,<default>
+m_attributes,org.aplana.br4j.dynamicaccess.xmldef.Attributes,false,false, , ,false,<default>
+m_permission,org.aplana.br4j.dynamicaccess.xmldef.Permission,false,false, , ,false,<default>
+m_rules,org.aplana.br4j.dynamicaccess.xmldef.Rules,false,false, , ,false,<default>
+m_template,org.aplana.br4j.dynamicaccess.xmldef.Template,false,false, , ,false,<default>
+permission,org.aplana.br4j.dynamicaccess.xmldef.Permission,false,false, , ,true,<default>
+template,org.aplana.br4j.dynamicaccess.xmldef.Template,false,false, , ,true,<default>
+XYLayout1,com.borland.jbcl.layout.XYLayout,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

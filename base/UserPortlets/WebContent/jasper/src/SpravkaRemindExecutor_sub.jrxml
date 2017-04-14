@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="controlOfResolutionExecutionReport " pageWidth="143" pageHeight="28" orientation="Landscape" columnWidth="143" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="card_id" class="java.lang.Integer"/>
+	<parameter name="responsibleExecutor" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[
+        SELECT * FROM
+        (
+            SELECT distinct 1 as ex,
+                executors_val.full_name as executor,
+                position.string_value as position,
+                '(отв)' as oi
+            From card c
+                --исполнитель
+                LEFT JOIN attribute_value executor on c.card_id = executor.card_id and (executor.attribute_code in ('JBR_INFD_EXEC_LINK'))
+                LEFT JOIN person executors_val on executor.number_value = executors_val.person_id
+                --должность исполнителя
+                LEFT JOIN attribute_value position on executors_val.card_id = position.card_id and  position.attribute_code = 'JBR_PERS_POSITION'
+            WHERE
+                c.card_id=$P{card_id} and (executors_val.full_name is not null and position.string_value is not null)
+            UNION
+            SELECT distinct 2 as ex,
+                executors_val.full_name as executor,
+                position.string_value as position,
+                '' as oi
+            From card c
+                --исполнитель
+                LEFT JOIN attribute_value executor on c.card_id = executor.card_id and (executor.attribute_code in ('ADMIN_255974') and ($P{responsibleExecutor} is null))
+                LEFT JOIN person executors_val on executor.number_value = executors_val.person_id
+                --должность исполнителя
+                LEFT JOIN attribute_value position on executors_val.card_id = position.card_id and  position.attribute_code = 'JBR_PERS_POSITION'
+            WHERE
+                c.card_id=$P{card_id} and (executors_val.full_name is not null and position.string_value is not null)
+        ) as q ORDER BY q.ex asc ]]>
+	</queryString>
+    <field name="ex" class="java.lang.String"/>
+	<field name="executor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="position" class="java.lang.String"/>
+	<field name="oi" class="java.lang.String"/>
+	<variable name="number" class="java.lang.Integer" incrementType="Column" calculation="Count"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="28" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="143" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{executor}!=null && !$F{executor}.equals("null")?$F{executor}:"")
++ ($F{position} != null && !$F{position}.equals("null") ? ", "+$F{position}: "")
++ ($F{oi}!=null && !$F{oi}.equals("null")?$F{oi}:"")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<datasources>
+        <local-tx-datasource>
+            <jndi-name>jdbc/DBMIDS</jndi-name>
+            <connection-url>jdbc:postgresql://172.16.125.102:5432/br4j</connection-url>
+            <driver-class>org.postgresql.Driver</driver-class>
+            <user-name>dbmi</user-name>
+            <password>password</password>
+            <min-pool-size>1</min-pool-size>
+            <max-pool-size>400</max-pool-size>
+            <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+            <metadata>
+                <type-mapping>PostgreSQL 9.3</type-mapping>
+            </metadata>
+        </local-tx-datasource>
+                                                                                                                                                                                                        
+        <local-tx-datasource>
+            <jndi-name>jdbc/DBMIDS_EVENT</jndi-name>
+            <connection-url>jdbc:postgresql://172.16.125.102:5432/br4j</connection-url>
+            <user-name>dbmi</user-name>
+            <password>password</password>
+            <driver-class>org.postgresql.Driver</driver-class>
+            <min-pool-size>1</min-pool-size>
+            <max-pool-size>400</max-pool-size>
+            <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+            <metadata>
+                <type-mapping>PostgreSQL 9.3</type-mapping>
+            </metadata>
+	</local-tx-datasource>
+        
+        <local-tx-datasource>
+            <jndi-name>PortalDS</jndi-name>
+            <connection-url>jdbc:postgresql://172.16.125.102:5432/br4j</connection-url>
+            <driver-class>org.postgresql.Driver</driver-class>
+            <user-name>portal</user-name>
+            <password>password</password>
+            <min-pool-size>1</min-pool-size>
+            <max-pool-size>400</max-pool-size>
+            <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+            <metadata>
+                <type-mapping>PostgreSQL 9.3</type-mapping>
+            </metadata>
+        </local-tx-datasource>
+</datasources>

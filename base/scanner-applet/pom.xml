@@ -1,0 +1,182 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>com.aplana</groupId>
+  <artifactId>scanner-applet</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Scanner Applet</name>
+  
+  <properties>
+  	<applet.name>scanner-applet</applet.name>
+  	<applet.output>applet</applet.output>
+  	<jarsigner.alias>appletcert</jarsigner.alias>
+  	<jarsigner.storepass>password</jarsigner.storepass>
+  	
+  	<commons-httpclient.version>3.1</commons-httpclient.version>
+  	<commons-logging.version>1.0.4</commons-logging.version>
+  	<commons-io.version>1.4</commons-io.version>
+  	<swing-worker.version>1.1</swing-worker.version>
+  	<itext.version>2.1.7</itext.version>
+  </properties>
+  
+  <dependencies>
+  	<!-- compile dependencies -->
+  	<dependency>
+  		<groupId>commons-httpclient</groupId>
+  		<artifactId>commons-httpclient</artifactId>
+  		<version>${commons-httpclient.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-logging</groupId>
+  		<artifactId>commons-logging</artifactId>
+  		<version>${commons-logging.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>${commons-io.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.jdesktop</groupId>
+  		<artifactId>swing-worker</artifactId>
+  		<version>${swing-worker.version}</version>
+  	</dependency>
+  	<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>${itext.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bctsp-jdk14</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+  	<dependency>
+  		<groupId>com.sun</groupId>
+  		<artifactId>plugin</artifactId>
+  		<version>1.5.0</version>
+  		<scope>system</scope>
+  		<systemPath>${java.home}/../jre/lib/plugin.jar</systemPath>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.sun.media</groupId>
+  		<artifactId>jai_imageio</artifactId>
+  		<version>1.1</version>
+  		<scope>system</scope>
+  		<systemPath>${basedir}/lib/jai_imageio.jar</systemPath>
+  	</dependency>
+  </dependencies>
+  
+  <build>
+  	<plugins>
+  		<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+  		<plugin>
+  			<artifactId>maven-antrun-plugin</artifactId>
+  			<executions>
+  				<execution>
+  					<phase>clean</phase>
+  					<goals>
+  						<goal>run</goal>
+  					</goals>
+  					<configuration>
+  						<tasks>
+  							<delete>
+  								<fileset dir="../${applet.output}"/>
+  							</delete>
+  						</tasks>
+  					</configuration>
+  				</execution>
+  			</executions>
+  		</plugin>
+  		<plugin>
+  			<artifactId>maven-jar-plugin</artifactId>
+  			<configuration>
+  				<archive>
+	  				<manifestEntries>
+	  					<Extension-List>jai_imageio</Extension-List>
+	  					<jai_imageio-Extension-Name>com.sun.media.imageio</jai_imageio-Extension-Name>
+	  					<jai_imageio-Specification-Version>1.1</jai_imageio-Specification-Version>
+	  					<jai_imageio-Implementation-Version>1.1</jai_imageio-Implementation-Version>
+	  					<jai_imageio-Implementation-Vendor-Id>com.sun</jai_imageio-Implementation-Vendor-Id>
+	  					<jai_imageio-Implementation-URL>/applet/jai_imageio-windows-i586.jar</jai_imageio-Implementation-URL>
+	  				</manifestEntries>
+  				</archive>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<artifactId>maven-shade-plugin</artifactId>
+  			<version>1.0.1</version>
+  			<executions>
+  				<execution>
+  					<phase>package</phase>
+  					<goals>
+  						<goal>shade</goal>
+  					</goals>
+  				</execution>
+  			</executions>
+  			<configuration>
+  				<finalName>${applet.name}</finalName>
+  				<outputDirectory>../${applet.output}</outputDirectory>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<artifactId>maven-jarsigner-plugin</artifactId>
+  			<version>1.1</version>
+  			<executions>
+  				<execution>
+  					<phase>package</phase>
+  					<goals>
+  						<goal>sign</goal>
+  					</goals>
+  				</execution>
+  			</executions>
+  			<configuration>
+  				<archive>../${applet.output}/${applet.name}.jar</archive>
+  				<alias>${jarsigner.alias}</alias>
+  				<storepass>${jarsigner.storepass}</storepass>
+  			</configuration>
+  		</plugin>
+  	</plugins>
+  </build>
+</project>

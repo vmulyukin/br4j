@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="quest_theme_arch_sub1" pageWidth="278" pageHeight="842" columnWidth="278" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="DejaVu Sans" fontSize="10" isBold="true" pdfFontName="DejaVuSans-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="table_header" style="dejavu_bold" backcolor="#CCFFFF">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="text_bold" style="dejavu_bold"/>
+	<style name="table" style="dejavu">
+		<box>
+            <topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+            <leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+            <bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+            <rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[Select
+av_qcategories_name.string_value as que,
+null::character varying(4000) as subque
+from card c
+join -- Вопросы
+	attribute_value av_question on (av_question.card_id = c.card_id and av_question.attribute_code = 'ADMIN_277251')
+join card av_c on av_c.card_id = av_question.number_value
+left outer join -- вопрос
+    attribute_value av_qcategories_name on (av_qcategories_name.card_id = av_question.number_value and av_qcategories_name.attribute_code = 'NAME')
+where c.card_id=$P{card_id} and av_c.template_id = 884
+
+UNION
+
+Select
+av_qcategories_name.string_value as que,
+av_sque_name.string_value as subque
+from card c
+join -- Подвопрос
+	attribute_value av_question on (av_question.card_id = c.card_id and av_question.attribute_code = 'ADMIN_277251')
+join card av_c on av_c.card_id = av_question.number_value
+left outer join -- вопрос
+    attribute_value av_sque_name on (av_sque_name.card_id = av_question.number_value and av_sque_name.attribute_code = 'NAME')
+join -- Вопрос
+	attribute_value av_sque on (av_sque.card_id = av_question.number_value and av_sque.attribute_code = 'JBR_QUESTION')
+left outer join -- вопрос
+    attribute_value av_qcategories_name on (av_qcategories_name.card_id = av_sque.number_value and av_qcategories_name.attribute_code = 'NAME')
+where c.card_id=$P{card_id} and av_c.template_id = 885]]>
+	</queryString>
+	<field name="subque" class="java.lang.String"/>
+	<field name="que" class="java.lang.String"/>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="278" height="30" isPrintWhenDetailOverflows="true"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="139" height="30" isPrintWhenDetailOverflows="true"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{que} != null ? $F{que} : ""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" x="139" y="0" width="139" height="30" isPrintWhenDetailOverflows="true"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{subque} != null ? $F{subque} : ""]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

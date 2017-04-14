@@ -1,0 +1,41 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<!-- Политики исполнения -->
+	<bean id="standardPolicy" class="com.aplana.dbmi.service.impl.async.ExecPoliciesImpl$StandartRetryPolicy" scope="prototype">
+		<property name="retryCount" value="3"/>
+		<property name="waitingTime" value="20000"/>
+	</bean>
+	
+	<bean id="IterationPolicy" class="com.aplana.dbmi.service.impl.async.ExecPoliciesImpl$IterationRetryPolicy" scope="prototype">
+		<property name="retryCount" value="60"/>
+		<property name="waitingTime" value="5000"/>
+		<property name="iterationFactor" value="12"/>
+		<property name="iterationCount" value="2"/>
+	</bean>
+	
+	<bean id="GroupResolutionIterationPolicy" class="com.aplana.dbmi.service.impl.async.ExecPoliciesImpl$IterationRetryPolicy" scope="prototype">
+		<property name="retryCount" value="60"/>
+		<property name="waitingTime" value="5000"/>
+		<property name="iterationFactor" value="4"/>
+		<property name="iterationCount" value="3"/>
+	</bean>
+</beans>

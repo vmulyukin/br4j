@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="arm_cancelled_resolutionsSQL.xml">
+	<name lang="ru">Отмененные поручения</name>
+	<name lang="en">Cancelled resolutions</name>
+		
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column>
+    <column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>
+	<column id="_PRELIMINARY_TERM" excelIgnore="true" width="5">
+		<default_icon image="preliminaryTerm" tooltipRu="Предварительный срок" tooltipEn="Preliminary term"/>
+		<empty_icon image="noImage" tooltipRu="Нет предварительного срока" tooltipEn="No preliminary term"/>		
+	</column>
+
+	<!-- Дата отмены -->
+	<column id="JBR_CANCEL_DATE" width="40"  sort="desc" link="true"/>
+	<!-- Причина отклонения -->
+	<column id="JBR_RIMP_COMMENT" width="50" textLength="160" columnTitleRu="Причина отклонения" columnTitleEn="Cancel reason"/>	
+	<!-- Срок -->
+	<column id="JBR_TCON_TERM:JBR_IMPL_DEADLINE" width="40" columnTitleRu="Срок" columnTitleEn="Date"/>	
+	<!-- Регистрационный номер -->
+	<column id="JBR_MAINDOC:JBR_DOCB_BYDOC" labelAttrId="JBR_REGD_REGNUM"  width="40" sortAttrId="jbr.main.doc->regnumberdigital;jbr.report.int.document->regnumberdigital"/>	
+	<!-- Текст резолюции  -->
+	<column id="JBR_GIPA_RESOLUT" width="50" link="true" columnTitleRu="Текст резолюции" columnTitleEn="Resolution text"/>	
+	<!-- Исполнитель -->
+	<column id="JBR_INFD_EXEC_LINK" width="50" textLength="30" isParentName="true"/>
+	<!-- Подписант -->
+	<column id="JBR_INFD_SGNEX_LINK" width="50" textLength="30" columnTitleRu="Подписант" columnTitleEn="Signer"/>
+	<!-- Дата подписания -->
+	<column id="JBR_INFD_DTSGN_LINK" width="40" textLength="30"/>
+</search>

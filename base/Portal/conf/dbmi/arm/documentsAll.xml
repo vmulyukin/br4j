@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<search byAttr="false" specialSQL="cardsAllSQLnew.xml">
+	<!-- 
+	<name lang="ru">Неисполненные</name>
+	<name lang="en">Unresolved</name>
+	   -->
+	<!-- name lang="ru">Поступившие</name>
+	<name lang="en">Incomings</name-->
+	 
+	<!-- column	id="JBR_TCON_ONCONT:JBR_IMPL_ONCONT">
+		<icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+		<icon value="1449" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1450" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column-->
+	<column id="ADMIN_702311" labelAttrId="JBR_TCON_ONCONT">
+		<icon value="1449" image="resolutionOnControl" tooltipRu="Поручение на контроле" tooltipEn="Resolution on control"/>
+		<icon value="1450" image="resolutionNotOnControl" tooltipRu="Поручение не на контроле" tooltipEn="Resolution not control"/>
+	</column>
+	<column id="JBR_HOWFAST">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column>
+	<column id="_STATE">
+		<icon value="6833780" image="onEnclosed" tooltipRu="На дополнительном согласовании" tooltipEn="On Enclosed"/>
+		<default_icon image="noImage" tooltipRu="Не на дополнительном согласовании" tooltipEn="Not On Enclosed"/>
+	</column>
+	<column id="ADMIN_6849958"  excelIgnore="true">
+		<default_icon image="innerEnded" tooltipRu="Дополнительное согласование завершено" tooltipEn="Inner negotiation is ended"/>
+		<empty_icon image="noImage" tooltipRu="Дополнительное согласование не завершено" tooltipEn="Inner negotiation is not ended"/>		
+	</column>
+	<column id="_PRELIMINARY_TERM" excelIgnore="true">
+		<default_icon image="preliminaryTerm" tooltipRu="Предварительный срок" tooltipEn="Preliminary term"/>
+		<empty_icon image="noImage" tooltipRu="Нет предварительного срока" tooltipEn="No preliminary term"/>		
+	</column>
+	<column id="_ALL_DOCLINKS" >
+        <default_icon image="doclinks_sand" tooltipRu="Есть вложения" tooltipEn="There is attachments"/>
+        <empty_icon image="notDoclinks" tooltipRu="Нет вложений" tooltipEn="There is no attachments"/>
+        <action id="showAttachments"/>
+    </column>    
+    
+	<column id="JBR_INCOMEDATE" width="40" sort="asc" link="true"/>
+	<!-- Регистрационный номер -->
+	<column id="JBR_RASSM_PARENT_DOC:JBR_INFORM_DOC:ADMIN_702311:ADMIN_702604:JBR_ADO_DOCBASE"  labelAttrId="JBR_REGD_REGNUM" isParentName="false" width="25"   
+		sortAttrId="jbr.exam.parent->regnumberdigital;jbr.info.parent->regnumberdigital;jbr.report.int.parent->regnumberdigital;jbr.report.int.document->regnumberdigital;jbr.ado.docbase->regnumberdigital"/>
+	<column id="NAME" width="120" columnTitleRu="Название" link="true"/>
+	<column id="JBR_TCON_TERM:JBR_RASSM_TODATE" width="40"  columnTitleRu="Срок"/>
+	<column id="JBR_VISA_PARENT_DOC:JBR_RASSM_PARENT_DOC:JBR_SIGN_PARENT:ADMIN_702604:ADMIN_726877:ADMIN_702602:JBR_INFORM_DOC" labelAttrId="jbr.incoming.sender->NAME" width="50"/>
+	<column id="_STATE" width="50" />		
+	<!-- column id="JBR_RASSM_PARENT_DOC:JBR_INFORM_DOC:ADMIN_702311:ADMIN_702604:JBR_ADO_DOCBASE"  labelAttrId="JBR_REGD_REGNUM" isParentName="false" width="25"  sort="asc" 
+		sortAttrId="jbr.exam.parent->regnumberdigital;jbr.info.parent->regnumberdigital;jbr.report.int.parent->regnumberdigital;jbr.report.int.document->regnumberdigital;jbr.ado.docbase->regnumberdigital"/>
+	<column id="NAME" width="140" columnTitleRu="Название" />	
+	<column id="_UNITERM" width="30"/>
+	<column id="JBR_TCON_TERM_PRELIM" labelAttrId="JBR_TCON_TERM_PRELIM" width="25" exportOnly="true"/>
+	<column id="_STATE" width="50" />
+	<column id="JBR_VISA_PARENT_DOC:JBR_RASSM_PARENT_DOC:JBR_SIGN_PARENT:ADMIN_702604:ADMIN_726877:ADMIN_702602:JBR_INFORM_DOC" 
+				labelAttrId="jbr.incoming.sender->NAME" width="50"/-->	
+	<!-- Тематика 
+	<column id="JBR_INFD_SUBJECTS" width="100" />-->
+	<!-- Краткое описание
+	<column id="JBR_INFD_SHORTDESC" width="100" />
+	  -->
+	<!-- Автор 
+	<column id="AUTHOR" width="100" />-->		
+</search>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<settings>
+	<variants choiceAttr="jbr.deliveryItem.method">
+		<variant searchAttr="NAME" searchAttrType="text" choiceValue="modeDeliveryMEDO">
+			<conditions>
+				<condition attrId="_STATE" values="103,206,104,48909"/>
+				<condition attrId="_TEMPLATE" values="224"/>
+			</conditions>
+			<hierarchyDialog>
+				<hierarchy parentMergeMode="cardSet" terminalNodesOnly="true">
+					<cardSet stored="true" alias="resolutions" labelAttr="jbr.resolution.FioSign" labelAttrType="user" showOrg="true" linkedLabelAttr="NAME" labelFormat="authorFormat" labelAsLink="true" collapsed="false"
+							sortAttr="jbr.resolution.FioSign" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.rimp.byrimp" isParentAttrLinkReversed="false">
+						<info collapsed="false">
+							<link targetSet="reports" linkAttr="jbr.reports" isReversed="false"/>
+							<link targetSet="externalReports" linkAttr="jbr.resolution.ExtReport" isReversed="false"/>
+							<link targetSet="adnotam" linkAttr="jbr.resolution.FyiReport" isReversed="false"/>
+						</info>
+						<children>
+							<link targetSet="resolutions" linkAttr="jbr.linkedResolutions"	isReversed="false"/>
+						</children>
+						<condition>
+							<status>draft</status>
+							<status>execution</status>
+							<status>agreement</status>
+							<status>done</status>
+							<status>ratified</status>
+							<status>poruchcancelled</status>
+							<status>closedviaparent</status>
+							<status>jbr.task.taskAgreed</status>
+						</condition>
+					</cardSet>
+					<cardSet alias="reports" labelAttr="jbr.report.int.executor" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="executors" columns="report"
+						sortAttr="jbr.report.int.executor" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.report.int.parent" isParentAttrLinkReversed="false"/>
+					<cardSet alias="externalReports" labelAttr="jbr.report.ext.executor" labelAttrType="link" linkedLabelAttr="NAME" labelAsLink="true" collapsed="false" group="external" columns="report"/>
+					<cardSet alias="adnotam" labelAttr="jbr.adnotamCommission.person" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="adnotam" columns="report"/>
+				</hierarchy>
+				<columns>
+					<column id="jbr.resolutionTerm" width="90"/>
+					<column id="jbr.resolutionText" width="250"/>
+					<column id="_STATE" width="120"/>
+					<column id="jbr.uzdo.signature" width="100"/>
+				</columns>
+				<columns id="report">
+					<column id="NON_EXISTANT" width="90"/>
+					<column id="jbr.report.hidden.text" width="250"/>
+					<column id="_STATE" width="120"/>
+				</columns>
+				<actions sort="com.aplana.dbmi.actionhandler.descriptor.ActionsDescriptorIdComparator">
+					<action title="addPoruchTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardImmediateActionHandler" selectionType="none" id="addPoruch" mode="all" permission="write">
+						<parameters>
+							<parameter name="template" value="jbr.resolution"/>
+							<parameter name="sourcePersonAttrId" value="jbr.incoming.addressee"/>
+							<parameter name="destinationPersonAttrId" value="jbr.resolution.FioSign"/>
+							<parameter name="statesAllowed" value="draft,execution,registration,consideration,preparation,inmedo,
+																   before-registration,boss.assistant,manager-consideration,sent.to.execution"/>
+						</parameters>
+					</action>
+					<action id="massRes"
+							handler="com.aplana.dbmi.card.actionhandler.multicard.AddTemplateGeneratedCardsActionHandler"
+							selectionType="none"
+							title="massResTitle"
+							mode="all"
+							permission="write">
+						<parameters>
+							<parameter name="statesAllowed" value="draft,execution,registration,consideration,preparation,inmedo,
+																   before-registration,boss.assistant,manager-consideration,sent.to.execution"/>
+							<parameter name="template" value="jbr.massResolution"/>
+							<parameter name="target_template" value="jbr.resolution"/>
+							<parameter name="mapping_package" value="com.aplana.dbmi.card.actionhandler.multicard"/>
+							<parameter name="mapping_split" value="true"/>
+							<parameter name="mapping" value="SplitPersonToPerson(user:jbr.MassExecutors)->(user:jbr.AssignmentExecutor);
+															 SplitPersonToPerson(user:jbr.massResolution.FioSign)->(user:jbr.resolution.FioSign);
+															 SplitTextToText(text:jbr.massResolutionText)->(text:jbr.resolutionText)"/>
+							<parameter name="reverse" value="true"/>
+							<parameter name="reverseAttrs" value="jbr.rimp.bydoc;jbr.main.doc"/>
+							<parameter name="closeHandlerPolicy" value="confirm"/>
+							<parameter name="availableWorkflow" value="jbr.commission.execute1"/>
+							<parameter name="statesAllowed" value="preparation,before-registration,registration,consideration,execution"/>
+						</parameters>
+					</action>
+					<action title="acceptResolution" handler="com.aplana.dbmi.card.actionhandler.LinkToCreatedCardCheckPermsActionHandler" selectionType="none" id="acceptRes" mode="all">
+						<parameters>
+							<parameter name="template" value="med.resolutionAccept"/>
+							<parameter name="cardLinkAttrId" value="medo.doc.parent"/>
+						</parameters>
+					</action>
+					<action title="notifyForApplicant" handler="com.aplana.dbmi.card.actionhandler.LinkToCreatedCardCheckPermsActionHandler" selectionType="none" id="acceptNotifyAppl" mode="all">
+						<parameters>
+							<parameter name="template" value="med.notifyForApplicant"/>
+							<parameter name="cardLinkAttrId" value="medo.doc.parent"/>
+						</parameters>
+					</action>
+				</actions>	
+				<styling>
+				</styling>
+				<selectableCardCondition>
+
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+		<variant searchAttr="NAME" searchAttrType="text">
+			<hierarchyDialog>
+				<hierarchy parentMergeMode="cardSet" terminalNodesOnly="true">
+					<cardSet stored="true" alias="resolutions" labelAttr="jbr.resolution.FioSign" labelAttrType="user" showOrg="true" linkedLabelAttr="NAME" labelFormat="authorFormat" labelAsLink="true" collapsed="false"
+							sortAttr="jbr.resolution.FioSign" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.rimp.byrimp" isParentAttrLinkReversed="false">
+						<info collapsed="false">
+							<link targetSet="reports" linkAttr="jbr.reports" isReversed="false"/>
+							<link targetSet="externalReports" linkAttr="jbr.resolution.ExtReport" isReversed="false"/>
+							<link targetSet="adnotam" linkAttr="jbr.resolution.FyiReport" isReversed="false"/>
+						</info>
+						<children>
+							<link targetSet="resolutions" linkAttr="jbr.linkedResolutions"	isReversed="false"/>
+						</children>
+						<condition>
+							<status>draft</status>
+							<status>execution</status>
+							<status>agreement</status>
+							<status>done</status>
+							<status>ratified</status>
+							<status>poruchcancelled</status>
+							<status>closedviaparent</status>
+							<status>jbr.task.taskAgreed</status>
+						</condition>
+					</cardSet>
+					<cardSet alias="reports" labelAttr="jbr.report.int.executor" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="executors" columns="report"
+						sortAttr="jbr.report.int.executor" sortAttrType="user" sortOrderByParentAttr="jbr.AssignmentExecutor,jbr.CoExecutor" parentAttrLink="jbr.report.int.parent" isParentAttrLinkReversed="false"/>
+					<cardSet alias="externalReports" labelAttr="jbr.report.ext.executor" labelAttrType="link" linkedLabelAttr="NAME" labelAsLink="true" maxLength="50" collapsed="false" group="external" columns="report"/>
+					<cardSet alias="adnotam" labelAttr="jbr.adnotamCommission.person" labelAttrType="user" showOrg="true" labelAsLink="true" collapsed="false" group="adnotam" columns="report"/>
+				</hierarchy>
+				<columns>
+					<column id="jbr.resolutionTerm" width="90"/>
+					<column id="jbr.resolutionText" width="250"/>
+					<column id="_STATE" width="120"/>
+				</columns>
+				<columns id="report">
+					<column id="NON_EXISTANT" width="90"/>
+					<column id="jbr.report.hidden.text" width="250"/>
+					<column id="_STATE" width="120"/>
+				</columns>
+				<actions sort="com.aplana.dbmi.actionhandler.descriptor.ActionsDescriptorIdComparator">
+					<!-- <action title="editCardListTitle" handler="com.aplana.dbmi.card.actionhandler.EditCardLinksActionHandler" selectionType="none" id="editCardList">
+					</action> -->
+					<!-- <action title="addPoruchTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandlerEx" selectionType="none" id="addPoruch"> -->
+					<action title="addPoruchTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardImmediateActionHandler" selectionType="none" id="addPoruch" mode="all" permission="write">
+						<parameters>
+							<parameter name="template" value="jbr.resolution"/>
+							<parameter name="sourcePersonAttrId" value="jbr.incoming.addressee"/>
+							<parameter name="destinationPersonAttrId" value="jbr.resolution.FioSign"/>
+							<parameter name="statesAllowed" value="draft,execution,registration,consideration,preparation,inmedo,
+																   before-registration,boss.assistant,manager-consideration,sent.to.execution"/>
+						</parameters>
+					</action>
+					<action id="massRes"
+							handler="com.aplana.dbmi.card.actionhandler.multicard.AddTemplateGeneratedCardsActionHandler"
+							selectionType="none"
+							title="massResTitle"
+							mode="all"
+							permission="write">
+						<parameters>
+							<parameter name="statesAllowed" value="draft,execution,registration,consideration,preparation,inmedo,
+																   before-registration,boss.assistant,manager-consideration,sent.to.execution"/>
+							<parameter name="template" value="jbr.massResolution"/>
+							<parameter name="target_template" value="jbr.resolution"/>
+							<parameter name="mapping_package" value="com.aplana.dbmi.card.actionhandler.multicard"/>
+							<parameter name="mapping_split" value="true"/>
+							<parameter name="mapping" value="SplitPersonToPerson(user:jbr.MassExecutors)->(user:jbr.AssignmentExecutor);
+															 SplitPersonToPerson(user:jbr.massResolution.FioSign)->(user:jbr.resolution.FioSign);
+															 SplitTextToText(text:jbr.massResolutionText)->(text:jbr.resolutionText)"/>
+							<parameter name="reverse" value="true"/>
+							<parameter name="reverseAttrs" value="jbr.rimp.bydoc;jbr.main.doc"/>
+							<parameter name="closeHandlerPolicy" value="confirm"/>
+							<parameter name="availableWorkflow" value="jbr.commission.execute1"/>						</parameters>
+					</action>
+				</actions>	
+				<styling>
+					<style value="text-decoration : line-through"> <!-- Поручения в статусе Отменен отображаются в зачеркнутом виде -->
+						<status>poruchcancelled</status>
+					</style>
+				</styling>
+				<selectableCardCondition>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<search>
+			</search>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+		    <message key="notifyForApplicant" value="Notify for relator"/>
+			<message key="addPoruchTitle" value="Add new"/>
+			<message key="massResTitle" value="A mass resolution"/>
+			<message key="acceptResolution" value="Take order for execution"/>
+			<message key="authorFormat" value="Author: {0}"/>
+			<message key="executors" value="Executors:"/>
+			<message key="adnotam" value="Ad notam:"/>
+			<message key="external" value="External coexecutors:"/>
+			<message key="acceptTitle" value="Ok"/>
+			<message key="cancelTitle" value="Cancel"/>
+			<message key="errorMandatoryAttrIsEmpty" value="Mandatory attribute {0} is empty"/>
+			<message key="changeStateSuccess" value="The task has been sent to service"/>
+		</lang>	
+		<lang code="ru">
+		    <message key="notifyForApplicant" value="Уведомить заявителя"/>
+			<message key="addPoruchTitle" value="Новая резолюция"/>
+			<message key="massResTitle" value="Массовая резолюция"/>
+			<message key="acceptResolution" value="Принять поручение к исполнению"/>
+			<message key="authorFormat" value="Автор: {0}" />
+			<message key="executors" value="Исполнители:"/>
+			<message key="adnotam" value="К сведению:"/>
+			<message key="external" value="Внешние соисполнители:"/>
+			<message key="acceptTitle" value="Ok"/>
+			<message key="cancelTitle" value="Отмена"/>
+			<message key="errorMandatoryAttrIsEmpty" value="Обязательный атрибут {0} не заполнен"/>
+			<message key="changeStateSuccess" value="Задание отправлено на обработку"/>
+		</lang>
+	</messages>
+</settings>

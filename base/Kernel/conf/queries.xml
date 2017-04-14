@@ -1,0 +1,874 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<queries>
+	<object type="Tab">
+		<list-all>
+			<query>ListAllTabs</query>
+		</list-all>
+		<list-children type="TabBlockViewParam" cache="3600">
+			<query>ListBlocksInTab</query>
+		</list-children>
+	</object>
+
+	<object type="Template">
+		<list-all>
+			<query>ListTemplates</query>
+		</list-all>
+		<list-children type="TemplateBlock" cache="3600">
+			<query>ListTemplateBlocks</query>
+		</list-children>
+		<list-children type="DefaultAttributeValue" cache="3600">
+			<query>ListDefaultAttributeValues</query>
+		</list-children>
+		<list-children type="AttributeViewParam">
+			<query>ListAttributeViewParameters</query>
+		</list-children>
+		<list-children type="AttributeViewParamDetail">
+			<query>ListAttributeViewParamDetails</query>
+		</list-children>
+		<list-children type="CardAccess">
+			<query class="ListTemplateCardAccess"/>
+		</list-children>
+		<list-children type="BlockViewParam" cache="3600">
+			<query>ListBlockViewParams</query>
+		</list-children>
+		<list-children type="TabViewParam" cache="3600">
+			<query>ListTabViewParams</query>
+		</list-children>
+		<list-children type="WorkflowMoveRequiredField" cache="3600">
+			<query>ListWorkflowMoveRequiredFields</query>
+		</list-children>
+		
+		<get-one cache="3600">
+			<query>GetTemplate</query>
+		</get-one>
+		<store>
+			<query>SaveTemplate</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="AttributeBlock">
+		<list-all>
+			<query>ListBlocks</query>
+		</list-all>
+		<list-children type="Attribute" cache="3600">
+			<query>ListBlockAttributes</query>
+		</list-children>
+		<get-one cache="3600">
+			<query>GetBlock</query>
+		</get-one>
+		<store>
+			<query>SaveBlock</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="Attribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+	</object>
+	<object type="StringAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="TextAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="IntegerAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="DateAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="ListAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<list-all>
+			<query>ListListAttributes</query>
+		</list-all>
+		<store>
+			<query>SaveReferenceAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="TreeAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<list-all>
+			<query>ListTreeAttributes</query>
+		</list-all>
+		<store>
+			<query>SaveReferenceAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="PersonAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="CardLinkAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="BackLinkAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="TypedCardLinkAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="DatedTypedCardLinkAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="HtmlAttribute">
+		<get-one cache="3600">
+			<query>GetAttribute</query>
+		</get-one>
+		<store>
+			<query>SavePlainAttribute</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="Reference">
+		<list-children type="ReferenceValue" cache="3600">
+			<query>ListReferenceValues</query>
+		</list-children>
+	</object>
+	<object type="ReferenceValue">
+		<get-one cache="3600">
+			<query>GetReferenceValue</query>
+		</get-one>
+	</object>
+	<object type="Workflow">
+		<get-one cache="3600">
+			<query class="GetWorkflow"/>
+		</get-one>
+		<list-all>
+			<query class="ListAllWorkflows"/>
+		</list-all>
+		<store>
+			<query class="SaveWorkflow"/>
+			<access class="AdminProcessesAction"/>
+		</store>
+		<list-children type="CardState">
+			<query class="ListWorkflowCardStates"/>
+		</list-children>
+		<list-children type="WorkflowMove">
+			<query class="ListWorkflowWorkflowMoves"/>
+		</list-children>
+	</object>
+	<object type="WorkflowMove">
+		<get-one>
+			<query>GetWorkflowMove</query>
+		</get-one>
+	</object>
+	<object type="CardState">
+		<get-one>
+			<query class="GetCardState"/>
+		</get-one>
+		<list-all>
+			<query class="ListAllCardStates"/>
+		</list-all>
+		<store>
+			<query class="SaveCardState"/>
+			<access class="AdminProcessesAction"/>
+		</store>
+	</object>
+	<object type="Card">
+		<get-one>
+			<query>GetCard</query>
+			<access>CardRead</access>
+		</get-one>
+		<list-children type="CardVersion">
+			<query>ListCardVersions</query>
+		</list-children>
+		<list-children type="WorkflowMove">
+			<query>ListCardWorkflowMoves</query>
+		</list-children>
+		<list-children type="AttributeViewParam">
+			<query>ListAttributeViewParameters</query>
+		</list-children>
+		<store>
+			<query>SaveCard</query>
+			<access>CardModify</access>
+			<validator package="com.aplana.dbmi.service.impl.processors">CheckCardForVersion</validator>
+			<validator package="com.aplana.dbmi.service.impl.processors">CheckStringAttrLength</validator>
+			<pre-process package="com.aplana.dbmi.filestorage.query">doMakeCardVersion</pre-process>
+			<!-- <post-process package="com.aplana.dbmi.service.mail">NotifyCardChange</post-process>-->
+			<specific property="template" value="jbr.internalPerson">
+				<post-process package="com.aplana.dbmi.service.impl.processors">SyncPersonCard</post-process>
+			</specific>
+		</store>
+	</object>
+	<object type="CardVersion">
+		<get-one>
+			<query>GetCardVersion</query>
+		</get-one>
+		<list-children type="AttributeViewParam">
+			<query>ListAttributeViewParameters</query>
+		</list-children>		
+	</object>
+	<object type="Person">
+		<list-all>
+			<query>ListUsers</query>
+		</list-all>
+		<get-one>
+			<query>GetUser</query>
+		</get-one>
+		<list-children type="Subscription">
+			<query>ListUserSubscriptions</query>
+		</list-children>
+		<list-children type="PersonalSearch">
+			<query>ListUserSearches</query>
+		</list-children>
+		<list-children type="Role">
+			<query>ListAllUserRoles</query>
+		</list-children>
+		<list-children type="UngroupedRole">
+			<query>ListUngroupedUserRoles</query>
+		</list-children>
+		<list-children type="Group">
+			<query>ListUserGroups</query>
+		</list-children>
+		<store>
+			<query>SaveUser</query>
+		</store>
+	</object>
+	<object type="PersonView">
+	       <list-all>
+	           <query>ListUserViews</query>
+	       </list-all>
+	</object> 
+	
+	<object type="UngroupedRole">
+		<get-one>
+			<query>GetUngroupedUserRole</query>
+		</get-one>
+		<store>
+			<query>SaveUngroupedUserRole</query>
+			<access>AdminUsersAction</access>
+		</store>
+		<delete>
+			<query>DeleteUngroupedUserRole</query>
+			<access>AdminUsersAction</access>
+		</delete>
+	</object>
+	<object type="Role">
+		<get-one>
+			<query>GetUserRole</query>
+		</get-one>
+	</object>
+	<object type="Group">
+		<get-one>
+			<query>GetUserGroup</query>
+		</get-one>
+		<store>
+			<query>SaveUserGroup</query>
+			<access>AdminUsersAction</access>
+		</store>
+		<delete>
+			<query>DeleteUserGroup</query>
+			<access>AdminUsersAction</access>
+		</delete>
+	</object>
+	<object type="Subscription">
+		<list-all>
+			<query>ListSubscriptions</query>
+		</list-all>
+		<get-one>
+			<query>GetSubscription</query>
+		</get-one>
+		<store>
+			<query>SaveNotification</query>
+			<access>PersonalArea</access>
+		</store>
+		<delete>
+			<query>DeleteSubscription</query>
+			<access>PersonalArea</access>
+		</delete>
+	</object>
+	<object type="Distribution">
+		<list-all>
+			<query>ListDistributions</query>
+			<access>DistributionAccess</access>
+		</list-all>
+		<get-one>
+			<query>GetDistribution</query>
+			<access>DistributionAccess</access>
+		</get-one>
+		<store>
+			<query>SaveNotification</query>
+			<access>DistributionAccess</access>
+		</store>
+		<delete>
+			<query>DeleteDistribution</query>
+			<access>DistributionAccess</access>
+		</delete>
+	</object>
+	<object type="PersonalSearch">
+		<list-all>
+			<query>ListStoredSearches</query>
+		</list-all>
+		<get-one>
+			<query>GetStoredSearch</query>
+		</get-one>
+		<store>
+			<query>SaveSearch</query>
+			<access>PersonalArea</access>
+		</store>
+		<delete>
+			<query>DeleteStoredSearch</query>
+			<access>PersonalArea</access>
+		</delete>
+	</object>
+	
+	
+	<action type="GetPersonSearchByNameAndArea">
+    	<query>DoGetPersonSearchByNameAndArea</query>
+    </action>
+    
+	<action type="ListStoredSearchsByArea">
+    	<query>DoListStoredSearchsByArea</query>
+    </action>    
+	
+	<object type="AttributeViewParamDetail">
+		<store>
+			<query>SaveAttributeViewParamDetail</query>
+			<access>AdminTemplatesAction</access>
+		</store>
+	</object>
+	<object type="SystemRole">
+		<get-one>
+			<query>GetSystemRole</query>
+		</get-one>
+		<store>
+			<query>SaveSystemRole</query>
+			<access>AdminUsersAction</access>
+			<post-process package="com.aplana.dbmi.jbr.processors">CheckRoleDuplicateProcessor</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors">SyncRoleGroups</post-process>
+		</store>
+		<delete>
+			<query>DeleteSystemRole</query>
+			<access>AdminUsersAction</access>
+		</delete>
+		<list-all>
+			<query>ListAllSystemRoles</query>
+		</list-all>
+		<list-children type="Person">
+			<query>ListUsersByRole</query>
+		</list-children>
+		<list-children type="SystemGroup">
+			<query>ListGroupsByRole</query>
+		</list-children>
+	</object>
+	<object type="SystemGroup">
+		<get-one>
+			<query>GetSystemGroup</query>
+		</get-one>
+		<store>
+			<query>SaveSystemGroup</query>
+			<access>AdminUsersAction</access>
+			<post-process package="com.aplana.dbmi.jbr.processors">CheckGroupDuplicateProcessor</post-process>
+			<post-process package="com.aplana.dbmi.jbr.processors">SyncGroupRoles</post-process>
+		</store>
+		<delete>
+			<query>DeleteSystemGroup</query>
+			<access>AdminUsersAction</access>
+		</delete>
+		<list-all>
+			<query>ListAllSystemGroups</query>
+		</list-all>
+		<list-children type="SystemRole">
+			<query>ListGroupRoles</query>
+		</list-children>
+
+		<list-children type="Person">
+			<query>ListUsersByGroup</query>
+		</list-children>
+	</object>
+	<object type="LogAction">
+		<list-all>
+			<query class="ListAllLogActions"/>
+		</list-all>
+		<get-one>
+			<query class="GetLogAction"/>
+		</get-one>
+		<store>
+			<query class="SaveLogAction"/>
+			<access class="AdminProcessesAction"/>
+		</store>
+	</object>
+
+    <object type="AccessTemplate">
+		<list-children type="AccessRule">
+			<query>ListTemplateAccessRules</query>
+			<access>AdminAction</access>
+		</list-children>
+	</object>
+	<object type="AccessRule">
+		<list-all>
+			<query>ListAccessRules</query>
+			<access>AdminAction</access>
+		</list-all>
+	</object>
+	<object type="RoleAccessRule">
+		<get-one>
+			<query>GetAccessRule</query>
+		</get-one>
+		<store>
+			<query>SaveRoleAccessRule</query>
+			<access>AdminAction</access>
+		</store>
+		<delete>
+			<query>DeleteRoleAccessRule</query>
+			<access>AdminAction</access>
+		</delete>
+	</object>
+	<object type="PersonAccessRule">
+		<get-one>
+			<query>GetAccessRule</query>
+		</get-one>
+		<store>
+			<query>SavePersonAccessRule</query>
+			<access>AdminAction</access>
+		</store>
+		<delete>
+			<query>DeletePersonAccessRule</query>
+			<access>AdminAction</access>
+		</delete>
+	</object>
+	<object type="PersonProfileAccessRule">
+		<get-one>
+			<query>GetAccessRule</query>
+		</get-one>
+		<store>
+			<query>SaveProfileAccessRule</query>
+			<access>AdminAction</access>
+		</store>
+		<delete>
+			<query>DeleteProfileAccessRule</query>
+			<access>AdminAction</access>
+		</delete>
+	</object>
+
+	<action type="Login">
+		<query>DoLogin</query>
+	</action>
+	<action type="Search">
+		<query>DoSearch</query>
+	</action>
+	<action type="SearchWithDelegatingAccess">
+		<query>DoSearchWithDelegatingAccess</query>
+	</action>
+	<action type="ParentReportAction">
+		<query>DoParentReportAction</query>
+	</action>
+
+	<action type="LockObject">
+		<!-- access>AdminAction</access>		
+		<specific property="id.type.name" value="com.aplana.dbmi.model.Card">
+			<access>CardModify</access>
+		</specific-->
+		<query>DoLock</query>
+	</action>
+
+	<action type="UnlockObject">
+		<query>DoUnlock</query>
+	</action>
+	
+	<action type="CheckLock">
+		<query>DoCheckLock</query>
+	</action>
+
+	<action type="CheckIsLocked">
+		<query>DoCheckIsLocked</query>
+	</action>
+
+	<!-- File upload/download - look at SolrModule project -->
+	
+	<action type="CreateCard">
+		<query class="DoNewCard">
+			<parameter name="mapAttributesFromParent" value="
+				link:jbr.ReqAuthor->link:jbr.outcoming.citizenAppealAddressee,
+				link:jbr.incoming.sender->link:jbr.outcoming.receiver
+			"/>
+		</query>
+		<access>CreateNewCard</access>
+	</action>
+	
+	<action type="CloneCard">
+		<query>DoCopyCard</query>
+		<access>CardClone</access>
+	</action>
+	
+	<action type="CreateRequest">
+		<query>DoNewCard</query>
+		<access>CreateNewCard</access>
+	</action>
+	
+	<action type="ChangeState">
+		<query>DoChangeState</query>
+		<pre-process package="com.aplana.dbmi.filestorage.query">doMakeCardVersion</pre-process>
+		<validator package="com.aplana.dbmi.service.impl.processors">CheckCardForVersion</validator>
+		<validator package="com.aplana.dbmi.service.impl.processors">ValidateState</validator>
+		
+		<access>PerformWorkflowMove</access>
+		<!-- 
+		<post-process package="com.aplana.dbmi.service.mail">NotifyStateChange</post-process>
+		 -->
+		<specific property="workflowMove.id" value="jbr.outcoming.preparation.registration">
+			<post-process package="com.aplana.dbmi.module.numerator">CardNumeration</post-process>
+		</specific>
+	</action>
+	
+	<action type="PublishCard">
+		<query>DoChangeState</query>
+		<validator package="com.aplana.dbmi.service.impl.processors">ValidateState</validator>
+		<access>Publish</access>
+	</action>
+	<action type="DetermineEditors">
+		<query>DoDetermineEditors</query>
+	</action>
+	<action type="AddToFavorites">
+		<query>DoFavoriteAdd</query>
+	</action>
+	<action type="RemoveFromFavorites">
+		<query>DoFavoriteRemove</query>
+	</action>
+	<action type="ListFavorites">
+		<query>DoListFavorites</query>
+	</action>
+	<action type="ListProject">
+		<query>DoListLinkedCards</query>
+	</action>
+	<action type="GetAdminEmail">
+		<query>DoGetAdminEmail</query>
+	</action>
+    <!-- Fake action just for access check -->
+    <action type="Administration">
+        <access>AdminAction</access>
+    </action>
+    <action type="FetchChildrenCards">
+    	<query>DoFetchChildrenCards</query>
+    </action>
+    <action type="GetCardKeyword">
+    	<query>DoGetCardKeyword</query>
+    </action>
+    <action type="GetCardIdByKeyword">
+    	<query>DoGetCardIdByKeyword</query>
+    </action>
+    <action type="GetDelegateListByLogin">
+    	<query>DoGetDelegateListByLogin</query>
+    </action>
+    <action type="BulkFetchChildrenCards">
+    	<query>DoBulkFetchChildrenCards</query>
+    </action>
+    <action type="SearchInFiles">
+		<query package="com.aplana.dbmi.filestorage.query">doSearchInFiles</query>
+		
+		<!--  access>MaterialAccess</access>  -->
+    </action>
+	<action type="OverwriteCardAttributes">
+		<query>DoOverwriteCardAttributes</query>
+	</action>
+	<action type="ProcessPseudoCardAttributes">
+		<query>DoProcessPseudoCardAttributes</query>
+	</action>
+	<action type="DeleteSystemRoleAction">
+		<query>DoDeleteSystemRole</query>
+	</action>
+	<action type="DeleteSystemGroupAction">
+		<query>DoDeleteSystemGroup</query>
+	</action>
+	<action type="GetActiveTab">
+		<query>DoListActiveTabs</query>
+	</action>
+	<action type="GetEmptyTabs">
+		<query>DoListEmptyTabs</query>
+	</action>
+	<action type="GetCardHistory">
+		<query>DoCardHistory</query>
+	</action>
+	<action type="GetCardEventHistory">
+		<query>DoCardEventHistory</query>
+	</action>
+	<action type="GetDeepChildren">
+		<query>DoGetDeepChildren</query>
+	</action>
+	<action type="StrictSearch">
+		<query>DoStrictSearch</query>
+	</action>
+	<action type="GetWorkflowMovesFromTargetState">
+		<query>DoGetWorkflowMovesFromTargetState</query>
+	</action>
+	<action type="ValidateMandatoryAttributes">
+		<query>DoValidateMandatoryAttributes</query>
+	</action>
+	<action type="SignCard">
+		<query>DoSignCard</query>
+	</action>
+	<action type="GetCardDSHistory">
+		<query>DoCardDSHistory</query>
+	</action>
+	<action type="SignAttachment">
+		<query>DoSignAttachment</query>
+	</action>
+    <action type="DeleteDelegateAction">
+            <query>DoDelegateDelete</query>
+    </action>
+    <action type="DownloadFileWithSignatures">
+            <query>DoDownloadFileWithSignatures</query>
+    </action>
+
+	
+	<action type="SearchByTemplatePeriodNameAction">
+		<query>DoSearchByTemplatePeriodName</query>
+	</action>	
+	
+	<action type="SearchRelatedDocsForReport">
+		<query>DoSearchRelatedDocsForReport</query>
+	</action>
+
+	<action type="SearchByTemplateStateNameAction">
+		<query>DoSearchByTemplateStateName</query>
+	</action>
+	
+	<action type="ServiceQuery">
+		<specific property="name" value="cacheStats">
+			<query package="com.aplana.dbmi.service.impl.cache">ReportStats</query>
+		</specific>
+	</action>	
+	<action package="com.aplana.dbmi.action.ireferent" type="GetParents">
+		<query package="com.aplana.dbmi.service.impl.query">GetListParents</query>
+	</action>
+	<action package="com.aplana.dbmi.action.ireferent" type="GetLayerSubsidiaries">
+		<query package="com.aplana.dbmi.service.impl.query">GetListSubsidiaries</query>
+	</action>
+	<action package="com.aplana.dbmi.action.ireferent" type="GetLayerSubsidiariesPerson">
+		<query package="com.aplana.dbmi.service.impl.query">GetListSubsidiariesPerson</query>
+	</action>
+
+	<object type="Delegation">
+		<get-one>
+			<query package="com.aplana.dbmi.access.delegate" class="QueryPermissionDelegate"/>
+		</get-one>
+		<list-all>
+			<query package="com.aplana.dbmi.access.delegate" class="ListAllPermissionDelegates"/>
+		</list-all>
+		<store>
+			<query package="com.aplana.dbmi.access.delegate" class="SavePermissionDelegate"/>
+			<!-- <access class="AdminAction"/> -->
+		</store>
+	</object>
+	
+	<action type="CheckDelegationIsEditableAction">
+		<query package="com.aplana.dbmi.access.delegate">DoCheckDelegationIsEditableQuery</query>
+	</action>
+
+	<action type="SaveDelegatesAction">
+		<query package="com.aplana.dbmi.access.delegate">SaveDelegates</query>
+	</action>
+	
+	<action type="IsUserDepartamentChief">
+	   <query package="com.aplana.dbmi.service.impl.query">IsUserDepartamentChiefActionQuery</query>
+	</action>
+	
+	<action type="GetUserViewsFromSameDepartamentAction">
+       <query package="com.aplana.dbmi.service.impl.query">GetUserViewsFromSameDepartament</query>
+    </action>
+	<action package="com.aplana.dbmi.action" type="GetCardUUID">
+		<query package="com.aplana.dbmi.service.impl.query">DoGetCardUUID</query>
+	</action>
+	<!-- 
+	<action type="DelegateManagerAction">
+		<query package="com.aplana.dbmi.access.delegate">DelegateManagerImpl</query>
+	</action>
+	  -->
+	  
+	<action type="GetCardIdByUUID">
+    	<query>DoGetCardIdByUUID</query>
+    </action>
+    
+    <action type="GetEventLog">
+    	<query>DoGetEventLog</query>
+    </action>	  
+	
+	<action type="GetAsyncActions">
+		<query>DoGetAsyncActions</query>
+	</action>
+	
+	<action type="GetActionName">
+    	<query>DoGetActionName</query>
+    </action>
+	
+	<action type="GetPersonByLogin">
+    	<query>DoGetPersonByLogin</query>
+    </action>
+    
+    <action type="GetPersonByCard">
+    	<query>DoGetPersonByCard</query>
+    </action>
+    
+    <action type="GetLockedCardsByPerson">
+    	<query>DoGetLockedCardsByPerson</query>
+    </action>
+    
+    <action type="CheckDelegatingReadAccess">
+    	<query>DoCheckDelegatingReadAccess</query>
+    </action>
+    
+    <action type="CheckIgnoreStates">
+    	<query>DoCheckIgnoreStates</query>
+    </action>
+    
+	<!-- ===================================================== -->
+	<action package="com.aplana.dbmi.jbr.action" type="GetAssistants">
+		<query package="com.aplana.dbmi.service.impl.query" class="DoGetAssistants" />
+	</action>    
+	
+	<action package="com.aplana.dbmi.jbr.action" type="GetBoss">
+		<query package="com.aplana.dbmi.service.impl.query" class="DoGetBoss" />
+	</action>  
+    
+    <action type="UnlockClosedObjects">
+        <query>DoUnlockClosedObjects</query>
+    </action>
+    
+    <action type="CheckWfmConditions">
+        <query>DoCheckWfmConditions</query>
+    </action>
+
+	<action type="ChangeZonesOfDocsForUser">
+		<query>DoChangeZonesOfDocsForUser</query>
+	</action>
+    
+	<action type="WriteEventLog">
+		<query>DoWriteEventLog</query>
+	</action>
+
+	<action type="GetTask">
+		<query>DoGetTask</query>
+	</action>
+
+	
+	<action type="ImportCards">
+		<query>DoImportCards</query>
+	</action>
+	
+	<action type="ImportRoles">
+		<query>DoImportRoles</query>
+	</action>
+	
+	<action type="ImportGroups">
+		<query>DoImportGroups</query>
+	</action>
+	
+	<action type="ImportObjects">
+		<query>DoImportObjects</query>
+	</action>
+
+	<action type="GetAttributeCodeByName">
+		<query>DoGetAttributeCodeByName</query>
+	</action>
+
+	<action type="ParseCardImportFile">
+		<query>DoParseCardImportFile</query>
+	</action>
+	
+	<action type="ParseImportFile">
+		<query>DoParseImportFile</query>
+	</action>
+	
+	<action type="GenerateCardExportFile">
+		<query>DoGenerateCardExportFile</query>
+	</action>
+	
+	<action type="CheckRolesForUser">
+		<query>DoCheckRolesForUser</query>
+	</action>
+	
+	<action type="GetPersonByCardId">
+		<query>DoGetPersonByCardId</query>
+	</action>
+	
+	<action type="ChainAsyncDeliveryAction">
+		<query>DoChainAsyncDeliveryAction</query>
+	</action>
+	
+	<action type="DeliverySendingStateAction">
+		<query>DoDeliverySendingStateAction</query>
+	</action>
+
+	<action type="UpdateRulesByRole">
+		<query>DoUpdateRulesByRole</query>
+	</action>
+</queries>

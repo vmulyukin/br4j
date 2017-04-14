@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<ejb-jar id="ejb-jar_ID" version="2.1" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
+
+	<display-name>DBMI-Data</display-name>
+
+	<enterprise-beans>
+
+		<session id="DataService">
+			<ejb-name>DataService</ejb-name>
+			<home>com.aplana.dbmi.service.DataServiceHome</home>
+			<remote>com.aplana.dbmi.service.DataService</remote>
+			<local-home>com.aplana.dbmi.service.DataServiceLocalHome</local-home>
+			<local>com.aplana.dbmi.service.DataServiceLocal</local>
+			<ejb-class>com.aplana.dbmi.service.impl.DataServiceBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+			<resource-ref id="ResourceRef_1202890636518">
+				<description>
+				</description>
+				<res-ref-name>jdbc/DBMIDS</res-ref-name>
+				<res-type>javax.sql.DataSource</res-type>
+				<res-auth>Container</res-auth>
+				<res-sharing-scope>Shareable</res-sharing-scope>
+			</resource-ref>
+		</session>
+		
+		<session id="AsyncDataService">
+			<ejb-name>AsyncDataService</ejb-name>
+			<home>com.aplana.dbmi.service.AsyncDataServiceHome</home>
+			<remote>com.aplana.dbmi.service.AsyncDataService</remote>
+			<local-home>com.aplana.dbmi.service.AsyncDataServiceLocalHome</local-home>
+			<local>com.aplana.dbmi.service.AsyncDataServiceLocal</local>
+			<ejb-class>com.aplana.dbmi.service.impl.AsyncDataServiceBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+			<resource-ref>
+				<description>
+				</description>
+				<res-ref-name>jdbc/DBMIDS</res-ref-name>
+				<res-type>javax.sql.DataSource</res-type>
+				<res-auth>Container</res-auth>
+				<res-sharing-scope>Shareable</res-sharing-scope>
+			</resource-ref>
+		</session>
+
+		<session id="AreaWorkstationProxyDataServiceBean">
+			<ejb-name>AreaWorkstationProxyDataServiceBean</ejb-name>
+			<local-home>com.aplana.dbmi.service.workstation.AreaWorkstationProxyDataServiceLocalHome</local-home>
+			<local>com.aplana.dbmi.service.workstation.AreaWorkstationProxyDataServiceLocal</local>
+			<ejb-class>com.aplana.dbmi.service.impl.workstation.AreaWorkstationProxyDataServiceBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+			<resource-ref id="ResourceRef_1202890636519">
+				<description>
+				</description>
+				<res-ref-name>jdbc/DBMIDS</res-ref-name>
+				<res-type>javax.sql.DataSource</res-type>
+				<res-auth>Container</res-auth>
+				<res-sharing-scope>Shareable</res-sharing-scope>
+			</resource-ref>
+		</session>
+
+		<session id="smartSaveConfig">
+			<ejb-name>smartSaveConfig</ejb-name>
+			<home>com.aplana.dbmi.service.impl.SmartSaveConfigHome</home>
+			<remote>com.aplana.dbmi.service.impl.SmartSaveConfig</remote>
+			<ejb-class>com.aplana.dbmi.service.impl.ConfigSmartSaveAttributesBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Bean</transaction-type>
+		</session>
+
+
+        <!-- session id="AcquaintanceCardDataServiceBean">
+            <ejb-name>AcquaintanceCardDataServiceBean</ejb-name>
+            <local-home>com.aplana.dbmi.service.workstation.AcquaintanceCardDataServiceLocalHome</local-home>
+            <local>com.aplana.dbmi.service.workstation.AcquaintanceCardDataServiceLocal</local>
+            <ejb-class>com.aplana.dbmi.service.impl.workstation.AcquaintanceCardDataServiceBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+            <resource-ref id="ResourceRef_1202890636518">
+                <description>
+                </description>
+                <res-ref-name>jdbc/DBMIDS</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+                <res-sharing-scope>Shareable</res-sharing-scope>
+            </resource-ref>
+        </session-->
+        
+	</enterprise-beans>
+
+	<ejb-client-jar>Model.jar</ejb-client-jar>
+
+</ejb-jar>

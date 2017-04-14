@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<searchQuery><query><sql><![CDATA[
+/*
+Отфильтровать по переданной дате синхронизации:
+   а) Если дата синхронизации меньше даты обновления поручения и меньше даты обновления отчёта - возвращаем поручение
+   б) Если дата синхронизации меньше даты обновления поручения и больше даты обновления отчёта - возвращаем поручение
+   в) Если дата синхронизации больше даты обновления поручения и меньше даты обновления отчёта - возвращаем поручение
+   г) Если дата синхронизации больше даты обновления поручения и больше даты обновления отчёта - не возвращаем поручение
+
+Алгоритм:
+1. Находим отчёты без учёта даты синхронизации (reports_limit_date_exec_var)
+2. Находим поручения с учётом п.1 без учёта даты синхронизации (resolut_var)
+3. Находим отчёты с датой обновления < даты синхронизации (reports_less_sync_var)
+4. Находим поручения (с учётом п.3) с датой обновления < даты синхронизации (resolut_less_sync_var)
+5. Из набора полученного в п.2 вычитаем набор из п.4 - получаем поручения удовлетворяющие пунктам а, б, в.
+*/
+
+WITH 
+reports_user_var AS
+( 
+	 Select av_user.card_id, av_user.attribute_code from attribute_value av_user where
+	 av_user.attribute_code = 'JBR_RPT_DR_APPROVER' -- "Утверждающий скрытый"
+	 AND av_user.number_value IN (%CURRENTUSERS%) -- Id users
+	 AND av_user.template_id = 1044 -- Отчёты
+),
+reports_on_doc_var AS 
+(
+	 SELECT DISTINCT c.card_id, c.status_id FROM card c where c.card_id in (
+	  Select reports_on_doc.card_id 
+	  from attribute_value AS reports_on_doc 
+	  where reports_on_doc.attribute_code = 'ADMIN_702604' -- На документ
+	  and reports_on_doc.card_id in (Select card_id from reports_user_var)
+	)
+),
+reports_date_exec_var AS 
+(
+	 Select reports_date_exec.card_id from attribute_value reports_date_exec where 
+	 reports_date_exec.attribute_code = 'JBR_REP_DT_DONE' -- "Дата исполнения отчёта"
+	 AND reports_date_exec.card_id in (Select card_id from reports_user_var where reports_user_var.attribute_code = 'JBR_RPT_DR_APPROVER')
+	 AND reports_date_exec.card_id in (Select card_id from reports_on_doc_var where status_id IN (206))
+	 AND 
+	 (
+	  (date(reports_date_exec.date_value) >= current_date - 6) AND 
+	  (date(reports_date_exec.date_value) <= current_date)
+	 )
+	 order by reports_date_exec.date_value
+),
+reports_limit_date_exec_var AS 
+(
+	select card_id from reports_date_exec_var LIMIT 30
+),
+resolut_var AS
+( 
+	 Select report.number_value as card_id from attribute_value report where
+	 report.card_id in (select card_id from reports_limit_date_exec_var)
+	 AND report.attribute_code = 'ADMIN_702311'
+	 AND report.template_id = 1044 -- Отчет об исполнении
+),
+reports_less_sync_var AS
+(
+	Select distinct reports_less_sync.card_id from attribute_value reports_less_sync where
+	reports_less_sync.card_id IN (Select card_id from reports_date_exec_var) 
+	AND reports_less_sync.attribute_code = 'CHANGED' 
+	AND reports_less_sync.date_value < %DATE_SYNC_IN%
+),
+resolut_less_sync_var AS
+(
+	 Select report_less_sync.number_value from attribute_value report_less_sync 
+	 INNER JOIN attribute_value changed ON
+	 report_less_sync.number_value = changed.card_id  
+	 AND report_less_sync.card_id in (select card_id from reports_less_sync_var) 
+	 AND report_less_sync.attribute_code = 'ADMIN_702311'
+	 AND report_less_sync.template_id = 1044 -- Отчет об исполнении
+	 AND changed.attribute_code = 'CHANGED' AND
+	 changed.date_value < %DATE_SYNC_IN%
+)
+Select card_id from resolut_var where
+card_id NOT IN (Select card_id from resolut_less_sync_var)
+]]></sql></query></searchQuery>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/Model"/>
+	<classpathentry kind="src" path="/Kernel"/>
+	<classpathentry kind="src" path="/CryptoModule"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/spring.jar" sourcepath="/home/chepiov/Workspace/Branches/Libs-source/spring-src.zip"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/hsqldb.jar"/>
+	<classpathentry kind="src" path="/Platform"/>
+	<classpathentry kind="lib" path="/opt/jboss-portal-minsv/server/default/lib/commons-beanutils-1.7.0.jar" sourcepath="/home/chepiov/Workspace/Branches/Libs-source/commons-beanutils-1.7.0-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/beanutils/commons-beanutils-1.7.0/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

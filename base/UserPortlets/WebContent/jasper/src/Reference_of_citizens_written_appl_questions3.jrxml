@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="addressee_inside" printOrder="Horizontal" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="DejaVu Sans" fontSize="10" pdfFontName="DejaVuSans.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="text" style="dejavu">
+		<box>
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="city_code" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="from_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+city_code.number_value as city,
+count(cons_res) as cons_res,
+count(control_date1) as not_at_a_stated_time,
+count(control_date) as at_a_stated_time
+FROM card c
+---выбираем все письменные обращения граждан
+JOIN attribute_value a ON a.card_id = c.card_id and a.attribute_code='ADMIN_283122' and a.value_id in (2136, 2137, 2138)
+ ---проверяем дату создания
+ JOIN attribute_value reg_date ON reg_date.card_id = c.card_id and reg_date.attribute_code='CREATED' and
+	date_trunc('day', reg_date.date_value) BETWEEN $P{from_date} and $P{to_date}
+ LEFT JOIN attribute_value city_code ON city_code.card_id = c.card_id and city_code.attribute_code='ADMIN_277245'
+ ---резултаты рассмотрения<> null
+LEFT JOIN attribute_value cons_res ON cons_res.card_id = c.card_id and cons_res.attribute_code='ADMIN_283926' and cons_res.number_value is not null
+ LEFT JOIN attribute_value answer_date ON answer_date.card_id = cons_res.card_id and answer_date.attribute_code='ADMIN_220912' and answer_date.date_value is not null
+    ---Рассмотрено вопросов – в срок
+   LEFT JOIN attribute_value control_date ON control_date.card_id = answer_date.card_id and control_date.attribute_code='JBR_IMPL_DEADLINE' and
+        control_date.date_value is not null and date_trunc('day', answer_date.date_value)<=date_trunc('day', control_date.date_value)
+    ---Рассмотрено вопросов c с нарушением срока
+    LEFT JOIN attribute_value control_date1 ON control_date1.card_id = answer_date.card_id and control_date1.attribute_code='JBR_IMPL_DEADLINE' and
+         control_date1.date_value is not null and date_trunc('day', answer_date.date_value)>date_trunc('day', control_date1.date_value)
+
+
+WHERE
+c.template_id=864  and  city_code.number_value is null
+group by city_code.number_value]]>
+	</queryString>
+	<field name="city" class="java.math.BigDecimal"/>
+	<field name="cons_res" class="java.lang.Long"/>
+	<field name="not_at_a_stated_time" class="java.lang.Long"/>
+	<field name="at_a_stated_time" class="java.lang.Long"/>
+	<variable name="cons_res1" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{cons_res}]]></variableExpression>
+	</variable>
+	<variable name="not_at_a_stated_time1" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{not_at_a_stated_time}]]></variableExpression>
+	</variable>
+	<variable name="at_a_stated_time1" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{at_a_stated_time}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="55" y="0" width="55" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{at_a_stated_time}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="55" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cons_res}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="0" width="55" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{not_at_a_stated_time}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

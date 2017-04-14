@@ -1,0 +1,327 @@
+====
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+====
+
+Имена и описание параметров, используемых в скриптах пакетов "00.Init" и "01.FirstInstall":
+    /**
+     * Имя БД
+     */
+    br4j.db.name
+    /**
+     * Имя сервера БД
+     */
+    br4j.db.host.name
+    /**
+     * Номер порта
+     */
+    br4j.db.port.number
+
+    /**
+     * jndi имя источника данных DBMI
+     */
+    br4j.dbmi.ds.jndi-name.DBMIDS
+    /**
+     * jndi имя источника данных DBMI_EVENT
+     */
+    br4j.dbmi_event.ds.jndi-name.DBMIDS_EVENT
+    /**
+     * jndi имя источника данных PORTAL
+     */
+    br4j.jboss.portal.ds.jndi-name.PortalDS
+
+    /**
+     * URL к БД DBMI
+     */
+    br4j.dbmi.db.url
+    /**
+     * Дривер для доступа к БД DBMI
+     */
+    br4j.dbmi.db.driver
+    /**
+     * Учетная запись пользователя для доступа к БД DBMI
+     */
+    br4j.dbmi.db.user.name
+    /**
+     * Пароль учетной записи пользователя для доступа к БД DBMI
+     */
+    br4j.dbmi.db.user.password
+    /**
+     * Минимальный размер пула запросов к БД DBMI
+     */
+    br4j.dbmi.db.poolsize.min
+    /**
+     * Максимальный размер пула запросов к БД DBMI
+     */
+    br4j.dbmi.db.poolsize.max
+    /**
+     * SQL запрос для диагностики подключения к БД DBMI
+     */
+    br4j.dbmi.db.check_sql
+
+    /**
+     * URL к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.url
+    /**
+     * Дривер для доступа к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.driver
+    /**
+     * Учетная запись пользователя для доступа к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.user.name
+    /**
+     * Пароль учетной записи пользователя для доступа к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.user.password
+    /**
+     * Минимальный размер пула запросов к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.poolsize.min
+    /**
+     * Максимальный размер пула запросов к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.poolsize.max
+    /**
+     * SQL запрос для диагностики подключения к БД DBMI_EVENT
+     */
+    br4j.dbmi_event.db.check_sql
+
+    /**
+     * URL к БД PORTAL
+     */
+    br4j.jboss.portal.db.url
+    /**
+     * Дривер для доступа к БД PORTAL
+     */
+    br4j.jboss.portal.db.driver
+    /**
+     * Учетная запись пользователя для доступа к БД PORTAL
+     */
+    br4j.jboss.portal.db.user.name
+    /**
+     * Пароль учетной записи пользователя для доступа к БД PORTAL
+     */
+    br4j.jboss.portal.db.user.password
+    /**
+     * Минимальный размер пула запросов к БД PORTAL
+     */
+    br4j.jboss.portal.db.poolsize.min
+    /**
+     * Максимальный размер пула запросов к БД PORTAL
+     */
+    br4j.jboss.portal.db.poolsize.max
+    /**
+     * SQL запрос для диагностики подключения к БД PORTAL
+     */
+    br4j.jboss.portal.db.check_sql
+
+    /**
+     * Тип отображения типов данных БД
+     */
+    br4j.db.type-mapping
+
+	/**
+     * Путь к набору обнавления
+     */
+    iuh.update.set.path
+    /**
+     * Путь к пакету скрипта, который исполняется в данный момент
+     */
+    iuh.current.script.path
+    /**
+     * Форсированный режим
+     */
+    iuh.mode.force
+    /**
+     * Интерактивный режим
+     */
+    iuh.mode.interactive
+    /**
+     * Учетная запись пользователя, запустившего оснастку
+     */
+    iuh.starter.user.name
+    /**
+     * Путь к файлу ответов
+     */
+    iuh.answers.file
+    /**
+     * Режим прогона
+     */
+    iuh.mode.run
+    /**
+     * Учетная запись пользователя, запустившего скприпт
+     */
+    iuh.executor.user.name
+    /**
+     * Префикс перед названием параметра в файле ответов, включающий в себя имя набора, имя пакета, имя скрипта в
+     * формате - SuiteName.PackageName.ScriptName.parameterName, например: "update.00.Init.OpenOffice.br4j.dbmi.convertor.temp.dir=data/ooconverter"
+     */
+    iuh.answers.prefix
+
+	/**
+    * Директория временного хранения файлов при конвертировании
+    */
+    br4j.dbmi.convertor.temp.dir
+    /**
+	 * Директория хранения логов при PDFA конвертировании
+	 */
+    br4j.dbmi.convertor.log.dir
+    /**
+     * Временная папка для OpenOffice конвертера
+     */
+    br4j.dbmi.openoffice.temp.dir
+	    /**
+     * Путь к файловому хранилищу
+     */
+    br4j.dbmi.filestore.rootLocation
+    /**
+     *
+     */
+    br4j.dbmi.filestore.nullUrlRootLocation
+    /**
+     * Путь к кэшу файлового хранилища
+     */
+    br4j.dbmi.filestore.cacheRootLocation
+	/**
+     * Расположение JBoss
+     */
+    br4j.jboss.home
+    /**
+     * Расположение рабочей конфигурации JBoss
+     */
+    br4j.jboss.configuration
+    /**
+     * Полный путь до рабочей конфигурации JBoss
+     */
+    br4j.jboss.configuration.path
+    /**
+     * Версия выпуска BR4J
+     */
+    br4j.dbmi.build.number
+    /**
+     * Модель ОС
+     */
+    os.name
+    /**
+     * Версия ОС
+     */
+    os.version
+    /**
+     * Архитектура ОС
+     */
+    os.arch
+    /**
+     * IP сервера
+     */
+    os.host.address
+    /**
+     * Имя сервера. Берётся только hostname на loopback так как брать все имена на всех интерфейсах - оч. долго
+     */
+    os.host.name
+	/**
+     *  Вид стандарта, по которому создано данное сообщение (сейчас используется значение "Стандарт системы управления документами")
+     */
+    br4j.dbmi.dmsi.standart
+    /**
+     * Версия стандарта (сейчас используется значение 1.0)
+     */
+    br4j.dbmi.dmsi.version
+    /**
+     * Уникальный служебный идентификационный номер системы
+     */
+    br4j.dbmi.dmsi.sys_id
+    /**
+     *  Наименование системы управления документами
+     */
+    br4j.dbmi.dmsi.system
+    /**
+     * Дополнительные данные о системе управления документами.
+     */
+    br4j.dbmi.dmsi.system_details
+    /**
+     * Обязательное для заполнение значение. Для него нужно указать card_id карточки Организации,
+     * которая считается для данной СЭД организацией по умолчанию. Это означает, что если при выгрузке используется пользователь,
+     * не привязанной к какой-то конкретной организации, то считается, что он относится к данной.
+     */
+    br4j.dbmi.dmsi.default_organization_id
+	/**
+     *  Общий каталог для входящих сообщений
+     */
+    br4j.dbmi.gost.inFolder
+    /**
+     * Общий каталог для формирования отчета по отправке сообщений.
+     */
+    br4j.dbmi.gost.inFolderProcessed
+    /**
+     * Директория, куда модуль ГОСТ переносит неразобранные пакеты.
+     */
+    br4j.dbmi.gost.inFolderDiscarded
+    /**
+     * Общий каталог для исходящих сообщений.
+     */
+    br4j.dbmi.gost.outFolder
+	/**
+     * Путь к папке входящих документов
+     */
+    br4j.dbmi.medo.InFolder
+    /**
+     * Путь к папке обработанных документов
+     */
+    br4j.dbmi.medo.InFolderProcessed
+    /**
+     * Путь к папке докуметов с ошибками
+     */
+    br4j.dbmi.medo.InFolderDiscarded
+    /**
+     * Путь к папке исходящих документов
+     */
+    br4j.dbmi.medo.outFolderExport
+
+
+    br4j.dbmi.medo.ticketsPath
+    br4j.dbmi.medo.processedTicketsPath
+
+	/**
+     * Уникальный идентификатор данной СЭД (узла Репликации)
+     */
+    br4j.dbmi.replication.ServerGUID
+    /**
+     * Директория, откуда модуль Репликация забирает пакеты для загрузки.
+     */
+    br4j.dbmi.replication.IncomingFolder
+    /**
+     * Директория, куда модуль Репликация будет выгружать пакеты для отправки.
+     */
+    br4j.dbmi.replication.OutgoingFolder
+    /**
+     * Уникальный идентификаторы организаций, базирующихся на данной СЭД.
+     */
+    br4j.dbmi.replication.GUID
+
+
+	br4j.dbmi.owriter.local.shared.folder
+    br4j.dbmi.owriter.service.shared.folder
+    br4j.dbmi.owriter.service.base.url
+	br4j.dbmi.materialsync.in
+    br4j.dbmi.materialsync.bad
+    br4j.dbmi.materialsync.folder
+    br4j.dbmi.materialsync.folder.count
+	br4j.dbmi.soz.export.directory
+    br4j.dbmi.soz.export.directory.result.ok
+    br4j.dbmi.soz.export.directory.result.fail
+    br4j.dbmi.soz.server.url
+    br4j.dbmi.soz.in.directory

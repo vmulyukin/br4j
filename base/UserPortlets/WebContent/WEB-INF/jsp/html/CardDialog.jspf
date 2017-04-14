@@ -1,0 +1,85 @@
+<%--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+--%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"  %>
+
+<%@page import="javax.portlet.*"%>
+<%@page import="com.aplana.dbmi.card.*"%>
+
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/portlet" prefix="portlet" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<c:if test="<%= sessionBean.getDialog() != null%>">
+	<c:set var="cardDialogId"><portlet:namespace/>_cardDialog</c:set>
+	<div id="${cardDialogId}" dojoType="dijit.Dialog" title="<%= sessionBean.getDialog().getTitle() %>" style="width: 400px; height: 120px">
+		<div style="text-align: left; padding-bottom: 10px;">
+			<%= sessionBean.getDialog().getMessage() %>
+		</div>
+		<%
+		if (sessionBean.getDialog().getInputLabel() != null){
+		%>
+		<div style="text-align: left; padding-bottom: 10px;">
+			<%= sessionBean.getDialog().getInputLabel() %>
+			<input type="text" id="dialog_input"></input>
+		</div>		
+		<%
+		}
+		%>
+		<div style="float:right; clear: both;">
+			<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="card.register.dialog.button.ok"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					submitForm_DialogAction('<%= sessionBean.getDialog().getCardPortletAction() %>',
+						'<%= CardPortlet.DIALOG_ACTION_OK %>');
+				</script>		
+			</button>
+			<button dojoType="dijit.form.Button" type="button">
+				<fmt:message key="card.register.dialog.button.cancel"/>
+			    <script type="dojo/method" event="onClick" args="evt">
+					dijit.byId('${cardDialogId}').hide();					
+				</script>
+			</button>			
+		</div>
+	</div>
+
+	<script type="text/javascript" language="javascript">
+		dojo.require('dijit.Dialog');
+		dojo.addOnLoad(function() {
+			dbmiHideLoadingSplash();
+			dijit.byId('${cardDialogId}').show();
+		});
+
+		function submitForm_DialogAction(action, dialogAction) { 
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.ACTION_FIELD %>.value = action;
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.DIALOG_ACTION_FIELD %>.value = dialogAction;
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.CARD_TAB_ID %>.value = '<%= tabsManager.getActiveTab().getId().getId().toString() %>';
+			<%
+			if (sessionBean.getDialog().getInputLabel() != null){
+			%>			
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.<%= CardPortlet.DIALOG_INPUT_PARAM_NAME %>.value = document.getElementById('dialog_input').value;
+			<%
+			}
+			%>
+			document.<%= CardPortlet.EDIT_FORM_NAME %>.submit();
+		}
+	</script>
+	<% sessionBean.setDialog(null); %>
+	
+</c:if>

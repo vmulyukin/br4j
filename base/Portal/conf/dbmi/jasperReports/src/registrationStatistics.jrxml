@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registrationStatistics" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.6105100000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="t11L" isDefault="true" hAlign="Left" vAlign="Middle" fontName="Times New Roman" fontSize="11"/>
+	<style name="t11C" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="11"/>
+	<style name="t12L" isDefault="true" hAlign="Left" vAlign="Middle" fontName="Times New Roman" fontSize="12"/>
+	<style name="t12C" isDefault="true" hAlign="Center" vAlign="Middle" fontName="Times New Roman" fontSize="12"/>
+	<parameter name="from_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select * from
+	(select count(*) incoming from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+			and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 224 and total.status_id not in (1,301,302,303990)) as "incoming",
+	(select count(*) og from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+			and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 864 and total.status_id not in (1,301,302,303990)) as "og",
+	(select count(*) outcoming from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+			and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 364 and total.status_id in (101,104)) as "outcoming",
+	(select count(*) internal from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+			and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 784 and total.status_id not in (106,107,108,200,303990,6092498)) as "internal",
+	(select count(*) ord from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+			and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 764 and total.status_id in (101,103,206,48909,104)) as "ord",
+	(select count(*) npa from
+		(Select av_reg_num.template_id, c.status_id
+		from attribute_value av_reg_num
+		join attribute_value av_data on
+		(av_reg_num.card_id = av_data.card_id
+			and av_data.attribute_code = 'JBR_REGD_DATEREG'
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') <= $P{to_date}
+            and date_trunc('day', av_data.date_value + interval '$P!{tz_hour} hour') >= $P{from_date})
+        join card c on c.card_id = av_reg_num.card_id
+			where
+			av_reg_num.attribute_code = 'JBR_REGD_REGNUM'
+			and av_reg_num.string_value is not null) as "total"
+		where total.template_id = 1226 and total.status_id in (101,103,206,48909,104)) as "npa"]]>
+	</queryString>
+	<field name="incoming" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="og" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="outcoming" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="internal" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ord" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="npa" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="42" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="t12C" x="73" y="0" width="396" height="19"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Сведения о документообороте"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="t12C" x="73" y="19" width="396" height="23"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="false" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дата регистрации c "+ (new SimpleDateFormat("dd.MM.yyyy")).format($P{from_date})+ " по " +
+(new SimpleDateFormat("dd.MM.yyyy")).format($P{to_date})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="150" splitType="Stretch">
+			<rectangle>
+				<reportElement x="342" y="15" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="15" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="0" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="0" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="30" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="30" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="45" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="45" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="60" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="60" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="75" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="75" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="90" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="90" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="105" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="120" width="127" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="120" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="105" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="73" y="135" width="269" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="342" y="135" width="127" height="15"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="t11C" x="342" y="15" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Long($F{incoming}.longValue() +  $F{og}.longValue())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="73" y="0" width="269" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Группа документов"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="0" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="FreeSerif" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Зарегистрировано"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="30" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["      Входящие документы"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="30" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{incoming}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="45" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{og}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="45" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["      Обращения граждан"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="60" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  Исходящие"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="t11C" x="342" y="60" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{outcoming}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="75" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  Внутренние"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="t11C" x="342" y="75" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{internal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="90" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  Правовые акты"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="120" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="105" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ord}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="120" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["      Нормативно-правовые акты"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="t11C" x="342" y="90" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Long($F{ord}.longValue() +  $F{npa}.longValue())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="105" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["      Организационно-распорядительные документы"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="135" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["					Итого:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11C" x="342" y="135" width="127" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Long($F{ord}.longValue() +  $F{npa}.longValue()+
+    +$F{incoming}.longValue()+$F{og}.longValue()+
+    +$F{outcoming}.longValue()+$F{internal}.longValue())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="t11L" x="73" y="15" width="269" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  Входящие"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

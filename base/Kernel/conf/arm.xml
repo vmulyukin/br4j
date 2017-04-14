@@ -1,0 +1,595 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<!-- Common ARM -->
+	<bean id="cardAttributeService" class="com.aplana.dbmi.service.impl.workstation.CardService">
+    	<property name="commonQuery" ref="commonWorkstationQuery"/>
+	</bean>
+	
+    <bean id="commonWorkstationQuery" class="com.aplana.dbmi.service.impl.workstation.dao.CommonWorkstationQuery">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+    <bean id="commonCardDataService" class="com.aplana.dbmi.service.impl.workstation.CommonCardDataService">
+		<property name="cardService" ref="cardAttributeService"/>
+	</bean>
+    
+    
+    <!-- Folder queries -->
+    
+    <!-- Consider folders and sub-folders  -->
+
+    <bean id="considerWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>
+
+    <bean id="considerConsiderWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderWorkstationQuery$ConsiderFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>
+
+    <bean id="considerAcquaintWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderWorkstationQuery$AcquaintFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>
+
+    <bean id="considerExecuteWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderWorkstationQuery$ExecuteFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>
+
+    <bean id="considerWorkstationMinisterQuery"
+    	class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderWorkstationQuery$AllFolderMinisterQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>
+
+    <!-- Delegation folders and sub-folders  -->
+
+    <bean id="delegationWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.DelegationWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="myDelegationsDelegationWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.DelegationWorkstationQuery$MyDelegationsFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="delegatedToMeDelegationWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.DelegationWorkstationQuery$DelegatedToMeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="delegationHistoryDelegationWorkstationSupQuery"
+        class="com.aplana.dbmi.service.impl.workstation.dao.DelegationWorkstationQuery$DelegationHistoryFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    
+    <!-- Consider Urgently folder and sub-folders -->
+    
+    <bean id="considerUrgentlyWorkstationSupQuery" 
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderUrgentlyWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>    
+    
+    <bean id="considerUrgentlyConsiderWorkstationSupQuery" 
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderUrgentlyWorkstationQuery$ConsiderFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>   
+
+    <bean id="considerUrgentlyAcquaintWorkstationSupQuery" 
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderUrgentlyWorkstationQuery$AcquaintFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>   
+    
+    <bean id="considerUrgentlyExecuteWorkstationSupQuery" 
+        class="com.aplana.dbmi.service.impl.workstation.dao.ConsiderUrgentlyWorkstationQuery$ExecuteFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="lockManagement" ref="lockManagement"/>
+    </bean>  
+	
+
+	<!-- Sign folders and sub-folders -->
+	
+    <bean id="signingWorkstationMinisterQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignWorkstationQuery$AllFolderMinisterQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+    <bean id="signingWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+	
+	<bean id="signingForCoordinationWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignWorkstationQuery$ForCoordinationFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+    <bean id="signingForSigningWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignWorkstationQuery$ForSigningFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+    
+	
+	<!-- Sing Urgently folder and sub-folders -->
+	
+    <bean id="signingUrgentlyWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignUrgentlyWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+	
+	<bean id="signingUrgentlyForCoordinationWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignUrgentlyWorkstationQuery$ForCoordinationFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+    <bean id="signingUrgentlyForSignWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.SignUrgentlyWorkstationQuery$ForSignFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+    
+    
+    <!-- On Execution folder and sub-folders -->
+    
+    <bean id="onExecutionWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+    
+    <bean id="onExecutionMissedDeadlineWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="0"/>
+    </bean>	
+    
+    <bean id="onExecutionDeadlineTomorrowWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="1"/>
+    </bean>	
+    
+    <bean id="onExecutionDeadlineIn3DaysWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="3"/>
+    </bean>	
+    
+    <bean id="onExecutionDeadlineInWeekWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="7"/>
+    </bean>	
+    
+     <!-- On Execution control folder and sub-folders -->
+    
+    <bean id="onExecutionContWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionContWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+    
+    <bean id="onExecutionContMissedDeadlineWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionContWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="0"/>
+    </bean>	
+    
+    <bean id="onExecutionContDeadlineTomorrowWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionContWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="1"/>
+    </bean>	
+    
+    <bean id="onExecutionContDeadlineIn3DaysWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionContWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="3"/>
+    </bean>	
+    
+    <bean id="onExecutionContDeadlineInWeekWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.OnExecutionContWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="7"/>
+    </bean>	
+    
+    
+    <!-- Personal Execution folder and sub-folders -->
+    
+    <bean id="personalExecutionWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.PersonalExecutionWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+    
+    <bean id="personalExecutionMissedDeadlineWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.PersonalExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="0"/>
+    </bean>	
+    
+    <bean id="personalExecutionDeadlineTomorrowWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.PersonalExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="1"/>
+    </bean>	
+    
+    <bean id="personalExecutionDeadlineIn3DaysWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.PersonalExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="3"/>
+    </bean>	
+    
+    <bean id="personalExecutionDeadlineInWeekWorkstationSupQuery" 
+                class="com.aplana.dbmi.service.impl.workstation.dao.PersonalExecutionWorkstationQuery$DeadlineFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="deadline" value="7"/>
+    </bean>	
+	
+	
+	<!-- External Control folder and sub-folders -->
+	
+	<bean id="externalControlWorkstationSupQuery" 
+			class="com.aplana.dbmi.service.impl.workstation.dao.ExternalControlWorkstationQuery$AllFolderSupQuery">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="externalControlMissedDeadlineWorkstationSupQuery" 
+			class="com.aplana.dbmi.service.impl.workstation.dao.ExternalControlWorkstationQuery$DeadlineFolderSupQuery">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="deadline" value="0"/>
+	</bean>
+	
+	<bean id="externalControlDeadlineTomorrowWorkstationSupQuery" 
+			class="com.aplana.dbmi.service.impl.workstation.dao.ExternalControlWorkstationQuery$DeadlineFolderSupQuery">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="deadline" value="1"/>
+	</bean>
+	
+	<bean id="externalControlDeadlineIn3DaysWorkstationSupQuery" 
+			class="com.aplana.dbmi.service.impl.workstation.dao.ExternalControlWorkstationQuery$DeadlineFolderSupQuery">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="deadline" value="3"/>
+	</bean>
+	
+	<bean id="externalControlDeadlineInWeekWorkstationSupQuery" 
+			class="com.aplana.dbmi.service.impl.workstation.dao.ExternalControlWorkstationQuery$DeadlineFolderSupQuery">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="deadline" value="7"/>
+	</bean>
+	
+	
+	<bean id="controlWorkstationMinisterQuery" 
+            class="com.aplana.dbmi.service.impl.workstation.dao.ControlWorkstationQuery$AllFolderMinisterQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>       
+	
+    <bean id="personalControlWorkstationSupQuery"
+         class="com.aplana.dbmi.service.impl.workstation.dao.PersonalControlWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>	
+	
+    <bean id="approveWorkstationQuery" 
+    		class="com.aplana.dbmi.service.impl.workstation.dao.ApproveWorkstationQuery">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+
+    <!-- My documents folders and sub-folder -->
+
+    <bean id="myDocumentsAllWorkstationSupQuery"
+                class="com.aplana.dbmi.service.impl.workstation.dao.MyDocumentsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="91"/>
+    </bean>
+    <bean id="myDocumentsAge1MonthWorkstationSupQuery"
+                class="com.aplana.dbmi.service.impl.workstation.dao.MyDocumentsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="30"/>
+    </bean>
+    <bean id="myDocumentsAge3MonthsWorkstationSupQuery"
+                class="com.aplana.dbmi.service.impl.workstation.dao.MyDocumentsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="91"/>
+    </bean>
+    <bean id="myDocumentsForReworkWorkstationSupQuery"
+                class="com.aplana.dbmi.service.impl.workstation.dao.MyDocumentsWorkstationQuery$ForReworkFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- Sent documents folders and sub-folders -->
+    <bean id="sentDocsAllWorkstationSupQuery" class="com.aplana.dbmi.service.impl.workstation.dao.SentDocsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="181"/>
+    </bean>
+    <bean id="sentDocsAge1MonthWorkstationSupQuery" class="com.aplana.dbmi.service.impl.workstation.dao.SentDocsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="30"/>
+    </bean>
+    <bean id="sentDocsAge3MonthsWorkstationSupQuery" class="com.aplana.dbmi.service.impl.workstation.dao.SentDocsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="91"/>
+    </bean>
+    <bean id="sentDocsAge6MonthsWorkstationSupQuery" class="com.aplana.dbmi.service.impl.workstation.dao.SentDocsWorkstationQuery$AgeFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="daysAge" value="181"/>
+    </bean>
+    <!-- Favorites folder -->
+
+    <bean id="favoritesWorkstationSupQuery"
+                class="com.aplana.dbmi.service.impl.workstation.dao.FavoritesWorkstationQuery$AllFolderSupQuery">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+	
+	<!-- Folder data services -->
+
+    <bean id="commonAreaWorkstationDataService" class="com.aplana.dbmi.service.impl.workstation.AreaWorkstationDataService"  >
+        <property name="cardService" ref="cardAttributeService"/>
+    </bean>    
+    
+    <bean id="approveWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="approveWorkstationQuery"/>
+    </bean>
+        
+    <bean id="personalControlWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalControlWorkstationSupQuery"/>
+    </bean>             
+
+    <bean id="controlWorkMinisterDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="controlWorkstationMinisterQuery"/>
+    </bean>      
+    
+ 
+ 	<!-- Sing folders and sub-folders data services -->
+    
+    <bean id="signingWorkMinisterDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingWorkstationMinisterQuery"/>
+    </bean>      
+
+    <bean id="signingWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingWorkstationSupQuery"/>
+    </bean>
+    
+    <bean id="signingForCoordWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingForCoordinationWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="signingForSigningWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingForSigningWorkstationSupQuery"/>
+    </bean>    
+    
+    
+    <!-- Sign Urgently folder and sub-folders data services -->
+    
+    <bean id="signingUrgentlyWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingUrgentlyWorkstationSupQuery"/>
+    </bean>
+    
+    <bean id="signingUrgentlyForCoordWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingUrgentlyForCoordinationWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="signingUrgentlyForSignWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="signingUrgentlyForSignWorkstationSupQuery"/>
+    </bean>    
+        
+    
+    <!-- Consider folders and sub-folders data services -->    
+        
+    <bean id="considerWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerWorkstationSupQuery"/>
+    </bean>     
+    
+    <bean id="considerConsiderWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerConsiderWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="considerAcquaintWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerAcquaintWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="considerExecuteWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerExecuteWorkstationSupQuery"/>
+    </bean>  
+    
+    <bean id="considerWorkMinisterDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerWorkstationMinisterQuery"/>
+    </bean>
+
+
+    <!-- Delegation folders and sub-folders data services -->    
+
+    <bean id="delegationWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="delegationWorkstationSupQuery"/>
+    </bean>
+
+    <bean id="delegationMyDelegationsWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="myDelegationsDelegationWorkstationSupQuery"/>
+    </bean>
+
+    <bean id="delegationDelegatedToMeWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="delegatedToMeDelegationWorkstationSupQuery"/>
+    </bean>
+
+    <bean id="delegationDelegationHistoryWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="delegationHistoryDelegationWorkstationSupQuery"/>
+    </bean>
+    
+    
+    <!-- Consider Urgently folder and subfolders data services -->
+    
+    <bean id="considerUrgentlyWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerUrgentlyWorkstationSupQuery"/>
+    </bean>     
+    
+    <bean id="considerUrgentlyConsiderWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerUrgentlyConsiderWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="considerUrgentlyAcquaintWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerUrgentlyAcquaintWorkstationSupQuery"/>
+    </bean>    
+    
+    <bean id="considerUrgentlyExecuteWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="considerUrgentlyExecuteWorkstationSupQuery"/>
+    </bean>       
+    
+    
+    <!-- On Execution folder and sub-folders data services -->
+    
+    <bean id="onExecutionWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionMissedDeadlineWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionMissedDeadlineWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionDeadlineTomorrowWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionDeadlineTomorrowWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionDeadlineIn3DaysWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionDeadlineIn3DaysWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionDeadlineInWeekWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionDeadlineInWeekWorkstationSupQuery"/>
+    </bean>   
+    
+    <!-- On Execution control folder and sub-folders data services -->
+    
+    <bean id="onExecutionContWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionContWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionContMissedDeadlineWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionContMissedDeadlineWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionContDeadlineTomorrowWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionContDeadlineTomorrowWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionContDeadlineIn3DaysWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionContDeadlineIn3DaysWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="onExecutionContDeadlineInWeekWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="onExecutionContDeadlineInWeekWorkstationSupQuery"/>
+    </bean>   
+    
+    
+    <!-- Personal Execution folder and sub-folders data services -->
+    
+    <bean id="personalExecutionWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalExecutionWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="personalExecutionMissedDeadlineWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalExecutionMissedDeadlineWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="personalExecutionDeadlineTomorrowWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalExecutionDeadlineTomorrowWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="personalExecutionDeadlineIn3DaysWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalExecutionDeadlineIn3DaysWorkstationSupQuery"/>
+    </bean>  
+    
+    <bean id="personalExecutionDeadlineInWeekWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="personalExecutionDeadlineInWeekWorkstationSupQuery"/>
+    </bean>  
+    
+    
+    <!-- External Control folder and sub-folders data services -->
+    
+    <bean id="externalControlWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="externalControlWorkstationSupQuery"/>
+    </bean>   
+    
+    <bean id="externalControlMissedDeadlineWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="externalControlMissedDeadlineWorkstationSupQuery"/>
+    </bean>  
+    
+    <bean id="externalControlDeadlineTomorrowWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="externalControlDeadlineTomorrowWorkstationSupQuery"/>
+    </bean>  
+    
+    <bean id="externalControlDeadlineIn3DaysWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="externalControlDeadlineIn3DaysWorkstationSupQuery"/>
+    </bean>  
+    
+    <bean id="externalControlDeadlineInWeekWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="externalControlDeadlineInWeekWorkstationSupQuery"/>
+    </bean> 
+    
+
+     <!-- My documents folder and sub-folder data services -->
+
+    <bean id="myDocumentsAllWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="myDocumentsAllWorkstationSupQuery"/>
+    </bean>
+    
+    <bean id="myDocumentsAge1MonthWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="myDocumentsAge1MonthWorkstationSupQuery"/>
+    </bean>
+    
+    <bean id="myDocumentsAge3MonthsWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="myDocumentsAge3MonthsWorkstationSupQuery"/>
+    </bean>
+
+    <bean id="myDocumentsForReworkWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="myDocumentsForReworkWorkstationSupQuery"/>
+    </bean>
+
+    <!-- Sent docs folder and sub-folder data services -->
+    <bean id="sentDocsAllWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="sentDocsAllWorkstationSupQuery"/>
+    </bean>
+    <bean id="sentDocsAge1MonthWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="sentDocsAge1MonthWorkstationSupQuery"/>
+    </bean>
+
+    <bean id="sentDocsAge3MonthsWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="sentDocsAge3MonthsWorkstationSupQuery"/>
+    </bean>
+    <bean id="sentDocsAge6MonthsWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="sentDocsAge6MonthsWorkstationSupQuery"/>
+    </bean>
+
+    <!-- Favorites folder data service -->
+
+    <bean id="favoritesWorkSupDataService" parent="commonAreaWorkstationDataService" >
+        <property name="workstationDAO" ref="favoritesWorkstationSupQuery"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<config>
+	<!-- query attrname="JBR_IMPL_ACQUAINTERS|Рассматривающие карточки ДО ">
+		<selectSQL>
+			<![CDATA[
+			/*
+			  Заполнение атрибута рассматривающие в ДО 
+			*/
+			select distinct q.card_id FROM 
+				(select c.card_id,
+					text('JBR_IMPL_ACQUAINTERS') as attribute_code, /* добавляем к Рассматривающие карточки ДО */
+					av_a.number_value,
+					c.template_id
+				FROM card c join attribute_value av on 
+							c.card_id=av.card_id and 
+							av.attribute_code='JBR_IMPL_ACQUAINT'
+					join attribute_value av_a on 
+							av_a.card_id=av.number_value and
+							av_a.attribute_code in ('JBR_RASSM_PERSON') /* коп. Рассматривающие из рассмотрений */
+					join card cc on cc.card_id = av_a.card_id
+				WHERE 
+					cc.template_id=504
+				) as q
+			WHERE
+				NOT EXISTS (
+					select 1 FROM attribute_value ave 
+					WHERE ave.card_id=q.card_id 
+						and ave.attribute_code = q.attribute_code 
+						and ave.number_value=q.number_value
+						and ave.template_id=q.template_id        
+				)
+				and q.number_value <> 0
+			]]>
+		</selectSQL>
+		<updateSQL>
+			<![CDATA[
+			/*
+			  Заполнение атрибута рассматривающие в ДО 
+			*/
+			INSERT INTO attribute_value (card_id, attribute_code, number_value, template_id)
+			select * FROM 
+				(select c.card_id,
+					text('JBR_IMPL_ACQUAINTERS') as attribute_code, /* добавляем к Рассматривающие карточки ДО */
+					av_a.number_value,
+					c.template_id
+				FROM card c join attribute_value av on 
+							c.card_id=av.card_id and 
+							av.attribute_code='JBR_IMPL_ACQUAINT'
+					join attribute_value av_a on 
+							av_a.card_id=av.number_value and
+							av_a.attribute_code in ('JBR_RASSM_PERSON') /* коп. Рассматривающие из рассмотрений */
+					join card cc on cc.card_id = av_a.card_id
+				WHERE 
+					cc.template_id=504 
+					and cc.card_id = ?
+				) as q
+			WHERE
+				NOT EXISTS (
+					select 1 FROM attribute_value ave 
+					WHERE ave.card_id=q.card_id 
+						and ave.attribute_code = q.attribute_code 
+						and ave.number_value=q.number_value
+						and ave.template_id=q.template_id        
+				)
+				and q.number_value <> 0
+			]]>
+		</updateSQL>
+	</query-->
+
+	<!-- query attrname="ADMIN_473929|Рассматривающие скрытые карточки документа-основания">
+		<selectSQL>
+			<![CDATA[
+			/*
+			  Копируем из рассмотрений Рассматривающих и вставляем их в карточку документа-основания
+			*/
+			select distinct q.card_id FROM 
+				(select c.card_id,
+					text('ADMIN_473929') as attribute_code, /* добавляем к Рассматривающие скрытые карточки документа-основания */
+					av_a.number_value,
+					c.template_id
+				FROM card c join attribute_value av on 
+							c.card_id=av.card_id and 
+							av.attribute_code='JBR_IMPL_ACQUAINT'
+					join attribute_value av_a on 
+							av_a.card_id=av.number_value and
+							av_a.attribute_code in ('JBR_RASSM_PERSON') /* коп. Рассматривающий из рассмотрения */
+					join card cc on
+							cc.card_id = av_a.card_id
+				WHERE 
+					cc.template_id=504
+				) as q
+			WHERE
+				NOT EXISTS (
+					select 1 FROM attribute_value ave 
+					WHERE ave.card_id=q.card_id 
+						and ave.attribute_code = q.attribute_code 
+						and ave.number_value=q.number_value
+						and ave.template_id=q.template_id        
+				)
+				and q.number_value <> 0
+			]]>
+		</selectSQL>
+		<updateSQL>
+			<![CDATA[
+			/*
+			  Копируем из рассмотрений Рассматривающих и вставляем их в карточку документа-основания
+			*/
+			INSERT INTO attribute_value (card_id, attribute_code, number_value, template_id)
+			select * FROM 
+				(select c.card_id,
+					text('ADMIN_473929') as attribute_code, /* добавляем к Рассматривающие скрытые карточки документа-основания */
+					av_a.number_value,
+					c.template_id
+				FROM card c join attribute_value av on 
+							c.card_id=av.card_id and 
+							av.attribute_code='JBR_IMPL_ACQUAINT'
+					join attribute_value av_a on 
+							av_a.card_id=av.number_value and
+							av_a.attribute_code in ('JBR_RASSM_PERSON') /* коп. Рассматривающий из рассмотрения */
+					join card cc on
+							cc.card_id = av_a.card_id
+				WHERE 
+					cc.template_id=504 
+					and cc.card_id = ?
+				) as q
+			WHERE
+				NOT EXISTS (
+					select 1 FROM attribute_value ave 
+					WHERE ave.card_id=q.card_id 
+						and ave.attribute_code = q.attribute_code 
+						and ave.number_value=q.number_value
+						and ave.template_id=q.template_id        
+				)
+				and q.number_value <> 0
+			]]>
+		</updateSQL>
+	</query-->
+	<query attrname="Doublet_Replace|Замена дубликатов">
+		<selectSQL>
+			<![CDATA[
+				select card_id from attribute_value
+					where number_value in (select card_id from card where status_id = 6 and 
+								template_id in (222,464,780,2300)) and
+					template_id in (864,224,364,324,1064,944)
+			]]>
+		</selectSQL>
+		<!-- Добавил в запрос на обновление значений атрибутов, ссылочные карточки по которым перешли в статус Дубликат, условие на совпадение шаблона ссылочной карточки для атрибута и шаблона ссылки на оригинальное значение в карточке дубликата + в ссылки на оригинальное значение добавил кардлинк: Оригинальное значение из блока Общие характеристики. -->
+		<updateSQL>
+			<![CDATA[
+				update attribute_value av_main set number_value = coalesce((
+					select av4.number_value
+					from attribute_value av4
+						where av4.card_id = av_main.number_value 
+							and av4.attribute_code in ('JBR_DORG_ORIG_ORG','JBR_PERS_ORIG_VALUE','JBR_TYPE_ORIG_VALUE','JBR_ORIG_QUEST_VALUE', 'JBR_ISSUE_ORIG_VALUE')
+							and exists(select 1 from card c4 where c4.card_id = av4.number_value and c4.template_id = av4.template_id)),number_value)
+				where card_id = ? and exists (select 1 from card c 
+									where c.card_id = av_main.number_value
+										and c.status_id = 6 
+										and c.template_id in (222,464,780,2300))
+
+			]]>
+		</updateSQL>
+	</query>
+	<query attrname="OG_Request_Author_Doublet_Replace|Замена дубликатов Авторов обращений в ОГ">
+		<selectSQL>
+			<![CDATA[
+				select card_id from attribute_value
+					where number_value in (select card_id from card where status_id = 6 and 
+								template_id = 780) and
+					template_id = 864
+					and attribute_code = 'JBR_OG_REQ_AUTHOR'
+			]]>
+		</selectSQL>
+		<updateSQL>
+			<![CDATA[
+				with upd_card as (
+					update attribute_value av_main set number_value = coalesce(
+								(select av4.number_value
+										from attribute_value av4
+											where av4.card_id = av_main.number_value 
+												and av4.attribute_code = 'JBR_AUTH_ORIG_VALUE'
+												and exists(select 1 from card c4 where c4.card_id = av4.number_value and c4.template_id = av4.template_id)
+								),
+								number_value
+							)
+					where card_id = ?
+					and exists (select 1 from card c where c.card_id = av_main.number_value
+											and c.status_id = 6 
+											and c.template_id = 780
+					)
+					and av_main.attribute_code = 'JBR_OG_REQ_AUTHOR' returning card_id
+				), upd as ( -- обновляем дату смены Автора обращения
+					update attribute_value set date_value = '{0}' where card_id = (select upd_card.card_id from upd_card limit 1) and attribute_code = 'JBR_REQ_AUTHOR_CHG'
+				)
+				insert into attribute_value(card_id, attribute_code, date_value, template_id) -- устанавливаем дату смены Автора обращения
+				select
+					c.card_id,
+					a.attribute_code,
+					'{0}' as date_value,
+					c.template_id
+				from card c
+					cross join attribute a
+					left join attribute_value av on av.card_id = c.card_id and av.attribute_code = a.attribute_code
+				where
+				c.card_id = (select upd_card.card_id from upd_card limit 1)
+				and a.attribute_code = 'JBR_REQ_AUTHOR_CHG'
+				and av.card_id is null
+			]]>
+		</updateSQL>
+		<updateSQL-params>
+			<parameter>CURRENT_DATE</parameter>
+		</updateSQL-params>
+	</query>
+
+	<!-- Заполнение атрибута Владелец карточки (скрытый) в карточках внутренних персон -->
+	<query attrname="JBR_PERS_OWNER|Владелец карточки (скрытый)">
+		<selectSQL>
+			<![CDATA[
+				/*Анализируем только те карточки, у которых атрибут не заполнен*/
+				select c.card_id from card c
+					left join attribute_value av on av.attribute_code = 'JBR_PERS_OWNER' and av.card_id = c.card_id
+				WHERE
+					c.template_id = 10
+					and av.number_value is null
+			]]>
+		</selectSQL>
+		<updateSQL>
+			<![CDATA[
+				insert into attribute_value(card_id, attribute_code, number_value, template_id)
+				select 
+					c.card_id, 
+					'JBR_PERS_OWNER' as attribute_code, 
+					p.person_id as number_value, 
+					10 as template_id
+				from 
+					card c
+					join person p on p.card_id = c.card_id
+				where
+					c.card_id = ?
+			]]>
+		</updateSQL>
+	</query>
+</config>

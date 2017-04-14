@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="og_author_appeal_sub" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="dejavu" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="dejavu_bold" isDefault="true" fontName="Times New Roman Полужирный" fontSize="10" isBold="true" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<queryString language="SQL">
+		<![CDATA[select
+    av_date.date_value as date,
+    vl_format.value_rus as format,
+    vl_sourceL.value_rus as sourceL,
+    av_name.string_value as sourceC
+
+from
+	card c
+left outer join -- Дата поступления
+	attribute_value av_date on (av_date.card_id = c.card_id and av_date.attribute_code = 'JBR_REGD_DATEOUT')
+left outer join -- Формат обращения
+	attribute_value av_form on (av_form.card_id = c.card_id and av_form.attribute_code = 'JBR_ADDRESS_FORMAT')
+		left outer join values_list vl_format on (vl_format.value_id=av_form.value_id)
+left outer join -- Источник поступления L
+	attribute_value av_sourceL on (av_sourceL.card_id = c.card_id and av_sourceL.attribute_code = 'ADMIN_283122')
+        left outer join values_list vl_sourceL on (vl_sourceL.value_id=av_sourceL.value_id)
+left outer join -- Источник поступления C
+    attribute_value av_sourceC on (av_sourceC.card_id = c.card_id and av_sourceC.attribute_code = 'ADMIN_281734')
+        left outer join attribute_value av_author on (av_author.card_id = av_sourceC.number_value AND av_author.attribute_code='AUTHOR'  )
+            left outer join attribute_value  av_name on (av_name.card_id=(select card_id from person where person_id=av_author.number_value) and av_name.attribute_code='JBR_PERS_SNAME_NM')
+
+where c.card_id = $P{card_id}]]>
+	</queryString>
+	<field name="date" class="java.util.Date"/>
+	<field name="format" class="java.lang.String"/>
+	<field name="sourceL" class="java.lang.String"/>
+	<field name="sourceC" class="java.lang.String"/>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dejavu" isPrintRepeatedValues="false" x="0" y="0" width="555" height="30"/>
+				<textElement>
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{date} != null ?  (new SimpleDateFormat("dd.MM.yyyy")).format($F{date})+ ", " : "") + ($F{format} != null ? $F{format}+ ", ": "") + ($F{sourceL} != null ? $F{sourceL}: "")  + ($F{sourceC} != null ? $F{sourceC}: "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

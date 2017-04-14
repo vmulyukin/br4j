@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="otchet_po_documentoob_subreport" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="dept" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\BR4J_SOURCE\\FSIN\\branches\\01.4.006.12.000\\base\\UserPortlets\\WebContent\\jasper\\src\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tz_hour" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH RECURSIVE search_up(cycle_id, cycle_number, cycle_base) AS (
+    select cast(c.card_id::bigint as numeric),1, c.card_id from card c
+    where c.status_id in (4,7) and c.template_id = 484
+
+    UNION ALL
+    SELECT v.number_value, su.cycle_number+1, su.cycle_base
+    FROM attribute_value v, search_up su
+    WHERE v.attribute_code = 'JBR_DEPT_PARENT_LINK'
+    AND v.card_id = su.cycle_id
+    and exists (select 1 from attribute_value
+		where attribute_code = 'JBR_DEPT_PARENT_LINK'
+		and card_id = v.number_value)),
+departments as (select (max(ARRAY[cycle_number, cycle_id, cycle_base]))[3] as curDep,
+			(max(ARRAY[cycle_number, cycle_id, cycle_base]))[2] as depLvl2
+		from search_up
+		group by cycle_base)
+select strt.value_id, vals.column2::text as title,
+coalesce( income.count,0) as in_count, coalesce(income.dsp,0) as in_dsp,
+coalesce(outcome.count,0) as out_count,coalesce(outcome.dsp,0) as out_dsp,
+coalesce(npa.count,0) as npa_count, coalesce(npa.dsp,0) as npa_dsp
+from
+(select value_id from values_list where value_id in (3010,3011,3012,3013,3014,3015,3016,3017)
+union
+select null
+order by value_id
+) as strt
+left join
+	(select count(new_dsp.card_id) as count, new_dsp.spec, round(sum(new_dsp.dsp::numeric)/1790) as dsp
+	from
+		(select distinct c.card_id, av_spec.value_id as spec, av_dsp.value_id as dsp
+		from card c
+		join attribute_value av_reg on c.card_id = av_reg.card_id and av_reg.attribute_code = 'JBR_REGD_REGISTRAR'
+		join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+		join person p_reg on av_reg.number_value = p_reg.person_id
+		join attribute_value av_dept on p_reg.card_id = av_dept.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+		join departments d on d.curDep = av_dept.number_value
+		join attribute_value av_sender on av_sender.card_id = c.card_id and av_sender.attribute_code = 'JBR_INFD_SENDER'
+		left join attribute_value av_spec on av_sender.number_value = av_spec.card_id and av_spec.attribute_code = 'JBR_DORG_SPESIALIZ' and av_spec.value_id in (3010,3011,3012,3013,3014,3015,3016,3017)
+		left join attribute_value av_type on c.card_id = av_type.card_id and av_type.attribute_code = 'JBR_INFD_TYPEDOC'
+		left join attribute_value av_dsp on c.card_id = av_dsp.card_id and av_dsp.attribute_code = 'ADMIN_281785' and av_dsp.value_id = 1790
+		where c.template_id = 224
+		and c.status_id in (206,48909,101,103,104,102)
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+		and av_type.number_value not in (select c.card_id
+						 from card c
+						left join attribute_value av on c.card_id = av.card_id and attribute_code = 'NAME'
+						where c.template_id = 2300 and av.string_value in ('Федеральный конституционный закон Российской Федерации',
+						'Федеральный закон Российской Федерации',
+						'Указ Президента Российской Федерации',
+						'Распоряжение Президента Российской Федерации',
+						'Постановление Правительства Российской Федерации',
+						'Распоряжение Правительства Российской Федерации',
+						'Распоряжение Росимущества',
+						'Распоряжение Генеральной прокуратуры Российской Федерации',
+						'Распоряжение Правительства Москвы',
+						'Постановление Центральной избирательной комиссии Российской Федерации',
+						'Постановление Главного государственного санитарного врача Российской Федерации',
+						'Распоряжение территориального управления Росимущества в городе Москве',
+						'Приказ Министерства внутренних дел Российской Федерации',
+						'Приказ Министерства здравоохранения Российской Федерации',
+						'Приказ Министерства труда и социальной защиты Российской Федерации',
+						'Приказ Росстата',
+						'Приказ Роспотребнадзора',
+						'Приказ Министерства сельского хозяйства Российской Федерации',
+						'Приказ Генеральной прокуратуры Российской Федерации',
+						'Приказ Министерства финансов Российской Федерации',
+						'Приказ Министерства юстиции Российской Федерации по личному составу',
+						'Приказ Министерства юстиции Российской Федерации по основной деятельности',
+						'Распоряжение Министерства юстиции Российской Федерации',
+						'Приказ ФСИН России по основной деятельности',
+						'Приказ ФСИН России по личному составу',
+						'Распоряжение ФСИН России'
+						)
+					)
+		)as new_dsp
+	group by spec	order by spec) as income on strt.value_id = income.spec or (strt.value_id is null and income.spec is null)
+left join
+	(select count(new_dsp.card_id) as count, new_dsp.spec, round(sum(new_dsp.dsp::numeric)/1790) as dsp
+	from
+		(select distinct c.card_id, av_spec.value_id as spec, av_dsp.value_id as dsp
+		from card c
+		join attribute_value av_reg on c.card_id = av_reg.card_id and av_reg.attribute_code = 'JBR_REGD_REGISTRAR'
+		join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+		join person p_reg on av_reg.number_value = p_reg.person_id
+		join attribute_value av_dept on p_reg.card_id = av_dept.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+		join departments d on d.curDep = av_dept.number_value
+		join attribute_value av_receiver on av_receiver.card_id = c.card_id and av_receiver.attribute_code = 'JBR_RECEIVER_EXT'
+		left join attribute_value av_spec on av_receiver.number_value = av_spec.card_id and av_spec.attribute_code = 'JBR_DORG_SPESIALIZ' and av_spec.value_id in (3010,3011,3012,3013,3014,3015,3016,3017)
+		left join attribute_value av_dsp on c.card_id = av_dsp.card_id and av_dsp.attribute_code = 'ADMIN_281785' and av_dsp.value_id = 1790
+		where c.template_id = 364
+		and c.status_id in (101,104)
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+		)as new_dsp
+	group by spec	order by spec) as outcome on strt.value_id = outcome.spec or (strt.value_id is null and outcome.spec is null)
+left join
+	(select count(new_dsp.card_id) as count, new_dsp.spec, round(sum(new_dsp.dsp::numeric)/1790) as dsp
+	from
+		(select distinct c.card_id, av_spec.value_id as spec, av_dsp.value_id as dsp
+		from card c
+		join attribute_value av_reg on c.card_id = av_reg.card_id and av_reg.attribute_code = 'JBR_REGD_REGISTRAR'
+		join attribute_value reg_date on reg_date.card_id = c.card_id and reg_date.attribute_code = 'JBR_REGD_DATEREG'
+		join person p_reg on av_reg.number_value = p_reg.person_id
+		join attribute_value av_dept on p_reg.card_id = av_dept.card_id and av_dept.attribute_code = 'JBR_PERS_DEPT_LINK'
+		join departments d on d.curDep = av_dept.number_value
+		join attribute_value av_sender on av_sender.card_id = c.card_id and av_sender.attribute_code = 'JBR_INFD_SENDER'
+		left join attribute_value av_spec on av_sender.number_value = av_spec.card_id and av_spec.attribute_code = 'JBR_DORG_SPESIALIZ' and av_spec.value_id in (3010,3011,3012,3013,3014,3015,3016,3017)
+		join attribute_value av_type on c.card_id = av_type.card_id and av_type.attribute_code = 'JBR_INFD_TYPEDOC'
+		left join attribute_value av_dsp on c.card_id = av_dsp.card_id and av_dsp.attribute_code = 'ADMIN_281785' and av_dsp.value_id = 1790
+		where c.template_id = 224
+		and c.status_id in (206,48909,101,103,104,102)
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') >= $P{startDate})
+		and (date_trunc('day',reg_date.date_value + interval '$P!{tz_hour} hour') <= $P{endDate})
+		and ($P{dept} is null or d.depLvl2 in ($P!{dept}))
+		and av_type.number_value in (select c.card_id
+						 from card c
+						left join attribute_value av on c.card_id = av.card_id and attribute_code = 'NAME'
+						where c.template_id = 2300 and av.string_value in ('Федеральный конституционный закон Российской Федерации',
+						'Федеральный закон Российской Федерации',
+						'Указ Президента Российской Федерации',
+						'Распоряжение Президента Российской Федерации',
+						'Постановление Правительства Российской Федерации',
+						'Распоряжение Правительства Российской Федерации',
+						'Распоряжение Росимущества',
+						'Распоряжение Генеральной прокуратуры Российской Федерации',
+						'Распоряжение Правительства Москвы',
+						'Постановление Центральной избирательной комиссии Российской Федерации',
+						'Постановление Главного государственного санитарного врача Российской Федерации',
+						'Распоряжение территориального управления Росимущества в городе Москве',
+						'Приказ Министерства внутренних дел Российской Федерации',
+						'Приказ Министерства здравоохранения Российской Федерации',
+						'Приказ Министерства труда и социальной защиты Российской Федерации',
+						'Приказ Росстата',
+						'Приказ Роспотребнадзора',
+						'Приказ Министерства сельского хозяйства Российской Федерации',
+						'Приказ Генеральной прокуратуры Российской Федерации',
+						'Приказ Министерства финансов Российской Федерации',
+						'Приказ Министерства юстиции Российской Федерации по личному составу',
+						'Приказ Министерства юстиции Российской Федерации по основной деятельности',
+						'Распоряжение Министерства юстиции Российской Федерации',
+						'Приказ ФСИН России по основной деятельности',
+						'Приказ ФСИН России по личному составу',
+						'Распоряжение ФСИН России'
+						)
+					)
+		)as new_dsp
+	group by spec	order by spec) as npa on strt.value_id = npa.spec or (strt.value_id is null and npa.spec is null)
+join (values (3010,'Аппарат президента РФ'),(3011,'Правительство РФ'),(3012,'Генеральная прокуратура РФ'),
+		(3013,'Минюст России'),(3014,'ФСИН России'),(3015,'Территориальный орган ФСИН России'),
+		(3016,'Учреждения, подведомственные территориальным органам ФСИН России'),(3017,'Другие учреждения, входящие в УИС'),
+		(null,'Организации, не входящие в УИС')) as vals on strt.value_id = vals.column1 or ( strt.value_id is null and vals.column1 is null)]]>
+	</queryString>
+	<field name="value_id" class="java.lang.Long"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="in_count" class="java.lang.Long"/>
+	<field name="in_dsp" class="java.lang.Long"/>
+	<field name="out_count" class="java.lang.Long"/>
+	<field name="out_dsp" class="java.lang.Long"/>
+	<field name="npa_count" class="java.lang.Long"/>
+	<field name="npa_dsp" class="java.lang.Long"/>
+	<variable name="sum_all" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{in_count}+$F{out_count}+$F{npa_count}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_in" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{in_count}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_out" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{out_count}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_npa" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{npa_count}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_in_dsp" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{in_dsp}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_out_dsp" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{out_dsp}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sum_npa_dsp" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{npa_dsp}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="33" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="33" y="0" width="195" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="228" y="0" width="70" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{in_count}+$F{out_count}+$F{npa_count} > 0? $F{in_count}+$F{out_count}+$F{npa_count} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="466" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npa_count} > 0? $F{npa_count} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="298" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{in_count} > 0? $F{in_count} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="382" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{out_count} > 0? $F{out_count}: ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="718" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npa_dsp} > 0? $F{npa_dsp} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="550" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{in_dsp} > 0? $F{in_dsp} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="634" y="0" width="84" height="15"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="times.ttf" pdfEncoding="Cp1251" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{out_dsp} > 0? $F{out_dsp}: ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

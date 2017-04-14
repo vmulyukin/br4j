@@ -1,0 +1,96 @@
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans default-lazy-init="false">
+	<bean id="config" class="com.aplana.dmsi.Configuration" scope="singleton" init-method="init">
+		<property name="JAXBContext" ref="jaxb"/>
+	</bean>
+	<bean id="jaxb" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg>
+			<value>com.aplana.dmsi.types:com.aplana.dmsi.types.delo:com.aplana.dmsi.expansion.fsin</value>
+		</constructor-arg>
+	</bean>
+	<bean id="expansionManager" class="com.aplana.dmsi.expansion.ExpansionManager">
+		<property name="adapters">
+			<map>
+				<entry key-ref="EOS" value-ref="EOS_Adapter"/>
+				<entry key-ref="LB_FSIN_1_0" value-ref="LB_FSIN_1_0_Adapter"/>
+			</map>
+		</property>
+		<property name="processors">
+			<map>
+				<entry key-ref="EOS" value-ref="EOS_Processor"/>
+				<entry key-ref="LB_FSIN_1_0" value-ref="LB_FSIN_1_0_Processor"/>
+			</map>
+		</property>
+		<property name="defaults">
+			<map>
+				<entry>
+					<key>
+						<bean class="java.lang.Enum" factory-method="valueOf">
+							<constructor-arg value="com.aplana.dbmi.model.TypeStandard" />
+							<constructor-arg value="GOST"/>
+						</bean>
+					</key>
+					<ref bean="LB_FSIN_1_0"/>
+				</entry>
+				<entry>
+					<key>
+						<bean class="java.lang.Enum" factory-method="valueOf">
+							<constructor-arg value="com.aplana.dbmi.model.TypeStandard" />
+							<constructor-arg value="DELO"/>
+						</bean>
+					</key>
+					<ref bean="EOS"/>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- Описания Expansion -->
+	<bean id="EOS" class="com.aplana.dmsi.expansion.ExpansionManager$ExpansionDescription" >
+		<constructor-arg value="ЭОС"/>
+		<constructor-arg value=""/>
+	</bean>
+	<bean id="LB_FSIN_1_0" class="com.aplana.dmsi.expansion.ExpansionManager$ExpansionDescription" >
+		<constructor-arg value="Логика Бизнеса"/>
+		<constructor-arg value="ORG 1.0"/>
+	</bean>
+	
+	<!-- Адаптеры Expansion -->
+	<bean id="EOS_Adapter" class="com.aplana.dmsi.expansion.EOSExpansionAdapter">
+	</bean>
+	
+	<bean id="LB_FSIN_1_0_Adapter" class="com.aplana.dmsi.expansion.FSIN0100ExpansionAdapter">
+	</bean>
+	
+	<!-- Процессоры Expansion -->
+	<bean id="EOS_Processor" class="com.aplana.dmsi.expansion.EOSExpansionProcessor">
+	</bean>
+	
+	<bean id="LB_FSIN_1_0_Processor" class="com.aplana.dmsi.expansion.FSIN0100ExpansionProcessor">
+		<property name="author"><bean id="LB_FSIN_1_0.author" 
+				class="org.springframework.beans.factory.config.PropertyPathFactoryBean"/></property>
+		<property name="version"><bean id="LB_FSIN_1_0.version" 
+				class="org.springframework.beans.factory.config.PropertyPathFactoryBean"/></property>
+	
+	</bean>
+	
+</beans>

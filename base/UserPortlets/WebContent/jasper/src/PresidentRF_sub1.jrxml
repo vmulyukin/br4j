@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PresidentRF_sub1" pageWidth="628" pageHeight="800" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="628" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="times_normal" isDefault="true" fontName="Times New Roman" fontSize="11"/>
+	<parameter name="path" class="java.lang.String"/>
+	<parameter name="tz_hour" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[new java.lang.Long(java.util.Calendar.getInstance().getTimeZone().getRawOffset() / 3600000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="card_id" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[with questions (card_id, question, org, route_date, des, remedy, reply_date) as (
+select
+    c.card_id as card_id,
+    av_que_num.string_value as question,
+    case when av_recip_name.string_value is null or av_recip_name.string_value = '' then av_recip_fullname.string_value
+	else  av_recip_name.string_value
+    end as org,
+    av_route_date.date_value + interval '$P!{tz_hour} hour' as route_date,
+    av_decision.value_id as des,
+    case when av_remedy_value.value_id = 1449
+         then av_remedy_value.value_rus
+         else null
+    end as remedy,
+    av_reply_date.date_value  + interval '$P!{tz_hour} hour' as reply_date
+
+    from card c
+    -- Вопросы
+    left join attribute_value av_que on c.card_id = av_que.card_id and av_que.attribute_code = 'ADMIN_277251'
+        -- Номер вопроса/подвопроса
+        left join attribute_value av_que_num on av_que.number_value = av_que_num.card_id and av_que_num.attribute_code = 'ADMIN_275723'
+
+    -- Перенаправление обращения
+    left join attribute_value av_reroute on c.card_id = av_reroute.card_id and av_reroute.attribute_code = 'JBR_REDIRECTED_REQ'
+					    and exists (select 1 from attribute_value av_route1 where av_route1.card_id = av_reroute.number_value and av_route1.attribute_code = 'JBR_REDIROG_QUEST'
+							and av_route1.number_value = av_que.number_value
+						       )
+        -- Получатель обращения
+        left join attribute_value av_recip on av_reroute.number_value = av_recip.card_id and av_recip.attribute_code = 'JBR_TREATMENT_RECIP'
+            -- Сокращенное наименование
+            left join attribute_value av_recip_name on av_recip.number_value = av_recip_name.card_id and av_recip_name.attribute_code = 'JBR_DORG_SHORTNAME'
+            -- Полное наименование
+            left join attribute_value av_recip_fullname on av_recip.number_value = av_recip_fullname.card_id and av_recip_fullname.attribute_code = 'JBR_DORG_FULLNAME'
+        -- Дата перенаправления
+        left join attribute_value av_route_date on av_reroute.number_value = av_route_date.card_id and av_route_date.attribute_code = 'JBR_REDIRECT_DATE'
+
+
+    -- Результаты рассмотрения
+    left join attribute_value av_result on c.card_id = av_result.card_id and av_result.attribute_code = 'ADMIN_283926'
+					   and exists (select 1 from attribute_value av_result1 where av_result1.card_id = av_result.number_value and av_result1.attribute_code = 'JBR_QUESTION_RES'
+							and av_result1.number_value = av_que.number_value
+						       )
+        -- Результат рассмотрения (Поддержано) 1240 (Разъяснено) 1242 (Не поддержано) 1243
+        left join attribute_value av_decision on av_result.number_value = av_decision.card_id and av_decision.attribute_code = 'JBR_DECISION_RES'
+         -- Меры приняты
+        left join attribute_value av_remedy on av_result.number_value = av_remedy.card_id and av_remedy.attribute_code = 'JBR_MEASURES_TAKEN'
+		left join values_list av_remedy_value on av_remedy.value_id = av_remedy_value.value_id
+		-- Дата направления ответа
+		left join attribute_value av_reply_date on av_result.number_value = av_reply_date.card_id and av_reply_date.attribute_code = 'JBR_REPLY_DATE'
+
+    where c.card_id = $P{card_id}
+    	order by av_que_num.string_value)
+
+select card_id, question, org, route_date, des, remedy, reply_date,
+(select count(question) from questions) as count_que,
+(select count(org) from questions) as count_org,
+(select count(route_date) from questions) as count_date,
+(select count(*) from questions where des is not null and des = 1240) as count_supported,
+(select count(remedy) from questions) as count_remedy,
+(select count(*) from questions where des is not null and des = 1242) as count_explained,
+(select count(*) from questions where des is not null and des = 1243) as count_not_sup,
+(select count(reply_date) from questions) as count_reply_date
+from questions]]>
+	</queryString>
+	<field name="card_id" class="java.lang.Long"/>
+	<field name="question" class="java.lang.String"/>
+	<field name="org" class="java.lang.String"/>
+	<field name="route_date" class="java.util.Date"/>
+	<field name="des" class="java.lang.Long"/>
+	<field name="remedy" class="java.lang.String"/>
+	<field name="reply_date" class="java.util.Date"/>
+	<field name="count_que" class="java.lang.Long"/>
+	<field name="count_org" class="java.lang.Long"/>
+	<field name="count_date" class="java.lang.Long"/>
+	<field name="count_supported" class="java.lang.Long"/>
+	<field name="count_remedy" class="java.lang.Long"/>
+	<field name="count_explained" class="java.lang.Long"/>
+	<field name="count_not_sup" class="java.lang.Long"/>
+	<field name="count_reply_date" class="java.lang.Long"/>
+	<variable name="count_que" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_que}]]></variableExpression>
+	</variable>
+	<variable name="count_org" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_org}]]></variableExpression>
+	</variable>
+	<variable name="count_date" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_date}]]></variableExpression>
+	</variable>
+	<variable name="count_supported" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_supported}]]></variableExpression>
+	</variable>
+	<variable name="count_remedy" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_remedy}]]></variableExpression>
+	</variable>
+	<variable name="count_explained" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_explained}]]></variableExpression>
+	</variable>
+	<variable name="count_not_sup" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_not_sup}]]></variableExpression>
+	</variable>
+	<variable name="count_reply_date" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{count_reply_date}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="125" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{question} != null
+    ? $F{question}
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="250" y="0" width="70" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{route_date} != null
+    ? new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{route_date})
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="125" y="0" width="125" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org} != null
+    ? $F{org}
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="320" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des} != null && $F{des} == 1240
+    ? "Да"
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="385" y="0" width="50" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remedy} != null
+    ? $F{remedy}
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="435" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des} != null && $F{des} == 1242
+    ? "Да"
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="times_normal" stretchType="RelativeToTallestObject" mode="Opaque" x="500" y="0" width="65" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="timesbd.ttf" pdfEncoding="Cp1251"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des} != null && $F{des} == 1243
+    ? "Да"
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="565" y="0" width="63" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reply_date} != null
+    ? new java.text.SimpleDateFormat("dd.MM.yyyy").format($F{reply_date})
+    : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

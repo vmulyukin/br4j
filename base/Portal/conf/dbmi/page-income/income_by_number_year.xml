@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!--
+	<column id="ATTRIBUTE_ID">
+		<default_icon image="class_image" tooltipRu="Подсказка на русском" tooltipEn="Tooltip on english"/>
+		<empty_icon image="class_image" tooltipRu="Подсказка на русском" tooltipEn="Tooltip on english"/>
+		<icon image="class_image" tooltipRu="Подсказка на русском" tooltipEn="Tooltip on english"/>
+	</column> 
+	Если атрибут не имеет значения, то применяется тег empty_icon, иначе ничего не выводится.
+	Если атрибут имеет значения, то используются теги icon, при этом ищется первое совпадение класса изображения тега
+	со значением атрибута. Сначала ищется совпадение для первого тега, если его нет, то для второго и т.д.
+	Если атрибут имеет значения, но совпадения нет, то используется тег default_icon.
+	
+	Если не применяется ни один из тегов, то ничего не выводится.
+-->
+<search byAttr="true">
+	<name lang="ru">Входящие по регистрационному номеру</name>
+	<name lang="en">Входящие по регистрационному номеру</name>
+
+	<template>224</template>
+	<status>registration</status>
+	<status>consideration</status>
+	<status>execution</status>
+	<status>done</status>
+	<status>delo</status>
+	<status>ready-to-write-off</status>	
+
+	<attribute id="CHANGED" type="date">
+		<value type="start" var="current" zeroTime="true">-365</value>
+		<value type="end" var="current">+1</value>
+	</attribute>
+	
+	<column	id="JBR_IMPL_ONCONT">
+		<icon value="1432" image="onControl" tooltipRu="На контроле" tooltipEn="On control"/>
+		<icon value="1433" image="notControl" tooltipRu="Не на контроле" tooltipEn="Not control"/>
+	</column>
+	<column id="_STATE">
+		<icon value="48909" image="executed" tooltipRu="Исполнен" tooltipEn="Executed"/>
+		<icon value="104" image="executed" tooltipRu="Исполнен" tooltipEn="Executed"/>
+		<default_icon image="noExecuted" tooltipRu="Не исполнен" tooltipEn="No executed"/>
+	</column>
+	<column id="ADMIN_290575">
+		<default_icon image="urgent" tooltipRu="Есть категория срочности" tooltipEn="There are categories of urgency"/>
+		<empty_icon image="notUrgent" tooltipRu="Нет категории срочности" tooltipEn="No category of urgency"/>
+	</column> 
+	<column id="JBR_IMPL_RESOLUT" linkCardsStatesIgnore="trash">
+		<default_icon image="boundRes" tooltipRu="Есть резолюции" tooltipEn="There is a resolution"/>
+		<empty_icon image="notBoundRes" tooltipRu="Нет резолюций" tooltipEn="No resolutions"/>
+	</column>
+	<column id="JBR_DOCL_RELATDOC">
+		<default_icon image="boundDoc" tooltipRu="Есть связанные документы" tooltipEn="There are related documents"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет связанных документов" tooltipEn="No related documents"/>
+	</column>
+	<!--  224	Входящий	ADMIN_221237	(B) На документ ссылаются   -->
+	<column id="ADMIN_221237">
+		<default_icon image="boundDoc" tooltipRu="Есть ссылки на документ" tooltipEn="Exists links to this document"/>
+		<empty_icon image="notBoundDoc" tooltipRu="Нет ссылок на документ" tooltipEn="No links to this document"/>
+	</column>
+
+
+	<column id="JBR_REGD_REGNUM"  width="40"  link="true"  sortAttrId="regnumberdigital"/>
+	<column id="JBR_REGD_DATEREG" width="40" sort="asc"/>
+	<column id="JBR_REGD_NUMOUT" width="40" />
+	<column id="JBR_REGD_DATEOUT" width="40" />
+	<column id="JBR_INFD_SHORTDESC" width="120" link="true" columnTitleRu="Краткое содержание"/>
+	<column id="JBR_INFD_SENDER" width="80"  labelAttrId="NAME" isParentName="true"/>	
+	<column id="_STATE" width="50" />
+</search>

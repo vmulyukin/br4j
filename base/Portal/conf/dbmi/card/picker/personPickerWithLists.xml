@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!--
+
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to you under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<cardLinkPickerAttributeEditorSettings>
+	<variants sharedValues="true" choiceAttr="LOCAL">
+		<variant searchAttr="NAME" searchAttrType="string" choiceValue="departments" title="departments">
+			<hierarchyDialog>
+				<hierarchy parentMergeMode="cardSet">
+					<cardSet alias="organizations" labelAttr="jbr.organization.shortName" labelAttrType="string" collapsed="true" checkChildren="true" sortAttr="jbr.organization.shortName" sortAttrType="string" sortOrder="asc"/>
+					<cardSet alias="departments" labelAttr="jbr.department.fullName" labelAttrType="text" collapsed="true" checkChildren="true" sortAttr="jbr.department.fullName" sortAttrType="text" sortOrder="asc">
+						<parent>
+							<link targetSet="departments" linkAttr="jbr.department.parentDepartment" isReversed="false" skipNextIfFound="true"/>
+							<link targetSet="organizations" linkAttr="jbr.department.Organization" isReversed="false"/>
+						</parent>
+					</cardSet>
+					<cardSet stored="true" alias="persons" labelAttr="jbr.person.lastName" labelAttrType="string" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+						<parent>
+							<link targetSet="departments" linkAttr="jbr.personInternal.department" isReversed="false"/>
+						</parent>
+					</cardSet>
+				</hierarchy>
+				<columns>
+					<column id="jbr.person.firstName" width="50" />
+					<column id="jbr.person.middleName" width="80" />
+				</columns>
+				<selectableCardCondition>
+					<template>jbr.internalPerson</template>
+				</selectableCardCondition>
+				<cacheable reloadTime="60"/>
+			</hierarchyDialog>
+			<list linkAttr="jbr.acquaintanceList.recipients" linkReversed="false"/>
+			<search byAttr="true">
+				<template>jbr.internalPerson</template>
+				<status>user.active</status>
+			</search>
+			<columns>
+				<column id="jbr.person.lastName" width="80" link="true" />
+				<column id="jbr.person.firstName" width="50" />
+				<column id="jbr.person.middleName" width="80" />
+				<column id="jbr.person.organization" width="80" labelAttrId="jbr.organization.shortName" isParentName="true"/>
+				<column id="jbr.person.dept" width="80" labelAttrId="NAME" isParentName="true"/>
+				<column id="jbr.person.pos" width="80" labelAttrId="NAME" isParentName="true"/>
+				
+				<!-- <column id="NAME" width="300" /> -->
+			</columns>
+		</variant>
+		<variant searchAttr="NAME" searchAttrType="string" choiceValue="lists" title="lists">
+			<hierarchyDialog>
+				<hierarchy parentMergeMode="cardSet">
+					<cardSet stored="true" alias="personLists" labelAttr="name" labelAsLink="true" checkChildren="true" collapsed="true" sortAttr="name" sortAttrType="string" sortOrder="asc">
+						<children>
+							<link targetSet="persons" linkAttr="jbr.acquaintanceList.recipients" isReversed="false"/>
+						</children>
+					</cardSet>
+					<cardSet  alias="persons" labelAttr="jbr.person.lastName" labelAttrType="string" sortAttr="NAME" sortAttrType="string" sortOrder="asc">
+					</cardSet>
+				</hierarchy>
+				<columns>
+					<column id="jbr.person.firstName" width="50" />
+					<column id="jbr.person.middleName" width="80" />
+				</columns>
+				<actions>
+					<action title="addListTitle" handler="com.aplana.dbmi.card.actionhandler.AddLinkedCardActionHandler" selectionType="none" id="addList">
+						<parameters>
+							<parameter name="template" value="jbr.acquaintanceList"/>
+							<parameter name="useThisAttrInsteadOfCardId" value="jbr.acquaintanceList.recipients"/>
+						</parameters>
+					</action>
+				</actions>
+				<selectableCardCondition>
+					<template>jbr.internalPerson</template>
+				</selectableCardCondition>
+			</hierarchyDialog>
+			<list linkAttr="jbr.acquaintanceList.recipients" linkReversed="false" status="user.active" template="jbr.internalPerson"/>
+			<search byAttr="true">
+				<template>jbr.acquaintanceList</template>
+				<status>private</status>
+				<status>public</status>
+			</search>
+			<columns>
+				<column id="jbr.person.lastName" width="80" link="true" />
+				<column id="jbr.person.firstName" width="50" />
+				<column id="jbr.person.middleName" width="80" />
+				<column id="jbr.person.organization" width="80" labelAttrId="jbr.organization.shortName" isParentName="true"/>
+				<column id="jbr.person.dept" width="80" labelAttrId="NAME" isParentName="true"/>
+				<column id="jbr.person.pos" width="80" labelAttrId="NAME" isParentName="true"/>
+				
+				<!-- <column id="NAME" width="300" /> -->
+			</columns>
+		</variant>
+	</variants>
+	<messages>
+		<lang code="en">
+			<message key="acceptTitle" value="Ok"/>
+			<message key="addListTitle" value="Add list of internal persons"/>
+			<message key="cancelTitle" value="Cancel"/>
+			<message key="sendInfoTitle" value="Send to persons"/>
+			<message key="confirmSendInfo" value="This will create children cards from lists of person, will save current card and send children cards to the associated persons. Proceed?"/>
+			<message key="departments" value="Persons"/>
+			<message key="lists" value="By person lists"/>
+		</lang>	
+		<lang code="ru">
+			<message key="acceptTitle" value="Ok"/>
+			<message key="addListTitle" value="�������� ������ ���������� ������"/>
+			<message key="cancelTitle" value="������"/>
+			<message key="sendInfoTitle" value="��������� �� ������������"/>
+			<message key="confirmSendInfo" value="��������� �������� � ��������� ��������� �������� �� ������������?"/>
+			<message key="departments" value="����������"/>
+			<message key="lists" value="������ ���������� ������"/>
+		</lang>
+	</messages>
+</cardLinkPickerAttributeEditorSettings>
