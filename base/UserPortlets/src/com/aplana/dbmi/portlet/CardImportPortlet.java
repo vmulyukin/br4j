@@ -733,9 +733,9 @@ public class CardImportPortlet extends GenericPortlet {
 				AttributeBlock attrBlock = (AttributeBlock)iter.next();
 				for (Attribute attr: attrBlock.getAttributes()){
 					if (attr instanceof CardLinkAttribute||attr instanceof TypedCardLinkAttribute||attr instanceof DatedTypedCardLinkAttribute){
-						CardLinkPickerDescriptor сardLinkPickerDescriptor = (CardLinkPickerDescriptor)cardInfo.getAttributeEditorData(attr.getId(), "cardLinkPickerDescriptor");
-						if (сardLinkPickerDescriptor!=null){
-							CardLinkPickerVariantDescriptor descr = сardLinkPickerDescriptor.getDefaultVariantDescriptor();
+						CardLinkPickerDescriptor cardLinkPickerDescriptor = (CardLinkPickerDescriptor)cardInfo.getAttributeEditorData(attr.getId(), "cardLinkPickerDescriptor");
+						if (cardLinkPickerDescriptor!=null){
+							CardLinkPickerVariantDescriptor descr = cardLinkPickerDescriptor.getDefaultVariantDescriptor();
 							Search attrSearch = (descr!=null)?descr.getSearch():null;
 							if (attrSearch!=null){
 								result.put(attr.getId(), attrSearch);
